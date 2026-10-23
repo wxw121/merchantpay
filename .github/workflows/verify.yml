@@ -1,0 +1,92 @@
+name: verify
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Build patched infrastructure fixtures
+        shell: pwsh
+        run: ./scripts/release/build-infrastructure.ps1
+      - name: Isolated S3 HTTP fixture
+        run: |
+          docker run -d --name merchantpay-s3-test -p 127.0.0.1:19000:9000 -e RUSTFS_ACCESS_KEY=integration-test -e RUSTFS_SECRET_KEY=integration-test-secret merchantpay/storage:v1-local /data
+          for n in $(seq 1 30); do if curl -s -o /dev/null http://127.0.0.1:19000; then exit 0; fi; sleep 1; done
+          exit 1
+      - name: Backend tests, real MySQL/S3 integration, module boundaries, format
+        run: mvn -B -ntp test fmt:check -Dmerchantpay.test.s3-endpoint=http://127.0.0.1:19000
+      - name: Load measurement regression tests
+        run: |
+          mkdir -p .work/load-tests
+          javac -d .work/load-tests scripts/load/*.java
+          java -cp .work/load-tests LoadMeasurementsTest
+          java -cp .work/load-tests DiagnosisMeasurementsTest
+          java -cp .work/load-tests CommitWaitSamplerTest
+          java -cp .work/load-tests AcceptanceToolsTest
+          javac -d .work/load-tests simulator/src/main/java/dev/merchantpay/simulator/StandardProfile.java
+          java -cp .work/load-tests StandardProfileTest
+      - name: D0 baseline qualification guards
+        shell: pwsh
+        run: ./scripts/load/test-baseline.ps1
+      - name: Isolated historical fixture scope guards
+        run: |
+          mvn -B -ntp -pl platform dependency:build-classpath -Dmdep.includeScope=test -Dmdep.outputFile=target/fixture-classpath.txt
+          mkdir -p .work/fixture-classes
+          javac -cp "platform/target/classes:simulator/target/classes:$(cat platform/target/fixture-classpath.txt)" -d .work/fixture-classes tools/fixtures/*.java
+          java -cp ".work/fixture-classes:platform/target/classes:simulator/target/classes:$(cat platform/target/fixture-classpath.txt)" D1FixtureTest
+      - name: V1 workload qualification guards
+        shell: pwsh
+        run: ./scripts/load/test-v1.ps1
+      - name: Capacity and complete scan entry guards
+        shell: pwsh
+        run: |
+          ./scripts/load/test-capacity.ps1
+          ./scripts/release/test-scan-gates.ps1
+          ./scripts/release/test-backup-resume.ps1
+          ./scripts/release/test-restored-api.ps1
+          ./scripts/release/test-startup-lock.ps1
+          ./scripts/test-process-environment.ps1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24.22.0'
+          package-manager-cache: false
+      - name: Install locked package manager
+        run: npm install --global pnpm@11.25.0
+      - name: Frontend checks
+        working-directory: console
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm test
+          pnpm build
+          pnpm exec prettier --check src tests playwright.config.ts
+      - name: Generated API client contract, types and HTTP tests
+        run: |
+          pnpm --dir sdk install --frozen-lockfile
+          pnpm --dir sdk verify
+      - name: Package application jars
+        run: mvn -B -ntp package -DskipTests
+      - name: Build local runtime images
+        shell: pwsh
+        run: ./scripts/release/build-images.ps1 -SkipBuild
+      - name: Install image scanner
+        uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241
+        with:
+          version: v0.72.0
+      - name: Runtime image vulnerability gate
+        shell: pwsh
+        run: ./scripts/release/scan-images.ps1
+      - name: Configured infrastructure vulnerability gate
+        shell: pwsh
+        run: |
+          ./scripts/release/catalog-configured-images.ps1
+          ./scripts/release/scan-images.ps1 -Manifest .work/release/configured-infrastructure-images.json
+      # OIDC browser / restart / scale checks require the full local environment;
+      # this job deliberately does not claim those or the R1 release gates.

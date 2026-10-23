@@ -1,0 +1,23 @@
+groups:
+  - name: merchantpay-v1
+    rules:
+      - alert: MerchantPayUnavailable
+        expr: up{job="merchantpay-platform"} == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: "平台指标端点不可达"}
+      - alert: MerchantPayDeadTasks
+        expr: merchantpay_tasks_dead > 0
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: "持久化任务进入死信，请查证后授权重放"}
+      - alert: MerchantPayQueueOld
+        expr: merchantpay_tasks_oldest_seconds > 120
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: "任务积压年龄超过两分钟"}
+      - alert: MerchantPayMetricsStale
+        expr: merchantpay_metrics_staleness_seconds > 60
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: "业务指标已超过一分钟未刷新"}

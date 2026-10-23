@@ -1,0 +1,1141 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MerchantPay 模拟商户支付 API",
+    "version": "1.0.0-SNAPSHOT",
+    "description": "HMAC五段签名与通知验签见 merchant-api.md。202仅表示持久化受理。API JSON金额必须为字符串。"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8080/api/v1",
+      "description": "仅本机模拟环境"
+    }
+  ],
+  "security": [
+    {
+      "MerchantKey": []
+    }
+  ],
+  "paths": {
+    "/payments": {
+      "parameters": [
+        {
+          "name": "X-Timestamp",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[0-9]{10}$"
+          }
+        },
+        {
+          "name": "X-Nonce",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{16,100}$"
+          }
+        },
+        {
+          "name": "X-Signature",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "X-Api-Version",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "1.0"
+            ],
+            "default": "1.0"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "createPayment",
+        "description": "受理支付；相同业务号和参数返回原对象",
+        "responses": {
+          "202": {
+            "description": "受理支付；相同业务号和参数返回原对象",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "日志关联标识"
+              }
+            }
+          },
+          "400": {
+            "description": "参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "不存在或不属于该商户",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "幂等、重放、额度或状态冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "超过配额",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "可能已提交；原业务号查询及退避重试",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Retry delay in seconds; reuse the original business key with a new nonce.",
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[0-9]+$"
+                }
+              },
+              "X-Retry-Reason": {
+                "description": "Fixed retry classification; unknown or absent values are UNCLASSIFIED.",
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "API_INFLIGHT",
+                    "QUOTA_CAPACITY",
+                    "QUOTA_TIMEOUT",
+                    "QUOTA_INTERRUPTED",
+                    "QUOTA_UNAVAILABLE",
+                    "QUOTA_DATABASE",
+                    "PAYMENT_CAPACITY",
+                    "DATABASE_UNAVAILABLE",
+                    "DATABASE_TRANSIENT",
+                    "UNCLASSIFIED"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "未分类5xx也可能已提交；先以原业务号查单，再退避重试。"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayment"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/{id}": {
+      "parameters": [
+        {
+          "name": "X-Timestamp",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[0-9]{10}$"
+          }
+        },
+        {
+          "name": "X-Nonce",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{16,100}$"
+          }
+        },
+        {
+          "name": "X-Signature",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "X-Api-Version",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "1.0"
+            ],
+            "default": "1.0"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getPayment",
+        "description": "读取本商户支付权威状态",
+        "responses": {
+          "200": {
+            "description": "读取本商户支付权威状态",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "日志关联标识"
+              }
+            }
+          },
+          "400": {
+            "description": "参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "不存在或不属于该商户",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "幂等、重放、额度或状态冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "超过配额",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "可能已提交；原业务号查询及退避重试",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Retry delay in seconds; reuse the original business key with a new nonce.",
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[0-9]+$"
+                }
+              },
+              "X-Retry-Reason": {
+                "description": "Fixed retry classification; unknown or absent values are UNCLASSIFIED.",
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "API_INFLIGHT",
+                    "QUOTA_CAPACITY",
+                    "QUOTA_TIMEOUT",
+                    "QUOTA_INTERRUPTED",
+                    "QUOTA_UNAVAILABLE",
+                    "QUOTA_DATABASE",
+                    "PAYMENT_CAPACITY",
+                    "DATABASE_UNAVAILABLE",
+                    "DATABASE_TRANSIENT",
+                    "UNCLASSIFIED"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "未分类5xx也可能已提交；先以原业务号查单，再退避重试。"
+          }
+        }
+      }
+    },
+    "/payments/{id}/close": {
+      "parameters": [
+        {
+          "name": "X-Timestamp",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[0-9]{10}$"
+          }
+        },
+        {
+          "name": "X-Nonce",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{16,100}$"
+          }
+        },
+        {
+          "name": "X-Signature",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "X-Api-Version",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "1.0"
+            ],
+            "default": "1.0"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      ],
+      "post": {
+        "operationId": "requestClose",
+        "description": "请求关闭并等待渠道证据，可能发现已成功",
+        "responses": {
+          "202": {
+            "description": "请求关闭并等待渠道证据，可能发现已成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "日志关联标识"
+              }
+            }
+          },
+          "400": {
+            "description": "参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "不存在或不属于该商户",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "幂等、重放、额度或状态冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "超过配额",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "可能已提交；原业务号查询及退避重试",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Retry delay in seconds; reuse the original business key with a new nonce.",
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[0-9]+$"
+                }
+              },
+              "X-Retry-Reason": {
+                "description": "Fixed retry classification; unknown or absent values are UNCLASSIFIED.",
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "API_INFLIGHT",
+                    "QUOTA_CAPACITY",
+                    "QUOTA_TIMEOUT",
+                    "QUOTA_INTERRUPTED",
+                    "QUOTA_UNAVAILABLE",
+                    "QUOTA_DATABASE",
+                    "PAYMENT_CAPACITY",
+                    "DATABASE_UNAVAILABLE",
+                    "DATABASE_TRANSIENT",
+                    "UNCLASSIFIED"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "未分类5xx也可能已提交；先以原业务号查单，再退避重试。"
+          }
+        }
+      }
+    },
+    "/payments/{id}/refunds": {
+      "parameters": [
+        {
+          "name": "X-Timestamp",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[0-9]{10}$"
+          }
+        },
+        {
+          "name": "X-Nonce",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{16,100}$"
+          }
+        },
+        {
+          "name": "X-Signature",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "X-Api-Version",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "1.0"
+            ],
+            "default": "1.0"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      ],
+      "post": {
+        "operationId": "createRefund",
+        "description": "受理退款并预占额度；未知保留预占",
+        "responses": {
+          "202": {
+            "description": "受理退款并预占额度；未知保留预占",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "日志关联标识"
+              }
+            }
+          },
+          "400": {
+            "description": "参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "不存在或不属于该商户",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "幂等、重放、额度或状态冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "超过配额",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "可能已提交；原业务号查询及退避重试",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Retry delay in seconds; reuse the original business key with a new nonce.",
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[0-9]+$"
+                }
+              },
+              "X-Retry-Reason": {
+                "description": "Fixed retry classification; unknown or absent values are UNCLASSIFIED.",
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "API_INFLIGHT",
+                    "QUOTA_CAPACITY",
+                    "QUOTA_TIMEOUT",
+                    "QUOTA_INTERRUPTED",
+                    "QUOTA_UNAVAILABLE",
+                    "QUOTA_DATABASE",
+                    "PAYMENT_CAPACITY",
+                    "DATABASE_UNAVAILABLE",
+                    "DATABASE_TRANSIENT",
+                    "UNCLASSIFIED"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "未分类5xx也可能已提交；先以原业务号查单，再退避重试。"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRefund"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/refunds/{id}": {
+      "parameters": [
+        {
+          "name": "X-Timestamp",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[0-9]{10}$"
+          }
+        },
+        {
+          "name": "X-Nonce",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{16,100}$"
+          }
+        },
+        {
+          "name": "X-Signature",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        {
+          "name": "X-Api-Version",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "1.0"
+            ],
+            "default": "1.0"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getRefund",
+        "description": "读取本商户退款权威状态",
+        "responses": {
+          "200": {
+            "description": "读取本商户退款权威状态",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            },
+            "headers": {
+              "X-Request-Id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "日志关联标识"
+              }
+            }
+          },
+          "400": {
+            "description": "参数无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "认证无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "权限不足",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "不存在或不属于该商户",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "幂等、重放、额度或状态冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "超过配额",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "可能已提交；原业务号查询及退避重试",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Retry delay in seconds; reuse the original business key with a new nonce.",
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[0-9]+$"
+                }
+              },
+              "X-Retry-Reason": {
+                "description": "Fixed retry classification; unknown or absent values are UNCLASSIFIED.",
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "API_INFLIGHT",
+                    "QUOTA_CAPACITY",
+                    "QUOTA_TIMEOUT",
+                    "QUOTA_INTERRUPTED",
+                    "QUOTA_UNAVAILABLE",
+                    "QUOTA_DATABASE",
+                    "PAYMENT_CAPACITY",
+                    "DATABASE_UNAVAILABLE",
+                    "DATABASE_TRANSIENT",
+                    "UNCLASSIFIED"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "未分类5xx也可能已提交；先以原业务号查单，再退避重试。"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "MerchantKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Key-Id",
+        "description": "还必须带时间、nonce和HMAC签名；不是仅凭keyId认证"
+      }
+    },
+    "schemas": {
+      "CreatePayment": {
+        "type": "object",
+        "required": [
+          "merchantOrderNo",
+          "amountMinor",
+          "currency",
+          "channel"
+        ],
+        "properties": {
+          "merchantOrderNo": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "amountMinor": {
+            "type": "string",
+            "pattern": "^([1-9][0-9]{0,8}|1000000000)$",
+            "example": "10000"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "CNY"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "MOCK_A",
+              "MOCK_B"
+            ]
+          },
+          "notificationUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "description": "HTTPS 443 公网域名；本地模拟地址仅由 local 配置放行"
+          }
+        }
+      },
+      "CreateRefund": {
+        "type": "object",
+        "required": [
+          "merchantRefundNo",
+          "amountMinor"
+        ],
+        "properties": {
+          "merchantRefundNo": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "amountMinor": {
+            "type": "string",
+            "pattern": "^([1-9][0-9]{0,8}|1000000000)$",
+            "example": "10000"
+          }
+        }
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "merchantId": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "merchantOrderNo": {
+            "type": "string"
+          },
+          "amountMinor": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "CNY 分，十进制整数字符串"
+          },
+          "feeMinor": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "CNY 分，十进制整数字符串"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "CNY"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PROCESSING",
+              "UNKNOWN",
+              "CLOSE_PENDING",
+              "SUCCEEDED",
+              "FAILED",
+              "CLOSED"
+            ]
+          },
+          "refundedMinor": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "CNY 分，十进制整数字符串"
+          },
+          "reservedMinor": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "CNY 分，十进制整数字符串"
+          },
+          "refundedFeeMinor": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "CNY 分，十进制整数字符串"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "MOCK_A",
+              "MOCK_B"
+            ]
+          },
+          "channelReference": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "notificationUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Refund": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "paymentId": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "merchantId": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "merchantRefundNo": {
+            "type": "string"
+          },
+          "amountMinor": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "CNY 分，十进制整数字符串"
+          },
+          "refundedFeeMinor": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "CNY 分，十进制整数字符串"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PROCESSING",
+              "UNKNOWN",
+              "SUCCEEDED",
+              "FAILED"
+            ]
+          },
+          "channel": {
+            "type": "string"
+          },
+          "channelReference": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

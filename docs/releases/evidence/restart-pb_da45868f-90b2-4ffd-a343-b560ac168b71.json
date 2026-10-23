@@ -1,0 +1,1 @@
+{"scenario":"application-restart-after-durable-acceptance","paymentId":"pb_da45868f-90b2-4ffd-a343-b560ac168b71","generatedAt":"2026-10-18T05:42:27.116099200Z","success":1,"journals":1,"entries":3,"ledgerDifferenceMinor":"0","successEvents":1,"channelAttempts":1,"correctnessPassed":true}

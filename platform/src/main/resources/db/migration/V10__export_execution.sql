@@ -1,0 +1,1 @@
+ALTER TABLE exports ADD COLUMN run_token VARCHAR(64);

@@ -1,0 +1,195 @@
+{
+  "realm": "merchantpay",
+  "enabled": true,
+  "displayName": "商户支付与对账平台 · 本地演示",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "ADMIN"
+      },
+      {
+        "name": "MERCHANT"
+      },
+      {
+        "name": "FINANCE"
+      },
+      {
+        "name": "OPS"
+      },
+      {
+        "name": "AUDITOR"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "merchantpay-console",
+      "name": "MerchantPay Console",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "__CLIENT_SECRET__",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "http://127.0.0.1:8080/login/oauth2/code/keycloak"
+      ],
+      "webOrigins": [
+        "http://127.0.0.1:5173"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "http://127.0.0.1:5173/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "merchant-scope",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "merchant_id",
+            "claim.name": "merchant_id",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "console-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "config": {
+            "claim.name": "roles",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "平台",
+      "lastName": "管理员",
+      "realmRoles": [
+        "ADMIN"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "email": "admin@merchantpay.invalid"
+    },
+    {
+      "username": "merchant-a",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "演示",
+      "lastName": "商户 A",
+      "attributes": {
+        "merchant_id": [
+          "merchant-a"
+        ]
+      },
+      "realmRoles": [
+        "MERCHANT"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "__DEMO_PASSWORD__",
+          "temporary": false
+        }
+      ],
+      "email": "merchant-a@merchantpay.invalid"
+    },
+    {
+      "username": "merchant-b",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "演示",
+      "lastName": "商户 B",
+      "attributes": {
+        "merchant_id": [
+          "merchant-b"
+        ]
+      },
+      "realmRoles": [
+        "MERCHANT"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "__DEMO_PASSWORD__",
+          "temporary": false
+        }
+      ],
+      "email": "merchant-b@merchantpay.invalid"
+    },
+    {
+      "username": "finance",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "财务",
+      "lastName": "测试",
+      "realmRoles": [
+        "FINANCE"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "__DEMO_PASSWORD__",
+          "temporary": false
+        }
+      ],
+      "email": "finance@merchantpay.invalid"
+    },
+    {
+      "username": "auditor",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "审计",
+      "lastName": "测试",
+      "realmRoles": [
+        "AUDITOR"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "__DEMO_PASSWORD__",
+          "temporary": false
+        }
+      ],
+      "email": "auditor@merchantpay.invalid"
+    },
+    {
+      "username": "ops",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "运维",
+      "lastName": "测试",
+      "realmRoles": [
+        "OPS"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "__DEMO_PASSWORD__",
+          "temporary": false
+        }
+      ],
+      "email": "ops@merchantpay.invalid"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+server:
+  address: ${BIND_ADDRESS:127.0.0.1}
+  port: ${SIMULATOR_PORT:9091}
+spring:
+  application:
+    name: merchantpay-channel-simulator
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: ${SIMULATOR_DATABASE_URL:jdbc:h2:file:./.data/simulator/channel;MODE=MySQL;DB_CLOSE_ON_EXIT=FALSE}
+    username: sa
+    password: ${SIMULATOR_DATABASE_PASSWORD:}
+    hikari:
+      maximum-pool-size: 16
+  sql:
+    init:
+      mode: always
+merchantpay:
+  standard-profile: ${SIMULATOR_PROFILE:demo}
+  standard-seed: ${SIMULATOR_SEED:20261019}
+  channel-token: ${CHANNEL_TOKEN}
+  callback-secret: ${CALLBACK_SECRET}
+  callback-url: ${CALLBACK_URL:http://127.0.0.1:8080/api/channel/callback}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

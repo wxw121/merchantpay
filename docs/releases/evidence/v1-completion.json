@@ -1,0 +1,778 @@
+{
+  "generatedAt": "2026-10-20T02:12:35.2471958+00:00",
+  "version": "1.0.0-SNAPSHOT",
+  "releaseReady": false,
+  "referenceR1Certified": false,
+  "scope": "Local Windows/Docker Desktop implementation and bounded validation; no remote Git repository or isolated R1 environment",
+  "checks": {
+    "backend": {
+      "failures": 0,
+      "total": 299,
+      "simulator": 6,
+      "skipped": 0,
+      "platform": 293,
+      "errors": 0
+    },
+    "loadGuards": true,
+    "sdk": {
+      "passed": 12,
+      "generatedDriftCheck": true,
+      "realSignedReadSmoke": true
+    },
+    "s3OperationalHttp": {
+      "mainDeploymentStorage": "local",
+      "passed": 7,
+      "endpointPort": 19002
+    },
+    "browser": {
+      "scalePassed": 1,
+      "normalPassed": 6,
+      "containerOidcPassed": 1
+    },
+    "frontend": {
+      "formatPassed": true,
+      "passed": 25,
+      "buildPassed": true
+    }
+  },
+  "currentArtifacts": [
+    {
+      "bytes": 61771734,
+      "path": "platform/target/platform-1.0.0-SNAPSHOT.jar",
+      "sha256": "17a405de540607182f44f27db650859c4b6c63a11047a26eac4449d0ab3d4909"
+    },
+    {
+      "bytes": 27822651,
+      "path": "simulator/target/simulator-1.0.0-SNAPSHOT.jar",
+      "sha256": "36bab12392bbb19a1c510c935bf47eb36bcc265dc58329af53b784b5867eff7e"
+    }
+  ],
+  "sourceArtifacts": [
+    {
+      "bytes": 5986,
+      "path": "platform/src/main/java/dev/merchantpay/platform/reconciliation/ObjectStorage.java",
+      "sha256": "939bf4f537a5c08f7c5a42abd35b34879db9b7dcce44fe30c83916b71054af17"
+    },
+    {
+      "bytes": 10763,
+      "path": "platform/src/main/java/dev/merchantpay/platform/reconciliation/ExportService.java",
+      "sha256": "cd1487dc1dc186d12454b13f7384bbe11ce822cd0ef24ad31145d190db911543"
+    },
+    {
+      "bytes": 22568,
+      "path": "platform/src/main/java/dev/merchantpay/platform/reconciliation/ReconciliationService.java",
+      "sha256": "2f713cdfffd5a8b1ed1ec867bc7de8721a5cf36cd0542e95453e2de65a0220ba"
+    },
+    {
+      "bytes": 8774,
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ReconciliationController.java",
+      "sha256": "8885607cddd8dfe07d20f5afc50977f5c58fa4a4e9c77dc96eb4eb294eb8a5d2"
+    },
+    {
+      "bytes": 2106,
+      "path": "simulator/src/main/java/dev/merchantpay/simulator/StandardProfile.java",
+      "sha256": "379caf4ff427da60881730fd3df3074ea67e96edacbcf220f21d4cbff6043cbd"
+    },
+    {
+      "bytes": 14710,
+      "path": "simulator/src/main/java/dev/merchantpay/simulator/ChannelStore.java",
+      "sha256": "4d95887c3840cd7917155a9c1c89f9bca9421357969e20de4ad354a632515e8a"
+    },
+    {
+      "bytes": 1620,
+      "path": "simulator/src/main/java/dev/merchantpay/simulator/AcceptanceController.java",
+      "sha256": "20ca9fb492be1f55015940ce98fec7fddd7b7b8ed5974f857049ad9348f63a6f"
+    },
+    {
+      "bytes": 9624,
+      "path": "console/src/App.tsx",
+      "sha256": "f7aeada2e8e74287b3fe0f4b5998587ea9485b47208493aca39dd336348b0e1a"
+    },
+    {
+      "bytes": 32205,
+      "path": "docs/api/openapi.json",
+      "sha256": "ded044441c0000fab15c4309c9c04d10d98fb223445c4467e6fb6c3f2f0ee77d"
+    },
+    {
+      "bytes": 35682,
+      "path": "scripts/load/AcceptanceLoad.java",
+      "sha256": "b6f2e1be0da40a28779f8e282a1929f51e1286aca7665fbae93bc5b912947023"
+    },
+    {
+      "bytes": 6418,
+      "path": "scripts/load/run-v1.ps1",
+      "sha256": "4dbf50125c31ad74a900c747056647fa907a059ba6669c57e79ab3927db59593"
+    },
+    {
+      "bytes": 16530,
+      "path": "tools/fixtures/D1Fixture.java",
+      "sha256": "5b2afa732fff82909d5b4750440a2ff05f057b9beb8824d5006226b2efda7f49"
+    },
+    {
+      "bytes": 9097,
+      "path": "scripts/release/backup-local.ps1",
+      "sha256": "25b3b331cda5c6306d0b9b2a5449e0244294a375e54d03aa87600f0a7d414ee6"
+    },
+    {
+      "bytes": 10293,
+      "path": "scripts/release/restore-local.ps1",
+      "sha256": "0386e928e642f834c21ade4cd8d943476cc53ea688433a0d6ee9f46cd69b81f8"
+    },
+    {
+      "bytes": 5896,
+      "path": "tools/fixtures/RestoredSetCheck.java",
+      "sha256": "6304343b653bdbfd8d9aaf82046eab64222c3fecbce9144c14938f6c24d8a816"
+    },
+    {
+      "bytes": 4249,
+      "path": "scripts/api/generate-client.mjs",
+      "sha256": "7d42963eda5486e9c3924b57d5b2bfd8c3a101f826147f160c1d45dda1c1b1af"
+    },
+    {
+      "bytes": 3458,
+      "path": ".github/workflows/verify.yml",
+      "sha256": "e5cd369bb4c1b11f39f04f302375f731adc79be12db3baf21ab60335cba2cac9"
+    }
+  ],
+  "images": [
+    {
+      "created": "2026-10-20T00:51:56.672928504Z",
+      "id": "sha256:a2993481fb084a5c76cbcd6fef8970346f958638efc3a625a4c41351b23bb3bd",
+      "user": "10001:10001",
+      "image": "merchantpay/platform:v1-local",
+      "module": "platform"
+    },
+    {
+      "created": "2026-10-20T00:52:01.687335996Z",
+      "id": "sha256:d88fc8a033ab2ff6fb8964e8aa339eda7716a4f723e6fc7e99cff07f0596f4ba",
+      "user": "10001:10001",
+      "image": "merchantpay/simulator:v1-local",
+      "module": "simulator"
+    },
+    {
+      "created": "2026-10-20T00:52:03.904644981Z",
+      "id": "sha256:88896988b53fb0909a8ad65edb9b01b5d6a86522a0fd280879c577623a88a3c0",
+      "user": "101",
+      "image": "merchantpay/console:v1-local",
+      "module": "console"
+    }
+  ],
+  "infrastructureSecurity": {
+    "imageVulnerabilityGatePassed": false,
+    "deploymentSecurityGatePassed": false,
+    "mysqlCritical": 1,
+    "scope": "Images used by running local deployment at scan time; application image result does not certify infrastructure",
+    "images": [
+      {
+        "findings": 90,
+        "id": "sha256:24989179f58856db763f418010c1169fecc944e3ec1ea7e921572d83eb070f70",
+        "highOrCritical": 40,
+        "module": "mysql",
+        "reportSha256": "cec967609e2dcece59951221d82b133e022a58338734c9657c5e41cdbb2f76c5"
+      },
+      {
+        "findings": 51,
+        "id": "sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244",
+        "highOrCritical": 0,
+        "module": "keycloak",
+        "reportSha256": "5eeafe92e7a36164652ba70be8e1abb8dffe4d6785f8f817275d225ec34fd0d6"
+      },
+      {
+        "findings": 42,
+        "id": "sha256:41fe89380f4120a337790c02af192c3fe7bb55c3edc2e6e9357b487b47c6ab21",
+        "highOrCritical": 2,
+        "module": "local-s3",
+        "reportSha256": "9b8dfbb53699a01f358699511ec9efbe0fb53dad30cf32f02c248effd204182a"
+      }
+    ]
+  },
+  "security": {
+    "hostWindowsOsCovered": false,
+    "jdkVendor": "Oracle native / Temurin container",
+    "jdkVersion": "25.0.4.1",
+    "frontendFindings": 0,
+    "jdkBinaryFullyCovered": false,
+    "applicationImageGatePassed": true,
+    "backendOsvPackages": 170,
+    "frontendPackages": 78,
+    "images": [
+      {
+        "findings": 49,
+        "id": "sha256:a2993481fb084a5c76cbcd6fef8970346f958638efc3a625a4c41351b23bb3bd",
+        "highOrCritical": 0,
+        "module": "platform",
+        "reportSha256": "7c211417dbab62491a0ce8fc0e1f60f04702f1b8cb960258902491551a3c4669"
+      },
+      {
+        "findings": 49,
+        "id": "sha256:d88fc8a033ab2ff6fb8964e8aa339eda7716a4f723e6fc7e99cff07f0596f4ba",
+        "highOrCritical": 0,
+        "module": "simulator",
+        "reportSha256": "d44f560220506c96bf5cc764a1bc1352e2aeb656c953582550e7bac55fa957d7"
+      },
+      {
+        "findings": 1,
+        "id": "sha256:88896988b53fb0909a8ad65edb9b01b5d6a86522a0fd280879c577623a88a3c0",
+        "highOrCritical": 0,
+        "module": "console",
+        "reportSha256": "2be63b05f830dab5d232ffa4064e418686a258aa77c5fee6657d0aa38ac29cdb"
+      }
+    ],
+    "backendOsvFindings": 0,
+    "vendorOctoberAdvisory": "pre-release at review; final patch availability/update not certified",
+    "trivyVersion": "0.72.0"
+  },
+  "nativeFinal": {
+    "schemaVersion": 12,
+    "moneyInvariantsPassed": true,
+    "unfinishedTasks": 0,
+    "dataset": {
+      "payments": 195457,
+      "ledgerEntries": 586297,
+      "journals": 196148,
+      "tasks": 588513,
+      "merchants": 2
+    },
+    "storageType": "local",
+    "admission": [
+      {
+        "logical_shard": 0,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 1,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 2,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 3,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 4,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 5,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 6,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 7,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 8,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 9,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 10,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 11,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 12,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 13,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 14,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 15,
+        "inflight": 0,
+        "actual": 0
+      }
+    ]
+  },
+  "containerFinal": {
+    "storageType": "local",
+    "admission": [
+      {
+        "logical_shard": 0,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 1,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 2,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 3,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 4,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 5,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 6,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 7,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 8,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 9,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 10,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 11,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 12,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 13,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 14,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 15,
+        "inflight": 0,
+        "actual": 0
+      }
+    ],
+    "unfinishedTasks": 0,
+    "dataset": {
+      "payments": 1385,
+      "ledgerEntries": 4815,
+      "journals": 1734,
+      "tasks": 5349,
+      "merchants": 2
+    },
+    "profile": "standard-v1"
+  },
+  "historicalFixture": {
+    "at": "2026-10-20T02:08:30.724633500Z",
+    "payments": 100,
+    "refunds": 400,
+    "ledgerEntries": 1499,
+    "outboxEvents": 1000,
+    "merchants": 10,
+    "businessDates": 3,
+    "channelReceipts": 500,
+    "unfinishedTasks": 0,
+    "unbalancedJournals": 0,
+    "refundViolations": 0,
+    "resumeCursor": 100,
+    "moneyAndAuthorityVerified": true,
+    "firstBusinessDay": "2026-10-17",
+    "lastBusinessDay": "2026-10-19",
+    "historicalDatesOnly": true,
+    "d1CountersSatisfied": false,
+    "referenceR1Certified": false,
+    "runElapsedMillis": 2586,
+    "authorityFactSha256": "d4bc5e48901a3acfbebc71bc9a232401a68c9bcfc1b563d1141982ea965b47d3",
+    "scope": "Offline historical fixture using domain services, independent durable H2 channel authority, fenced completion, five lawful partial refunds on 80% of payments; no HTTP/signature/notification transport benchmark"
+  },
+  "fullD1Preflight": {
+    "gatePassed": false,
+    "referenceR1Certified": false,
+    "requestedFull": true,
+    "workspaceDriveFreeFraction": 0.07547254984467539,
+    "minimumFreeFraction": 0.3,
+    "workspaceDriveFreeGiB": 46.85,
+    "at": "2026-10-20T09:15:33.2387759+08:00"
+  },
+  "standardSmoke": {
+    "payments": 50,
+    "queries": 100,
+    "seconds": 10,
+    "refunds": 10,
+    "financialAndChannelTruthPassed": true
+  },
+  "scaledC1": {
+    "refund": {
+      "scheduled": 465,
+      "sent": 465,
+      "acceptedOrRead": 388,
+      "httpStatuses": {
+        "202": 388,
+        "503": 77
+      },
+      "droppedIterations": 0,
+      "systemErrors": 77,
+      "rejected": 0,
+      "httpP50Micros": 44607,
+      "httpP95Micros": 79694,
+      "httpP99Micros": 114468,
+      "scheduledHttpP99Micros": 115475,
+      "sendDelayP99Micros": 1662,
+      "posted": 377,
+      "businessFailed": 11,
+      "unfinished": 0,
+      "unacknowledgedCommitted": 0,
+      "oldestUnfinishedMicros": 0,
+      "completedPerArrivalSecondLower": 11.8,
+      "completedPerArrivalSecondUpper": 12.333333333333334,
+      "successfulCompletionP99LowerMicros": 8944574,
+      "successfulCompletionP99UpperMicros": 9276614,
+      "acceptedCompletionP99UpperMicros": null,
+      "observerTotalQueryMicros": 7293285,
+      "observerSnapshots": 447,
+      "observerMaxQueryMicros": 39080,
+      "maxCommitVisibilityIntervalMicros": 371783
+    },
+    "payment": {
+      "scheduled": 4605,
+      "sent": 4605,
+      "acceptedOrRead": 835,
+      "httpStatuses": {
+        "202": 835,
+        "503": 3770
+      },
+      "droppedIterations": 0,
+      "systemErrors": 3770,
+      "rejected": 0,
+      "httpP50Micros": 37970,
+      "httpP95Micros": 75978,
+      "httpP99Micros": 99285,
+      "scheduledHttpP99Micros": 99916,
+      "sendDelayP99Micros": 1668,
+      "posted": 813,
+      "businessFailed": 22,
+      "unfinished": 0,
+      "unacknowledgedCommitted": 0,
+      "oldestUnfinishedMicros": 0,
+      "completedPerArrivalSecondLower": 37.46666666666667,
+      "completedPerArrivalSecondUpper": 38.13333333333333,
+      "successfulCompletionP99LowerMicros": 8910955,
+      "successfulCompletionP99UpperMicros": 9265166,
+      "acceptedCompletionP99UpperMicros": null,
+      "observerTotalQueryMicros": 16367815,
+      "observerSnapshots": 447,
+      "observerMaxQueryMicros": 74824,
+      "maxCommitVisibilityIntervalMicros": 401635
+    },
+    "originalTruth": {
+      "disagreements": 22,
+      "matched": false,
+      "sha256": "aa4c997d1f4573618f1bc69f56e41a4abd1f89e52a09eb69a295f3a43e3cae68",
+      "persisted": 1223,
+      "checked": 1223
+    },
+    "truthRecheck": {
+      "disagreements": 0,
+      "checked": 1223,
+      "matched": true,
+      "reason": "Failed payment keeps quoted fee; authority reports zero charged fee. Successful fees and other facts compared; original failed report preserved."
+    },
+    "seconds": 15,
+    "moneyInvariantsPassed": true,
+    "formalPerformanceCertified": false,
+    "passed": false
+  },
+  "webPerformance": {
+    "target": "http://127.0.0.1:5174",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "network": {
+      "latencyMillis": 40,
+      "downMbps": 20
+    },
+    "browserVersion": "155.0.4283.62",
+    "logicalProcessorsReported": 32,
+    "clientCpuAndMemoryBudgetVerified": false,
+    "referenceR1Certified": false,
+    "summaries": [
+      {
+        "path": "/",
+        "samples": 30,
+        "p75Millis": 708
+      },
+      {
+        "path": "/payments",
+        "samples": 30,
+        "p75Millis": 716
+      }
+    ]
+  },
+  "backup": {
+    "includesS3": true,
+    "encryptedBundleSha256": "ceb62537563024d292723deaf6cec1ec88ebff584d07ac7dfd936b618023fc40",
+    "referenceR1Certified": false,
+    "plainBytes": 29068788.0,
+    "encryption": "Windows CurrentUser DPAPI, host/account bound; cross-host key recovery not certified",
+    "at": "2026-10-20T09:43:06.823345+08:00",
+    "fileCount": 10,
+    "id": "completion-verified",
+    "complete": true,
+    "restoreVerified": true
+  },
+  "restore": {
+    "referenceR1Certified": false,
+    "s3Restored": true,
+    "complete": true,
+    "channelAndMerchantKeysVerified": true,
+    "mysqlRestored": true,
+    "at": "2026-10-20T09:49:34.6240694+08:00",
+    "backupId": "completion-verified",
+    "identitySigningKeysPreserved": true,
+    "limits": [
+      "Small independent container dataset, not native historical DB or full D1",
+      "DPAPI depends on this Windows user and host",
+      "No cross-host RPO/RTO or restored application traffic certification"
+    ],
+    "allArchiveHashesVerified": true
+  },
+  "restoreFacts": {
+    "authorityFactSha256": "848144daf40e5e6512bb637b5b90f5b3c7cfa28935f8a9db9cc6c70ae6d18fcd",
+    "channelReceipts": 1783,
+    "merchantKeysVerified": 2,
+    "truthAndKeyRecoveryPassed": true,
+    "referenceR1Certified": false,
+    "payments": 1385,
+    "refunds": 398,
+    "ledgerEntries": 4815,
+    "unbalancedJournals": 0,
+    "refundViolations": 0,
+    "missingJournals": 0,
+    "unfinishedTasks": 0,
+    "referencedBillsVerified": 0,
+    "referencedExportsVerified": 0,
+    "moneyAndLocalObjectRecoveryPassed": true
+  },
+  "remaining": [
+    "R1 resource isolation and observer calibration/cache comparison",
+    "300 completed payment TPS with 10% refunds, 2000 successful exact-query QPS",
+    "Full D1 load, distribution and online verification; disk preflight failed",
+    "Formal C3 mixed baseline comparison and four-hour soak",
+    "D1 full recovery, database fault coverage, cross-host keys and RPO/RTO",
+    "4vCPU/8GiB client LCP and 200ms critical feedback verification",
+    "Infrastructure scan failed: MySQL40 HIGH/CRITICAL including1 CRITICAL, local S3 2 HIGH; remediation/retest open. JDK final October patch review/update also open",
+    "Remote CI execution: no remote repository"
+  ],
+  "rawArtifacts": [
+    {
+      "bytes": 46961,
+      "path": ".work/v1-full-backend.log",
+      "sha256": "6cd3bc17abd86067f9a57c10d8e93797e0f9e20618daecd6c17670ab58f40473"
+    },
+    {
+      "bytes": 3614,
+      "path": ".work/v1-s3-operational-pass.log",
+      "sha256": "394adef7470d33ba65adbce0f252a3911222a2e99600fb08b22aa1d40e457537"
+    },
+    {
+      "bytes": 1431,
+      "path": ".work/v1-console-final-tests.log",
+      "sha256": "e4f2bd8b2f1d0cdea547ac339363b688145e67c0f48ae60c0ca96f0f4d692ecb"
+    },
+    {
+      "bytes": 1585,
+      "path": ".work/v1-console-build-native.log",
+      "sha256": "b160cb152603eff8bbd318af57c4bfea9057a2cdc91872860bcca7b373a2d1e6"
+    },
+    {
+      "bytes": 1241,
+      "path": ".work/v1-browser.log",
+      "sha256": "ea24ca1be40202da355383cad21cc39bccc9b76032adf2382f4f85fb82b58a8a"
+    },
+    {
+      "bytes": 1041,
+      "path": ".work/v1-scale.log",
+      "sha256": "879c4ebc382e9fc1abbf96b8b5ea1501316706d153ea49bef117d4c9dd3467c5"
+    },
+    {
+      "bytes": 1485,
+      "path": ".work/v1-sdk-final-check.log",
+      "sha256": "97723ddbb791e86743f5bff02ab12e5a94c5f2d46ce64bd0727939c1915049de"
+    },
+    {
+      "bytes": 145,
+      "path": ".work/v1-sdk-real-platform.log",
+      "sha256": "05b19f6421dfde6bdefd9e7d8854d15a2b00883acdc6bf228851e376a632fa0b"
+    },
+    {
+      "bytes": 341,
+      "path": ".work/v1-container-oidc-final.log",
+      "sha256": "7acba7855b5a2b4923adb448a50947997665d1cf679970bd5219c0855e22cb19"
+    },
+    {
+      "bytes": 304,
+      "path": ".work/v1-final-tool-guards.log",
+      "sha256": "bb385b2af4bff7ede92aadf6a2f51b116a497b99c4018e852cc62a2289b39100"
+    },
+    {
+      "bytes": 5782,
+      "path": ".work/v1-d1-recovery-red.log",
+      "sha256": "04e0c9024d17c2773ada8c624a6d973454b4d3e70ec4d7da822ef1beffb729a3"
+    },
+    {
+      "bytes": 6075,
+      "path": ".work/v1-d1-recovery-green.log",
+      "sha256": "545a0557a5e5ab0379a3420f7a843369b6ef42030c9e4239573e5c743b5730da"
+    },
+    {
+      "bytes": 158,
+      "path": ".work/v1-backup-set-verified.log",
+      "sha256": "776c85e354805385dac0997aa978e022d109235d1ee9edc34239a2a0461921c2"
+    },
+    {
+      "bytes": 304,
+      "path": ".work/v1-backup-immutable.log",
+      "sha256": "f05b958f7562aab7281a6a3cd18bc78c8122cb6b8dceae3d72f72e5f3c79a218"
+    },
+    {
+      "bytes": 1827,
+      "path": ".work/v1-restore-set.log",
+      "sha256": "9d16faeab188f4fdf9d77c62ba094204882bca4bf915bfc308f5981b48cf1fbd"
+    },
+    {
+      "bytes": 1918,
+      "path": ".work/v1-restore-set-complete.log",
+      "sha256": "fcc751677b1136c7d7a5237650d0bd18c0307dd567ef0ef16ecb499c1cf84571"
+    },
+    {
+      "bytes": 1497,
+      "path": ".work/v1-standard-c1-scaled.log",
+      "sha256": "0485951d9ef3baa7774e2714b8b5083c000643ed040f9d98b6d7800b7e2e5667"
+    },
+    {
+      "bytes": 812,
+      "path": ".work/v1-standard-truth-recheck.log",
+      "sha256": "5d4d8ef286e9255a1bd6cb248c33678fbbb9ebb859c811666afae1570eae61f5"
+    },
+    {
+      "bytes": 727,
+      "path": ".work/v1-native-final-money.log",
+      "sha256": "81f94c536b318e0ff69ead805353efd24d296d4a8634cf986b80ee990b47e66e"
+    },
+    {
+      "bytes": 68,
+      "path": ".work/v1-frontend-format-pass.log",
+      "sha256": "f20510a9da4717c51c4cffee6d0dd88d6c9a723d0a83711d01216f5b48961283"
+    },
+    {
+      "bytes": 5910,
+      "path": ".work/release/web-performance.json",
+      "sha256": "d99e0eff0148003c8c76343444c548884021163a788f82775e30b5c1e4fcad5d"
+    },
+    {
+      "bytes": 11209,
+      "path": ".work/release/storage-sync.json",
+      "sha256": "590d0f624ec022af4b68de8cc938a041b43a48774e4c257c7e217b4a4da28f3c"
+    },
+    {
+      "bytes": 1742,
+      "path": ".work/release/security-20261020T005331Z/summary.json",
+      "sha256": "232fffad5a717d69f9a26f27fa6562982c7e4ff689325181797f80179a3070d2"
+    },
+    {
+      "bytes": 434,
+      "path": ".work/release/restore-completion-verified-facts.json",
+      "sha256": "30a527ecbfc916390dc996193c281dc60cd13ec9d4500197a9169756e49c3d55"
+    },
+    {
+      "bytes": 428,
+      "path": ".work/release/services-final.json",
+      "sha256": "b0b412272dcd28429160c68b8a91cb8e31f34caf3c381739a9e4da3e696f7407"
+    },
+    {
+      "bytes": 900,
+      "path": ".work/release/images.json",
+      "sha256": "b1c939802d00018e2d6b09217ebf6f60d99d54d20427d90bda5265f36faa90af"
+    },
+    {
+      "bytes": 670,
+      "path": ".work/release/fixture-completion-small.json",
+      "sha256": "2839bc7e79ec0ebe5b2c959b46a9d67170ed338ed7fc56eda9e5db61f57dda31"
+    },
+    {
+      "bytes": 255,
+      "path": ".work/d1-full-preflight.json",
+      "sha256": "3ca3db45782de7cc73f517fd6cc00b6608680d7b37ed689be8cd439d0ef2ff8b"
+    },
+    {
+      "bytes": 90,
+      "path": ".work/v1-backup-guards.log",
+      "sha256": "6d9d8e0a1acb0af1aabcda313aacbe76940df570abe2f5f1465b8f5c0bb63bea"
+    },
+    {
+      "bytes": 6261,
+      "path": ".work/v1-d1-fresh-history-final.log",
+      "sha256": "367d518f13ac67e8027c08a883f9ebbe64648cdfd55ab44c3bc8d04204eeb98f"
+    },
+    {
+      "bytes": 760,
+      "path": ".work/release/fixture-completion-history.json",
+      "sha256": "cfd7ab2877c5f4c15b91204d49c4e6bb86c11cc35de03102126c2a5a7155f419"
+    },
+    {
+      "bytes": 1735,
+      "path": ".work/release/security-20261020T020119Z/summary.json",
+      "sha256": "76dc97e7fe2c90d2afce34602812d56cd1a193b8ad1f63f73132857504fa61d9"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "verifiedAtUtc": "2026-10-18T15:47:26.9668255Z",
+  "version": "1.0.0-SNAPSHOT",
+  "scope": "Third review: 3 P2 and 1 P3 fixes",
+  "backend": {
+    "platformTests": 228,
+    "skipped": 0,
+    "failures": 0,
+    "simulatorTestLog": ".work/round3-fixes-final-simulator.log",
+    "totalTests": 232,
+    "javaFilesFormatChecked": 66,
+    "platformTestLog": ".work/round3-fixes-final-backend.log",
+    "platformVerifyExitCode": 1,
+    "packageAndFormatExitCode": 0,
+    "simulatorTestExitCode": 0,
+    "simulatorTests": 4,
+    "packageAndFormatLog": ".work/round3-fixes-final-package.log",
+    "errors": 0,
+    "platformVerifyFailureStage": "repackage: Windows running JAR file lock, after all 228 tests passed"
+  },
+  "frontend": {
+    "formatLog": ".work/round3-fixes-front-format-check.log",
+    "format": "passed",
+    "failures": 0,
+    "build": "passed",
+    "buildLog": ".work/round3-fixes-front-build.log",
+    "tests": 25,
+    "testLog": ".work/round3-fixes-front-green.log"
+  },
+  "browser": {
+    "skippedCase": "100000-row scale oracle",
+    "isolated": {
+      "allApiMocked": true,
+      "realBackendWrites": 0,
+      "allToA": {
+        "selectedMerchant": "review-a",
+        "requestMerchant": "review-a"
+      },
+      "aToB": {
+        "selectedMerchant": "review-b",
+        "requestMerchant": "review-b",
+        "otherFieldsPreserved": true
+      },
+      "backToAll": {
+        "merchantEditable": true,
+        "staleMerchantCleared": true,
+        "manualChoiceSubmitted": "review-a"
+      },
+      "cancelReopen": {
+        "visibleFileCount": 0,
+        "missingFileBlocked": true,
+        "uploadRequests": 0
+      },
+      "freshSelection": {
+        "freshFilenameAndBytes": true,
+        "cancelledFileAbsent": true
+      },
+      "pageErrors": []
+    },
+    "realEndToEndPassed": 5,
+    "realEndToEndExitCode": 0,
+    "realEndToEndSkipped": 1,
+    "realEndToEndLog": ".work/round3-fixes-final-e2e.log"
+  },
+  "deployment": {
+    "status": "local running",
+    "platformJarSha256": "4A29A8C7541475FA6CC058898D00F931210A9E80D66E8B143D8AD21ABDDC4E00",
+    "log": ".work/round3-fixes-final-deploy.log",
+    "simulatorJarSha256": "1475EC0A4478E5223C4A62B4C86E30B9B54E381C5F8FF441C2FF2E375AA4AE68"
+  },
+  "runtime": {
+    "success": "1",
+    "version": "11",
+    "unbalanced_journals": "0",
+    "health": "UP",
+    "invalid_refund_quotas": "0",
+    "ledger_difference_minor": "0",
+    "new_refunds_without_audit": "0",
+    "new_payments_without_audit": "0"
+  },
+  "independentReview": {
+    "scope": "Changed source and tests; reviewer did not execute tests or contact live backend",
+    "actionableFindings": 0
+  },
+  "sourceDigests": ".work/round3-fixes-source-digests.json",
+  "notRecertified": [
+    "R1",
+    "D1",
+    "100000-row batch",
+    "4-hour stability",
+    "dependency vulnerability status"
+  ],
+  "knownBuildWarning": "Existing frontend large bundle warning"
+}

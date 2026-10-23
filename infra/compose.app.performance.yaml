@@ -1,0 +1,16 @@
+# Measured D0 preset; opt in with start-containers.ps1 -Performance. No R1 claim.
+services:
+  mysql:
+    mem_limit: 2g
+    cpus: 2
+    command: !override
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_bin
+      - --max-connections=200
+      - --innodb-flush-log-at-trx-commit=1
+      - --sync-binlog=1
+      - --innodb-buffer-pool-size=1073741824
+  platform:
+    environment:
+      API_MAX_INFLIGHT: "128"
+      FAST_WORKER_CONCURRENCY: "96"

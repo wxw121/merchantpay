@@ -1,0 +1,3227 @@
+{
+  "generatedAt": "2026-10-21T14:07:52.9139467+00:00",
+  "version": "1.0.0-SNAPSHOT",
+  "releaseReady": false,
+  "referenceR1Certified": false,
+  "published": false,
+  "localRemainingChecksComplete": true,
+  "scope": "Feasible local nonrelease closure completed on Windows/shared Docker Desktop D0; five unmet formal or external gates remain explicit; original financial history and failed reports retained",
+  "checks": {
+    "backend": {
+      "realS3": true,
+      "previousEnvironmentFailureLog": ".work/v1-jdk2505-mysql8413-backend-full.log",
+      "passed": 301,
+      "mysql": "8.4.13",
+      "simulator": 6,
+      "failures": 0,
+      "jdk": "Oracle25.0.5+9",
+      "log": ".work/v1-jdk2505-mysql8413-backend-green.log",
+      "platform": 295
+    },
+    "frontend": {
+      "passed": 29,
+      "buildPassed": true,
+      "formatPassed": true
+    },
+    "sdk": {
+      "passed": 12,
+      "generatedContractAndTypesPassed": true
+    },
+    "restrictedBrowser": {
+      "logicalCpuAffinity": 4,
+      "aggregateCommittedMemoryLimitGiB": 8,
+      "coldNavigationsPerPage": 30,
+      "networkMbps": 20,
+      "rttMillis": 40,
+      "dashboardLcpP75Millis": 1044,
+      "paymentsLcpP75Millis": 1048,
+      "feedbackSamples": 18,
+      "feedbackMinMillis": 8.8,
+      "feedbackMaxMillis": 76.5,
+      "feedbackUsesControlledResponses": true
+    },
+    "imageSecurity": {
+      "applicationImagesHighCritical": 0,
+      "patchedMysqlHighCritical": 0,
+      "patchedStorageHighCritical": 0,
+      "keycloakHighCritical": 0,
+      "configuredPrometheusHigh": 2,
+      "overallGatePassed": false,
+      "jdkAndMysqlVendorReviewComplete": true,
+      "keycloakDeploymentPending": false,
+      "currentConfiguredScan": ".work/release/security-20261021T131704Z/summary.json",
+      "configuredPrometheusVersion": "3.13.5",
+      "previousConfiguredPrometheusHigh": 10,
+      "nonLts3150CandidateHigh": 8,
+      "finalApplicationScan": ".work/release/security-20261021T131701Z/summary.json",
+      "remainingHighCve": "CVE-2026-84445 in grpc1.83.1, once in prometheus and once in promtool"
+    },
+    "nonemptyS3Recovery": {
+      "passed": true,
+      "payments": 1387,
+      "refunds": 398,
+      "ledgerEntries": 4821,
+      "authorityReceipts": 1785,
+      "merchantKeys": 2,
+      "bills": 2,
+      "exports": 2,
+      "s3Bills": 1,
+      "s3Exports": 1,
+      "restoreSeconds": 48.31,
+      "s3DisabledNegativePassed": true,
+      "tamperAndImmutableIdPassed": true
+    },
+    "nativeHistoricalRecovery": {
+      "backupSeconds": 170.755,
+      "apiProof": ".work/release/restore-native-v1b-20261020-api.json",
+      "bills": 16,
+      "exports": 13,
+      "authorityReceipts": 201150,
+      "archiveCompressedBytes": 557470054,
+      "formalRpoRtoCertified": false,
+      "actualHttp2xxDeliveries": 2,
+      "backupId": "native-v1b-20261020",
+      "sourceResumePassed": true,
+      "archiveRawBytes": 2033487314,
+      "payments": 200449,
+      "status": "passed",
+      "refunds": 701,
+      "moneyViolations": 0,
+      "sourceFinancialWrites": 0,
+      "merchantKeys": 2,
+      "unfinishedTasks": 0,
+      "restoredPaymentAndRefundPassed": true,
+      "ledgerEntries": 601231
+    },
+    "mixed30Minutes": {
+      "durationSeconds": 1800,
+      "payments": 9000,
+      "postedPayments": 8832,
+      "authoritativePaymentFailures": 168,
+      "refunds": 1800,
+      "postedRefunds": 1763,
+      "authoritativeRefundFailures": 37,
+      "queries": 36000,
+      "consoleCalls": 26807,
+      "systemErrors": 0,
+      "rejected": 0,
+      "unfinished": 0,
+      "observerErrors": 0,
+      "consoleErrors": 0,
+      "truthMatched": 10800,
+      "reconciliationRows": 2753,
+      "exportRows": 2463,
+      "formalBatchCoveragePassed": false,
+      "finalDeliverySupplement": "passed; endurance-20261020T081034/final-manifest.json"
+    },
+    "soak4Hours": {
+      "refundHttp503": 4,
+      "rawReport": ".work/acceptance/accept-20261020T084605-ab3454e3/accept-20261020T084605-ab3454e3-r1.json",
+      "truthMatched": 42178,
+      "paySent": 38400,
+      "refundPosted": 3764,
+      "status": "failed",
+      "queryHttp200": 191741,
+      "payPosted": 37571,
+      "observerErrors": 0,
+      "queryHttp503": 259,
+      "deliveryConverged": true,
+      "unfinished": 0,
+      "payAuthoritativeFailures": 771,
+      "refundAccepted": 3836,
+      "refundAuthoritativeFailures": 72,
+      "scaled": true,
+      "refundSent": 3840,
+      "payHttp503": 58,
+      "durationSeconds": 14400,
+      "querySent": 192000,
+      "financialInvariantsPassed": true,
+      "retainedOriginalFailure": true,
+      "payAccepted": 38342,
+      "unavailableReason": "321 API_INFLIGHT from service counters"
+    },
+    "native100PerSecondAttempt": {
+      "sent": 6000,
+      "acceptedAndPosted": 4992,
+      "http503": 1008,
+      "completedPerSecondLower": 82.72,
+      "completedPerSecondUpper": 83.2,
+      "successfulCompletionP99UpperSeconds": 3.486,
+      "targetPassed": false
+    },
+    "capacity": {
+      "samplePayments": 1000,
+      "sampleRefunds": 4000,
+      "sampleLedgerEntries": 14999,
+      "sampleEvents": 10000,
+      "sampleMerchants": 1000,
+      "sampleDays": 30,
+      "projectedMillionBytes": 97537269000,
+      "datasetArchiveRestoreAndLoadBudgetBytes": 303349225240,
+      "formalPostAllocationFreeRatio": 0.3,
+      "fullPreflightPassed": false,
+      "fullWriteAttempted": false,
+      "dockerDataDirectory": "D:/Docker/wsl",
+      "hostPhysicalGiB": 31.73,
+      "dockerMemoryGiB": 15.48,
+      "r1IncludingIndependentLoadGiB": 40
+    },
+    "jdkVendorUpdate": {
+      "windowsProjectVersion": "25.0.5+9",
+      "previousCloneColdBackupBytes": 425895798,
+      "fullRegressionComplete": true,
+      "nativeAndCloneDouble1Verified": true,
+      "mysqlVersion": "8.4.13",
+      "linuxArchiveSha256Verified": true,
+      "containerBase": "container-registry.oracle.com/java/jdk-no-fee-term:25.0.5@sha256:283d01db5d749b005826ad311af50a78cc40969548abb63d4b57063a6d611960",
+      "windowsSha256Verified": true,
+      "oldProjectToolchainRetained": true,
+      "containerVersion": "25.0.5+9",
+      "mysqlImageId": "sha256:13ea632fbac16588eb0c08aa76c093e496753aec83cd244e2b978a1e7b49b5d8",
+      "mysqlWholeHistoricalCopyPassed": true,
+      "systemToolchainChanged": false,
+      "actualRuntimeProof": ".work/release/v1-oct21-final-runtime.json",
+      "scope": "Both running application deployments and identity JVMs; system toolchain unchanged"
+    },
+    "processEnvironmentRegression": {
+      "redObserved": true,
+      "greenPassed": true,
+      "fullBackendAfterS3StartupPassed": true,
+      "absentEmptyAndNonemptyPreserved": true
+    },
+    "apiCapacityComparison": {
+      "defaultCapacity": 16,
+      "databasePool": 32,
+      "applicationCpu": 2,
+      "candidateDatabaseMemoryGiB": 2,
+      "performanceSwitch": "scripts/release/start-containers.ps1 -Storage s3 -Performance",
+      "comparisonMatrix": [
+        {
+          "rounds": [
+            {
+              "payCompletionP99UpperMicros": 1251481,
+              "capacity": 16,
+              "httpSystemErrors": 82,
+              "exitCode": 1,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 296157,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            },
+            {
+              "payCompletionP99UpperMicros": 845201,
+              "capacity": 32,
+              "httpSystemErrors": 36,
+              "exitCode": 1,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 249451,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            },
+            {
+              "payCompletionP99UpperMicros": 760464,
+              "capacity": 16,
+              "httpSystemErrors": 59,
+              "exitCode": 1,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 214267,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            },
+            {
+              "payCompletionP99UpperMicros": 735210,
+              "capacity": 32,
+              "httpSystemErrors": 0,
+              "exitCode": 0,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 161719,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            }
+          ],
+          "warmupSeconds": 60,
+          "profile": "ABAB16-32-16-32",
+          "report": ".work/acceptance/api-capacity-20261021T063015/summary.json"
+        },
+        {
+          "rounds": [
+            {
+              "payCompletionP99UpperMicros": 745697,
+              "capacity": 64,
+              "httpSystemErrors": 0,
+              "exitCode": 0,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 251508,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            },
+            {
+              "payCompletionP99UpperMicros": 1197750,
+              "capacity": 64,
+              "httpSystemErrors": 58,
+              "exitCode": 1,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 480819,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            }
+          ],
+          "warmupSeconds": 60,
+          "profile": "C64-C64",
+          "report": ".work/acceptance/api-capacity-20261021T065347/summary.json"
+        },
+        {
+          "rounds": [
+            {
+              "payCompletionP99UpperMicros": 721669,
+              "capacity": 16,
+              "httpSystemErrors": 25,
+              "exitCode": 1,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 165170,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            }
+          ],
+          "warmupSeconds": 300,
+          "profile": "DB2G-Cache1G-B1",
+          "report": ".work/acceptance/api-capacity-20261021T072449/summary.json"
+        },
+        {
+          "rounds": [
+            {
+              "payCompletionP99UpperMicros": 1077146,
+              "capacity": 64,
+              "httpSystemErrors": 23,
+              "exitCode": 1,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 337238,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            },
+            {
+              "payCompletionP99UpperMicros": 630505,
+              "capacity": 64,
+              "httpSystemErrors": 0,
+              "exitCode": 0,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 104763,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            }
+          ],
+          "warmupSeconds": 300,
+          "profile": "DB2G-Cache1G-API64",
+          "report": ".work/acceptance/api-capacity-20261021T074528/summary.json"
+        },
+        {
+          "rounds": [
+            {
+              "payCompletionP99UpperMicros": 679644,
+              "capacity": 128,
+              "httpSystemErrors": 0,
+              "exitCode": 0,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 148488,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            },
+            {
+              "payCompletionP99UpperMicros": 766225,
+              "capacity": 128,
+              "httpSystemErrors": 0,
+              "exitCode": 0,
+              "moneyPassed": true,
+              "queryHttpP99Micros": 179304,
+              "truthMatched": true,
+              "consoleErrors": 0,
+              "deliveryConverged": true,
+              "complete": true
+            }
+          ],
+          "warmupSeconds": 300,
+          "profile": "DB2G-Cache1G-API128",
+          "report": ".work/acceptance/api-capacity-20261021T080740/summary.json"
+        }
+      ],
+      "status": "complete; explicit D0 preset passed repeated peaks,30-minute mixed and full4-hour Soak",
+      "candidateCapacity": 128,
+      "durability": "1/1",
+      "candidateDatabaseCpu": 2,
+      "candidateBufferPoolGiB": 1,
+      "defaultChanged": false,
+      "referenceR1Certified": false,
+      "applicationMemoryGiB": 1
+    },
+    "keycloakJvmUpdate": {
+      "previousRuntimeJdk": "21.0.12.1",
+      "rollbackReadinessGuardProof": ".work/release/keycloak25-readiness-guards.json",
+      "candidateOidcProof": ".work/release/keycloak25-oidc.json",
+      "candidateHighCritical": 0,
+      "fipsEnabled": false,
+      "sourceDeploymentsUpdated": true,
+      "vendorSupport": "https://www.keycloak.org/server/supported-configurations",
+      "maintenanceLockNegativeProof": ".work/release/keycloak25-maintenance-lock-negative.json",
+      "wholePublicKeyMaterialPreserved": true,
+      "wrongPkceVerifierRejected": true,
+      "id": "sha256:afbb977ebc0910bd11a6458f0d8584777babc21f844ac25095cc6a8bb0b0f7f3",
+      "jdk": "25.0.5+9",
+      "image": "merchantpay/keycloak:v1-local",
+      "distribution": "26.8.1",
+      "actualRuntimeProofs": [
+        ".work/release/keycloak25-native-runtime.json",
+        ".work/release/keycloak25-container-runtime.json"
+      ],
+      "adminAndMerchantConsoleLoginPassed": true,
+      "finalClosure": ".work/release/v1-endurance-and-identity-final.json"
+    },
+    "mixed30MinutesRetry": {
+      "consoleErrors": 0,
+      "refundBusinessFailed": 28,
+      "paySent": 9000,
+      "truth": {
+        "checked": 10800,
+        "disagreements": 0,
+        "matched": true,
+        "sha256": "a1b1960abc1a0575e63bd57f989dc8477feedd7ef02e26960482c7708170141a",
+        "persisted": 10800
+      },
+      "refundSent": 1800,
+      "systemErrors": 0,
+      "report": ".work/acceptance/accept-20261021T083738-7fafe3c7/accept-20261021T083738-7fafe3c7-r1.json",
+      "reconciliationRows": 14402,
+      "refundPosted": 1772,
+      "referenceR1Certified": false,
+      "moneyPassed": true,
+      "passed": true,
+      "durationSeconds": 1800,
+      "querySent": 36000,
+      "deliveryConverged": true,
+      "exportRows": 37365,
+      "payBusinessFailed": 188,
+      "consoleCalls": 25735,
+      "payPosted": 8812,
+      "formalBatchCoveragePassed": false
+    },
+    "soak4HoursRetry": {
+      "candidateImagePullOverlappedFinalTwoMinutes": true,
+      "resourcesAndFourWavesPassed": true,
+      "status": "passed",
+      "unchangedRuntimeAndNoOom": true,
+      "payment": {
+        "scheduled": 38400,
+        "sent": 38400,
+        "acceptedOrRead": 38400,
+        "httpStatuses": {
+          "202": 38400
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 24955,
+        "httpP95Micros": 52268,
+        "httpP99Micros": 217753,
+        "scheduledHttpP99Micros": 223686,
+        "sendDelayP99Micros": 15302,
+        "posted": 37625,
+        "businessFailed": 775,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 2.6126388888888887,
+        "completedPerArrivalSecondUpper": 2.6128472222222223,
+        "successfulCompletionP99LowerMicros": 424913,
+        "successfulCompletionP99UpperMicros": 737769,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 700837615,
+        "observerSnapshots": 50358,
+        "observerMaxQueryMicros": 125336,
+        "maxCommitVisibilityIntervalMicros": 4746030,
+        "retryReasons": {}
+      },
+      "observerErrors": 0,
+      "minimumFreeBytes": 22205816832.0,
+      "tasks": {
+        "reconciliation": [
+          {
+            "rows": 20702,
+            "status": "COMPLETE",
+            "id": "23a94c69-e633-4ace-833f-54c8609d88cf",
+            "processedLines": 20702
+          }
+        ],
+        "exports": [
+          {
+            "id": "bc114615-f509-4c3c-86dc-22159045a770",
+            "rows": 41865,
+            "status": "COMPLETE"
+          }
+        ],
+        "consoleCalls": 201625,
+        "consoleErrors": 0,
+        "listP95Micros": 7387,
+        "batchCoveragePassed": false
+      },
+      "sampleCount": 259,
+      "soakSamples": 228,
+      "durationSeconds": 14400,
+      "rawReport": ".work/acceptance/accept-20261021T090801-d1742b2c/accept-20261021T090801-d1742b2c-r1.json",
+      "scaled": true,
+      "manifest": {
+        "generatedAt": "2026-10-21T13:08:58.130497500Z",
+        "scope": "whole authoritative platform DB; counts are actual tables, not synthetic fixture targets",
+        "seed": 20261019,
+        "payments": 122107,
+        "ledgerEntries": 388301,
+        "outboxEvents": 411131,
+        "merchantsWithPayments": 2,
+        "distinctBusinessDatesUtc": 2,
+        "credentialMerchants": 2,
+        "unbalancedJournals": 0,
+        "refundConstraintViolations": 0,
+        "missingSuccessfulFacts": 0,
+        "extraOrMisattributedJournals": 0,
+        "refundAggregateDisagreements": 0,
+        "moneyInvariantsPassed": true,
+        "d1CountersSatisfied": false,
+        "referenceR1Certified": false,
+        "databaseBytes": 1510129664,
+        "maxPaymentIdWatermark": "pf_fff47606-3e77-4f7c-9dfa-118f67f0a0be",
+        "paymentDateDistribution": {
+          "2026-10-20": 52252,
+          "2026-10-21": 69855
+        },
+        "unfinishedTasks": 0,
+        "unfinishedNotifications": 0,
+        "undeliveredNotifications": 0,
+        "deliveryConverged": true
+      },
+      "referenceR1Certified": false,
+      "truth": {
+        "disagreements": 0,
+        "checked": 42240,
+        "persisted": 42240,
+        "sha256": "453f07bcf8e246d3f17bc72e9b4a438776f797799a8d272ed50993e51e04633d",
+        "matched": true
+      },
+      "folder": ".work/acceptance/endurance-20261021T083724",
+      "query": {
+        "scheduled": 192000,
+        "sent": 192000,
+        "acceptedOrRead": 192000,
+        "httpStatuses": {
+          "200": 192000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 19541,
+        "httpP95Micros": 39575,
+        "httpP99Micros": 191383,
+        "scheduledHttpP99Micros": 198847,
+        "sendDelayP99Micros": 15286,
+        "successfulPerArrivalSecond": 13.333263888888888,
+        "retryReasons": {}
+      },
+      "refund": {
+        "scheduled": 3840,
+        "sent": 3840,
+        "acceptedOrRead": 3840,
+        "httpStatuses": {
+          "202": 3840
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 25607,
+        "httpP95Micros": 47949,
+        "httpP99Micros": 131610,
+        "scheduledHttpP99Micros": 134651,
+        "sendDelayP99Micros": 15419,
+        "posted": 3757,
+        "businessFailed": 83,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0.26090277777777776,
+        "completedPerArrivalSecondUpper": 0.26090277777777776,
+        "successfulCompletionP99LowerMicros": 388740,
+        "successfulCompletionP99UpperMicros": 702894,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 623404807,
+        "observerSnapshots": 50358,
+        "observerMaxQueryMicros": 111342,
+        "maxCommitVisibilityIntervalMicros": 3895285,
+        "retryReasons": {}
+      },
+      "identityRuntimeDuringSoak": "Keycloak26.8.1 on previous RedHatJDK21.0.12.1; patched after completed Soak, separately verified OIDC and financial smoke"
+    },
+    "prometheusSecurityUpdate": {
+      "remainingHighCve": "CVE-2026-84445",
+      "remainingHigh": 2,
+      "previousStoppedHistoryCheckpoint": ".work/release/prometheus3135-checkpoint.json",
+      "overallSecurityGatePassed": false,
+      "goVersion": "1.26.10",
+      "ruleCount": 4,
+      "at": "2026-10-21T21:15:06.120015+08:00",
+      "version": "3.13.5",
+      "containerId": "ef1c027900fbdc79b0d0e99ed5ffa8dfe4b95ef343467afcd880968f7809ad3f",
+      "financialServicesRestarted": false,
+      "remainingHighPackage": "google.golang.org/grpc v1.83.1",
+      "imageId": "sha256:aafa9d694e6a883c02db516d9f6e5b84e14195f49a2a6456a4cca815edda72b9",
+      "authenticatedPlatformUp": 1,
+      "passed": true
+    },
+    "postIdentitySignedSmoke": {
+      "paySent": 100,
+      "querySent": 400,
+      "passed": true,
+      "sourceNativeFinancialCountsUnchanged": true,
+      "report": ".work/acceptance/accept-20261021T131323-46d196fe/accept-20261021T131323-46d196fe-r1.json",
+      "refundSent": 20,
+      "payPosted": 95,
+      "manifest": {
+        "generatedAt": "2026-10-21T13:13:56.677665200Z",
+        "scope": "whole authoritative platform DB; counts are actual tables, not synthetic fixture targets",
+        "seed": 20261019,
+        "payments": 122207,
+        "ledgerEntries": 388624,
+        "outboxEvents": 411491,
+        "merchantsWithPayments": 2,
+        "distinctBusinessDatesUtc": 2,
+        "credentialMerchants": 2,
+        "unbalancedJournals": 0,
+        "refundConstraintViolations": 0,
+        "missingSuccessfulFacts": 0,
+        "extraOrMisattributedJournals": 0,
+        "refundAggregateDisagreements": 0,
+        "moneyInvariantsPassed": true,
+        "d1CountersSatisfied": false,
+        "referenceR1Certified": false,
+        "databaseBytes": 1510047744,
+        "maxPaymentIdWatermark": "pf_fff47606-3e77-4f7c-9dfa-118f67f0a0be",
+        "paymentDateDistribution": {
+          "2026-10-20": 52252,
+          "2026-10-21": 69955
+        },
+        "unfinishedTasks": 0,
+        "unfinishedNotifications": 0,
+        "undeliveredNotifications": 0,
+        "deliveryConverged": true
+      },
+      "truth": {
+        "disagreements": 0,
+        "matched": true,
+        "sha256": "1eefac7733fcc6aed8f22096460cdbb66a74a3c5fd1c3e1b9771412fbd501ac2",
+        "persisted": 120,
+        "checked": 120
+      },
+      "refundPosted": 19
+    },
+    "containerStartupWorkloadLock": {
+      "remoteCiRun": false,
+      "actualUnlockedStartupLog": ".work/v1-final-unlocked-container-start.log",
+      "negativeAndPositivePassed": true,
+      "greenLog": ".work/v1-startup-lock-final.log",
+      "ciDefinitionUpdated": true,
+      "redLog": ".work/v1-startup-lock-red.log"
+    },
+    "currentThroughput": {
+      "published": false,
+      "steps": [
+        {
+          "deliveryConverged": true,
+          "rawReport": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.json",
+          "query": {
+            "scheduled": 6000,
+            "sent": 6000,
+            "acceptedOrRead": 6000,
+            "httpStatuses": {
+              "200": 6000
+            },
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": 18842,
+            "httpP95Micros": 107159,
+            "httpP99Micros": 744596,
+            "scheduledHttpP99Micros": 745370,
+            "sendDelayP99Micros": 2815,
+            "successfulPerArrivalSecond": 50.0,
+            "retryReasons": {}
+          },
+          "zeroErrorPassed": true,
+          "moneyInvariantsPassed": true,
+          "offeredQueryRate": 50,
+          "payment": {
+            "scheduled": 1200,
+            "sent": 1200,
+            "acceptedOrRead": 1200,
+            "httpStatuses": {
+              "202": 1200
+            },
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": 24535,
+            "httpP95Micros": 116225,
+            "httpP99Micros": 753696,
+            "scheduledHttpP99Micros": 753892,
+            "sendDelayP99Micros": 3947,
+            "posted": 1180,
+            "businessFailed": 20,
+            "unfinished": 0,
+            "unacknowledgedCommitted": 0,
+            "oldestUnfinishedMicros": 0,
+            "completedPerArrivalSecondLower": 9.816666666666666,
+            "completedPerArrivalSecondUpper": 9.825,
+            "successfulCompletionP99LowerMicros": 1784127,
+            "successfulCompletionP99UpperMicros": 2086278,
+            "acceptedCompletionP99UpperMicros": null,
+            "observerTotalQueryMicros": 5664299,
+            "observerSnapshots": 442,
+            "observerMaxQueryMicros": 54807,
+            "maxCommitVisibilityIntervalMicros": 350143,
+            "retryReasons": {}
+          },
+          "offeredPayRate": 10,
+          "name": "warmup",
+          "truthMatched": true,
+          "seconds": 120
+        },
+        {
+          "deliveryConverged": true,
+          "rawReport": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.json",
+          "query": {
+            "scheduled": 0,
+            "sent": 0,
+            "acceptedOrRead": 0,
+            "httpStatuses": {},
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": null,
+            "httpP95Micros": null,
+            "httpP99Micros": null,
+            "scheduledHttpP99Micros": null,
+            "sendDelayP99Micros": null,
+            "successfulPerArrivalSecond": 0.0,
+            "retryReasons": {}
+          },
+          "zeroErrorPassed": true,
+          "moneyInvariantsPassed": true,
+          "offeredQueryRate": 0,
+          "payment": {
+            "scheduled": 1800,
+            "sent": 1800,
+            "acceptedOrRead": 1800,
+            "httpStatuses": {
+              "202": 1800
+            },
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": 28459,
+            "httpP95Micros": 499769,
+            "httpP99Micros": 1234520,
+            "scheduledHttpP99Micros": 1235441,
+            "sendDelayP99Micros": 2458,
+            "posted": 1766,
+            "businessFailed": 34,
+            "unfinished": 0,
+            "unacknowledgedCommitted": 0,
+            "oldestUnfinishedMicros": 0,
+            "completedPerArrivalSecondLower": 29.216666666666665,
+            "completedPerArrivalSecondUpper": 29.266666666666666,
+            "successfulCompletionP99LowerMicros": 2225101,
+            "successfulCompletionP99UpperMicros": 2516766,
+            "acceptedCompletionP99UpperMicros": null,
+            "observerTotalQueryMicros": 3895693,
+            "observerSnapshots": 219,
+            "observerMaxQueryMicros": 504750,
+            "maxCommitVisibilityIntervalMicros": 388280,
+            "retryReasons": {}
+          },
+          "offeredPayRate": 30,
+          "name": "pay-30",
+          "truthMatched": true,
+          "seconds": 60
+        },
+        {
+          "deliveryConverged": true,
+          "rawReport": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.json",
+          "query": {
+            "scheduled": 0,
+            "sent": 0,
+            "acceptedOrRead": 0,
+            "httpStatuses": {},
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": null,
+            "httpP95Micros": null,
+            "httpP99Micros": null,
+            "scheduledHttpP99Micros": null,
+            "sendDelayP99Micros": null,
+            "successfulPerArrivalSecond": 0.0,
+            "retryReasons": {}
+          },
+          "zeroErrorPassed": false,
+          "moneyInvariantsPassed": true,
+          "offeredQueryRate": 0,
+          "payment": {
+            "scheduled": 3600,
+            "sent": 3600,
+            "acceptedOrRead": 3194,
+            "httpStatuses": {
+              "202": 3194,
+              "503": 406
+            },
+            "droppedIterations": 0,
+            "systemErrors": 406,
+            "rejected": 0,
+            "httpP50Micros": 34012,
+            "httpP95Micros": 422906,
+            "httpP99Micros": 633187,
+            "scheduledHttpP99Micros": 634190,
+            "sendDelayP99Micros": 2606,
+            "posted": 3111,
+            "businessFailed": 83,
+            "unfinished": 0,
+            "unacknowledgedCommitted": 0,
+            "oldestUnfinishedMicros": 0,
+            "completedPerArrivalSecondLower": 48.36666666666667,
+            "completedPerArrivalSecondUpper": 48.733333333333334,
+            "successfulCompletionP99LowerMicros": 6084005,
+            "successfulCompletionP99UpperMicros": 6381659,
+            "acceptedCompletionP99UpperMicros": null,
+            "observerTotalQueryMicros": 10124753,
+            "observerSnapshots": 654,
+            "observerMaxQueryMicros": 486586,
+            "maxCommitVisibilityIntervalMicros": 487207,
+            "retryReasons": {
+              "PAYMENT_CAPACITY": 406
+            }
+          },
+          "offeredPayRate": 60,
+          "name": "pay-60",
+          "truthMatched": true,
+          "seconds": 60
+        },
+        {
+          "deliveryConverged": true,
+          "rawReport": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.json",
+          "query": {
+            "scheduled": 0,
+            "sent": 0,
+            "acceptedOrRead": 0,
+            "httpStatuses": {},
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": null,
+            "httpP95Micros": null,
+            "httpP99Micros": null,
+            "scheduledHttpP99Micros": null,
+            "sendDelayP99Micros": null,
+            "successfulPerArrivalSecond": 0.0,
+            "retryReasons": {}
+          },
+          "zeroErrorPassed": true,
+          "moneyInvariantsPassed": true,
+          "offeredQueryRate": 0,
+          "payment": {
+            "scheduled": 3600,
+            "sent": 3600,
+            "acceptedOrRead": 3600,
+            "httpStatuses": {
+              "202": 3600
+            },
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": 28684,
+            "httpP95Micros": 447382,
+            "httpP99Micros": 926991,
+            "scheduledHttpP99Micros": 928392,
+            "sendDelayP99Micros": 1939,
+            "posted": 3533,
+            "businessFailed": 67,
+            "unfinished": 0,
+            "unacknowledgedCommitted": 0,
+            "oldestUnfinishedMicros": 0,
+            "completedPerArrivalSecondLower": 29.358333333333334,
+            "completedPerArrivalSecondUpper": 29.391666666666666,
+            "successfulCompletionP99LowerMicros": 1273908,
+            "successfulCompletionP99UpperMicros": 1564983,
+            "acceptedCompletionP99UpperMicros": null,
+            "observerTotalQueryMicros": 6447443,
+            "observerSnapshots": 441,
+            "observerMaxQueryMicros": 484691,
+            "maxCommitVisibilityIntervalMicros": 440800,
+            "retryReasons": {}
+          },
+          "offeredPayRate": 30,
+          "name": "pay-30-repeat",
+          "truthMatched": true,
+          "seconds": 120
+        },
+        {
+          "deliveryConverged": true,
+          "rawReport": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.json",
+          "query": {
+            "scheduled": 6000,
+            "sent": 6000,
+            "acceptedOrRead": 6000,
+            "httpStatuses": {
+              "200": 6000
+            },
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": 19173,
+            "httpP95Micros": 34272,
+            "httpP99Micros": 93308,
+            "scheduledHttpP99Micros": 99431,
+            "sendDelayP99Micros": 14780,
+            "successfulPerArrivalSecond": 99.96666666666667,
+            "retryReasons": {}
+          },
+          "zeroErrorPassed": true,
+          "moneyInvariantsPassed": true,
+          "offeredQueryRate": 100,
+          "payment": {
+            "scheduled": 0,
+            "sent": 0,
+            "acceptedOrRead": 0,
+            "httpStatuses": {},
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": null,
+            "httpP95Micros": null,
+            "httpP99Micros": null,
+            "scheduledHttpP99Micros": null,
+            "sendDelayP99Micros": null,
+            "posted": 0,
+            "businessFailed": 0,
+            "unfinished": 0,
+            "unacknowledgedCommitted": 0,
+            "oldestUnfinishedMicros": 0,
+            "completedPerArrivalSecondLower": 0.0,
+            "completedPerArrivalSecondUpper": 0.0,
+            "successfulCompletionP99LowerMicros": null,
+            "successfulCompletionP99UpperMicros": null,
+            "acceptedCompletionP99UpperMicros": null,
+            "observerTotalQueryMicros": 3316954,
+            "observerSnapshots": 215,
+            "observerMaxQueryMicros": 42502,
+            "maxCommitVisibilityIntervalMicros": 0,
+            "retryReasons": {}
+          },
+          "offeredPayRate": 0,
+          "name": "query-100",
+          "truthMatched": true,
+          "seconds": 60
+        },
+        {
+          "deliveryConverged": true,
+          "rawReport": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.json",
+          "query": {
+            "scheduled": 18000,
+            "sent": 18000,
+            "acceptedOrRead": 18000,
+            "httpStatuses": {
+              "200": 18000
+            },
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": 23172,
+            "httpP95Micros": 146603,
+            "httpP99Micros": 878815,
+            "scheduledHttpP99Micros": 1402849,
+            "sendDelayP99Micros": 1061644,
+            "successfulPerArrivalSecond": 299.85,
+            "retryReasons": {}
+          },
+          "zeroErrorPassed": true,
+          "moneyInvariantsPassed": true,
+          "offeredQueryRate": 300,
+          "payment": {
+            "scheduled": 0,
+            "sent": 0,
+            "acceptedOrRead": 0,
+            "httpStatuses": {},
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": null,
+            "httpP95Micros": null,
+            "httpP99Micros": null,
+            "scheduledHttpP99Micros": null,
+            "sendDelayP99Micros": null,
+            "posted": 0,
+            "businessFailed": 0,
+            "unfinished": 0,
+            "unacknowledgedCommitted": 0,
+            "oldestUnfinishedMicros": 0,
+            "completedPerArrivalSecondLower": 0.0,
+            "completedPerArrivalSecondUpper": 0.0,
+            "successfulCompletionP99LowerMicros": null,
+            "successfulCompletionP99UpperMicros": null,
+            "acceptedCompletionP99UpperMicros": null,
+            "observerTotalQueryMicros": 6306015,
+            "observerSnapshots": 185,
+            "observerMaxQueryMicros": 361357,
+            "maxCommitVisibilityIntervalMicros": 0,
+            "retryReasons": {}
+          },
+          "offeredPayRate": 0,
+          "name": "query-300",
+          "truthMatched": true,
+          "seconds": 60
+        },
+        {
+          "deliveryConverged": true,
+          "rawReport": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.json",
+          "query": {
+            "scheduled": 36000,
+            "sent": 35867,
+            "acceptedOrRead": 34502,
+            "httpStatuses": {
+              "-1": 63,
+              "200": 34502,
+              "429": 49,
+              "503": 1253
+            },
+            "droppedIterations": 133,
+            "systemErrors": 1316,
+            "rejected": 49,
+            "httpP50Micros": 23465,
+            "httpP95Micros": 1972966,
+            "httpP99Micros": 3770635,
+            "scheduledHttpP99Micros": 4687314,
+            "sendDelayP99Micros": 1146866,
+            "successfulPerArrivalSecond": 574.5666666666667,
+            "retryReasons": {
+              "API_INFLIGHT": 1253
+            }
+          },
+          "zeroErrorPassed": false,
+          "moneyInvariantsPassed": true,
+          "offeredQueryRate": 600,
+          "payment": {
+            "scheduled": 0,
+            "sent": 0,
+            "acceptedOrRead": 0,
+            "httpStatuses": {},
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": null,
+            "httpP95Micros": null,
+            "httpP99Micros": null,
+            "scheduledHttpP99Micros": null,
+            "sendDelayP99Micros": null,
+            "posted": 0,
+            "businessFailed": 0,
+            "unfinished": 0,
+            "unacknowledgedCommitted": 0,
+            "oldestUnfinishedMicros": 0,
+            "completedPerArrivalSecondLower": 0.0,
+            "completedPerArrivalSecondUpper": 0.0,
+            "successfulCompletionP99LowerMicros": null,
+            "successfulCompletionP99UpperMicros": null,
+            "acceptedCompletionP99UpperMicros": null,
+            "observerTotalQueryMicros": 8255373,
+            "observerSnapshots": 179,
+            "observerMaxQueryMicros": 542905,
+            "maxCommitVisibilityIntervalMicros": 0,
+            "retryReasons": {}
+          },
+          "offeredPayRate": 0,
+          "name": "query-600",
+          "truthMatched": true,
+          "seconds": 60
+        },
+        {
+          "deliveryConverged": true,
+          "rawReport": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.json",
+          "query": {
+            "scheduled": 36000,
+            "sent": 36000,
+            "acceptedOrRead": 35989,
+            "httpStatuses": {
+              "200": 35989,
+              "503": 11
+            },
+            "droppedIterations": 0,
+            "systemErrors": 11,
+            "rejected": 0,
+            "httpP50Micros": 20084,
+            "httpP95Micros": 38979,
+            "httpP99Micros": 342727,
+            "scheduledHttpP99Micros": 432488,
+            "sendDelayP99Micros": 111221,
+            "successfulPerArrivalSecond": 299.85833333333335,
+            "retryReasons": {
+              "API_INFLIGHT": 11
+            }
+          },
+          "zeroErrorPassed": false,
+          "moneyInvariantsPassed": true,
+          "offeredQueryRate": 300,
+          "payment": {
+            "scheduled": 0,
+            "sent": 0,
+            "acceptedOrRead": 0,
+            "httpStatuses": {},
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": null,
+            "httpP95Micros": null,
+            "httpP99Micros": null,
+            "scheduledHttpP99Micros": null,
+            "sendDelayP99Micros": null,
+            "posted": 0,
+            "businessFailed": 0,
+            "unfinished": 0,
+            "unacknowledgedCommitted": 0,
+            "oldestUnfinishedMicros": 0,
+            "completedPerArrivalSecondLower": 0.0,
+            "completedPerArrivalSecondUpper": 0.0,
+            "successfulCompletionP99LowerMicros": null,
+            "successfulCompletionP99UpperMicros": null,
+            "acceptedCompletionP99UpperMicros": null,
+            "observerTotalQueryMicros": 9861348,
+            "observerSnapshots": 396,
+            "observerMaxQueryMicros": 625294,
+            "maxCommitVisibilityIntervalMicros": 0,
+            "retryReasons": {}
+          },
+          "offeredPayRate": 0,
+          "name": "query-300-repeat",
+          "truthMatched": true,
+          "seconds": 120
+        },
+        {
+          "deliveryConverged": true,
+          "rawReport": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.json",
+          "query": {
+            "scheduled": 12000,
+            "sent": 12000,
+            "acceptedOrRead": 12000,
+            "httpStatuses": {
+              "200": 12000
+            },
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": 18090,
+            "httpP95Micros": 28535,
+            "httpP99Micros": 38883,
+            "scheduledHttpP99Micros": 50265,
+            "sendDelayP99Micros": 15586,
+            "successfulPerArrivalSecond": 99.975,
+            "retryReasons": {}
+          },
+          "zeroErrorPassed": true,
+          "moneyInvariantsPassed": true,
+          "offeredQueryRate": 100,
+          "payment": {
+            "scheduled": 0,
+            "sent": 0,
+            "acceptedOrRead": 0,
+            "httpStatuses": {},
+            "droppedIterations": 0,
+            "systemErrors": 0,
+            "rejected": 0,
+            "httpP50Micros": null,
+            "httpP95Micros": null,
+            "httpP99Micros": null,
+            "scheduledHttpP99Micros": null,
+            "sendDelayP99Micros": null,
+            "posted": 0,
+            "businessFailed": 0,
+            "unfinished": 0,
+            "unacknowledgedCommitted": 0,
+            "oldestUnfinishedMicros": 0,
+            "completedPerArrivalSecondLower": 0.0,
+            "completedPerArrivalSecondUpper": 0.0,
+            "successfulCompletionP99LowerMicros": null,
+            "successfulCompletionP99UpperMicros": null,
+            "acceptedCompletionP99UpperMicros": null,
+            "observerTotalQueryMicros": 8331935,
+            "observerSnapshots": 404,
+            "observerMaxQueryMicros": 131439,
+            "maxCommitVisibilityIntervalMicros": 0,
+            "retryReasons": {}
+          },
+          "offeredPayRate": 0,
+          "name": "query-100-repeat",
+          "truthMatched": true,
+          "seconds": 120
+        }
+      ],
+      "databaseMemoryBytes": 2147483648,
+      "credentialMerchants": 2,
+      "referenceR1Certified": false,
+      "poolSize": 32,
+      "diagnostic": {
+        "maxUnfinishedTasks": 669,
+        "limits": "Concurrent cumulative times are not wallclock or dedicatedfsync; interval excludesquery600andquery300repeat; sampling has overhead",
+        "physicalReadsDelta": 20897,
+        "redoMiscCumulativeSeconds": 223.086699428125,
+        "first": "2026-10-21T13:47:04.343116900Z",
+        "last": "2026-10-21T13:57:03.283833900Z",
+        "sampleErrors": 0,
+        "samples": 556,
+        "binlogMiscCumulativeSeconds": 201.967859540315,
+        "maxWaitingForHandlerCommit": 32
+      },
+      "performanceTargetPassed": false,
+      "runtimeUnchanged": true,
+      "businessCodeChanged": false,
+      "requestRowsChecked": 124200,
+      "allRequestRowsIndependentlyVerified": true,
+      "artifacts": [
+        {
+          "path": ".work/diagnose-clone.ps1",
+          "sha256": "0083f37959528d4b896ea86aef1e74bba58f222ed093eda173b0039d451b53ee",
+          "bytes": 2228
+        },
+        {
+          "path": ".work/record-throughput.ps1",
+          "sha256": "99aa410858e1c4dd6c198cf92c6663b735400b865f6d55fd532358f53075d760",
+          "bytes": 5119
+        },
+        {
+          "path": ".work/run-throughput-ladder.ps1",
+          "sha256": "0d9ae6f14c982b3a398c340415c26502f8f643ed72d2fb0d2974450a87d1662a",
+          "bytes": 8486
+        },
+        {
+          "path": ".work/verify-throughput.mjs",
+          "sha256": "4adc7e7d52f098fd13d480927931a0c6c5d618157df8542342b7d1cbdd1f110a",
+          "bytes": 4067
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.json",
+          "sha256": "28af9b4d373be7263478d6cd79b6c8ecf3240b0f7c8d8ae72ea2c19962f6cebc",
+          "bytes": 3710
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.pay.jsonl",
+          "sha256": "af73f9d14b8cd00836e7a8cdc74d7204d236cdcb5ab31a6dab3a4c9abe30c192",
+          "bytes": 311009
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.query.jsonl",
+          "sha256": "06f18749a9c43d12665b559d8d3fbc34b1662085b73394017f3e389a6b79eabd",
+          "bytes": 1446220
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.refund.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.started.json",
+          "sha256": "4fb1d854afa4d31bbbab679f04d5f01155c6bab54a12de7fca53f1a5bb1cd57c",
+          "bytes": 86
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/initial.json",
+          "sha256": "b0e4a107b82f08bb87b0678c1bd9121b7bfad468823e86920838c1fb84080d8a",
+          "bytes": 799
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/protocol.json",
+          "sha256": "d5256458a59db125057b1fcf238474821954fb9f7c23dd1276a6351dd45e6c97",
+          "bytes": 519
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.json",
+          "sha256": "fe042af39fa73784ee6c257d483bcc9edfd0ec40254ca5405165890abbcd3dd0",
+          "bytes": 3694
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.pay.jsonl",
+          "sha256": "daa47cf6436aa485fbe0de805e56e33e76e906ba54eed1b174e9fe2b19678917",
+          "bytes": 464718
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.query.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.refund.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.started.json",
+          "sha256": "f717cb8800ffe1a9fdbe63b702eecc14b1da32bc1751c6bea4a710303c64878b",
+          "bytes": 85
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134750-9c2665f9/initial.json",
+          "sha256": "74b3c2ce20b672028c08bc3300ba8f3499ec20f6093f6435d3cee2788eed3936",
+          "bytes": 796
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134750-9c2665f9/protocol.json",
+          "sha256": "66344707469ccd7806a33338a722f6a6dbaeee4b2e6a626b336f7d2538497240",
+          "bytes": 519
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.failure.json",
+          "sha256": "3cac0b43c2b1252181c12a3fbbc9fdb1a7e616d083026918da5b727e8fb2d7b4",
+          "bytes": 106
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.json",
+          "sha256": "c6aca8cee45e109880eb8cf7afe9167d9510ad61f00624b8fb0dbd4ab649db43",
+          "bytes": 3723
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.pay.jsonl",
+          "sha256": "e4f9b4e0f5a3b249f838a34e2e17393a63c35a759e00a799fae2d48170d78b37",
+          "bytes": 928433
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.query.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.refund.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.started.json",
+          "sha256": "48897c82e2c9689d6ed1688965dfeee7c051cc175c82cd42399fd4068e3c2137",
+          "bytes": 85
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/initial.json",
+          "sha256": "ba52fcf1cf0a98b2659becca5bf71a2b6e2546317983147a6e5bfc02ae4825c2",
+          "bytes": 799
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/protocol.json",
+          "sha256": "5ad176c0a73a1c80d231e60a983c3feb93b326e1d9e0a08509d4b402e7e9c214",
+          "bytes": 591
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.json",
+          "sha256": "82ed7e4d91085fb184e52314ee0aad021da36e74625d5a1f70370779d68c1125",
+          "bytes": 3694
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.pay.jsonl",
+          "sha256": "773f4ab756098c6aff7adbd6af21b05a6ec0121ffc457408459da0c9d4c9b739",
+          "bytes": 935238
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.query.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.refund.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.started.json",
+          "sha256": "382729a45dd9a84e463f20f81d9eafd0d0a0d1313da116f517d25f9dd6bcfc97",
+          "bytes": 86
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135225-8b41b079/initial.json",
+          "sha256": "aae225066e990edb94dc3f207f38ac075d1c5b0c3fb54dd5fd63f9ffd213e376",
+          "bytes": 799
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135225-8b41b079/protocol.json",
+          "sha256": "0ddbdf400396a3902d3ed4b50625b8de831a5286b4c2fb0fb42334185804cd30",
+          "bytes": 519
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.json",
+          "sha256": "7f0fda8b5b4788643563d9af4e7274e0444ca9428ac55a64d369e0c4dfa44003",
+          "bytes": 3657
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.pay.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.query.jsonl",
+          "sha256": "477a289f7562e362801576b4e4053cf2c193e0fbb3af37b03fb21090dc252d5e",
+          "bytes": 1441559
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.refund.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.started.json",
+          "sha256": "8d69fdaed755ca78cfc8ccc03cf9f443895e3cd775d7683bfece033c8a20009f",
+          "bytes": 85
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/initial.json",
+          "sha256": "97d74ac92059d0d22adadca0a6470be0be482572e3dab4d5e08e120324b347f7",
+          "bytes": 799
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/protocol.json",
+          "sha256": "35fc82737aa0eced62657f77118ec1a94c65d1b4f94bbf38e474740b69e9477b",
+          "bytes": 519
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.json",
+          "sha256": "634a235acbf7ec9beda78aeb14892e62d24152d63406c76447711f2f01d63074",
+          "bytes": 3656
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.pay.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.query.jsonl",
+          "sha256": "bd34e589149bb2b84a3cfafead4df6e57a0fb87b5c6765c2ec973dc960f06b09",
+          "bytes": 4335133
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.refund.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.started.json",
+          "sha256": "057a853db4a74d8d95a357660b58c3d235baa1202441e9f197a70173496210ec",
+          "bytes": 82
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/initial.json",
+          "sha256": "baa1a841c38a1c498c7f98683a2b7a4f373c542f94a3f4717b814c46fe0150e6",
+          "bytes": 799
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/protocol.json",
+          "sha256": "5bf789238ec22db6a1683d08f975dd84af78742c1ca06ff77ff427d499d1cc56",
+          "bytes": 519
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.failure.json",
+          "sha256": "bca3760f6c4f8ba947559b4cf8b91ee77a663ffa6660ccdedf9f20b646c75e4b",
+          "bytes": 106
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.json",
+          "sha256": "8c89c24120af1664de6c3152f97b3358fb8662051e098611f48af0177eb82ff4",
+          "bytes": 3724
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.pay.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.query.jsonl",
+          "sha256": "6d4eb8413c16bd9cf8fdb44c677188d2a1d3c13f8adfab9fd707fa814a56c8b4",
+          "bytes": 8695450
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.refund.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.started.json",
+          "sha256": "0db8765f401b90a48f6092bf75df063854f15b9868552698122f7d095067a74f",
+          "bytes": 85
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135722-d0e93f66/initial.json",
+          "sha256": "00eead0fc8d215d7f378867640e21824184e5bbb705270d49fb208f73c981835",
+          "bytes": 799
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135722-d0e93f66/protocol.json",
+          "sha256": "a4d2f5ddc32dbea4cece4ad354f6985f7a7c2a364eecf8a181361e14648834b4",
+          "bytes": 591
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.json",
+          "sha256": "48c7d496bfde8d8d1de67569414d70e34f525ac48b57aedacef00de5d7ad905c",
+          "bytes": 3695
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.pay.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.query.jsonl",
+          "sha256": "965f19d98d7b241bc99aeaa0517d4a9d8cf5e84ec062938cfab83e1128ef43fa",
+          "bytes": 8709139
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.refund.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.started.json",
+          "sha256": "7eec8c954c8a8f823f1ae5306cf27997fb5677678d3296e162d3d7d277e63523",
+          "bytes": 86
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135841-d971ab9c/initial.json",
+          "sha256": "717a26b518380564d73eac391785006ad54bc20b9288214293527711389ab5b6",
+          "bytes": 799
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T135841-d971ab9c/protocol.json",
+          "sha256": "cfb771fa519fff4469d80086b01fc4c6eebf1a1e0025afca640019d2dfea01b1",
+          "bytes": 519
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.json",
+          "sha256": "bdb3108c057a29e6f4471ccc618a4f5257af921ec0fdb4e37fa930a57b861aea",
+          "bytes": 3653
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.pay.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.query.jsonl",
+          "sha256": "085264f29e3d590d5e25311e959ec70f451a71578d28d358bc52dddb6c66bb1d",
+          "bytes": 2895564
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.refund.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.started.json",
+          "sha256": "bb25687da356e0a39ff4175423615157ce69df1970a47f23bc1ed6883cfed4ba",
+          "bytes": 86
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T140217-102b7082/initial.json",
+          "sha256": "efe1220fe1a62151912595d04c02779a7bdd0418a1e2b09be1dedd82e9861f2c",
+          "bytes": 799
+        },
+        {
+          "path": ".work/acceptance/accept-20261021T140217-102b7082/protocol.json",
+          "sha256": "0617a612af50921cbc71ae5c5bf868798522d5d9d67e5cb7cbf3522a2fd35705",
+          "bytes": 519
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/final-services.json",
+          "sha256": "62472e4cc641c2cf56276dda67b4d99fa4e1adb118405d4117fae03df8d2d0da",
+          "bytes": 1776
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/independent-verification.json",
+          "sha256": "a0bfeef0d23d926f784ee9f36ee8dbbfc056c7d6bf46c9fccd2e7d1945771a55",
+          "bytes": 13013
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/pay-30-repeat.log",
+          "sha256": "2627761884b4729ba9db79e080ca418e742b8f8b71d892ffe3af62d3f74492a4",
+          "bytes": 1059
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/pay-30.log",
+          "sha256": "e483519cd2cb43551f238509b8b03fd63c4821abefe62babaab90545bfa4b72f",
+          "bytes": 1056
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/pay-60.log",
+          "sha256": "17e1d16a313c491815d9ecb801ddf9194269cb8c50a26b800c1ad7ab0d293ea4",
+          "bytes": 1206
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/progress.json",
+          "sha256": "8e649ad5520e48021b01a72e9f1ae24ed5a1c1e1523ecb436f405ac6de5d13d4",
+          "bytes": 24089
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/query-100.log",
+          "sha256": "82bfd17936bcc3f66b8113aafee8c02caeac3ae05635bd2861e46fa665336ed2",
+          "bytes": 1059
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/query-300-repeat.log",
+          "sha256": "ca22a4550c5290f8920eb4da3e69660543c203f666639f7f1f2ebbe50c784734",
+          "bytes": 1059
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/query-300.log",
+          "sha256": "dcf336930bde8ecf0a065bf802aad52e3721cff03c3c23797aff0ae6a36b89ac",
+          "bytes": 1059
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/query-600.log",
+          "sha256": "a593dbf44cce9efe8b1c5865e1d82160b37de1db7190a3c5f1ba6d1164e806d0",
+          "bytes": 1206
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/resources.jsonl",
+          "sha256": "0de7e53a3ba9c20db62101a186c156436ad61ff5a9a93e81f5ebf699a61f0dd1",
+          "bytes": 108191
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/runtime-after.json",
+          "sha256": "504164a27174686f34422d9a886cb5e573bdbc6134710980a8a82cb2c46c80cb",
+          "bytes": 1360
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/runtime-before.json",
+          "sha256": "504164a27174686f34422d9a886cb5e573bdbc6134710980a8a82cb2c46c80cb",
+          "bytes": 1360
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/summary.json",
+          "sha256": "02e1a418cfa958f74e7b965171e52d4094512515120d80a78d3fccf658320d19",
+          "bytes": 28125
+        },
+        {
+          "path": ".work/acceptance/throughput-20261021T134530/warmup.log",
+          "sha256": "8b965bca307cca8650f4d6ed062eb4d6e99e91e4cb38567751bee3cdf88dc684",
+          "bytes": 1059
+        },
+        {
+          "path": ".work/acceptance/throughput-query100-repeat-20261021T140215/independent-verification.json",
+          "sha256": "e1f00f0c87c4b42fe7b61c97f5e4a7682b3587850e4988cba6604385f4492e18",
+          "bytes": 2390
+        },
+        {
+          "path": ".work/acceptance/throughput-query100-repeat-20261021T140215/query-100-repeat.log",
+          "sha256": "745b4e867776d09068b1bce353ed250e855302c25b380c7a5029df67fc32cb24",
+          "bytes": 1059
+        },
+        {
+          "path": ".work/acceptance/throughput-query100-repeat-20261021T140215/resources.jsonl",
+          "sha256": "dbfa357fcaae0ef01531c4aa6a1ea45d4454ce601db41598b8553b3db3b40e99",
+          "bytes": 16225
+        },
+        {
+          "path": ".work/acceptance/throughput-query100-repeat-20261021T140215/summary.json",
+          "sha256": "ac87d4a6eaff158a0f58961e6304a766f7f40c11206f4a8ebc975e8c73f04ba6",
+          "bytes": 3687
+        },
+        {
+          "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.config.json",
+          "sha256": "ffa010c552af29fc37a34321b4269d78ca36d9e7e27a72b6036ccd08d58f5bb5",
+          "bytes": 108
+        },
+        {
+          "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.digests-after.json",
+          "sha256": "da7ee47fd0d75d29874990fd50b013fe33dc3fd1ae9bf6c399346c338f829945",
+          "bytes": 68229
+        },
+        {
+          "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.digests-before.json",
+          "sha256": "32986fa51a4ff5cd71e184a523dbca48509bb54c8a00f2cf2e135549609c01fe",
+          "bytes": 67153
+        },
+        {
+          "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.io-after.json",
+          "sha256": "60b1e4d8a8cfc054478408bf93573de137b856e88bf29afaf38bd24dd41df459",
+          "bytes": 8059
+        },
+        {
+          "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.io-before.json",
+          "sha256": "7d4efd231e99c93e4f84143722dce8a5fff90fe5b31c6d35b27581d2b6030a1e",
+          "bytes": 8056
+        },
+        {
+          "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.io-delta.json",
+          "sha256": "35d71bf3884d9d4017e693db4e3b21297eb56ebb68346fd7a66d7a0454f5e5bc",
+          "bytes": 4776
+        },
+        {
+          "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.jsonl",
+          "sha256": "2907d6a4ae1a03248c6a8733d851b63cbf2f0473e13fe2af034fe3ddde6d75fd",
+          "bytes": 10273798
+        },
+        {
+          "path": "docs/quality/2026-10-21-throughput-recheck.md",
+          "sha256": "fd25940c6ff2f082efa6397e21fce9a8b76e1f8ce553bf8bd119559eaed31445",
+          "bytes": 5532
+        },
+        {
+          "path": "scripts/browser/BudgetProcess.cs",
+          "sha256": "a2a3494f19a815997786f95f55800133cd062f49ba326b2220253fccb8f16d68",
+          "bytes": 8003
+        },
+        {
+          "path": "scripts/load/AcceptanceLoad.java",
+          "sha256": "a1469151a7a230323fa0ca50e4004dd84e4a63c5a5506c302bab329b11ed6ae1",
+          "bytes": 38771
+        },
+        {
+          "path": "scripts/load/LoadMeasurements.java",
+          "sha256": "1bf71bf258577b7f115a1b93ba58e9f627b0f403de18569d0a67beb7fcc4b74a",
+          "bytes": 4316
+        },
+        {
+          "path": "scripts/load/LocalDiagnosis.java",
+          "sha256": "968512522fece4a977c621bed62c0cd6a942ffe7f3a0d18bfbf895687c2b0bd8",
+          "bytes": 13231
+        },
+        {
+          "path": "scripts/load/run-v1.ps1",
+          "sha256": "e307f06ec6237ea34c2c919c6056c02561667bb35154351d7cc07f031b88c8ee",
+          "bytes": 6629
+        },
+        {
+          "path": "scripts/load/V1Acceptance.ps1",
+          "sha256": "da1b5fc2ef729b4ab92b67a7a82a4aa4363a3d03d06eda31ec86d21e14820a86",
+          "bytes": 4170
+        }
+      ],
+      "report": "docs/quality/2026-10-21-throughput-recheck.md",
+      "conclusions": [
+        "Payment30/s zero-system-error repeated, successful committed window29.22-29.39TPS; HTTP P99 exceeds300ms",
+        "Payment60/s fails:406PAYMENT_CAPACITY503, completed window48.37-48.73TPS, successful completion P99upper6.382s",
+        "Query100/s repeated zeroerrors, successful window99.97-99.98QPS, HTTP P99 93.31/38.88ms",
+        "Query300/s not stable: first zeroerror but878.82msP99; repeat11API_INFLIGHT503 and342.73msP99",
+        "Query600/s fails:1253API_INFLIGHT503,63transport failures,49quota429;574.57successfulQPS does not imply pass",
+        "Untested intermediate rates and short durations prevent exact capacity inference; different native83TPS result is not a same-resource comparison"
+      ],
+      "finalServices": {
+        "runtimeUnchanged": true,
+        "nativeRefunds": 701,
+        "comparison": "Field-by-field; JSON object property order is not semantic",
+        "published": false,
+        "runtime": [
+          {
+            "name": "merchantpay-container-v1-platform-1",
+            "id": "873c9645641adf573520d635851080ab6fe05b1cb685547ca6a0e98613f629ef",
+            "image": "sha256:7db9c8a069da34130c97ca508227ac087a23a642886c0513170737546c94e205",
+            "started": "2026-10-21T08:37:08.681796326Z",
+            "restarts": 0,
+            "memory": 1073741824,
+            "cpu": 2000000000,
+            "selectedEnvironment": [
+              "JAVA_TOOL_OPTIONS=-Xmx640m -XX:ActiveProcessorCount=2",
+              "API_MAX_INFLIGHT=128"
+            ]
+          },
+          {
+            "name": "merchantpay-container-v1-mysql-1",
+            "id": "476ecdfd1322d79da3f469922f53ef90e663e7f185a11083bf6d77ce2ffabbcb",
+            "image": "sha256:13ea632fbac16588eb0c08aa76c093e496753aec83cd244e2b978a1e7b49b5d8",
+            "started": "2026-10-21T07:24:03.947901508Z",
+            "restarts": 0,
+            "memory": 2147483648,
+            "cpu": 2000000000,
+            "selectedEnvironment": []
+          },
+          {
+            "name": "merchantpay-container-v1-simulator-1",
+            "id": "f2b4c24655a967e59878456c0f300dc158c719852792103c94a8420e161c658e",
+            "image": "sha256:1886eddc64a5db5334dfd96938ad41bae69914a6fd4422e832d57c76822c4a00",
+            "started": "2026-10-21T06:18:54.634907842Z",
+            "restarts": 0,
+            "memory": 536870912,
+            "cpu": 2000000000,
+            "selectedEnvironment": [
+              "SIMULATOR_PROFILE=standard-v1",
+              "JAVA_TOOL_OPTIONS=-Xmx320m -XX:ActiveProcessorCount=2"
+            ]
+          }
+        ],
+        "nativePayments": 200449,
+        "double1": true,
+        "nativeUnfinishedTasks": 0,
+        "checkedAt": "2026-10-21T22:06:41.1313037+08:00",
+        "bufferPoolBytes": 1073741824
+      },
+      "databaseCpu": 2,
+      "bufferPoolBytes": 1073741824,
+      "generatedAt": "2026-10-21T22:07:52.6734175+08:00",
+      "applicationMemoryBytes": 1073741824,
+      "scope": "Current shared Docker Desktop D0 short throughput recheck; performance targets remain unmet",
+      "applicationCpu": 2,
+      "double1": true,
+      "apiMaxInflight": 128
+    }
+  },
+  "reviews": {
+    "importantFixedInitial": 3,
+    "importantFixedNativeBackup": 2,
+    "remainingFindings": 0,
+    "nativeApiStaticReviewFindings": 0,
+    "latestRecoveryAndEnvironmentReview": "no actionable findings; read-only review, execution verified separately",
+    "keycloakPkceImportantFixed": 1,
+    "latestPerformanceAndIdentityReview": "PKCE negative coverage fixed and real identity test passed; maintenance workload lock and exact-image/readiness/key rollback checks fixed and independently rechecked, no remaining findings",
+    "identityMaintenanceFindingsFixed": 2,
+    "containerStartupAndFinalizerReview": "no actionable findings after RED/GREEN workload lock guard and explicit full-duration prerequisite",
+    "currentScopeReport": "docs/reviews/2026-10-21-v1-recovery-runtime-review.md"
+  },
+  "unverified": [
+    {
+      "item": "Formal R1 throughput and latency",
+      "reason": "Insufficient reference resources and independent load isolation; the bounded local 100/s attempt also failed"
+    },
+    {
+      "item": "Full D1 and full-D1 recovery",
+      "reason": "Measured actual Docker drive capacity cannot hold data, archive, restore and load budgets while retaining 30 percent free"
+    },
+    {
+      "item": "All-image security gate",
+      "reason": "Official LTS3.13.5/Go1.26.10 deployed and compatibility verified; grpc1.83.1 CVE-2026-84445 remains HIGH in both prometheus/promtool; needs an upstream fixed binary or a separately validated maintained rebuild"
+    },
+    {
+      "item": "Cross-host RPO/RTO",
+      "reason": "No independent recovery environment or portable key custody; DPAPI is bound to this Windows account and host"
+    },
+    {
+      "item": "Remote CI",
+      "reason": "No Git repository or remote configured; workflow definitions and local checks do not prove remote execution"
+    }
+  ],
+  "artifactHashes": [
+    {
+      "path": ".work/acceptance/accept-20261021T090801-d1742b2c/accept-20261021T090801-d1742b2c-r1.json",
+      "sha256": "672ba833ef86b4e09ab535dacc3de2a5e9f60cf1c1ae1f705aa96ce1064b7e55",
+      "bytes": 4022
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T131323-46d196fe/accept-20261021T131323-46d196fe-r1.json",
+      "sha256": "5fc09942cb78a4a3fae528549f85e80e4812c04171277be67c95398a6f8ca03d",
+      "bytes": 3710
+    },
+    {
+      "path": ".work/acceptance/api-capacity-20261021T063015/summary.json",
+      "sha256": "c7029ffbab07c1df458718cafdcba109f0a26a9f282bedb5ee610feab0ea373a",
+      "bytes": 41658
+    },
+    {
+      "path": ".work/acceptance/api-capacity-20261021T065347/summary.json",
+      "sha256": "0e10af5296069459c4df965339186eaacf321a89b61c8cb9f5902d74bb2b0270",
+      "bytes": 21035
+    },
+    {
+      "path": ".work/acceptance/api-capacity-20261021T072449/summary.json",
+      "sha256": "c34e6826d7547b64ad7c4b6736f01d73f112e0ec557ad920013ea926a33db42e",
+      "bytes": 10801
+    },
+    {
+      "path": ".work/acceptance/api-capacity-20261021T074528/summary.json",
+      "sha256": "9d7f85cb3b2b23b54cf1093b87fe1032f0dc874cb45ca0c09f7c24d13095d9db",
+      "bytes": 21080
+    },
+    {
+      "path": ".work/acceptance/api-capacity-20261021T080740/summary.json",
+      "sha256": "f53fd3718d0d669ff10d24ad510b523fc70a7283a222d0b0d0e75e323e0f26ab",
+      "bytes": 20893
+    },
+    {
+      "path": ".work/acceptance/endurance-20261020T081034/failure.json",
+      "sha256": "ecfbe64f7bffd7146bccdcd1504dfe53a8a952ebbd02c4ab0ec7998c129a6188",
+      "bytes": 907
+    },
+    {
+      "path": ".work/acceptance/endurance-20261021T083724/analysis.json",
+      "sha256": "f4fe61439a725e74e19c609e84c66162b900cb59ccca08e9ed6cf2d72c0919fa",
+      "bytes": 4883
+    },
+    {
+      "path": ".work/acceptance/endurance-20261021T083724/final-manifest.json",
+      "sha256": "efa8a90232a2cfd579393bd2b868a6b65f116dcfd2c87374da01a5ef90b3f86a",
+      "bytes": 941
+    },
+    {
+      "path": ".work/acceptance/endurance-20261021T083724/summary.json",
+      "sha256": "5b7c18dbdf46d44a09ad12c5026e97948ef018e9ee9bffca21691954b8114450",
+      "bytes": 1469
+    },
+    {
+      "path": ".work/d1-full-preflight.json",
+      "sha256": "e99a7d9beec9863c4638af5c230186fe63b3c630bd7e41db6469fc19e335ad04",
+      "bytes": 603
+    },
+    {
+      "path": ".work/release/critical-feedback.json",
+      "sha256": "bf3f54bdd0383e5f17ab7c4578638d47d28d9ab541529f1d54eb0b90d67cd496",
+      "bytes": 2140
+    },
+    {
+      "path": ".work/release/keycloak25-container-runtime.json",
+      "sha256": "56546b89cf44887659731f5a581ddd08c2883ed9a008ca15470857db11aec79d",
+      "bytes": 1254
+    },
+    {
+      "path": ".work/release/keycloak25-maintenance-lock-negative.json",
+      "sha256": "8e1b94ffaf2abbad464f1d44e8ee41b7a64a832ca05d438b9eb0e949d96bdec8",
+      "bytes": 133
+    },
+    {
+      "path": ".work/release/keycloak25-native-runtime.json",
+      "sha256": "1f9d86ca619d8c12028ba23436306781b8aeb07aa9e394aac8b59ba79dfb6005",
+      "bytes": 1246
+    },
+    {
+      "path": ".work/release/keycloak25-oidc.json",
+      "sha256": "94b4c025f3110b9b395496dc6707bdaa857be11d3be8fc51d135e3805bb77367",
+      "bytes": 416
+    },
+    {
+      "path": ".work/release/keycloak25-readiness-guards.json",
+      "sha256": "bcee679da98ba1e3c65f783133557ee35cb9db10edc42b3f2853ca49c5e59926",
+      "bytes": 302
+    },
+    {
+      "path": ".work/release/mysql8413-upgrade.json",
+      "sha256": "cf6f1595b10316f38d5d5cf98a9a0b92e35be0c7c7c4f3599889ad1a55425094",
+      "bytes": 497
+    },
+    {
+      "path": ".work/release/prometheus3135-checkpoint.json",
+      "sha256": "f264e05d1ae7592fc0cfc0e00782136788a12903a91242d31ad8e85294f4df6c",
+      "bytes": 602
+    },
+    {
+      "path": ".work/release/prometheus3135-compatibility.json",
+      "sha256": "eb6b5ade3aa72dd6a6dc23715578301f4ef180ef1c914aa897caf5db58a2aded",
+      "bytes": 389
+    },
+    {
+      "path": ".work/release/prometheus3135-runtime.json",
+      "sha256": "bbfc501a075312eac69e610bc286f32d301a1d4757ee2283d7678a907cfa3832",
+      "bytes": 638
+    },
+    {
+      "path": ".work/release/restore-native-v1b-20261020-api-facts.json",
+      "sha256": "0ef50c1ae2ae4bc164a0622ce513e3342c15b15f0d9bff061ad9ee66eade0ec5",
+      "bytes": 1007
+    },
+    {
+      "path": ".work/release/restore-native-v1b-20261020-api.json",
+      "sha256": "0fce3656c3062fb5706c6349cd2c89df7a74f6e4ad1fe79528fe12e9794ce84c",
+      "bytes": 578
+    },
+    {
+      "path": ".work/release/restore-native-v1b-20261020-facts.json",
+      "sha256": "fdd4e9f5b2e613a115e2c0af8b683cca779de6f0246ad8f923a103a7113a98d6",
+      "bytes": 1007
+    },
+    {
+      "path": ".work/release/restore-nonempty-20261020-facts.json",
+      "sha256": "01165137b36f5791080714ebcd0c09411d00e9d16524408e2a7efc862eacea55",
+      "bytes": 532
+    },
+    {
+      "path": ".work/release/security-20261021T131701Z/summary.json",
+      "sha256": "3e762f9d49288c73d598ed92b2b83e608eeef77cf712a694d4fa00ca89525eb4",
+      "bytes": 1736
+    },
+    {
+      "path": ".work/release/security-20261021T131704Z/summary.json",
+      "sha256": "c27e09d702c1024bb746d7d033583bca5fef431c46363beadd3a82bfeffd38ba",
+      "bytes": 2182
+    },
+    {
+      "path": ".work/release/v1-capacity-feasibility.json",
+      "sha256": "67183296730912403b9c062ae1ad5a5f6c2869c3750494fcaa3f9972f3c0e98f",
+      "bytes": 753
+    },
+    {
+      "path": ".work/release/v1-endurance-and-identity-final.json",
+      "sha256": "e754e93b660988209cffaa4e18691e68ecb626fcba8f5d45f60c3d7ee1f5c05b",
+      "bytes": 1207
+    },
+    {
+      "path": ".work/release/v1-endurance128-execution.json",
+      "sha256": "496260f2917d6d3b8384f4b1fc105a5812d6577bf2c5caadbec2491ef6dc71c1",
+      "bytes": 658
+    },
+    {
+      "path": ".work/release/v1-final-powershell-parse.json",
+      "sha256": "578b888ece86184ada12cad4dca6557a2771face6246c67a6a04cb3a93ed7b83",
+      "bytes": 92
+    },
+    {
+      "path": ".work/release/v1-final-services.json",
+      "sha256": "6239ece24b4bddb68ab38019ad2c89c63f8e453bcb99d5a1cd7fe38cba4560f7",
+      "bytes": 1001
+    },
+    {
+      "path": ".work/release/v1-oct21-final-runtime.json",
+      "sha256": "955b1482b4d3090ad9583ed8fecdb100c4813d5f0732cc5e5c5dda29a7c76b1d",
+      "bytes": 5836
+    },
+    {
+      "path": ".work/release/v1-performance-compose-check.json",
+      "sha256": "a63bb05f866ac4d89cf58c44d7f0ab6c139692e55c3cfcd428dd804728603202",
+      "bytes": 271
+    },
+    {
+      "path": ".work/release/web-performance.json",
+      "sha256": "b0dec5629dbd94be295f237e4223ebbeda20dd2effd232842c476ee64c4f55ae",
+      "bytes": 6465
+    },
+    {
+      "path": ".work/v1-final-frontend-format.log",
+      "sha256": "f20510a9da4717c51c4cffee6d0dd88d6c9a723d0a83711d01216f5b48961283",
+      "bytes": 68
+    },
+    {
+      "path": ".work/v1-final-sdk-network.log",
+      "sha256": "39e2a33d5b3ffc471ccabce642c478d8356b0cccae3c77562547ea3982f4fd0a",
+      "bytes": 1487
+    },
+    {
+      "path": ".work/v1-jdk2505-mysql8413-backend-green.log",
+      "sha256": "f768b8d7008d8f0252ef7a542768966687cc7ad0f70ec4583230adc1f2299295",
+      "bytes": 47510
+    },
+    {
+      "path": "docs/releases/evidence/current-throughput.json",
+      "sha256": "57fc836378f39f6a3539895da3296aafe33c876fd1324d9491a5c72984dbd7fa",
+      "bytes": 43152
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": ".github/workflows/verify.yml",
+      "sha256": "fee68f19c3e4c05060399d6cf14292cba9f0f66bacbb46545949267da552a6ce",
+      "bytes": 4225
+    },
+    {
+      "path": "console/package.json",
+      "sha256": "a2d3ee12cc7a1724d333bb5eb4c08d9af268d6324584a3e485d2fe71217145b3",
+      "bytes": 955
+    },
+    {
+      "path": "console/pnpm-lock.yaml",
+      "sha256": "69342a5235ddfb6c288ae43aa1331946fe9e84d6b2ac2fb364c8e95c2c2e4197",
+      "bytes": 80721
+    },
+    {
+      "path": "console/src/App.tsx",
+      "sha256": "f7aeada2e8e74287b3fe0f4b5998587ea9485b47208493aca39dd336348b0e1a",
+      "bytes": 9624
+    },
+    {
+      "path": "console/src/components.test.tsx",
+      "sha256": "2756f0c4df18e62c044d2b59c500f747c1b0206cd57651238ebd52763c26c4cf",
+      "bytes": 2976
+    },
+    {
+      "path": "console/src/components.tsx",
+      "sha256": "527ecc077f7bbe3026ef21d3fcfdd5e20b6696fb2ee14b19886acc105178141c",
+      "bytes": 6774
+    },
+    {
+      "path": "console/src/context.tsx",
+      "sha256": "1094182ee6e5c6e7342f1d621e929d048328e5da746d0035fdfecb105eb43ee8",
+      "bytes": 363
+    },
+    {
+      "path": "console/src/lib/api.ts",
+      "sha256": "ead8f0fc39d5a6591e5c747510c3246033ca7314542d460a74697d633d67c6ed",
+      "bytes": 2860
+    },
+    {
+      "path": "console/src/lib/money.test.ts",
+      "sha256": "c631f30c694028f7649a9d40993aa5584e4001ce1d1b1138e543988b3586605a",
+      "bytes": 860
+    },
+    {
+      "path": "console/src/lib/money.ts",
+      "sha256": "e2c446eac7d73db99ff0007478661ebebed98a248e2ad1cba38e8ac8441e2bd5",
+      "bytes": 776
+    },
+    {
+      "path": "console/src/lib/status.test.ts",
+      "sha256": "b83325a16c21f15a7c977be3be747416199676dbdbd8f1cf8e06e1ac56e54865",
+      "bytes": 589
+    },
+    {
+      "path": "console/src/lib/status.ts",
+      "sha256": "1a1ff5361e4419f7382e89ab52fed5fd8ace99afc93ae008037571644493d97e",
+      "bytes": 865
+    },
+    {
+      "path": "console/src/main.tsx",
+      "sha256": "5f519a82944f6401aa465e9ce19f9909233a42fb2a5ec16fa470e18fdd3a9863",
+      "bytes": 1107
+    },
+    {
+      "path": "console/src/merchant-select.test.tsx",
+      "sha256": "d781e9391b4706619bdf975ecc304636e92e6a679b19edef76f1d9ba7a1c07d9",
+      "bytes": 2228
+    },
+    {
+      "path": "console/src/merchant-select.tsx",
+      "sha256": "967f6eb7f4ce131bf0df7c3c2839b9272ff092db61fcb963c3d4ca207e65564d",
+      "bytes": 2204
+    },
+    {
+      "path": "console/src/pages/ActionFeedback.test.tsx",
+      "sha256": "b6e73e25a7ac224e9cd9422d14fdab1562ae1e2e3147ada09429d928aa013056",
+      "bytes": 5321
+    },
+    {
+      "path": "console/src/pages/Merchants.tsx",
+      "sha256": "39c768c269bac3c8e092164a2854276074bffde631979c22aa89348404f11178",
+      "bytes": 12213
+    },
+    {
+      "path": "console/src/pages/Overview.tsx",
+      "sha256": "c1c00922002c7ddc2b71f78ba67c086dfe0944f6eeb049a389c4eac34c42f914",
+      "bytes": 8096
+    },
+    {
+      "path": "console/src/pages/Payments.test.tsx",
+      "sha256": "1a88bf6fa071fa02de314f7347fd98d7a18d28c72bb2d66ad37d834a1b839cfb",
+      "bytes": 11876
+    },
+    {
+      "path": "console/src/pages/Payments.tsx",
+      "sha256": "8150ebce2b3df48023bb3cf4a18ef6ed8eb2ef4e6d817a9557f198535e0cf52e",
+      "bytes": 28650
+    },
+    {
+      "path": "console/src/pages/Reconciliation.test.tsx",
+      "sha256": "c4c709bad35956815fafc4835054d4a36c0df5c1f1ea2eafa9f0432357479666",
+      "bytes": 5814
+    },
+    {
+      "path": "console/src/pages/Reconciliation.tsx",
+      "sha256": "f49c6ad4f5cef65cf6994d30017090c519636f8f2d3bd57708b11c8da8dfa2ef",
+      "bytes": 15402
+    },
+    {
+      "path": "console/src/pages/Records.tsx",
+      "sha256": "418cec9a406baa704c0a78cb0ca55c1aaca9895c7894454ce46966eec26b3692",
+      "bytes": 12182
+    },
+    {
+      "path": "console/src/style.css",
+      "sha256": "c7ce5f6f20f4330773ce0efb528fc1ebf30eaf886b4c32bb1c4db79c08d4e438",
+      "bytes": 13699
+    },
+    {
+      "path": "console/src/test-setup.ts",
+      "sha256": "711e30bf5e15781e938499cb6958e7b8a4fdfc69993e1f7289ddbe95073ae8da",
+      "bytes": 429
+    },
+    {
+      "path": "console/tests/container.spec.ts",
+      "sha256": "c5a61c55763304a18ce07de502933940697a038a532b9d9da0c4ae6f824788d6",
+      "bytes": 1064
+    },
+    {
+      "path": "console/tests/critical-feedback.spec.ts",
+      "sha256": "d90698d9d1742e243571d07a4ecd53962e238e3c72c5c198b8625cafc4d647e0",
+      "bytes": 10977
+    },
+    {
+      "path": "console/tests/evidence-paging.spec.ts",
+      "sha256": "686ca20e58be580b01447fc48e364ffb1bbb65211d043cb6a05c3e792567e119",
+      "bytes": 3626
+    },
+    {
+      "path": "console/tests/export-audit.spec.ts",
+      "sha256": "589c242773584594610ea82a27632101249b44a0d5896046b857c9596c19303e",
+      "bytes": 1726
+    },
+    {
+      "path": "console/tests/faults.spec.ts",
+      "sha256": "855335fec14c638c2a54a5f68227d4308576e42f96517225aeb5776738d23e3e",
+      "bytes": 1797
+    },
+    {
+      "path": "console/tests/identity-console.spec.ts",
+      "sha256": "0a9727c240440c0dd3e3eae9470e5995332b4c3c68cb19ad6062c7f5487215a8",
+      "bytes": 1127
+    },
+    {
+      "path": "console/tests/identity-runtime.spec.ts",
+      "sha256": "b5c9b5472fb0b9fa20a925cf4dd0289f766cafe1d6bc5752d652a70089dd7d72",
+      "bytes": 6926
+    },
+    {
+      "path": "console/tests/load-session.spec.ts",
+      "sha256": "82edaa077e28cd1e86480abe734044eb6858bd18ff539c0471d51ab9a578bd4e",
+      "bytes": 1250
+    },
+    {
+      "path": "console/tests/payment.spec.ts",
+      "sha256": "532ee6ec8eac669855e2820e6edc022e63dc0d220769f41d8d901ce2a76caf07",
+      "bytes": 6797
+    },
+    {
+      "path": "console/tests/recovery-objects.spec.ts",
+      "sha256": "ac0f396087298c80ebcd12c5c270bb9a1ecf691dbd7ebe8feae7575bfd6ebc26",
+      "bytes": 4137
+    },
+    {
+      "path": "console/tests/resource-budget.ts",
+      "sha256": "7719e61805a530507f3eaf5668b52b33277854d36932d2b625dec892899aa64f",
+      "bytes": 1401
+    },
+    {
+      "path": "console/tests/review-fixes.spec.ts",
+      "sha256": "625931e21110699b7d3e37a78d243efea258429be65566f34639444b21eddc5b",
+      "bytes": 3587
+    },
+    {
+      "path": "console/tests/scale.spec.ts",
+      "sha256": "2826726aeac32d687171ec175dae116b3ce7a96bc76e36bbd040266a679d1045",
+      "bytes": 4139
+    },
+    {
+      "path": "console/tests/support.ts",
+      "sha256": "fc63675db8ec73a4897f8e6c4a1a5c5d9c8303d5843958c3abfd39e14a02768a",
+      "bytes": 2342
+    },
+    {
+      "path": "console/tests/web-performance.spec.ts",
+      "sha256": "91a4f45e567da1dc34d8a89902ecbe35ce54a873fd1336ff52d535bdf89a1f1a",
+      "bytes": 4219
+    },
+    {
+      "path": "docs/quality/2026-10-20-v1-nonrelease.md",
+      "sha256": "c4b2b7dba8a6068408ae4df6f4bdcc04dc20cc2f7fd111dd9cfe0241bf0b1e9a",
+      "bytes": 19816
+    },
+    {
+      "path": "docs/quality/2026-10-21-throughput-recheck.md",
+      "sha256": "fd25940c6ff2f082efa6397e21fce9a8b76e1f8ce553bf8bd119559eaed31445",
+      "bytes": 5532
+    },
+    {
+      "path": "docs/releases/local-delivery.md",
+      "sha256": "06b75f6c1ac72af8360df8adb2310955cebfe290dff61d23336f988d3c6db11c",
+      "bytes": 14334
+    },
+    {
+      "path": "docs/releases/v1.0.0.md",
+      "sha256": "14c83dcd91306533e91c756519e1a7f681fb6dcb997ac61067029c72495ef3cd",
+      "bytes": 23402
+    },
+    {
+      "path": "docs/reviews/2026-10-21-v1-recovery-runtime-review.md",
+      "sha256": "38f9547590d1ac57beb9fac2e16fb54b3b74caea4a9fba9be296ea033997f8c8",
+      "bytes": 4311
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-20-v1-local-remaining.md",
+      "sha256": "1e40038d5cad6c26908a3f6d90abf655b3167aa46c102cf0583544bce4814d66",
+      "bytes": 15850
+    },
+    {
+      "path": "infra/compose.app.performance.yaml",
+      "sha256": "559ae55dac8034da362c48265fff4357860e3985e884197108d97c1fc4524361",
+      "bytes": 438
+    },
+    {
+      "path": "infra/compose.app.s3.yaml",
+      "sha256": "49edc1526b2f1cf9a4611765cb29d03ca71940fd86ba19f2a327ee0e318a0ab1",
+      "bytes": 475
+    },
+    {
+      "path": "infra/compose.app.yaml",
+      "sha256": "bfabff65677b5b97f9a2b1c2ac7a878f12e5a177970fefed40e5c04ddc084fcc",
+      "bytes": 3163
+    },
+    {
+      "path": "infra/compose.performance.yaml",
+      "sha256": "bea9cede291438918228b3c93b55e39cd3aaac66116625b90e903302d5f0ad89",
+      "bytes": 336
+    },
+    {
+      "path": "infra/compose.storage.yaml",
+      "sha256": "f0b44d75a22439d9c817b41d192279a429f9394a6a4b384cd0b199da435aab07",
+      "bytes": 430
+    },
+    {
+      "path": "infra/compose.yaml",
+      "sha256": "6c9e1c959a94106cf63bcd09c76531ae34bec668b228cb10499a78182ba4d6ee",
+      "bytes": 2056
+    },
+    {
+      "path": "infra/images.lock.json",
+      "sha256": "41ed6d0e70719d8d2e57709ae31bc140058a56f11d64320862d32d0eff20c08f",
+      "bytes": 2379
+    },
+    {
+      "path": "infra/images/keycloak.Dockerfile",
+      "sha256": "932c1475124b53ffe775c5c24060b820dd22b53763b1e9870bd5f933ecce1b5c",
+      "bytes": 467
+    },
+    {
+      "path": "infra/images/mysql.Dockerfile",
+      "sha256": "5e5ef2ee51707e857d17ac063319aac02f082461bb23c8d51092e2d9790b34ed",
+      "bytes": 487
+    },
+    {
+      "path": "infra/images/storage.Dockerfile",
+      "sha256": "45117d74d660b21b2b1fc489eed6e59d229a6d33066c7f251eba1b2635d24c96",
+      "bytes": 198
+    },
+    {
+      "path": "infra/keycloak/realm.template.json",
+      "sha256": "b920e32aa394cfabd02537a3692a211848d06565dfb26fcaa631bbc0350c8a1c",
+      "bytes": 4647
+    },
+    {
+      "path": "infra/prometheus/alerts.yml",
+      "sha256": "d20908ac542a54fc9f29756e94ca8ade58196de0f4254891cf36b5c04b935266",
+      "bytes": 895
+    },
+    {
+      "path": "infra/prometheus/prometheus.template.yml",
+      "sha256": "9983d7b20f0651449e5b1c0d849659d9fbc006e6480881ab48b6a1f17a03e11c",
+      "bytes": 331
+    },
+    {
+      "path": "platform/pom.xml",
+      "sha256": "631f649907c741b4d2fb48a3d3e161341a9e1300ea73d9c5b3f1747ace1fb785",
+      "bytes": 3875
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/channel/ChannelApi.java",
+      "sha256": "4ef34dd85fc0c0da548a589e2cc4d6fdfa2aa1f71a22b57aa12524a3636d5cc2",
+      "bytes": 1782
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/channel/ChannelBillReader.java",
+      "sha256": "ac17734a3af677f91fc330d6dd7c63ce04ec0b93e01463e278fb3f0f70ec8770",
+      "bytes": 1609
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/channel/ChannelGateway.java",
+      "sha256": "fa7be9ae1661275e75a81372beeec4e563854470b9663a47733b63d2c8ec3303",
+      "bytes": 12048
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/channel/InboxService.java",
+      "sha256": "61ec28f6103a7adcc0b094a3e68eedbc7e247ffa0a5c091b73c02b74e225e4d5",
+      "bytes": 4654
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/ApiException.java",
+      "sha256": "3a7d73ede525c822b60f9489aa568e7d5e3e33b60d60d1089baedbd0967b8514",
+      "bytes": 969
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/ChannelResult.java",
+      "sha256": "0de610320d74937edd9543ad6c32fcfdfe0f635113fd87a3776bf0c0602730fd",
+      "bytes": 500
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/Csv.java",
+      "sha256": "df3bce95879d4d73b653e820cedb0d159fa0116b3cf7bc99792b65fa1fe54edf",
+      "bytes": 462
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/KeyVault.java",
+      "sha256": "7cfdafddd810c3b75826820a3cd31ce4438d1560cd96e18441a3165b33c7099d",
+      "bytes": 2341
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/MoneyRules.java",
+      "sha256": "21d4a0cc537302c4dcd164a1e817c062591b3cd84b614fa5bcfb11faaecf97f1",
+      "bytes": 1512
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/NotificationPolicy.java",
+      "sha256": "041bf8a83196e983c04d378a465764fffcb7c64622aaeae9993d6df7ece89134",
+      "bytes": 1401
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/Signatures.java",
+      "sha256": "8c217871c6619f3a7236deb7106e5728a81f01c9a81071c919d6454537db6aa3",
+      "bytes": 1908
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/ledger/LedgerService.java",
+      "sha256": "9e785f60954a62e9b81b83dc9339a9d852f8526b1310c0a3bbdc9c4fd58dd264",
+      "bytes": 3053
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/merchant/MerchantService.java",
+      "sha256": "76753c32613641ef11090aa764e94b73a509339c765c93b8153b50ee1ee953cf",
+      "bytes": 4813
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/BusinessMetrics.java",
+      "sha256": "a5ba91ad416cb488f1311ca51c42cfcdff46536d2cd7623ecef1057cb95d6307",
+      "bytes": 2388
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/LocalDemoData.java",
+      "sha256": "ec0afb6cb06139786a86c492cc3833278599fd3c7baa110384673690f394229f",
+      "bytes": 1899
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/NotificationService.java",
+      "sha256": "55c7f9d6180d03fa0525c110bb75e1d2ba29388e01a23ffea4fe8b18f51ef689",
+      "bytes": 4434
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/TaskCompletions.java",
+      "sha256": "a167f25a7935b6b86e8149744c2b657403c7f70dad0eec2f933741ec90c80f3d",
+      "bytes": 2462
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/TaskWorker.java",
+      "sha256": "862a87a0053df5b53cf618eec5b12a92280dd0545c5f9120b4cb0f2d03a5d9d1",
+      "bytes": 4880
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/outbox/OutboxService.java",
+      "sha256": "21edddb84195b8a10282950e9f7aec2ffb793f265d976717592593b20a46f6dd",
+      "bytes": 1298
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/outbox/TaskQueue.java",
+      "sha256": "6717155e89b688e11bdf3c230a0b9498491ebe60910feff7362ed3af82c1febd",
+      "bytes": 8844
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/payment/PaymentService.java",
+      "sha256": "682987a04996ba73043000779bca137671c80a507b7628046a6c4ecca4d365f5",
+      "bytes": 14790
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/PlatformApplication.java",
+      "sha256": "c0aa64a56d15ffc1e016311c05c32c7b73f8322722aa6fcb0dbb431a63002db5",
+      "bytes": 1926
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/query/Queries.java",
+      "sha256": "f61a7675e2bbaacceb2b11b26b5c925f2064ae44cf874697c180d3fffb1179fe",
+      "bytes": 14634
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/reconciliation/ExportService.java",
+      "sha256": "cd1487dc1dc186d12454b13f7384bbe11ce822cd0ef24ad31145d190db911543",
+      "bytes": 10763
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/reconciliation/ObjectStorage.java",
+      "sha256": "74aa69b399913e04268a5e2cf302cc01966bc53716d076f361844dcb603237a8",
+      "bytes": 6140
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/reconciliation/ReconciliationService.java",
+      "sha256": "2f713cdfffd5a8b1ed1ec867bc7de8721a5cf36cd0542e95453e2de65a0220ba",
+      "bytes": 22568
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/refund/RefundService.java",
+      "sha256": "2b5181e3e0b87f1c2c2c70b242fcbf0eaaa17d0f6902b4648c2077822e08cd37",
+      "bytes": 9882
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/Access.java",
+      "sha256": "d4f07c224d55f398d34909e64104a402895f882e80ab89e33a5fcd3d82b2b231",
+      "bytes": 2387
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ApiAvailability.java",
+      "sha256": "225cb0e8013ed7c14bd332683101ad40d2365cd453f88201e70e849c49bf0c55",
+      "bytes": 1770
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ApiErrors.java",
+      "sha256": "29d5c6596b4fb3a80075d9702f9bae3451ebbcc2fc12bc3f48089cb719f359b5",
+      "bytes": 1795
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ApiRateLimiter.java",
+      "sha256": "bb0387a016315408ed6d8613dea2c64bed43fd788adca16597d3abc68404f3da",
+      "bytes": 5739
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ChannelCallbackController.java",
+      "sha256": "e3e85b8beb8ddeaeef6f3907262a18c508d2dd4fc81f4a963fda60a25ff0d9c4",
+      "bytes": 1039
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ChannelStatusController.java",
+      "sha256": "ea62bb564dd0c5dce5e1ea4a0ff96f2e14abbc6c24f5432e27251465ef1fe6f6",
+      "bytes": 714
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ConsoleController.java",
+      "sha256": "95281c3c964aa74b95959a7cba89921fcb932777919c7cce56e3a4cb10c3f9f0",
+      "bytes": 12214
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/OpenApiController.java",
+      "sha256": "0628cf9ffed7b857079a411c9ee655af295b9dde63937a20d7bf3281365284e8",
+      "bytes": 3151
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ReconciliationController.java",
+      "sha256": "8885607cddd8dfe07d20f5afc50977f5c58fa4a4e9c77dc96eb4eb294eb8a5d2",
+      "bytes": 8774
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/RequestTraceFilter.java",
+      "sha256": "87ec59b93a897a6cd0d801c741a50dd3821921dede0f036d64e56a7c2a29229a",
+      "bytes": 1351
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/SecurityConfiguration.java",
+      "sha256": "e8c073c36e7548da76fe4ad7dd10a85f49a187b67fa442faf91b85e03cf51891",
+      "bytes": 6358
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/SignatureFilter.java",
+      "sha256": "940d95d0a3c8adf3330e87bc865572c7852aa93f82b68375085e449e5a7236e6",
+      "bytes": 7288
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/WebConfiguration.java",
+      "sha256": "545bd26bb34eaa11c375b5f697313b83ab6542dcde310ae260ade39963764884",
+      "bytes": 1096
+    },
+    {
+      "path": "platform/src/main/resources/application.yaml",
+      "sha256": "0a9b545f802d5c7b3b1c5fa06dcd8b561ff061066955623de51eec38ef3462b8",
+      "bytes": 3123
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V1__core.sql",
+      "sha256": "7886e929c4ad0575e35798bf8fe268cf365d392c0ee10c8146830beef7dbe2a1",
+      "bytes": 5797
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V10__export_execution.sql",
+      "sha256": "63712b0066c17d7148cc3a0e5f48e3bca791cf9424e4b2b98abfcb87dc2c66b2",
+      "bytes": 54
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V11__payment_evidence_paging.sql",
+      "sha256": "f826cba647a47575a0a41c4933d1c81add4a73759c2014befecd20551017d796",
+      "bytes": 83
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V12__payment_backpressure.sql",
+      "sha256": "42c4a059c5715693cc87a7b45370554a07052f513a4d0e88203e5e79e64ab782",
+      "bytes": 681
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V2__security_and_evidence.sql",
+      "sha256": "a6f4367984437269b10116711af34360cc268bc592195efa73214aecd9e3d11e",
+      "bytes": 682
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V3__notifications.sql",
+      "sha256": "9396fc5df78972d49df7496d0469e9446562350898608f3f524606589d123ba6",
+      "bytes": 398
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V4__reconciliation.sql",
+      "sha256": "d5528042679999640d3263b6d7d0950e477d34c6ed0641fe4d73b27b8cf2117f",
+      "bytes": 2154
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V5__exports.sql",
+      "sha256": "7535aaf722aaab49e306358b272c7dddf738063220698d99f8c5c07165967b90",
+      "bytes": 453
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V6__timeline_and_cursor_indexes.sql",
+      "sha256": "765742fab1cb1ebc1ceb47606f8cfd53f6cf703a182bd58caf57f229fee75f36",
+      "bytes": 572
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V7__isolated_task_queues.sql",
+      "sha256": "107a3566f279ad3881c231dcbe038c6da9425785670c542ea9d07c7bc9bb1c88",
+      "bytes": 330
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V8__export_ownership.sql",
+      "sha256": "be931902ed6aba17f46e3222a07a632374b560f62b363823ef74c8ef2fa6a9ff",
+      "bytes": 285
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V9__reconciliation_execution.sql",
+      "sha256": "626e798c9f281b5c5be17121fccd9ba2ff03391273203580a36e4faf0f6c057d",
+      "bytes": 60
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/AdmissionTest.java",
+      "sha256": "cf31272cafa85a87834dfbec362c9f671326101cc0698d6f0b7579779b43088b",
+      "bytes": 8141
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ApiRateLimiterTest.java",
+      "sha256": "801c782625c5a70869ae7f71d5a5d7c0927eeb1c5c35c0d14eaa013581b41e87",
+      "bytes": 8691
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/AuditTransactionTest.java",
+      "sha256": "229d016de8918561162a16b9e7efc8cc025aa59bdf7de98ae484d4364eb58831",
+      "bytes": 11502
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ChannelEvidenceTest.java",
+      "sha256": "64ef4184a9a1cfaf8bf1dd6928b0593dabe58eb60359ffa078998f448a553fa9",
+      "bytes": 25416
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ChannelHttpContractTest.java",
+      "sha256": "79c3ad0e3e0c19159bcce1e92d8b7ca26f7c4d9157a202477e590bfb92fa00a7",
+      "bytes": 2402
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/common/CryptoTest.java",
+      "sha256": "e7d34120a00fd438637e7b428e53be5d47c956d792d4a62ec4a4e97d6af2cf20",
+      "bytes": 2479
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/common/CsvTest.java",
+      "sha256": "27e59a848b7d9cc6c279ff957630d9e033cd0edd129b96209faec4c8ae5cfbb6",
+      "bytes": 510
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/common/MoneyRulesTest.java",
+      "sha256": "083e35cec2a629fbf847adb6534a36bc5e9e9935f5db06075611a6b9796a7fda",
+      "bytes": 1797
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ConsoleDetailTest.java",
+      "sha256": "81e0f23a6dc3cd584a08340ee11fdc4040de0b45b8c8bfe8562bda94585a7af0",
+      "bytes": 9005
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/DurableTaskTest.java",
+      "sha256": "815ad82b6f0d71a61303ea0e36c88c0cdfdace393132d0bf2e4a00d85d412ad4",
+      "bytes": 8558
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ExportTest.java",
+      "sha256": "11580346eeea995e8495e5edfd23693668640020a5cf7ce6e64042544cbdeee8",
+      "bytes": 13513
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/FinancialCoreTest.java",
+      "sha256": "7e0cbfa539b5cf7c2862aa454bed6690eafddec4816660d8bb39076101c91d09",
+      "bytes": 10872
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/FinancialFixture.java",
+      "sha256": "c78bc1d9b90a41defe773d2318da10d298fdae7712e4ee2ddde7bfc67933a0e2",
+      "bytes": 3533
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/LegacyObjectStorageTest.java",
+      "sha256": "328162cd8601f830e8a2a5c517e9c5aba99efc7763c42cc0cc745c4b4d9de714",
+      "bytes": 1787
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ModuleArchitectureTest.java",
+      "sha256": "fbcefa5bfcf01ed7f473986447f42733cd5cef64b794b319b65011ac06a9f6b5",
+      "bytes": 292
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlApiRateLimiterTest.java",
+      "sha256": "e2a1eb85f6be23068927f11d9561f10c42defd3196f953d2baa193e71ec75416",
+      "bytes": 1216
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlAuditTransactionTest.java",
+      "sha256": "c892b46e22484c997ada6ccd78e11ca533ff045c8248f284598e1bc310b9598d",
+      "bytes": 1163
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlChannelEvidenceTest.java",
+      "sha256": "854a86f198e71285e9117de630bd813e25ee3e661448a4cf9b120e141a218388",
+      "bytes": 1219
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlConsoleDetailTest.java",
+      "sha256": "d3c667b1d5e9e060a33dcd03efcd5bdc2fbf4e2226a25b8d6ae6f3450777f189",
+      "bytes": 1158
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlConsoleSnapshotTest.java",
+      "sha256": "2dde157429c5e3a88861aaf1e30926e896299e02f91175ab487bc068575bd69d",
+      "bytes": 4119
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlDurableTaskTest.java",
+      "sha256": "3938596cee78ccffb2e583bba1d8522a0c2428dd62f53118333837636cf4e6c4",
+      "bytes": 1171
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlExportTest.java",
+      "sha256": "81bdfe90bea5009fb6281a60b3d86c91e241d8bbd73ca811163eb1d36f3b78c4",
+      "bytes": 1144
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlFinancialTest.java",
+      "sha256": "6cfb1b0903cff73361498de0c858b12f143a0e23c655e819275659192212e575",
+      "bytes": 3456
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlPaymentBackpressureTest.java",
+      "sha256": "34b351efa48a226612192b2f7c146880406987970b11102729be22cfb769cbb4",
+      "bytes": 1176
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlReconciliationTest.java",
+      "sha256": "d3e73f0f73123416d18cd0d002bbde0496e77994eea937fec44911cc9d40b968",
+      "bytes": 4887
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlTestImage.java",
+      "sha256": "6b5ee68faadbe0ccad326a29575099c7ef099532149021b314527a167ed9cecd",
+      "bytes": 347
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/orchestration/TaskCompletionsTest.java",
+      "sha256": "234529e3a6fa3facafd8b3f1d33cc45322de8fa093dcdeb9406ef28c7a92f4f9",
+      "bytes": 6198
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/orchestration/TaskWorkerMetricsTest.java",
+      "sha256": "2c21dba311f9d89173b4b05d88644a2e210e81638dff560b2b27538ba16fb2bd",
+      "bytes": 2343
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/PausingQueue.java",
+      "sha256": "41e8e6e47956d56e20bea9997d01cb59bc2df8de82c79d7ed30aaf15b31c5f79",
+      "bytes": 1154
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/PaymentBackpressureTest.java",
+      "sha256": "9ae1625053c58ec9d0fac3eb3d8238fd62d5c0d24a5ee85f15bb754eb928f084",
+      "bytes": 9186
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ReconciliationTest.java",
+      "sha256": "a4f757027e9a9b0271c0654faf6dc3e1d25688b078240ab3a652d72276f5808c",
+      "bytes": 19381
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/S3StorageTest.java",
+      "sha256": "f2cbed089d428c64fbf87e776aebfbd268c5c51a6487e036ec4ea64a0c0cc920",
+      "bytes": 13409
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/SecurityIntegrationTest.java",
+      "sha256": "fecb89578bad0950dc4145123f501589f7412374a68512d7bf66bccfb33e36d9",
+      "bytes": 13658
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/web/ApiAvailabilityTest.java",
+      "sha256": "0975b41ebf8bba02754352ddce5dff59ccf664365799f8e9c3d5b78df70ebe84",
+      "bytes": 2121
+    },
+    {
+      "path": "pom.xml",
+      "sha256": "c0b02a707115f1476a4dae8c4d9e1750357e0aab166163e9ca09d7e078533423",
+      "bytes": 1992
+    },
+    {
+      "path": "README.md",
+      "sha256": "6d923d719b56893052e7c813418c0083f95333d033bcaea033950d02ae27e4e4",
+      "bytes": 13553
+    },
+    {
+      "path": "scripts/api-example.ps1",
+      "sha256": "ec86678b259ebc926078f2c2464dfe0959b771b5c94ba5d06f7bb69e9fdf3023",
+      "bytes": 2085
+    },
+    {
+      "path": "scripts/api/generate-client.mjs",
+      "sha256": "7d42963eda5486e9c3924b57d5b2bfd8c3a101f826147f160c1d45dda1c1b1af",
+      "bytes": 4249
+    },
+    {
+      "path": "scripts/api/restored-client.mjs",
+      "sha256": "2344595b474231c0e4c1d905bd6e31a609a970607d77762cc23fb3a446697280",
+      "bytes": 2457
+    },
+    {
+      "path": "scripts/api/smoke-client.mjs",
+      "sha256": "3ed6c8a5fe7f86dc07c8f0222052e84f557fc195cfd8a9d2d7339559a41af374",
+      "bytes": 889
+    },
+    {
+      "path": "scripts/bootstrap.ps1",
+      "sha256": "f544eb106f477961c1d83a957a73dc98cafc3974eff1825f81d084eb0ac6cac8",
+      "bytes": 2494
+    },
+    {
+      "path": "scripts/browser/BudgetProcess.cs",
+      "sha256": "a2a3494f19a815997786f95f55800133cd062f49ba326b2220253fccb8f16d68",
+      "bytes": 8003
+    },
+    {
+      "path": "scripts/browser/verify-client.ps1",
+      "sha256": "e6d7e6cf080afd210a0268f23126ebb6d76d8082179f48b4685577abb3bd358f",
+      "bytes": 4115
+    },
+    {
+      "path": "scripts/db-inspect.ps1",
+      "sha256": "5c7ab8abc76b5758e850674d92780b06f257f5b130cec50e64f86e261c7dc9ca",
+      "bytes": 564
+    },
+    {
+      "path": "scripts/DbInspect.java",
+      "sha256": "d81aa048ae2eae1324137a1c2c19903ea4fe0bea812303ce821d6581dcf3a701",
+      "bytes": 2597
+    },
+    {
+      "path": "scripts/dependency-audit.ps1",
+      "sha256": "386945a5389caa45b347b575896940f997434576cb6e69e21eb8832a1c63055b",
+      "bytes": 3151
+    },
+    {
+      "path": "scripts/download-ranged.ps1",
+      "sha256": "8f0c88cedf200645c1389fba49a93e294811aa45d212719a30c970bac16bc300",
+      "bytes": 2191
+    },
+    {
+      "path": "scripts/Import-LocalEnvironment.ps1",
+      "sha256": "3afea7d5d032462e4a43935c83e032fc93f6d2ff77bee59884ce6b523cd13d30",
+      "bytes": 436
+    },
+    {
+      "path": "scripts/init-local.ps1",
+      "sha256": "bd056a75b6fc67835f24ae53644cfe82b930f203bdf183d5e158f5a7e5066610",
+      "bytes": 2445
+    },
+    {
+      "path": "scripts/load/AcceptanceLoad.java",
+      "sha256": "a1469151a7a230323fa0ca50e4004dd84e4a63c5a5506c302bab329b11ed6ae1",
+      "bytes": 38771
+    },
+    {
+      "path": "scripts/load/AcceptanceToolsTest.java",
+      "sha256": "4f3c0d70ab4678a620b30c64a89c8d4e49466cc3e82b5018c972f506ac57c69e",
+      "bytes": 7407
+    },
+    {
+      "path": "scripts/load/baseline-local.ps1",
+      "sha256": "7b18f37bcac87af82fdbcffd74e59c99144fe053747ac48c79c735b18f2d6006",
+      "bytes": 14613
+    },
+    {
+      "path": "scripts/load/CapacityBudget.ps1",
+      "sha256": "c5a25380178c7aa547c4b358d719c4d3f070208272505ce4a3efa0dc4769acf3",
+      "bytes": 823
+    },
+    {
+      "path": "scripts/load/CommitWaitSampler.java",
+      "sha256": "a8521b513bd9f9554632bacedd4c4be3b1fc75b2722aaa16457d147bff0fe584",
+      "bytes": 7012
+    },
+    {
+      "path": "scripts/load/CommitWaitSamplerTest.java",
+      "sha256": "02a068cddb836371cefd387f5886ab0c7a82b4f34ed4e1fcaf041934dc2cddda",
+      "bytes": 2885
+    },
+    {
+      "path": "scripts/load/d1-fixture.ps1",
+      "sha256": "93c47222c6c29885a404d5838816676e188002743cdc879bf5b69c0d1d162800",
+      "bytes": 7371
+    },
+    {
+      "path": "scripts/load/diagnose-local.ps1",
+      "sha256": "a77dd7fca5dfc177408bd5963c7f36f9da995e19029215b32d79b60320da5367",
+      "bytes": 1121
+    },
+    {
+      "path": "scripts/load/DiagnosisMeasurementsTest.java",
+      "sha256": "5ca9b1c02af17a2459f524a559b6b2dc33bea787f588d00c2f1e6b6c1f62ee1f",
+      "bytes": 7478
+    },
+    {
+      "path": "scripts/load/LoadMeasurements.java",
+      "sha256": "1bf71bf258577b7f115a1b93ba58e9f627b0f403de18569d0a67beb7fcc4b74a",
+      "bytes": 4316
+    },
+    {
+      "path": "scripts/load/LoadMeasurementsTest.java",
+      "sha256": "4c75cf1f7b8a9301f10e590f230fc8011e69c40d7a844de7606db692e700f18b",
+      "bytes": 9201
+    },
+    {
+      "path": "scripts/load/LocalDiagnosis.java",
+      "sha256": "968512522fece4a977c621bed62c0cd6a942ffe7f3a0d18bfbf895687c2b0bd8",
+      "bytes": 13231
+    },
+    {
+      "path": "scripts/load/LocalLoad.java",
+      "sha256": "a69aeca955c9af6ba54ec98d19d9b911c987e2d6988648db91cf7c7995fe8e24",
+      "bytes": 25440
+    },
+    {
+      "path": "scripts/load/run-local-endurance.ps1",
+      "sha256": "5a175729648cb0f908408cc05a22f821fbb726e57174be376a102de60ccd6d66",
+      "bytes": 6028
+    },
+    {
+      "path": "scripts/load/run-local.ps1",
+      "sha256": "ca610bd8d6d00cc57ee4b372cca6b2c20958cacf79573cf8e0f2700c3ce9f200",
+      "bytes": 2834
+    },
+    {
+      "path": "scripts/load/run-v1.ps1",
+      "sha256": "e307f06ec6237ea34c2c919c6056c02561667bb35154351d7cc07f031b88c8ee",
+      "bytes": 6629
+    },
+    {
+      "path": "scripts/load/RuntimeSnapshot.java",
+      "sha256": "82405de267d304c902e2e19416a48eee4d6f4d5814ac8b1c4cca2c2ce46f93cd",
+      "bytes": 1652
+    },
+    {
+      "path": "scripts/load/StandardProfileTest.java",
+      "sha256": "f9ff6d821e85c805f7f9d616a456a30b28780ed2ec4a65e41214ede848b9b436",
+      "bytes": 2120
+    },
+    {
+      "path": "scripts/load/SyncWriteProbe.java",
+      "sha256": "6fb2cafafb35f369d3549a5f3f6c402f900ed3ffdf9ed60a7c97a853b39ce793",
+      "bytes": 1930
+    },
+    {
+      "path": "scripts/load/test-baseline.ps1",
+      "sha256": "ea5cad244f3bc38f8b44a4d4e6c000c7f6163c341cefa4a769cac81e670864a6",
+      "bytes": 5218
+    },
+    {
+      "path": "scripts/load/test-capacity.ps1",
+      "sha256": "3c865df86576d82fcd9aaf085d8103b5bcea626e646d5469c8d1d5ca46b99a2e",
+      "bytes": 803
+    },
+    {
+      "path": "scripts/load/test-local.ps1",
+      "sha256": "050ab262d31ffc816363d57f4dcc7f4a1931021dc6ffe2deaebc9789161b8b9d",
+      "bytes": 2213
+    },
+    {
+      "path": "scripts/load/test-v1.ps1",
+      "sha256": "97580def210686745d79de18d256d342b1f38274b5fb5752bc052afee2b6a18c",
+      "bytes": 3611
+    },
+    {
+      "path": "scripts/load/V1Acceptance.ps1",
+      "sha256": "da1b5fc2ef729b4ab92b67a7a82a4aa4363a3d03d06eda31ec86d21e14820a86",
+      "bytes": 4170
+    },
+    {
+      "path": "scripts/LocalPerformance.ps1",
+      "sha256": "89c2c642f00d93b741723abd9aa7196152cdbce6b2e65be65c71844e5afaab57",
+      "bytes": 6763
+    },
+    {
+      "path": "scripts/mvn.ps1",
+      "sha256": "f7f172cf645f5bb44fa2ade0838d1848253aaec9f6e59a193ca1687c067f225f",
+      "bytes": 981
+    },
+    {
+      "path": "scripts/pnpm.ps1",
+      "sha256": "0fb304dc72053ce0f5bb1271df5f949bfaf2a2f7ea2a55681145446f00c05516",
+      "bytes": 980
+    },
+    {
+      "path": "scripts/ProcessEnvironment.ps1",
+      "sha256": "12b417318e562e835639f2a3aaadf582034204c64d71486d0e29aca866ba9508",
+      "bytes": 314
+    },
+    {
+      "path": "scripts/RecoveryCheck.java",
+      "sha256": "d6a246b555420f10d1e88ea0a69a3b67c3c87de42d19db010338fbd98a7d2300",
+      "bytes": 2595
+    },
+    {
+      "path": "scripts/release/backup-local.ps1",
+      "sha256": "04b67c6aaf25b0384c6f9750cf1bcdce57bc682d63593d1499b339481d249cf1",
+      "bytes": 13141
+    },
+    {
+      "path": "scripts/release/BackupBudget.ps1",
+      "sha256": "955c45faa15598a5ae3cb1df5c2fb5594614da971bb54ee3e268e8b7b565768c",
+      "bytes": 289
+    },
+    {
+      "path": "scripts/release/BackupResume.ps1",
+      "sha256": "dbecc805096f0b788cc32a77699532edf07bacd35c5f44d38908718dd7fe76f6",
+      "bytes": 3035
+    },
+    {
+      "path": "scripts/release/build-images.ps1",
+      "sha256": "6eec981a2b1c105a4efd0983ce511fa848331df0cdaf4bf1972b7925e6f4d602",
+      "bytes": 1600
+    },
+    {
+      "path": "scripts/release/build-infrastructure.ps1",
+      "sha256": "a53a90c613e1df9b54c359915a5e238b5f258d21d77caeb6ecaacdf9ee6e1cbe",
+      "bytes": 2018
+    },
+    {
+      "path": "scripts/release/catalog-configured-images.ps1",
+      "sha256": "412598198688308ca26ecd6ad648470f0869327e08b54be50997b01e17d24ba2",
+      "bytes": 1981
+    },
+    {
+      "path": "scripts/release/restore-local.ps1",
+      "sha256": "ace0d2b3dfcf5d5f7265185c94271745d51f01360904bf1053e4b09bcc683ffd",
+      "bytes": 11044
+    },
+    {
+      "path": "scripts/release/scan-images.ps1",
+      "sha256": "8bb70c83cd2b54a033bb6e5f960bb97d8da59826a3a8ea2325fd9fcaa089f7f1",
+      "bytes": 2744
+    },
+    {
+      "path": "scripts/release/start-containers.ps1",
+      "sha256": "8df0f6b9d13be02d1d0118aae6beed81b8795a99d75529b1c7575a5790116257",
+      "bytes": 4521
+    },
+    {
+      "path": "scripts/release/test-backup-resume.ps1",
+      "sha256": "b53e25ffef2af7a7832bfb966f862e190def37fad1019dec329d38a39954cd0c",
+      "bytes": 2763
+    },
+    {
+      "path": "scripts/release/test-backup.ps1",
+      "sha256": "18a25efa7fd9b6cc252ed4cc896681f1e8f2b1239d329e9dc3876eb72a8ed9ed",
+      "bytes": 2283
+    },
+    {
+      "path": "scripts/release/test-restored-api.ps1",
+      "sha256": "acec5930b5a865d10ab28372c1239bf44e9facf4da6dc877f8a5dcb03e7e5f97",
+      "bytes": 2166
+    },
+    {
+      "path": "scripts/release/test-restored-objects.ps1",
+      "sha256": "ff0e0a6f152465aaca25d83888969d5fabbe7ea2ce6cda3246e3394a75872fb7",
+      "bytes": 3582
+    },
+    {
+      "path": "scripts/release/test-scan-gates.ps1",
+      "sha256": "d209780d187b27d2a94bf94a2d3f166d75a34cfd707e9e7ceae6e7b61f812ab2",
+      "bytes": 523
+    },
+    {
+      "path": "scripts/release/test-startup-lock.ps1",
+      "sha256": "0de59649fff402f06b8ab19cd5b887a24063389993f12d69dfa2eff73ea395ec",
+      "bytes": 1043
+    },
+    {
+      "path": "scripts/release/verify-restored-api.ps1",
+      "sha256": "945a6ee7780cef475861439f8c0c59f66bddd7ee05a8d9e846ad73fc5cde83b4",
+      "bytes": 8435
+    },
+    {
+      "path": "scripts/restart-recovery.ps1",
+      "sha256": "d09bd8a518c36511de96613264667212851262d9ea34f9a7c7229662ffb7b422",
+      "bytes": 1488
+    },
+    {
+      "path": "scripts/start-local.ps1",
+      "sha256": "7215ac51af3bf16c2425a96a4a9d5aafcbe412ca0235ba08a76d134d10efc830",
+      "bytes": 6269
+    },
+    {
+      "path": "scripts/stop-local.ps1",
+      "sha256": "e5d2964b438334543678c67c23421c628d2a02952664a4e3a77147326bab29e6",
+      "bytes": 841
+    },
+    {
+      "path": "scripts/storage/BackupS3Probe.java",
+      "sha256": "aed9dd0916d1845259f87f465ba25e9c28bcd59181564c134282a40018403c78",
+      "bytes": 1422
+    },
+    {
+      "path": "scripts/storage/InitializeS3.java",
+      "sha256": "8eccc59f82ae00d9e6ecee97592635e2e6c5797094dd45f6e3d6e1a97a05bace",
+      "bytes": 1519
+    },
+    {
+      "path": "scripts/storage/start-local.ps1",
+      "sha256": "835e2d63fb9751edcc6c7381257aa67d270b934edfb54269a63260dbcfc6f49f",
+      "bytes": 2284
+    },
+    {
+      "path": "scripts/storage/VerifyS3.java",
+      "sha256": "aadfd72c7d4a09e05b822ec6327330b2c385236ff213e893877c9ddb093b5f25",
+      "bytes": 1618
+    },
+    {
+      "path": "scripts/sync-local-identity.ps1",
+      "sha256": "1fbf5e068b91e087f9ef52468fa50cc6e800d957c5fb961b10e2ef261b31013d",
+      "bytes": 1322
+    },
+    {
+      "path": "scripts/test-process-environment.ps1",
+      "sha256": "dfeb56d42377b1f7b3038210726a0ac8ecc4bd42afa9cdfbd2427cfb1d0a6691",
+      "bytes": 1450
+    },
+    {
+      "path": "scripts/verify.ps1",
+      "sha256": "13c32b36f0bcff8733612c29c2a9c61078786f748a079a184ba9d295a9c0fe79",
+      "bytes": 2993
+    },
+    {
+      "path": "sdk/package.json",
+      "sha256": "d3609b0a20a618a1ab95ddc994a86f1063fdd158edd428af93252bc1b77f2c5c",
+      "bytes": 916
+    },
+    {
+      "path": "sdk/pnpm-lock.yaml",
+      "sha256": "752f0408f540fc87f495eb0380f44f6df0c3e5b8075741cb0d7490ba28a1d4f5",
+      "bytes": 8725
+    },
+    {
+      "path": "sdk/src/generated/client.ts",
+      "sha256": "828562fbe99630c4cc213be0572cf0e77af131dfc4b150c1f6cd1726f017a745",
+      "bytes": 1749
+    },
+    {
+      "path": "sdk/src/generated/models.ts",
+      "sha256": "950340e65a91a8496615b073e549f224bf770934cbc07d44c570eac47917a3c3",
+      "bytes": 25029
+    },
+    {
+      "path": "sdk/src/index.ts",
+      "sha256": "a6266df179b947e94f1199a47f1ec55eaf3af6fe5af6ddc7abd9fa15f0930fcc",
+      "bytes": 269
+    },
+    {
+      "path": "sdk/src/transport.ts",
+      "sha256": "3a9754ec36bbbbe0d8526d4b7f2951414b4b8ad461d803e6755d642cad07e430",
+      "bytes": 7508
+    },
+    {
+      "path": "simulator/pom.xml",
+      "sha256": "ec77da1e1b3343d08300f398f42055fd5c613986cc9d397331729626c5b94d09",
+      "bytes": 1529
+    },
+    {
+      "path": "simulator/src/main/java/dev/merchantpay/simulator/AcceptanceController.java",
+      "sha256": "20ca9fb492be1f55015940ce98fec7fddd7b7b8ed5974f857049ad9348f63a6f",
+      "bytes": 1620
+    },
+    {
+      "path": "simulator/src/main/java/dev/merchantpay/simulator/CallbackWorker.java",
+      "sha256": "425f0b1310a6fc0414e7e034e675827669bfb867defe82c3e317e1bea664ee6f",
+      "bytes": 3015
+    },
+    {
+      "path": "simulator/src/main/java/dev/merchantpay/simulator/ChannelController.java",
+      "sha256": "06585a9f2c7f1ae660323379860901c51265f46538a2518d6354c33d02188328",
+      "bytes": 4251
+    },
+    {
+      "path": "simulator/src/main/java/dev/merchantpay/simulator/ChannelStore.java",
+      "sha256": "4d95887c3840cd7917155a9c1c89f9bca9421357969e20de4ad354a632515e8a",
+      "bytes": 14710
+    },
+    {
+      "path": "simulator/src/main/java/dev/merchantpay/simulator/DemoMerchantWebhook.java",
+      "sha256": "39d402b77e274a244c2e1b3fe8e1ac55748c2cb0642f9b5d97dfa6d787eb37f9",
+      "bytes": 1528
+    },
+    {
+      "path": "simulator/src/main/java/dev/merchantpay/simulator/SimulatorApplication.java",
+      "sha256": "f86c724c08638a1419c40aab9bba35a00a6d53abb9e67676dcc0fded0eec8532",
+      "bytes": 729
+    },
+    {
+      "path": "simulator/src/main/java/dev/merchantpay/simulator/StandardProfile.java",
+      "sha256": "379caf4ff427da60881730fd3df3074ea67e96edacbcf220f21d4cbff6043cbd",
+      "bytes": 2106
+    },
+    {
+      "path": "simulator/src/main/resources/application.yaml",
+      "sha256": "112e06460e89c13866db74a5994bece313ad62de42898c26431a4e5f33f95f9c",
+      "bytes": 773
+    },
+    {
+      "path": "simulator/src/main/resources/schema.sql",
+      "sha256": "15fded6774e945fb4eb1001425590d29122b90c8a9691006638d1df94980aab9",
+      "bytes": 1821
+    },
+    {
+      "path": "simulator/src/test/java/dev/merchantpay/simulator/ChannelHealthTest.java",
+      "sha256": "d3ee49d57f963904b312870ab53ba520faf5df4902225279bb80271567b190d6",
+      "bytes": 5011
+    },
+    {
+      "path": "simulator/src/test/java/dev/merchantpay/simulator/ChannelStoreTest.java",
+      "sha256": "2736043d53e4c8da5fb53e288ee80c31632995de4ec342ab5fb20cb78e50b2cc",
+      "bytes": 6137
+    },
+    {
+      "path": "toolchain.lock.json",
+      "sha256": "dd852874050e0e04017fefabc1b3fe0a04d6ad99cf245934fe8f19316385b044",
+      "bytes": 577
+    },
+    {
+      "path": "tools/fixtures/D1Fixture.java",
+      "sha256": "b107cf3666c72e6a1253518309d311f4ed92768f9157b2dacae4dca82c3b7d0b",
+      "bytes": 17754
+    },
+    {
+      "path": "tools/fixtures/D1FixtureRecoveryTest.java",
+      "sha256": "14a2d8770cd9090c4999375808e4b5d9243d3d7ff24be6ea1fb427f8a1415bed",
+      "bytes": 3136
+    },
+    {
+      "path": "tools/fixtures/D1FixtureTest.java",
+      "sha256": "c99fbf101498759b3181feb48f603788a2edd6062a2e62709b860c0e65bd8ad6",
+      "bytes": 4060
+    },
+    {
+      "path": "tools/fixtures/RestoredSetCheck.java",
+      "sha256": "9dc65cf8cba9a0e1b5d833183d8147fff6213a1e0ef7e9f0c3203e67458dd59e",
+      "bytes": 7238
+    }
+  ]
+}

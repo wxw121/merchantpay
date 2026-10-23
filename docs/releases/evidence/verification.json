@@ -1,0 +1,53 @@
+{
+  "independentReview": {
+    "report": "docs/releases/review.md",
+    "minorDeferred": 1,
+    "fixed": 4,
+    "importantFindings": 4
+  },
+  "browser": {
+    "core": 3,
+    "passed": true,
+    "source": ".work/e2e-consistent-delivery.log"
+  },
+  "knownDependencyFindings": {
+    "MavenFindings": 0,
+    "FrontendFindings": 0,
+    "MavenRuntimePackages": 138,
+    "FrontendProductionPackages": 78
+  },
+  "fourHourSoakCertified": false,
+  "referenceR1Certified": false,
+  "formalReleaseApproved": false,
+  "d1FullCapacityCertified": false,
+  "restartRecoveryPassed": true,
+  "frontend": {
+    "initialBundleLcpMeasured": false,
+    "tests": 12,
+    "failures": 0,
+    "productionBuildPassed": true
+  },
+  "release": "1.0.0-SNAPSHOT",
+  "applicationImageBuildPassed": false,
+  "generatedAt": "2026-10-18T06:06:39.3790090+00:00",
+  "backend": {
+    "failures": 0,
+    "source": ".work/final-consistency-and-admission.log",
+    "simulator": 4,
+    "platform": 97
+  },
+  "remoteCiExecuted": false,
+  "scale": {
+    "rows": 100000,
+    "processingMilliseconds": 191159,
+    "issueCount": 100000,
+    "passed": true,
+    "source": ".work/scale-reviewed.log"
+  },
+  "localLoadTimingBasis": "Committed facts are verified offline; arrival-window counts and completion latency use journal.created_at before commit as a timing proxy, not exact commit timestamps.",
+  "finalHealth": {
+    "source": "final local HTTP health check",
+    "prometheusTargetUp": 1,
+    "platform": "UP"
+  }
+}

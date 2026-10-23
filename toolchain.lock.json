@@ -1,0 +1,18 @@
+[
+  {
+    "name": "java25",
+    "archive": "jdk-25.0.5-windows.zip",
+    "sha256": "558dff0116b6df12f74ecc2405e2e666ed89faafe6065b8948cedccfe96523d3",
+    "url": "https://download.oracle.com/java/25/archive/jdk-25.0.5_windows-x64_bin.zip",
+    "version": "25.0.5",
+    "length": 215947971
+  },
+  {
+    "name": "node24",
+    "archive": "node24.zip",
+    "sha256": "f9683a19877e12a9b167305c8db71040d812876359de21f0d2e97c3f321f80c3",
+    "url": "https://nodejs.org/dist/v24.22.0/node-v24.22.0-win-x64.zip",
+    "version": "24.22.0",
+    "length": 37733703
+  }
+]

@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-10-18T11:02:43.5984345Z",
+  "version": "1.0.0-SNAPSHOT",
+  "scope": "Four findings from the second code review",
+  "findingsFixed": 4,
+  "backend": {
+    "platform": 182,
+    "simulator": 4,
+    "total": 186,
+    "failures": 0,
+    "errors": 0,
+    "format": "passed",
+    "log": ".work/round2-fixes-final-backend.log"
+  },
+  "frontend": {
+    "tests": 18,
+    "build": "passed",
+    "log": ".work/round2-fixes-final-ui.log",
+    "buildLog": ".work/round2-fixes-final-ui-build.log"
+  },
+  "browser": {
+    "passed": 5,
+    "scaleSkipped": 1,
+    "log": ".work/round2-fixes-final-e2e.log",
+    "desktop": "docs/releases/evidence/round2-evidence-desktop.png",
+    "mobile": "docs/releases/evidence/round2-evidence-mobile.png"
+  },
+  "independentReview": "Migration version collision fixed as V11; no remaining P1/P2 confirmed",
+  "runtime": {
+    "health": "UP",
+    "schemaVersion": 11,
+    "ledgerDifferenceMinor": "0",
+    "unbalancedJournals": 0,
+    "invalidRefundQuotas": 0,
+    "dataPreserved": true,
+    "log": ".work/round2-fixes-runtime.log"
+  },
+  "performance": {
+    "queryPlanCases": [
+      "20000 duplicates",
+      "40000 duplicates",
+      "separated duplicate groups"
+    ],
+    "productionSqlPlanVerified": true,
+    "R1D1Recertified": false,
+    "fourHourStabilityRerun": false
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "verifiedAtUtc": "2026-10-18T16:17:36.2823963Z",
+  "version": "1.0.0-SNAPSHOT",
+  "scope": "Fourth review P3 export download audit merchant attribution",
+  "backend": {
+    "javaFormat": "passed",
+    "errors": 0,
+    "javaFormatFiles": 66,
+    "platformTests": 240,
+    "exitCode": 0,
+    "targetedLog": ".work/round4-fix-export-green.log",
+    "simulatorTests": 4,
+    "totalTests": 244,
+    "targetedExportTests": 22,
+    "log": ".work/round4-fix-final-backend.log",
+    "skipped": 0,
+    "failures": 0
+  },
+  "build": {
+    "status": "passed",
+    "exitCode": 0,
+    "log": ".work/round4-fix-package.log"
+  },
+  "browser": {
+    "targetedExitCode": 0,
+    "test": "console/tests/export-audit.spec.ts",
+    "targetedPassed": 1,
+    "previousFiveFlowsRerun": false,
+    "originalImplementationFailedLog": ".work/round4-fix-browser-red.log",
+    "log": ".work/round4-fix-browser-green.log"
+  },
+  "frontend": {
+    "productionBuildRerun": false,
+    "unitTestsRerun": false,
+    "browserTestFormat": "passed",
+    "productionSourceChanged": false
+  },
+  "runtime": {
+    "incorrect_merchant": "0",
+    "health": "UP",
+    "new_export_download_audits": "1",
+    "ledger_difference_minor": "0",
+    "missing_merchant": "0"
+  },
+  "deployment": {
+    "platformJarSha256": "83AD000C10E4ACF62C64AF3F1D7BD4B626C831985C8F46C2CE3C4B5AA01939F3",
+    "status": "local running",
+    "log": ".work/round4-fix-deploy.log"
+  },
+  "independentReview": {
+    "scope": "Read-only source/test/log review; no independent runtime execution",
+    "actionableFindings": 0
+  },
+  "historicalNullMerchantAuditBackfilled": false,
+  "sourceDigests": ".work/round4-fix-source-digests.json",
+  "notRecertified": [
+    "R1",
+    "D1",
+    "100000-row batch",
+    "4-hour stability",
+    "dependency vulnerability status"
+  ]
+}

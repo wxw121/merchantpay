@@ -1,0 +1,53 @@
+{
+  "images": [
+    {
+      "repoDigests": [
+        "mysql@sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364"
+      ],
+      "id": "sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364",
+      "tag": "mysql:8.4"
+    },
+    {
+      "repoDigests": [
+        "quay.io/keycloak/keycloak@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244"
+      ],
+      "id": "sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244",
+      "tag": "quay.io/keycloak/keycloak:26.8.1"
+    },
+    {
+      "id": "sha256:aafa9d694e6a883c02db516d9f6e5b84e14195f49a2a6456a4cca815edda72b9",
+      "tag": "quay.io/prometheus/prometheus:v3.13.5",
+      "repoDigests": [
+        "quay.io/prometheus/prometheus@sha256:aafa9d694e6a883c02db516d9f6e5b84e14195f49a2a6456a4cca815edda72b9"
+      ]
+    }
+  ],
+  "recordedAt": "2026-10-21T14:07:52.9609961+00:00",
+  "localPatchedInfrastructure": [
+    {
+      "module": "mysql",
+      "dockerfileSha256": "5E5EF2EE51707E857D17AC063319AAC02F082461BB23C8D51092E2D9790B34ED",
+      "id": "sha256:13ea632fbac16588eb0c08aa76c093e496753aec83cd244e2b978a1e7b49b5d8",
+      "image": "merchantpay/mysql:v1-local"
+    },
+    {
+      "module": "storage",
+      "dockerfileSha256": "45117D74D660B21B2B1FC489EED6E59D229A6D33066C7F251EBA1B2635D24C96",
+      "id": "sha256:94aaa1c507d6c9756e0efb120df7f19aa8d2407afe39847b5285d24f34dd3db0",
+      "image": "merchantpay/storage:v1-local"
+    },
+    {
+      "module": "keycloak",
+      "dockerfileSha256": "932C1475124B53FFE775C5C24060B820DD22B53763B1E9870BD5F933ECCE1B5C",
+      "id": "sha256:afbb977ebc0910bd11a6458f0d8584777babc21f844ac25095cc6a8bb0b0f7f3",
+      "image": "merchantpay/keycloak:v1-local"
+    }
+  ],
+  "baseDigests": [
+    "mysql:8.4@sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364",
+    "rustfs/rustfs:1.0.0-beta.12@sha256:41fe89380f4120a337790c02af192c3fe7bb55c3edc2e6e9357b487b47c6ab21",
+    "quay.io/keycloak/keycloak:26.8.1@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244",
+    "container-registry.oracle.com/java/jdk-no-fee-term:25.0.5@sha256:283d01db5d749b005826ad311af50a78cc40969548abb63d4b57063a6d611960",
+    "quay.io/prometheus/prometheus:v3.13.5@sha256:aafa9d694e6a883c02db516d9f6e5b84e14195f49a2a6456a4cca815edda72b9"
+  ]
+}

@@ -1,0 +1,77 @@
+# Independent local container deployment. Never overlays the native project's volumes.
+# docker compose --env-file .env -p merchantpay-container-v1 -f infra/compose.yaml -f infra/compose.app.yaml up -d
+services:
+  mysql:
+    ports: !override ["127.0.0.1:13307:3306"]
+    mem_limit: 768m
+    cpus: 2
+  keycloak:
+    command: ["start-dev", "--import-realm", "--http-port=18180"]
+    environment:
+      KC_HOSTNAME: http://merchantpay-keycloak.localhost:18180
+    ports: !override ["127.0.0.1:18180:18180"]
+    networks:
+      default:
+        aliases: [merchantpay-keycloak.localhost]
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/18180"]
+      interval: 3s
+      timeout: 2s
+      retries: 40
+    volumes: !override
+      - ../.data/container/keycloak:/opt/keycloak/data/import:ro
+      - keycloak-data:/opt/keycloak/data/h2
+    mem_limit: 768m
+    cpus: 2
+  platform:
+    image: merchantpay/platform:${APP_IMAGE_TAG:-v1-local}
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      JAVA_TOOL_OPTIONS: -Xmx640m -XX:ActiveProcessorCount=2
+      DATABASE_URL: jdbc:mysql://mysql:3306/merchantpay?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&rewriteBatchedStatements=true&cachePrepStmts=true&prepStmtCacheSize=256&useLocalSessionState=true
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?Run scripts/init-local.ps1}
+      MASTER_KEY: ${MASTER_KEY:?Run scripts/init-local.ps1}
+      CHANNEL_TOKEN: ${CHANNEL_TOKEN:?Run scripts/init-local.ps1}
+      CALLBACK_SECRET: ${CALLBACK_SECRET:?Run scripts/init-local.ps1}
+      METRICS_PASSWORD: ${METRICS_PASSWORD:?Run scripts/init-local.ps1}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:?Run scripts/init-local.ps1}
+      OIDC_BASE_URL: http://merchantpay-keycloak.localhost:18180
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KEYCLOAK_REDIRECT_URI: http://127.0.0.1:15173/login/oauth2/code/keycloak
+      CHANNEL_BASE_URL: http://simulator:9091
+      CONSOLE_URL: http://127.0.0.1:15173
+      LOCAL_WEBHOOK: http://simulator:9091/merchant-webhook
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
+    ports: ["127.0.0.1:18080:8080"]
+    volumes: ["platform-data:/data/platform"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      simulator:
+        condition: service_started
+    restart: on-failure:3
+    mem_limit: 1g
+    cpus: 2
+  simulator:
+    image: merchantpay/simulator:${APP_IMAGE_TAG:-v1-local}
+    environment:
+      JAVA_TOOL_OPTIONS: -Xmx320m -XX:ActiveProcessorCount=2
+      CHANNEL_TOKEN: ${CHANNEL_TOKEN:?Run scripts/init-local.ps1}
+      CALLBACK_SECRET: ${CALLBACK_SECRET:?Run scripts/init-local.ps1}
+      CALLBACK_URL: http://platform:8080/api/channel/callback
+      SIMULATOR_PROFILE: ${APP_SIMULATOR_PROFILE:-demo}
+      SIMULATOR_SEED: "20261019"
+    ports: ["127.0.0.1:19091:9091"]
+    volumes: ["simulator-data:/data/simulator"]
+    mem_limit: 512m
+    cpus: 2
+  console:
+    image: merchantpay/console:${APP_IMAGE_TAG:-v1-local}
+    ports: ["127.0.0.1:15173:8080"]
+    depends_on: [platform]
+    mem_limit: 128m
+    cpus: 1
+volumes:
+  platform-data:
+  simulator-data:

@@ -1,0 +1,3718 @@
+{
+  "generatedAt": "2026-10-23T00:37:38.760Z",
+  "measurementAndVerificationComplete": true,
+  "published": false,
+  "performanceGoalsPassed": false,
+  "qualified": false,
+  "referenceR1Certified": false,
+  "d1Qualified": false,
+  "targets": {
+    "paymentCompletedTps": 300,
+    "simultaneousRefundCompletedTps": 30,
+    "successfulQueryQps": 2000,
+    "acceptedHttpP99Ms": 300,
+    "successfulPostingP99Ms": 3000,
+    "queryP99Ms": 200
+  },
+  "retained": {
+    "image": "merchantpay/platform:v1-local",
+    "imageId": "sha256:5401f16bec54708af42071bab6ac07c9900da1ff1d6e40fe661c0ad2fda05e2d",
+    "jar": {
+      "path": "platform/target/platform-1.0.0-SNAPSHOT.jar",
+      "sha256": "6860c949fd4344d454ff62eca8bd18f285ea95dd65bab03dc851706968b31ac7",
+      "bytes": 61779706
+    },
+    "databaseIsolationEnabled": false,
+    "databasePool": 32,
+    "fastWorkerPerformance": {
+      "channel": 64,
+      "inbox": 16,
+      "notification": 16,
+      "total": 96
+    },
+    "bulk": 2,
+    "apiInflight": 128,
+    "flushLogAtTrxCommit": 1,
+    "syncBinlog": 1
+  },
+  "regression": {
+    "platformTests": 338,
+    "simulatorTests": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "formatPassed": true,
+    "log": {
+      "path": ".work/flow-optimization-20261022/final-database-backend.log",
+      "sha256": "f5ca1247250486a9f81d201b2d3fd98a3a56656e879f86635176d27e2ceac467",
+      "bytes": 90294
+    },
+    "frontendChanged": false
+  },
+  "sourceFiles": [
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/channel/ChannelApi.java",
+      "sha256": "4ef34dd85fc0c0da548a589e2cc4d6fdfa2aa1f71a22b57aa12524a3636d5cc2",
+      "bytes": 1782
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/channel/ChannelBillReader.java",
+      "sha256": "ac17734a3af677f91fc330d6dd7c63ce04ec0b93e01463e278fb3f0f70ec8770",
+      "bytes": 1609
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/channel/ChannelGateway.java",
+      "sha256": "ef3bf583615deed3b70888155cd871d6e4f69c4510dbb867a24d9a1e83fa841e",
+      "bytes": 12664
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/channel/InboxService.java",
+      "sha256": "61ec28f6103a7adcc0b094a3e68eedbc7e247ffa0a5c091b73c02b74e225e4d5",
+      "bytes": 4654
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/ApiException.java",
+      "sha256": "3a7d73ede525c822b60f9489aa568e7d5e3e33b60d60d1089baedbd0967b8514",
+      "bytes": 969
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/ChannelResult.java",
+      "sha256": "0de610320d74937edd9543ad6c32fcfdfe0f635113fd87a3776bf0c0602730fd",
+      "bytes": 500
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/Csv.java",
+      "sha256": "df3bce95879d4d73b653e820cedb0d159fa0116b3cf7bc99792b65fa1fe54edf",
+      "bytes": 462
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/DatabasePools.java",
+      "sha256": "e27609910bce36c8e086e8f2f238e3d0d5d2362040ed299147d26ba11dfd9763",
+      "bytes": 2736
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/DatabaseRole.java",
+      "sha256": "819ae8fe21412d9592987bed5d308a6abd23a16136eca06a9035e0b74d2dd64c",
+      "bytes": 488
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/KeyVault.java",
+      "sha256": "7cfdafddd810c3b75826820a3cd31ce4438d1560cd96e18441a3165b33c7099d",
+      "bytes": 2341
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/MoneyRules.java",
+      "sha256": "21d4a0cc537302c4dcd164a1e817c062591b3cd84b614fa5bcfb11faaecf97f1",
+      "bytes": 1512
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/NotificationPolicy.java",
+      "sha256": "041bf8a83196e983c04d378a465764fffcb7c64622aaeae9993d6df7ece89134",
+      "bytes": 1401
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/common/Signatures.java",
+      "sha256": "8c217871c6619f3a7236deb7106e5728a81f01c9a81071c919d6454537db6aa3",
+      "bytes": 1908
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/ledger/LedgerService.java",
+      "sha256": "9e785f60954a62e9b81b83dc9339a9d852f8526b1310c0a3bbdc9c4fd58dd264",
+      "bytes": 3053
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/merchant/MerchantService.java",
+      "sha256": "76753c32613641ef11090aa764e94b73a509339c765c93b8153b50ee1ee953cf",
+      "bytes": 4813
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/BusinessMetrics.java",
+      "sha256": "ad150e77717c7953ae92c6c0f3394331f7f052a63ea1a8ff9cbad3d185f985fd",
+      "bytes": 2525
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/LocalDemoData.java",
+      "sha256": "ec0afb6cb06139786a86c492cc3833278599fd3c7baa110384673690f394229f",
+      "bytes": 1899
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/NotificationService.java",
+      "sha256": "55c7f9d6180d03fa0525c110bb75e1d2ba29388e01a23ffea4fe8b18f51ef689",
+      "bytes": 4434
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/TaskCompletions.java",
+      "sha256": "a167f25a7935b6b86e8149744c2b657403c7f70dad0eec2f933741ec90c80f3d",
+      "bytes": 2462
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/TaskWorker.java",
+      "sha256": "992c06b1a4d7257b8783e21ed42ef11fc5e6836ee3b9f5d2904f4a519ad62353",
+      "bytes": 7394
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/outbox/OutboxService.java",
+      "sha256": "c3893e8141c61cabb70af1c6a50aa1b9a82d66b096a4ef1c606ca637532fd7e7",
+      "bytes": 1567
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/outbox/TaskQueue.java",
+      "sha256": "0afb3ebe489007e414c2d16f74eb645fea5c72a178ac44d574f4e0e597594e29",
+      "bytes": 9011
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/payment/PaymentService.java",
+      "sha256": "12419cee553f35bfbb046fbddd28ff8d59ace31566e472b042cf396070d83614",
+      "bytes": 15443
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/PlatformApplication.java",
+      "sha256": "eb986add51d0779632c3196ed42bd5e729b1093e0360cc42eacbe60e64d7eed2",
+      "bytes": 2693
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/query/Queries.java",
+      "sha256": "f61a7675e2bbaacceb2b11b26b5c925f2064ae44cf874697c180d3fffb1179fe",
+      "bytes": 14634
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/reconciliation/ExportService.java",
+      "sha256": "cd1487dc1dc186d12454b13f7384bbe11ce822cd0ef24ad31145d190db911543",
+      "bytes": 10763
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/reconciliation/ObjectStorage.java",
+      "sha256": "74aa69b399913e04268a5e2cf302cc01966bc53716d076f361844dcb603237a8",
+      "bytes": 6140
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/reconciliation/ReconciliationService.java",
+      "sha256": "2f713cdfffd5a8b1ed1ec867bc7de8721a5cf36cd0542e95453e2de65a0220ba",
+      "bytes": 22568
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/refund/RefundService.java",
+      "sha256": "2b5181e3e0b87f1c2c2c70b242fcbf0eaaa17d0f6902b4648c2077822e08cd37",
+      "bytes": 9882
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/Access.java",
+      "sha256": "d4f07c224d55f398d34909e64104a402895f882e80ab89e33a5fcd3d82b2b231",
+      "bytes": 2387
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ApiAvailability.java",
+      "sha256": "225cb0e8013ed7c14bd332683101ad40d2365cd453f88201e70e849c49bf0c55",
+      "bytes": 1770
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ApiErrors.java",
+      "sha256": "29d5c6596b4fb3a80075d9702f9bae3451ebbcc2fc12bc3f48089cb719f359b5",
+      "bytes": 1795
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ApiRateLimiter.java",
+      "sha256": "244344a41e6ebac70868a4f98c33ff2a9dca6aa18b44b6a0e507fcc23d5ad8be",
+      "bytes": 6377
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ChannelCallbackController.java",
+      "sha256": "685542d2b33f4e0d6f17106f2e9b6b061b739445d38078432c5f0224caa953df",
+      "bytes": 1164
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ChannelStatusController.java",
+      "sha256": "ea62bb564dd0c5dce5e1ea4a0ff96f2e14abbc6c24f5432e27251465ef1fe6f6",
+      "bytes": 714
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ConsoleController.java",
+      "sha256": "95281c3c964aa74b95959a7cba89921fcb932777919c7cce56e3a4cb10c3f9f0",
+      "bytes": 12214
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/OpenApiController.java",
+      "sha256": "0628cf9ffed7b857079a411c9ee655af295b9dde63937a20d7bf3281365284e8",
+      "bytes": 3151
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/ReconciliationController.java",
+      "sha256": "8885607cddd8dfe07d20f5afc50977f5c58fa4a4e9c77dc96eb4eb294eb8a5d2",
+      "bytes": 8774
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/RequestTraceFilter.java",
+      "sha256": "87ec59b93a897a6cd0d801c741a50dd3821921dede0f036d64e56a7c2a29229a",
+      "bytes": 1351
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/SecurityConfiguration.java",
+      "sha256": "e8c073c36e7548da76fe4ad7dd10a85f49a187b67fa442faf91b85e03cf51891",
+      "bytes": 6358
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/SignatureFilter.java",
+      "sha256": "940d95d0a3c8adf3330e87bc865572c7852aa93f82b68375085e449e5a7236e6",
+      "bytes": 7288
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/WebConfiguration.java",
+      "sha256": "545bd26bb34eaa11c375b5f697313b83ab6542dcde310ae260ade39963764884",
+      "bytes": 1096
+    },
+    {
+      "path": "platform/src/main/resources/application.yaml",
+      "sha256": "2fdef797b650820841a52c6a340cc60fa591d675e9344b1d870d09f803abc0f1",
+      "bytes": 3383
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V10__export_execution.sql",
+      "sha256": "63712b0066c17d7148cc3a0e5f48e3bca791cf9424e4b2b98abfcb87dc2c66b2",
+      "bytes": 54
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V11__payment_evidence_paging.sql",
+      "sha256": "f826cba647a47575a0a41c4933d1c81add4a73759c2014befecd20551017d796",
+      "bytes": 83
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V12__payment_backpressure.sql",
+      "sha256": "42c4a059c5715693cc87a7b45370554a07052f513a4d0e88203e5e79e64ab782",
+      "bytes": 681
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V13__task_execution_lanes.sql",
+      "sha256": "46646dad15f6e3b209d38152c3e88ab84d849d3685f711d846c26003c0c52745",
+      "bytes": 520
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V1__core.sql",
+      "sha256": "7886e929c4ad0575e35798bf8fe268cf365d392c0ee10c8146830beef7dbe2a1",
+      "bytes": 5797
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V2__security_and_evidence.sql",
+      "sha256": "a6f4367984437269b10116711af34360cc268bc592195efa73214aecd9e3d11e",
+      "bytes": 682
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V3__notifications.sql",
+      "sha256": "9396fc5df78972d49df7496d0469e9446562350898608f3f524606589d123ba6",
+      "bytes": 398
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V4__reconciliation.sql",
+      "sha256": "d5528042679999640d3263b6d7d0950e477d34c6ed0641fe4d73b27b8cf2117f",
+      "bytes": 2154
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V5__exports.sql",
+      "sha256": "7535aaf722aaab49e306358b272c7dddf738063220698d99f8c5c07165967b90",
+      "bytes": 453
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V6__timeline_and_cursor_indexes.sql",
+      "sha256": "765742fab1cb1ebc1ceb47606f8cfd53f6cf703a182bd58caf57f229fee75f36",
+      "bytes": 572
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V7__isolated_task_queues.sql",
+      "sha256": "107a3566f279ad3881c231dcbe038c6da9425785670c542ea9d07c7bc9bb1c88",
+      "bytes": 330
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V8__export_ownership.sql",
+      "sha256": "be931902ed6aba17f46e3222a07a632374b560f62b363823ef74c8ef2fa6a9ff",
+      "bytes": 285
+    },
+    {
+      "path": "platform/src/main/resources/db/migration/V9__reconciliation_execution.sql",
+      "sha256": "626e798c9f281b5c5be17121fccd9ba2ff03391273203580a36e4faf0f6c057d",
+      "bytes": 60
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/AdmissionTest.java",
+      "sha256": "e9c9d9bc18d4889513d8a61b6a89aaf70ddc7d5f031ac063b2428f34650050f6",
+      "bytes": 7838
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ApiRateLimiterTest.java",
+      "sha256": "974d757d34ba2e1c56283d27e23de27dd759fc6be9c5a5f22d6361009bedd78d",
+      "bytes": 10224
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/AuditTransactionTest.java",
+      "sha256": "229d016de8918561162a16b9e7efc8cc025aa59bdf7de98ae484d4364eb58831",
+      "bytes": 11502
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ChannelConcurrencyTest.java",
+      "sha256": "dfe12cbdebd87c292f63907cd6e2cdf87747fa75a470376ce9f48d6374617c99",
+      "bytes": 4015
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ChannelEvidenceTest.java",
+      "sha256": "1b3736c44be43e71895b0f2588386bf4ba5c08a786d84313c1126dbddb9c89ff",
+      "bytes": 25617
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ChannelHttpContractTest.java",
+      "sha256": "79c3ad0e3e0c19159bcce1e92d8b7ca26f7c4d9157a202477e590bfb92fa00a7",
+      "bytes": 2402
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ChannelSubmissionTest.java",
+      "sha256": "c5ecb4ead1a83d23459c156ff61dcba041adfb61422ab89bcafb7b6559470cbd",
+      "bytes": 7873
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/common/CryptoTest.java",
+      "sha256": "e7d34120a00fd438637e7b428e53be5d47c956d792d4a62ec4a4e97d6af2cf20",
+      "bytes": 2479
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/common/CsvTest.java",
+      "sha256": "27e59a848b7d9cc6c279ff957630d9e033cd0edd129b96209faec4c8ae5cfbb6",
+      "bytes": 510
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/common/MoneyRulesTest.java",
+      "sha256": "083e35cec2a629fbf847adb6534a36bc5e9e9935f5db06075611a6b9796a7fda",
+      "bytes": 1797
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ConsoleDetailTest.java",
+      "sha256": "81e0f23a6dc3cd584a08340ee11fdc4040de0b45b8c8bfe8562bda94585a7af0",
+      "bytes": 9005
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/DatabaseIsolationTest.java",
+      "sha256": "a45e65f50ad7bedd1aac94fe093b93e9c24e68742c8a7b1568f64f0a2efb0c30",
+      "bytes": 7786
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/DatabasePoolConfigurationTest.java",
+      "sha256": "c2479aeec960f3ffc9f5063b95e8da9d1cdbdacd0fff994b1bb6f80de8f65eb3",
+      "bytes": 1912
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/DurableTaskTest.java",
+      "sha256": "526510f7631d6223bafd28bf73f20652ea14cf8411b29cf2249845b3623f557a",
+      "bytes": 8574
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ExportTest.java",
+      "sha256": "8e406c18ad1e101d946fd015d27781337d0ee73ee11930e2ae34878d8bae5c7f",
+      "bytes": 13854
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/FinancialCoreTest.java",
+      "sha256": "7e0cbfa539b5cf7c2862aa454bed6690eafddec4816660d8bb39076101c91d09",
+      "bytes": 10872
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/FinancialFixture.java",
+      "sha256": "c78bc1d9b90a41defe773d2318da10d298fdae7712e4ee2ddde7bfc67933a0e2",
+      "bytes": 3533
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/LegacyObjectStorageTest.java",
+      "sha256": "328162cd8601f830e8a2a5c517e9c5aba99efc7763c42cc0cc745c4b4d9de714",
+      "bytes": 1787
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ModuleArchitectureTest.java",
+      "sha256": "fbcefa5bfcf01ed7f473986447f42733cd5cef64b794b319b65011ac06a9f6b5",
+      "bytes": 292
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlApiRateLimiterTest.java",
+      "sha256": "e2a1eb85f6be23068927f11d9561f10c42defd3196f953d2baa193e71ec75416",
+      "bytes": 1216
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlAuditTransactionTest.java",
+      "sha256": "c892b46e22484c997ada6ccd78e11ca533ff045c8248f284598e1bc310b9598d",
+      "bytes": 1163
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlChannelEvidenceTest.java",
+      "sha256": "854a86f198e71285e9117de630bd813e25ee3e661448a4cf9b120e141a218388",
+      "bytes": 1219
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlChannelSubmissionTest.java",
+      "sha256": "cd828d9ba33ae48889e471fe1c3ee923f11864c4dc4cc8a50e50b1ebb214ae69",
+      "bytes": 1225
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlConsoleDetailTest.java",
+      "sha256": "d3c667b1d5e9e060a33dcd03efcd5bdc2fbf4e2226a25b8d6ae6f3450777f189",
+      "bytes": 1158
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlConsoleSnapshotTest.java",
+      "sha256": "2dde157429c5e3a88861aaf1e30926e896299e02f91175ab487bc068575bd69d",
+      "bytes": 4119
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlDurableTaskTest.java",
+      "sha256": "3938596cee78ccffb2e583bba1d8522a0c2428dd62f53118333837636cf4e6c4",
+      "bytes": 1171
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlExportTest.java",
+      "sha256": "81bdfe90bea5009fb6281a60b3d86c91e241d8bbd73ca811163eb1d36f3b78c4",
+      "bytes": 1144
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlFinancialTest.java",
+      "sha256": "6cfb1b0903cff73361498de0c858b12f143a0e23c655e819275659192212e575",
+      "bytes": 3456
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlPaymentBackpressureTest.java",
+      "sha256": "34b351efa48a226612192b2f7c146880406987970b11102729be22cfb769cbb4",
+      "bytes": 1176
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlReconciliationTest.java",
+      "sha256": "d3e73f0f73123416d18cd0d002bbde0496e77994eea937fec44911cc9d40b968",
+      "bytes": 4887
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/MySqlTestImage.java",
+      "sha256": "6b5ee68faadbe0ccad326a29575099c7ef099532149021b314527a167ed9cecd",
+      "bytes": 347
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/orchestration/TaskCompletionsTest.java",
+      "sha256": "234529e3a6fa3facafd8b3f1d33cc45322de8fa093dcdeb9406ef28c7a92f4f9",
+      "bytes": 6198
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/orchestration/TaskWorkerConcurrencyTest.java",
+      "sha256": "506a5d4c5b8334abd6baa340446d14eb652b9379b7f2ced1acfee443c514a310",
+      "bytes": 10276
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/orchestration/TaskWorkerMetricsTest.java",
+      "sha256": "ceaf3b59f2ab7f614fc7c42f8fad9cce010294b1a860c34fbf7fb36e34c9437d",
+      "bytes": 2362
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/PausingQueue.java",
+      "sha256": "41e8e6e47956d56e20bea9997d01cb59bc2df8de82c79d7ed30aaf15b31c5f79",
+      "bytes": 1154
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/PaymentBackpressureTest.java",
+      "sha256": "5a721e81fe831a6d9acc2b823159f92642087598ae6834c7d4534e57f856bd8a",
+      "bytes": 14460
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ReconciliationTest.java",
+      "sha256": "a4f757027e9a9b0271c0654faf6dc3e1d25688b078240ab3a652d72276f5808c",
+      "bytes": 19381
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/S3StorageTest.java",
+      "sha256": "f2cbed089d428c64fbf87e776aebfbd268c5c51a6487e036ec4ea64a0c0cc920",
+      "bytes": 13409
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/SecurityIntegrationTest.java",
+      "sha256": "fecb89578bad0950dc4145123f501589f7412374a68512d7bf66bccfb33e36d9",
+      "bytes": 13658
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/web/ApiAvailabilityTest.java",
+      "sha256": "0975b41ebf8bba02754352ddce5dff59ccf664365799f8e9c3d5b78df70ebe84",
+      "bytes": 2121
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/WorkerIsolationTest.java",
+      "sha256": "c0ce1cbfc7ec3fba26e92a3d932f6fc136978a56c56f7f46a97f1c4020628dfb",
+      "bytes": 3110
+    }
+  ],
+  "runtime": {
+    "native": {
+      "before": "200449\t701\t201140\t0\t0",
+      "financialHistoryUnchanged": true,
+      "after": "200449\t701\t201140\t0\t0",
+      "jarSha256": "6860c949fd4344d454ff62eca8bd18f285ea95dd65bab03dc851706968b31ac7",
+      "health": "UP",
+      "oldOwnedPid": null,
+      "at": "2026-10-23T08:32:35.7467084+08:00",
+      "databaseIsolationEnabled": false
+    },
+    "at": "2026-10-23T00:34:07.0677606+00:00",
+    "healthChecks": [
+      {
+        "status": "UP",
+        "url": "http://127.0.0.1:8080/actuator/health"
+      },
+      {
+        "status": "UP",
+        "url": "http://127.0.0.1:18080/actuator/health"
+      },
+      {
+        "httpStatus": 200,
+        "url": "http://127.0.0.1:5173"
+      },
+      {
+        "httpStatus": 200,
+        "url": "http://127.0.0.1:15173"
+      },
+      {
+        "httpStatus": 200,
+        "url": "http://127.0.0.1:8180/realms/merchantpay/.well-known/openid-configuration"
+      },
+      {
+        "httpStatus": 200,
+        "url": "http://127.0.0.1:18180/realms/merchantpay/.well-known/openid-configuration"
+      }
+    ],
+    "retainedContainer": {
+      "cpu": 2,
+      "ready": true,
+      "isolation": "false",
+      "memory": 1073741824,
+      "at": "2026-10-22T19:44:33.9528352+08:00",
+      "imageId": "sha256:5401f16bec54708af42071bab6ac07c9900da1ff1d6e40fe661c0ad2fda05e2d"
+    }
+  },
+  "nativeSmoke": {
+    "balanceMinor": 0,
+    "id": "pf_c81f75de-2623-4df3-8b97-9e21c9f0bfdc",
+    "at": "2026-10-23T00:34:54.6423524+00:00",
+    "status": "SUCCEEDED",
+    "newSmokePaymentAddedAfterUpgradeCounters": true,
+    "uniqueJournal": 1
+  },
+  "imageScan": {
+    "imageVulnerabilityGatePassed": true,
+    "images": [
+      {
+        "os": {
+          "Family": "oracle",
+          "Name": "9.8"
+        },
+        "findings": 0,
+        "id": "sha256:5401f16bec54708af42071bab6ac07c9900da1ff1d6e40fe661c0ad2fda05e2d",
+        "report": "D:\\software\\cld_project\\javaProject\\.work\\release\\security-20261023T003332Z\\platform.json",
+        "results": 2,
+        "sha256": "D6B0F9471D053A6B25B46260A3C3E03C29290702FE5F03853718603EC28D352A",
+        "complete": true,
+        "highOrCritical": 0,
+        "module": "platform"
+      }
+    ],
+    "scanner": "Version: 0.72.0",
+    "at": "2026-10-23T00:33:56.9442171+00:00",
+    "hostWindowsOsCovered": false,
+    "jdkVendorReviewRequired": true
+  },
+  "classVerification": {
+    "allPackagedClassesMatchFinalCompiledOutput": true,
+    "classCount": 83,
+    "jarSha256": "6860c949fd4344d454ff62eca8bd18f285ea95dd65bab03dc851706968b31ac7",
+    "nativeAndContainerJarIdentical": true,
+    "at": "2026-10-23T00:35:45.5313833+00:00"
+  },
+  "failedPreflight": {
+    "path": ".work/acceptance/optimized-flow-c1-20261022T114610",
+    "reason": "Need1920 distinct successful refundable payments, found1596; workload not started; subsequently populated via signed API"
+  },
+  "comparisons": [
+    {
+      "path": ".work/acceptance/commit-aba-pay-20261022T102053",
+      "summary": {
+        "path": ".work/acceptance/commit-aba-pay-20261022T102053/summary.json",
+        "sha256": "ec624f40a6ca26e2d9214adac218366d2363f91ff682026c8c15a17d1cfd9926",
+        "bytes": 24993
+      }
+    },
+    {
+      "path": ".work/acceptance/commit-aba-pay-20261022T105349",
+      "summary": {
+        "path": ".work/acceptance/commit-aba-pay-20261022T105349/summary.json",
+        "sha256": "476aaaf2564311385669d88d2e1947ba7cd7d043523bc04f72dfa03f0f9650f5",
+        "bytes": 24955
+      }
+    },
+    {
+      "path": ".work/acceptance/commit-aba-pay-20261022T112946",
+      "summary": {
+        "path": ".work/acceptance/commit-aba-pay-20261022T112946/summary.json",
+        "sha256": "e539e92407f5f5bc440298c1ab5650a5091a1554e99d6ee50817393e081d2045",
+        "bytes": 24927
+      }
+    },
+    {
+      "path": ".work/acceptance/optimized-flow-warmup-20261022T114434",
+      "summary": {
+        "path": ".work/acceptance/optimized-flow-warmup-20261022T114434/summary.json",
+        "sha256": "9d5b9bcb227b80e2cb43bacf76d7cb07b58a4869e3873fcdd448d13f662f7f24",
+        "bytes": 4756
+      }
+    },
+    {
+      "path": ".work/acceptance/optimized-flow-refund-fixture-20261022T114712",
+      "summary": {
+        "path": ".work/acceptance/optimized-flow-refund-fixture-20261022T114712/summary.json",
+        "sha256": "0e41157ee70a6fa1c0312ea1d58ba3d1b065a3582ec7af377e35b6fb6c7091fd",
+        "bytes": 4698
+      }
+    },
+    {
+      "path": ".work/acceptance/optimized-flow-c1-20261022T114814",
+      "summary": {
+        "path": ".work/acceptance/optimized-flow-c1-20261022T114814/summary.json",
+        "sha256": "41f87a5ec3daf6afcf1881d76ed33c83a0fb6f0a6b9d7dd52f82bc7e6e98de3d",
+        "bytes": 4960
+      }
+    },
+    {
+      "path": ".work/acceptance/optimized-flow-query800-20261022T115201",
+      "summary": {
+        "path": ".work/acceptance/optimized-flow-query800-20261022T115201/summary.json",
+        "sha256": "b357aa089ff15e695ade8b8b6067c37353d2a48937858d050a9a71652fb4b8da",
+        "bytes": 4771
+      }
+    },
+    {
+      "path": ".work/acceptance/optimized-flow-c2-20261022T115330",
+      "summary": {
+        "path": ".work/acceptance/optimized-flow-c2-20261022T115330/summary.json",
+        "sha256": "fb2c5d90160aef1aae8454d5756e111c063c4700672b73dcbe6c23d7d92de36a",
+        "bytes": 4776
+      }
+    }
+  ],
+  "stages": [
+    {
+      "name": "commit-aba-pay-20261022T102053:a1:warmup",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 600,
+        "sent": 600,
+        "acceptedOrRead": 600,
+        "httpStatuses": {
+          "202": 600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 31406,
+        "httpP95Micros": 130693,
+        "httpP99Micros": 447425,
+        "scheduledHttpP99Micros": 456758,
+        "sendDelayP99Micros": 17973,
+        "posted": 587,
+        "businessFailed": 13,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.75,
+        "completedPerArrivalSecondUpper": 9.766666666666667,
+        "successfulCompletionP99LowerMicros": 1442428,
+        "successfulCompletionP99UpperMicros": 1812191,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5757626,
+        "observerSnapshots": 197,
+        "observerMaxQueryMicros": 153724,
+        "maxCommitVisibilityIntervalMicros": 468163,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 447425
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5109432,
+        "observerSnapshots": 197,
+        "observerMaxQueryMicros": 91529,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 3000,
+        "httpStatuses": {
+          "200": 3000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 23158,
+        "httpP95Micros": 104929,
+        "httpP99Micros": 373933,
+        "scheduledHttpP99Micros": 384193,
+        "sendDelayP99Micros": 20509,
+        "successfulPerArrivalSecond": 49.983333333333334,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 373933
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T102106-5fd6a757/accept-20261022T102106-5fd6a757-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T102053:a1:measurement",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 4950,
+        "httpStatuses": {
+          "202": 4950,
+          "503": 1050
+        },
+        "droppedIterations": 0,
+        "systemErrors": 1050,
+        "rejected": 0,
+        "httpP50Micros": 204219,
+        "httpP95Micros": 1133603,
+        "httpP99Micros": 1544203,
+        "scheduledHttpP99Micros": 1547295,
+        "sendDelayP99Micros": 23660,
+        "posted": 4846,
+        "businessFailed": 104,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 76.51666666666667,
+        "completedPerArrivalSecondUpper": 76.56666666666666,
+        "successfulCompletionP99LowerMicros": 4648527,
+        "successfulCompletionP99UpperMicros": 5165134,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 22924720,
+        "observerSnapshots": 559,
+        "observerMaxQueryMicros": 613407,
+        "maxCommitVisibilityIntervalMicros": 949734,
+        "retryReasons": {
+          "API_INFLIGHT": 47,
+          "PAYMENT_CAPACITY": 1003
+        },
+        "successfulHttpP99Micros": 1540939
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 14397367,
+        "observerSnapshots": 559,
+        "observerMaxQueryMicros": 373784,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T102244-1011bff2/accept-20261022T102244-1011bff2-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T102053:b:warmup",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 600,
+        "sent": 600,
+        "acceptedOrRead": 600,
+        "httpStatuses": {
+          "202": 600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 28905,
+        "httpP95Micros": 103816,
+        "httpP99Micros": 196857,
+        "scheduledHttpP99Micros": 208533,
+        "sendDelayP99Micros": 20096,
+        "posted": 592,
+        "businessFailed": 8,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.816666666666666,
+        "completedPerArrivalSecondUpper": 9.866666666666667,
+        "successfulCompletionP99LowerMicros": 502730,
+        "successfulCompletionP99UpperMicros": 872913,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5950848,
+        "observerSnapshots": 196,
+        "observerMaxQueryMicros": 171005,
+        "maxCommitVisibilityIntervalMicros": 597689,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 196857
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5008956,
+        "observerSnapshots": 196,
+        "observerMaxQueryMicros": 83609,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 3000,
+        "httpStatuses": {
+          "200": 3000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 22577,
+        "httpP95Micros": 85749,
+        "httpP99Micros": 198369,
+        "scheduledHttpP99Micros": 210988,
+        "sendDelayP99Micros": 20976,
+        "successfulPerArrivalSecond": 49.916666666666664,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 198369
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T102632-e14773c0/accept-20261022T102632-e14773c0-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T102053:b:measurement",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 4787,
+        "httpStatuses": {
+          "202": 4787,
+          "503": 1213
+        },
+        "droppedIterations": 0,
+        "systemErrors": 1213,
+        "rejected": 0,
+        "httpP50Micros": 194152,
+        "httpP95Micros": 1405683,
+        "httpP99Micros": 3674264,
+        "scheduledHttpP99Micros": 3674292,
+        "sendDelayP99Micros": 18737,
+        "posted": 4688,
+        "businessFailed": 99,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 73.86666666666666,
+        "completedPerArrivalSecondUpper": 73.9,
+        "successfulCompletionP99LowerMicros": 7217118,
+        "successfulCompletionP99UpperMicros": 7619137,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 20327220,
+        "observerSnapshots": 575,
+        "observerMaxQueryMicros": 478001,
+        "maxCommitVisibilityIntervalMicros": 744822,
+        "retryReasons": {
+          "API_INFLIGHT": 361,
+          "DATABASE_UNAVAILABLE": 48,
+          "PAYMENT_CAPACITY": 796,
+          "QUOTA_DATABASE": 8
+        },
+        "successfulHttpP99Micros": 2053163
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 12901645,
+        "observerSnapshots": 575,
+        "observerMaxQueryMicros": 162320,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T102800-0877341b/accept-20261022T102800-0877341b-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T102053:a2:warmup",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 600,
+        "sent": 600,
+        "acceptedOrRead": 600,
+        "httpStatuses": {
+          "202": 600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 31283,
+        "httpP95Micros": 280285,
+        "httpP99Micros": 615956,
+        "scheduledHttpP99Micros": 630262,
+        "sendDelayP99Micros": 23659,
+        "posted": 584,
+        "businessFailed": 16,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.716666666666667,
+        "completedPerArrivalSecondUpper": 9.733333333333333,
+        "successfulCompletionP99LowerMicros": 920363,
+        "successfulCompletionP99UpperMicros": 1252861,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5652963,
+        "observerSnapshots": 194,
+        "observerMaxQueryMicros": 110736,
+        "maxCommitVisibilityIntervalMicros": 603257,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 615956
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5639632,
+        "observerSnapshots": 194,
+        "observerMaxQueryMicros": 151611,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 3000,
+        "httpStatuses": {
+          "200": 3000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 24057,
+        "httpP95Micros": 270407,
+        "httpP99Micros": 582989,
+        "scheduledHttpP99Micros": 596871,
+        "sendDelayP99Micros": 21994,
+        "successfulPerArrivalSecond": 49.96666666666667,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 582989
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T103147-9c43a610/accept-20261022T103147-9c43a610-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T102053:a2:measurement",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 4308,
+        "httpStatuses": {
+          "202": 4308,
+          "503": 1692
+        },
+        "droppedIterations": 0,
+        "systemErrors": 1692,
+        "rejected": 0,
+        "httpP50Micros": 197983,
+        "httpP95Micros": 1392490,
+        "httpP99Micros": 2004556,
+        "scheduledHttpP99Micros": 2009660,
+        "sendDelayP99Micros": 24320,
+        "posted": 4217,
+        "businessFailed": 91,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 66.2,
+        "completedPerArrivalSecondUpper": 66.95,
+        "successfulCompletionP99LowerMicros": 5165633,
+        "successfulCompletionP99UpperMicros": 5740475,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 22734551,
+        "observerSnapshots": 560,
+        "observerMaxQueryMicros": 519273,
+        "maxCommitVisibilityIntervalMicros": 702767,
+        "retryReasons": {
+          "API_INFLIGHT": 203,
+          "PAYMENT_CAPACITY": 1489
+        },
+        "successfulHttpP99Micros": 1959536
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 13204596,
+        "observerSnapshots": 560,
+        "observerMaxQueryMicros": 142939,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T103317-816340b0/accept-20261022T103317-816340b0-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T105349:a1:warmup",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 600,
+        "sent": 600,
+        "acceptedOrRead": 600,
+        "httpStatuses": {
+          "202": 600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 26993,
+        "httpP95Micros": 163265,
+        "httpP99Micros": 411955,
+        "scheduledHttpP99Micros": 415393,
+        "sendDelayP99Micros": 18948,
+        "posted": 586,
+        "businessFailed": 14,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.733333333333333,
+        "completedPerArrivalSecondUpper": 9.766666666666667,
+        "successfulCompletionP99LowerMicros": 540483,
+        "successfulCompletionP99UpperMicros": 925921,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5524391,
+        "observerSnapshots": 196,
+        "observerMaxQueryMicros": 195975,
+        "maxCommitVisibilityIntervalMicros": 595044,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 411955
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5316820,
+        "observerSnapshots": 196,
+        "observerMaxQueryMicros": 263061,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 3000,
+        "httpStatuses": {
+          "200": 3000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 21076,
+        "httpP95Micros": 152019,
+        "httpP99Micros": 395248,
+        "scheduledHttpP99Micros": 403333,
+        "sendDelayP99Micros": 21421,
+        "successfulPerArrivalSecond": 49.983333333333334,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 395248
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T105400-f3627f82/accept-20261022T105400-f3627f82-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T105349:a1:measurement",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 5370,
+        "httpStatuses": {
+          "202": 5370,
+          "503": 630
+        },
+        "droppedIterations": 0,
+        "systemErrors": 630,
+        "rejected": 0,
+        "httpP50Micros": 153758,
+        "httpP95Micros": 1329969,
+        "httpP99Micros": 1898581,
+        "scheduledHttpP99Micros": 1906116,
+        "sendDelayP99Micros": 20306,
+        "posted": 5243,
+        "businessFailed": 127,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 83.16666666666667,
+        "completedPerArrivalSecondUpper": 83.86666666666666,
+        "successfulCompletionP99LowerMicros": 3883058,
+        "successfulCompletionP99UpperMicros": 4422436,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 18210544,
+        "observerSnapshots": 579,
+        "observerMaxQueryMicros": 464439,
+        "maxCommitVisibilityIntervalMicros": 735142,
+        "retryReasons": {
+          "API_INFLIGHT": 195,
+          "PAYMENT_CAPACITY": 435
+        },
+        "successfulHttpP99Micros": 1884776
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 13655306,
+        "observerSnapshots": 579,
+        "observerMaxQueryMicros": 166288,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T105529-a8172093/accept-20261022T105529-a8172093-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T105349:b:warmup",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 600,
+        "sent": 600,
+        "acceptedOrRead": 600,
+        "httpStatuses": {
+          "202": 600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 29552,
+        "httpP95Micros": 293319,
+        "httpP99Micros": 772457,
+        "scheduledHttpP99Micros": 778879,
+        "sendDelayP99Micros": 19231,
+        "posted": 590,
+        "businessFailed": 10,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.8,
+        "completedPerArrivalSecondUpper": 9.833333333333334,
+        "successfulCompletionP99LowerMicros": 832106,
+        "successfulCompletionP99UpperMicros": 1160235,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5656545,
+        "observerSnapshots": 195,
+        "observerMaxQueryMicros": 176111,
+        "maxCommitVisibilityIntervalMicros": 743765,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 772457
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5399731,
+        "observerSnapshots": 195,
+        "observerMaxQueryMicros": 177221,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 3000,
+        "httpStatuses": {
+          "200": 3000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 22479,
+        "httpP95Micros": 254661,
+        "httpP99Micros": 642438,
+        "scheduledHttpP99Micros": 649319,
+        "sendDelayP99Micros": 29991,
+        "successfulPerArrivalSecond": 49.983333333333334,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 642438
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T105915-25eafda4/accept-20261022T105915-25eafda4-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T105349:b:measurement",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 5824,
+        "httpStatuses": {
+          "202": 5824,
+          "503": 176
+        },
+        "droppedIterations": 0,
+        "systemErrors": 176,
+        "rejected": 0,
+        "httpP50Micros": 158141,
+        "httpP95Micros": 1163937,
+        "httpP99Micros": 1598341,
+        "scheduledHttpP99Micros": 1612475,
+        "sendDelayP99Micros": 24444,
+        "posted": 5705,
+        "businessFailed": 119,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 94.18333333333334,
+        "completedPerArrivalSecondUpper": 94.38333333333334,
+        "successfulCompletionP99LowerMicros": 3155307,
+        "successfulCompletionP99UpperMicros": 3574775,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 16015840,
+        "observerSnapshots": 592,
+        "observerMaxQueryMicros": 478427,
+        "maxCommitVisibilityIntervalMicros": 777882,
+        "retryReasons": {
+          "API_INFLIGHT": 48,
+          "PAYMENT_CAPACITY": 128
+        },
+        "successfulHttpP99Micros": 1597263
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 12786637,
+        "observerSnapshots": 592,
+        "observerMaxQueryMicros": 132345,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T110042-acbf2a76/accept-20261022T110042-acbf2a76-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T105349:a2:warmup",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 600,
+        "sent": 600,
+        "acceptedOrRead": 600,
+        "httpStatuses": {
+          "202": 600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 28140,
+        "httpP95Micros": 153873,
+        "httpP99Micros": 334627,
+        "scheduledHttpP99Micros": 336618,
+        "sendDelayP99Micros": 23914,
+        "posted": 594,
+        "businessFailed": 6,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.866666666666667,
+        "completedPerArrivalSecondUpper": 9.9,
+        "successfulCompletionP99LowerMicros": 519289,
+        "successfulCompletionP99UpperMicros": 863847,
+        "acceptedCompletionP99UpperMicros": 978444,
+        "observerTotalQueryMicros": 5789531,
+        "observerSnapshots": 194,
+        "observerMaxQueryMicros": 237347,
+        "maxCommitVisibilityIntervalMicros": 736276,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 334627
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5397276,
+        "observerSnapshots": 194,
+        "observerMaxQueryMicros": 174378,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 3000,
+        "httpStatuses": {
+          "200": 3000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 21609,
+        "httpP95Micros": 125560,
+        "httpP99Micros": 317183,
+        "scheduledHttpP99Micros": 324319,
+        "sendDelayP99Micros": 22373,
+        "successfulPerArrivalSecond": 49.983333333333334,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 317183
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T110431-042c930a/accept-20261022T110431-042c930a-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T105349:a2:measurement",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 5110,
+        "httpStatuses": {
+          "202": 5110,
+          "503": 890
+        },
+        "droppedIterations": 0,
+        "systemErrors": 890,
+        "rejected": 0,
+        "httpP50Micros": 179127,
+        "httpP95Micros": 1188974,
+        "httpP99Micros": 1626808,
+        "scheduledHttpP99Micros": 1634642,
+        "sendDelayP99Micros": 21606,
+        "posted": 5009,
+        "businessFailed": 101,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 79.28333333333333,
+        "completedPerArrivalSecondUpper": 79.46666666666667,
+        "successfulCompletionP99LowerMicros": 4279920,
+        "successfulCompletionP99UpperMicros": 4703177,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 19205677,
+        "observerSnapshots": 578,
+        "observerMaxQueryMicros": 533965,
+        "maxCommitVisibilityIntervalMicros": 932372,
+        "retryReasons": {
+          "API_INFLIGHT": 101,
+          "PAYMENT_CAPACITY": 789
+        },
+        "successfulHttpP99Micros": 1634157
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 13165889,
+        "observerSnapshots": 578,
+        "observerMaxQueryMicros": 227368,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T110602-fc19e185/accept-20261022T110602-fc19e185-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T112946:a1:warmup",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 600,
+        "sent": 600,
+        "acceptedOrRead": 600,
+        "httpStatuses": {
+          "202": 600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 27163,
+        "httpP95Micros": 152270,
+        "httpP99Micros": 341464,
+        "scheduledHttpP99Micros": 347371,
+        "sendDelayP99Micros": 15331,
+        "posted": 583,
+        "businessFailed": 17,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.65,
+        "completedPerArrivalSecondUpper": 9.716666666666667,
+        "successfulCompletionP99LowerMicros": 520232,
+        "successfulCompletionP99UpperMicros": 894667,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 4043093,
+        "observerSnapshots": 211,
+        "observerMaxQueryMicros": 73034,
+        "maxCommitVisibilityIntervalMicros": 400288,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 341464
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 3614874,
+        "observerSnapshots": 211,
+        "observerMaxQueryMicros": 53570,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 3000,
+        "httpStatuses": {
+          "200": 3000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 20639,
+        "httpP95Micros": 128357,
+        "httpP99Micros": 324221,
+        "scheduledHttpP99Micros": 330168,
+        "sendDelayP99Micros": 15507,
+        "successfulPerArrivalSecond": 49.983333333333334,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 324221
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T112956-ede9e4e4/accept-20261022T112956-ede9e4e4-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T112946:a1:measurement",
+      "seconds": 30,
+      "payment": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 2975,
+        "httpStatuses": {
+          "202": 2975,
+          "503": 25
+        },
+        "droppedIterations": 0,
+        "systemErrors": 25,
+        "rejected": 0,
+        "httpP50Micros": 90513,
+        "httpP95Micros": 816612,
+        "httpP99Micros": 1283349,
+        "scheduledHttpP99Micros": 1283561,
+        "sendDelayP99Micros": 4795,
+        "posted": 2921,
+        "businessFailed": 54,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 95.03333333333333,
+        "completedPerArrivalSecondUpper": 95.13333333333334,
+        "successfulCompletionP99LowerMicros": 2384487,
+        "successfulCompletionP99UpperMicros": 2710199,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 7843160,
+        "observerSnapshots": 551,
+        "observerMaxQueryMicros": 487787,
+        "maxCommitVisibilityIntervalMicros": 516719,
+        "retryReasons": {
+          "PAYMENT_CAPACITY": 25
+        },
+        "successfulHttpP99Micros": 1289155
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 6127876,
+        "observerSnapshots": 551,
+        "observerMaxQueryMicros": 86098,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T113128-ee1e723d/accept-20261022T113128-ee1e723d-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T112946:b:warmup",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 600,
+        "sent": 600,
+        "acceptedOrRead": 600,
+        "httpStatuses": {
+          "202": 600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 27648,
+        "httpP95Micros": 167980,
+        "httpP99Micros": 381958,
+        "scheduledHttpP99Micros": 383288,
+        "sendDelayP99Micros": 17277,
+        "posted": 586,
+        "businessFailed": 14,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.7,
+        "completedPerArrivalSecondUpper": 9.716666666666667,
+        "successfulCompletionP99LowerMicros": 472518,
+        "successfulCompletionP99UpperMicros": 829118,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5305870,
+        "observerSnapshots": 199,
+        "observerMaxQueryMicros": 267506,
+        "maxCommitVisibilityIntervalMicros": 576414,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 381958
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5203315,
+        "observerSnapshots": 199,
+        "observerMaxQueryMicros": 172367,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 3000,
+        "httpStatuses": {
+          "200": 3000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 21417,
+        "httpP95Micros": 157886,
+        "httpP99Micros": 380660,
+        "scheduledHttpP99Micros": 383276,
+        "sendDelayP99Micros": 20348,
+        "successfulPerArrivalSecond": 49.78333333333333,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 380660
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T113438-aaa9f41a/accept-20261022T113438-aaa9f41a-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T112946:b:measurement",
+      "seconds": 30,
+      "payment": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 2908,
+        "httpStatuses": {
+          "202": 2908,
+          "503": 92
+        },
+        "droppedIterations": 0,
+        "systemErrors": 92,
+        "rejected": 0,
+        "httpP50Micros": 101307,
+        "httpP95Micros": 1454023,
+        "httpP99Micros": 1942092,
+        "scheduledHttpP99Micros": 1952766,
+        "sendDelayP99Micros": 23664,
+        "posted": 2860,
+        "businessFailed": 48,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 91.53333333333333,
+        "completedPerArrivalSecondUpper": 95.16666666666667,
+        "successfulCompletionP99LowerMicros": 2273845,
+        "successfulCompletionP99UpperMicros": 2651369,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 9784875,
+        "observerSnapshots": 526,
+        "observerMaxQueryMicros": 611241,
+        "maxCommitVisibilityIntervalMicros": 669189,
+        "retryReasons": {
+          "API_INFLIGHT": 92
+        },
+        "successfulHttpP99Micros": 1952709
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 8069045,
+        "observerSnapshots": 526,
+        "observerMaxQueryMicros": 144820,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T113608-9ad04108/accept-20261022T113608-9ad04108-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T112946:a2:warmup",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 600,
+        "sent": 600,
+        "acceptedOrRead": 600,
+        "httpStatuses": {
+          "202": 600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 28582,
+        "httpP95Micros": 220695,
+        "httpP99Micros": 597613,
+        "scheduledHttpP99Micros": 609071,
+        "sendDelayP99Micros": 18907,
+        "posted": 586,
+        "businessFailed": 14,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.7,
+        "completedPerArrivalSecondUpper": 9.766666666666667,
+        "successfulCompletionP99LowerMicros": 580665,
+        "successfulCompletionP99UpperMicros": 950981,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5744427,
+        "observerSnapshots": 195,
+        "observerMaxQueryMicros": 246169,
+        "maxCommitVisibilityIntervalMicros": 718707,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 597613
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5405557,
+        "observerSnapshots": 195,
+        "observerMaxQueryMicros": 139802,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 3000,
+        "httpStatuses": {
+          "200": 3000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 21352,
+        "httpP95Micros": 188436,
+        "httpP99Micros": 431239,
+        "scheduledHttpP99Micros": 438447,
+        "sendDelayP99Micros": 20078,
+        "successfulPerArrivalSecond": 49.96666666666667,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 431239
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T113921-e8a7e2f6/accept-20261022T113921-e8a7e2f6-r1.json"
+    },
+    {
+      "name": "commit-aba-pay-20261022T112946:a2:measurement",
+      "seconds": 30,
+      "payment": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 2852,
+        "httpStatuses": {
+          "202": 2852,
+          "503": 148
+        },
+        "droppedIterations": 0,
+        "systemErrors": 148,
+        "rejected": 0,
+        "httpP50Micros": 104616,
+        "httpP95Micros": 1087356,
+        "httpP99Micros": 1628849,
+        "scheduledHttpP99Micros": 1629671,
+        "sendDelayP99Micros": 6462,
+        "posted": 2793,
+        "businessFailed": 59,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 91.8,
+        "completedPerArrivalSecondUpper": 92.86666666666666,
+        "successfulCompletionP99LowerMicros": 3953466,
+        "successfulCompletionP99UpperMicros": 4418644,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 9308689,
+        "observerSnapshots": 530,
+        "observerMaxQueryMicros": 487464,
+        "maxCommitVisibilityIntervalMicros": 493027,
+        "retryReasons": {
+          "API_INFLIGHT": 28,
+          "PAYMENT_CAPACITY": 120
+        },
+        "successfulHttpP99Micros": 1653978
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 7237993,
+        "observerSnapshots": 530,
+        "observerMaxQueryMicros": 103217,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T114056-a6823028/accept-20261022T114056-a6823028-r1.json"
+    },
+    {
+      "name": "optimized-flow-warmup-20261022T114434:flow-warmup",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 600,
+        "sent": 600,
+        "acceptedOrRead": 600,
+        "httpStatuses": {
+          "202": 600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 28772,
+        "httpP95Micros": 162279,
+        "httpP99Micros": 500942,
+        "scheduledHttpP99Micros": 513311,
+        "sendDelayP99Micros": 17370,
+        "posted": 590,
+        "businessFailed": 10,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.716666666666667,
+        "completedPerArrivalSecondUpper": 9.716666666666667,
+        "successfulCompletionP99LowerMicros": 679367,
+        "successfulCompletionP99UpperMicros": 1004681,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5833474,
+        "observerSnapshots": 197,
+        "observerMaxQueryMicros": 237220,
+        "maxCommitVisibilityIntervalMicros": 708430,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 500942
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5329408,
+        "observerSnapshots": 197,
+        "observerMaxQueryMicros": 141647,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 3000,
+        "sent": 3000,
+        "acceptedOrRead": 3000,
+        "httpStatuses": {
+          "200": 3000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 22169,
+        "httpP95Micros": 143529,
+        "httpP99Micros": 411249,
+        "scheduledHttpP99Micros": 418259,
+        "sendDelayP99Micros": 18887,
+        "successfulPerArrivalSecond": 49.43333333333333,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 411249
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T114438-de25112b/accept-20261022T114438-de25112b-r1.json"
+    },
+    {
+      "name": "optimized-flow-refund-fixture-20261022T114712:flow-refund-fixture",
+      "seconds": 30,
+      "payment": {
+        "scheduled": 900,
+        "sent": 900,
+        "acceptedOrRead": 900,
+        "httpStatuses": {
+          "202": 900
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 29821,
+        "httpP95Micros": 292761,
+        "httpP99Micros": 623001,
+        "scheduledHttpP99Micros": 624620,
+        "sendDelayP99Micros": 20392,
+        "posted": 884,
+        "businessFailed": 16,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 29.133333333333333,
+        "completedPerArrivalSecondUpper": 29.466666666666665,
+        "successfulCompletionP99LowerMicros": 855078,
+        "successfulCompletionP99UpperMicros": 1208280,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 3630426,
+        "observerSnapshots": 97,
+        "observerMaxQueryMicros": 502159,
+        "maxCommitVisibilityIntervalMicros": 485214,
+        "retryReasons": {},
+        "successfulHttpP99Micros": 623001
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 2934460,
+        "observerSnapshots": 97,
+        "observerMaxQueryMicros": 78147,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T114713-5a415292/accept-20261022T114713-5a415292-r1.json"
+    },
+    {
+      "name": "optimized-flow-c1-20261022T114814:flow-c1",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 18600,
+        "sent": 18600,
+        "acceptedOrRead": 3456,
+        "httpStatuses": {
+          "202": 3456,
+          "503": 15144
+        },
+        "droppedIterations": 0,
+        "systemErrors": 15144,
+        "rejected": 0,
+        "httpP50Micros": 326340,
+        "httpP95Micros": 2028616,
+        "httpP99Micros": 2967891,
+        "scheduledHttpP99Micros": 3933462,
+        "sendDelayP99Micros": 1132888,
+        "posted": 3392,
+        "businessFailed": 64,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 52.11666666666667,
+        "completedPerArrivalSecondUpper": 52.55,
+        "successfulCompletionP99LowerMicros": 8175847,
+        "successfulCompletionP99UpperMicros": 8964326,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 63209697,
+        "observerSnapshots": 401,
+        "observerMaxQueryMicros": 687754,
+        "maxCommitVisibilityIntervalMicros": 2157921,
+        "retryReasons": {
+          "API_INFLIGHT": 7046,
+          "PAYMENT_CAPACITY": 8098
+        },
+        "successfulHttpP99Micros": 3718655
+      },
+      "refund": {
+        "scheduled": 1920,
+        "sent": 1920,
+        "acceptedOrRead": 1163,
+        "httpStatuses": {
+          "202": 1163,
+          "503": 757
+        },
+        "droppedIterations": 0,
+        "systemErrors": 757,
+        "rejected": 0,
+        "httpP50Micros": 367835,
+        "httpP95Micros": 1877410,
+        "httpP99Micros": 3249284,
+        "scheduledHttpP99Micros": 4338076,
+        "sendDelayP99Micros": 1574002,
+        "posted": 1133,
+        "businessFailed": 30,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 16.95,
+        "completedPerArrivalSecondUpper": 17.216666666666665,
+        "successfulCompletionP99LowerMicros": 8430332,
+        "successfulCompletionP99UpperMicros": 9035920,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 15448740,
+        "observerSnapshots": 401,
+        "observerMaxQueryMicros": 566883,
+        "maxCommitVisibilityIntervalMicros": 1763500,
+        "retryReasons": {
+          "API_INFLIGHT": 757
+        },
+        "successfulHttpP99Micros": 3494682
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T114815-8d1ab72a/accept-20261022T114815-8d1ab72a-r1.json"
+    },
+    {
+      "name": "optimized-flow-query800-20261022T115201:flow-query800",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 9429420,
+        "observerSnapshots": 172,
+        "observerMaxQueryMicros": 983058,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 7164999,
+        "observerSnapshots": 172,
+        "observerMaxQueryMicros": 277250,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 48000,
+        "sent": 45621,
+        "acceptedOrRead": 43082,
+        "httpStatuses": {
+          "200": 43082,
+          "503": 2378,
+          "-1": 161
+        },
+        "droppedIterations": 2379,
+        "systemErrors": 2539,
+        "rejected": 0,
+        "httpP50Micros": 25973,
+        "httpP95Micros": 2212333,
+        "httpP99Micros": 3860022,
+        "scheduledHttpP99Micros": 5090272,
+        "sendDelayP99Micros": 1912579,
+        "successfulPerArrivalSecond": 717.6333333333333,
+        "retryReasons": {
+          "API_INFLIGHT": 2378
+        },
+        "successfulHttpP99Micros": 3416435
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T115202-8985d1a1/accept-20261022T115202-8985d1a1-r1.json"
+    },
+    {
+      "name": "optimized-flow-c2-20261022T115330:flow-c2",
+      "seconds": 60,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 16093780,
+        "observerSnapshots": 129,
+        "observerMaxQueryMicros": 838978,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 12071576,
+        "observerSnapshots": 129,
+        "observerMaxQueryMicros": 1096014,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {},
+        "successfulHttpP99Micros": null
+      },
+      "query": {
+        "scheduled": 123000,
+        "sent": 75906,
+        "acceptedOrRead": 46427,
+        "httpStatuses": {
+          "200": 46427,
+          "503": 29078,
+          "-1": 401
+        },
+        "droppedIterations": 47094,
+        "systemErrors": 29479,
+        "rejected": 0,
+        "httpP50Micros": 1080064,
+        "httpP95Micros": 3319974,
+        "httpP99Micros": 4430992,
+        "scheduledHttpP99Micros": 4827748,
+        "sendDelayP99Micros": 1868114,
+        "successfulPerArrivalSecond": 752.5333333333333,
+        "retryReasons": {
+          "API_INFLIGHT": 29078
+        },
+        "successfulHttpP99Micros": 4572031
+      },
+      "c1Passed": false,
+      "c2Passed": false,
+      "report": ".work/acceptance/accept-20261022T115331-45e64388/accept-20261022T115331-45e64388-r1.json"
+    }
+  ],
+  "independentVerification": {
+    "verifiedAt": "2026-10-23T00:30:46.851Z",
+    "requestRowsChecked": 273420,
+    "steps": [
+      {
+        "step": "commit-aba-pay-20261022T102053:a1:warmup",
+        "parts": {
+          "payment": {
+            "requests": 600,
+            "statuses": {
+              "202": 600
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 3000,
+            "statuses": {
+              "200": 3000
+            }
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T102053:a1:measurement",
+        "parts": {
+          "payment": {
+            "requests": 6000,
+            "statuses": {
+              "202": 4950,
+              "503": 1050
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T102053:b:warmup",
+        "parts": {
+          "payment": {
+            "requests": 600,
+            "statuses": {
+              "202": 600
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 3000,
+            "statuses": {
+              "200": 3000
+            }
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T102053:b:measurement",
+        "parts": {
+          "payment": {
+            "requests": 6000,
+            "statuses": {
+              "202": 4787,
+              "503": 1213
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T102053:a2:warmup",
+        "parts": {
+          "payment": {
+            "requests": 600,
+            "statuses": {
+              "202": 600
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 3000,
+            "statuses": {
+              "200": 3000
+            }
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T102053:a2:measurement",
+        "parts": {
+          "payment": {
+            "requests": 6000,
+            "statuses": {
+              "202": 4308,
+              "503": 1692
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T105349:a1:warmup",
+        "parts": {
+          "payment": {
+            "requests": 600,
+            "statuses": {
+              "202": 600
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 3000,
+            "statuses": {
+              "200": 3000
+            }
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T105349:a1:measurement",
+        "parts": {
+          "payment": {
+            "requests": 6000,
+            "statuses": {
+              "202": 5370,
+              "503": 630
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T105349:b:warmup",
+        "parts": {
+          "payment": {
+            "requests": 600,
+            "statuses": {
+              "202": 600
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 3000,
+            "statuses": {
+              "200": 3000
+            }
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T105349:b:measurement",
+        "parts": {
+          "payment": {
+            "requests": 6000,
+            "statuses": {
+              "202": 5824,
+              "503": 176
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T105349:a2:warmup",
+        "parts": {
+          "payment": {
+            "requests": 600,
+            "statuses": {
+              "202": 600
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 3000,
+            "statuses": {
+              "200": 3000
+            }
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T105349:a2:measurement",
+        "parts": {
+          "payment": {
+            "requests": 6000,
+            "statuses": {
+              "202": 5110,
+              "503": 890
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T112946:a1:warmup",
+        "parts": {
+          "payment": {
+            "requests": 600,
+            "statuses": {
+              "202": 600
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 3000,
+            "statuses": {
+              "200": 3000
+            }
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T112946:a1:measurement",
+        "parts": {
+          "payment": {
+            "requests": 3000,
+            "statuses": {
+              "202": 2975,
+              "503": 25
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T112946:b:warmup",
+        "parts": {
+          "payment": {
+            "requests": 600,
+            "statuses": {
+              "202": 600
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 3000,
+            "statuses": {
+              "200": 3000
+            }
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T112946:b:measurement",
+        "parts": {
+          "payment": {
+            "requests": 3000,
+            "statuses": {
+              "202": 2908,
+              "503": 92
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T112946:a2:warmup",
+        "parts": {
+          "payment": {
+            "requests": 600,
+            "statuses": {
+              "202": 600
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 3000,
+            "statuses": {
+              "200": 3000
+            }
+          }
+        }
+      },
+      {
+        "step": "commit-aba-pay-20261022T112946:a2:measurement",
+        "parts": {
+          "payment": {
+            "requests": 3000,
+            "statuses": {
+              "202": 2852,
+              "503": 148
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "optimized-flow-warmup-20261022T114434:flow-warmup",
+        "parts": {
+          "payment": {
+            "requests": 600,
+            "statuses": {
+              "202": 600
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 3000,
+            "statuses": {
+              "200": 3000
+            }
+          }
+        }
+      },
+      {
+        "step": "optimized-flow-refund-fixture-20261022T114712:flow-refund-fixture",
+        "parts": {
+          "payment": {
+            "requests": 900,
+            "statuses": {
+              "202": 900
+            }
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "optimized-flow-c1-20261022T114814:flow-c1",
+        "parts": {
+          "payment": {
+            "requests": 18600,
+            "statuses": {
+              "202": 3456,
+              "503": 15144
+            }
+          },
+          "refund": {
+            "requests": 1920,
+            "statuses": {
+              "202": 1163,
+              "503": 757
+            }
+          },
+          "query": {
+            "requests": 0,
+            "statuses": {}
+          }
+        }
+      },
+      {
+        "step": "optimized-flow-query800-20261022T115201:flow-query800",
+        "parts": {
+          "payment": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 48000,
+            "statuses": {
+              "200": 43082,
+              "503": 2378,
+              "-1": 161
+            }
+          }
+        }
+      },
+      {
+        "step": "optimized-flow-c2-20261022T115330:flow-c2",
+        "parts": {
+          "payment": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "refund": {
+            "requests": 0,
+            "statuses": {}
+          },
+          "query": {
+            "requests": 123000,
+            "statuses": {
+              "200": 46427,
+              "503": 29078,
+              "-1": 401
+            }
+          }
+        }
+      }
+    ],
+    "complete": true,
+    "referenceR1Certified": false,
+    "hashes": [
+      {
+        "path": ".work/acceptance/accept-20261022T102106-5fd6a757/accept-20261022T102106-5fd6a757-r1.json",
+        "bytes": 3738,
+        "sha256": "9b6ad36852939e1ced6bd40eb8b433d54f2e59e234080fd042d979f64103b432"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102106-5fd6a757/accept-20261022T102106-5fd6a757-r1.pay.jsonl",
+        "bytes": 154545,
+        "sha256": "6b375d3741945185179efe03b105e55faf5ecf0144ea184a7e9dbd82ee4bdd57"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102106-5fd6a757/accept-20261022T102106-5fd6a757-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102106-5fd6a757/accept-20261022T102106-5fd6a757-r1.query.jsonl",
+        "bytes": 720222,
+        "sha256": "5c08dac49359ac9beeedc277b8e1c3a0a5c560c1b821bc07d840bed022e51fbc"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102244-1011bff2/accept-20261022T102244-1011bff2-r1.json",
+        "bytes": 3774,
+        "sha256": "154128bcf6c2fb31fabfa31b8706427a7d859f6f9ddccb0dca9b32038daa8ec5"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102244-1011bff2/accept-20261022T102244-1011bff2-r1.pay.jsonl",
+        "bytes": 1546981,
+        "sha256": "1ca28d8ebc96f16e9d94b1ae3fda83132e4eb991adffd192e194f1973d1f43f8"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102244-1011bff2/accept-20261022T102244-1011bff2-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102244-1011bff2/accept-20261022T102244-1011bff2-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102632-e14773c0/accept-20261022T102632-e14773c0-r1.json",
+        "bytes": 3747,
+        "sha256": "23b7859468c371acc58f6b2604802ab171f3cc4e6983ed61e14f5e1b1b7ea94c"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102632-e14773c0/accept-20261022T102632-e14773c0-r1.pay.jsonl",
+        "bytes": 154613,
+        "sha256": "475f41e7276d770ac9061d9b1415c44a36d8373a4ff9b4f4eacd4694172a6f26"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102632-e14773c0/accept-20261022T102632-e14773c0-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102632-e14773c0/accept-20261022T102632-e14773c0-r1.query.jsonl",
+        "bytes": 720230,
+        "sha256": "528abf75fdfc8cd2d10aae3fb4b7e8e1a4360432e0f3293093dc5130806692c5"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102800-0877341b/accept-20261022T102800-0877341b-r1.json",
+        "bytes": 3805,
+        "sha256": "6830d6f97b2276cb6d87e6dbdc1959bb73b2e9a7f64acfc706fc3eddb905d811"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102800-0877341b/accept-20261022T102800-0877341b-r1.pay.jsonl",
+        "bytes": 1544663,
+        "sha256": "7e4d0bc1bfa310078f087b0b9dc4933ae0db2c456804633e85821368c6e48aee"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102800-0877341b/accept-20261022T102800-0877341b-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T102800-0877341b/accept-20261022T102800-0877341b-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T103147-9c43a610/accept-20261022T103147-9c43a610-r1.json",
+        "bytes": 3750,
+        "sha256": "3d37095aae3c45e503534a9fc0f6797627a2343246d0bd124d8620458cade943"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T103147-9c43a610/accept-20261022T103147-9c43a610-r1.pay.jsonl",
+        "bytes": 154487,
+        "sha256": "ce375e0e77defb71cd7c3f1e07d75c8dc8eef383f8a094d2bb176752856c267c"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T103147-9c43a610/accept-20261022T103147-9c43a610-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T103147-9c43a610/accept-20261022T103147-9c43a610-r1.query.jsonl",
+        "bytes": 720228,
+        "sha256": "552a126693c317be3a153b81b0800b4e9fc492e2641c8d6d408a4e5a0a27bbad"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T103317-816340b0/accept-20261022T103317-816340b0-r1.json",
+        "bytes": 3746,
+        "sha256": "2e18571bf9b44d7ca3ace23786aed9ee1bf0bbe4839d126451a9c4c366d4e568"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T103317-816340b0/accept-20261022T103317-816340b0-r1.pay.jsonl",
+        "bytes": 1543381,
+        "sha256": "182e7a153058ed3887ee9831ee60acf5066010e47b6a7efed38bd492f08106a4"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T103317-816340b0/accept-20261022T103317-816340b0-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T103317-816340b0/accept-20261022T103317-816340b0-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105400-f3627f82/accept-20261022T105400-f3627f82-r1.json",
+        "bytes": 3750,
+        "sha256": "0d6a41a8392634aec38a64fadf588cf904a881c272f42e713dde8b9f102a2e1d"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105400-f3627f82/accept-20261022T105400-f3627f82-r1.pay.jsonl",
+        "bytes": 154521,
+        "sha256": "233513a5deedb57b779182cbd7e076cde33bc1bccc8b39de2cd1e163e6953d78"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105400-f3627f82/accept-20261022T105400-f3627f82-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105400-f3627f82/accept-20261022T105400-f3627f82-r1.query.jsonl",
+        "bytes": 720221,
+        "sha256": "783bfef80c123e5cad07dbc6d170cbf00c1cb79812c29889865f4411aefc3040"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105529-a8172093/accept-20261022T105529-a8172093-r1.json",
+        "bytes": 3772,
+        "sha256": "a615a5dc84a9870bc962aeb4f1584e04615584e840acb856ba1770d146f6ef35"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105529-a8172093/accept-20261022T105529-a8172093-r1.pay.jsonl",
+        "bytes": 1547639,
+        "sha256": "2c0da436f3e9025d4a033b2f505a1f1717e713ddb146b4f84626d33bd02c0735"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105529-a8172093/accept-20261022T105529-a8172093-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105529-a8172093/accept-20261022T105529-a8172093-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105915-25eafda4/accept-20261022T105915-25eafda4-r1.json",
+        "bytes": 3737,
+        "sha256": "65d776700e860faba1730fd7c203bf3a0a200fb2fea83f8ee632829277c4f5be"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105915-25eafda4/accept-20261022T105915-25eafda4-r1.pay.jsonl",
+        "bytes": 154586,
+        "sha256": "3ee84425e3667dadf1f0c46c18323bdce88e65b4b971232f77804ffb0ec9413e"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105915-25eafda4/accept-20261022T105915-25eafda4-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T105915-25eafda4/accept-20261022T105915-25eafda4-r1.query.jsonl",
+        "bytes": 720233,
+        "sha256": "c3e1adf78bf968996aec4f92e6a6b167a596fe3830e74892b619f0fdd0397e83"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110042-acbf2a76/accept-20261022T110042-acbf2a76-r1.json",
+        "bytes": 3768,
+        "sha256": "92fe1acbb48f070c1725329242ef7c8ca38cc7a06c573195e246722eaff220b4"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110042-acbf2a76/accept-20261022T110042-acbf2a76-r1.pay.jsonl",
+        "bytes": 1550549,
+        "sha256": "ae4278715b621b207b3d6cf159434fb8a9b341e7ee8de3c12a9adb715c4faf34"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110042-acbf2a76/accept-20261022T110042-acbf2a76-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110042-acbf2a76/accept-20261022T110042-acbf2a76-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110431-042c930a/accept-20261022T110431-042c930a-r1.json",
+        "bytes": 3737,
+        "sha256": "b11cdd4351bdb5ace20ba47bea30f2bf984739dbbad9b43acf4edb2ac5b92619"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110431-042c930a/accept-20261022T110431-042c930a-r1.pay.jsonl",
+        "bytes": 154645,
+        "sha256": "85cdf10d73413dc72a49875f0489dbce5fd6d4d5f63741218544e815c289dcde"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110431-042c930a/accept-20261022T110431-042c930a-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110431-042c930a/accept-20261022T110431-042c930a-r1.query.jsonl",
+        "bytes": 720225,
+        "sha256": "bf770802a2f0fc53d86a69b1bccc942f7ec864ae6e817d66a47568b43249d9fb"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110602-fc19e185/accept-20261022T110602-fc19e185-r1.json",
+        "bytes": 3769,
+        "sha256": "13d0919fa0d9de43e62fbcf5251e7e40ff6890c7e05bff13719b1b4bc813b158"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110602-fc19e185/accept-20261022T110602-fc19e185-r1.pay.jsonl",
+        "bytes": 1547519,
+        "sha256": "a29e6185f30e443c0d334364f4087c4b97066156cf09e0edd8d0cfb31c23ded9"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110602-fc19e185/accept-20261022T110602-fc19e185-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T110602-fc19e185/accept-20261022T110602-fc19e185-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T112956-ede9e4e4/accept-20261022T112956-ede9e4e4-r1.json",
+        "bytes": 3735,
+        "sha256": "020ac0b37b56125811fb79c2151b6932a974d1465d84112126e7f07c7221e26c"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T112956-ede9e4e4/accept-20261022T112956-ede9e4e4-r1.pay.jsonl",
+        "bytes": 154472,
+        "sha256": "6f638e115e18837565d6be66268746433ea16c28ded897801d1d6a8dd87d1732"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T112956-ede9e4e4/accept-20261022T112956-ede9e4e4-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T112956-ede9e4e4/accept-20261022T112956-ede9e4e4-r1.query.jsonl",
+        "bytes": 720222,
+        "sha256": "84530480c3042edf6c15f5000d5cca57c47a077cb760a299e7a47424732e7d70"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113128-ee1e723d/accept-20261022T113128-ee1e723d-r1.json",
+        "bytes": 3743,
+        "sha256": "1b08282d260bf0acdb8a2185980550f7d5a68faa816f66d58a3cfd22f63296fe"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113128-ee1e723d/accept-20261022T113128-ee1e723d-r1.pay.jsonl",
+        "bytes": 772695,
+        "sha256": "0e9d205451342e06d9198185efefcde0d864b4a1e9671cc3770896c38ba04770"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113128-ee1e723d/accept-20261022T113128-ee1e723d-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113128-ee1e723d/accept-20261022T113128-ee1e723d-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113438-aaa9f41a/accept-20261022T113438-aaa9f41a-r1.json",
+        "bytes": 3732,
+        "sha256": "de369f4a4b6d7fb3e9fa1ecd87ba74e5fd24daf6f59236bdc118f4b919a4c172"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113438-aaa9f41a/accept-20261022T113438-aaa9f41a-r1.pay.jsonl",
+        "bytes": 154519,
+        "sha256": "7ce4eceac38de8e52f639de3b2e2c120a5638a551aab0896ee959fb45d8e634f"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113438-aaa9f41a/accept-20261022T113438-aaa9f41a-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113438-aaa9f41a/accept-20261022T113438-aaa9f41a-r1.query.jsonl",
+        "bytes": 720223,
+        "sha256": "31b1b9e277d524c5fdd83000d40b1067e9365d9eb4a99961159bb311d58c68b6"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113608-9ad04108/accept-20261022T113608-9ad04108-r1.json",
+        "bytes": 3743,
+        "sha256": "a8e2fe855b77abc015666d0fa97c2d65d58647f50d883ba4dc2232070cea05c7"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113608-9ad04108/accept-20261022T113608-9ad04108-r1.pay.jsonl",
+        "bytes": 772025,
+        "sha256": "b54540629a66efccdd6b0d9af9d9fb5a8adb17ff95aef769ff53117b5f1ff768"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113608-9ad04108/accept-20261022T113608-9ad04108-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113608-9ad04108/accept-20261022T113608-9ad04108-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113921-e8a7e2f6/accept-20261022T113921-e8a7e2f6-r1.json",
+        "bytes": 3732,
+        "sha256": "b358e1b326719dfa2d399415192637079fdb4f7c20a570a719d9f907874f7201"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113921-e8a7e2f6/accept-20261022T113921-e8a7e2f6-r1.pay.jsonl",
+        "bytes": 154518,
+        "sha256": "e4f8a70a80674a1423958c6269e4472d0235b2fa34ca8bd8211658e3f4d900ed"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113921-e8a7e2f6/accept-20261022T113921-e8a7e2f6-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T113921-e8a7e2f6/accept-20261022T113921-e8a7e2f6-r1.query.jsonl",
+        "bytes": 720227,
+        "sha256": "8f1c0515baca51f3b459a76349bcd51741ea821e39e974da1b0c57662c53a468"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114056-a6823028/accept-20261022T114056-a6823028-r1.json",
+        "bytes": 3754,
+        "sha256": "8418954b0db2cba880989749cccf6b04a5a0d8c59e5472aae53ca782486b1fa3"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114056-a6823028/accept-20261022T114056-a6823028-r1.pay.jsonl",
+        "bytes": 771680,
+        "sha256": "f7beef5452856165833a2a227c7874c07d603b25054aede68e534f20351ad670"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114056-a6823028/accept-20261022T114056-a6823028-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114056-a6823028/accept-20261022T114056-a6823028-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114438-de25112b/accept-20261022T114438-de25112b-r1.json",
+        "bytes": 3750,
+        "sha256": "4440a322f6fa560f55594a9ecc88642391b809f3bf2236e2d8e0aabc2af6f6ae"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114438-de25112b/accept-20261022T114438-de25112b-r1.pay.jsonl",
+        "bytes": 154581,
+        "sha256": "3bdd10a2e0b543b80b13d3f9e5d18e76c7116aa2761e03de59f021f334e73c5c"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114438-de25112b/accept-20261022T114438-de25112b-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114438-de25112b/accept-20261022T114438-de25112b-r1.query.jsonl",
+        "bytes": 720228,
+        "sha256": "18ca5fea460603bc4d54cec8c34bfd889a25f844e039b02fd7677e6b5dfd4b49"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114713-5a415292/accept-20261022T114713-5a415292-r1.json",
+        "bytes": 3705,
+        "sha256": "38074d577465538f688a1720efb13fb4d141586fa141c44d35c8782012516600"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114713-5a415292/accept-20261022T114713-5a415292-r1.pay.jsonl",
+        "bytes": 231112,
+        "sha256": "81e9265c5bcd534b12d35b5aca719a71101975f93720278db7e90f3780a5fb88"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114713-5a415292/accept-20261022T114713-5a415292-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114713-5a415292/accept-20261022T114713-5a415292-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114815-8d1ab72a/accept-20261022T114815-8d1ab72a-r1.json",
+        "bytes": 3868,
+        "sha256": "8eeeba8ffb2059bbc9426d258129db7384348aad82e4cc33295aa69f2711c0b8"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114815-8d1ab72a/accept-20261022T114815-8d1ab72a-r1.pay.jsonl",
+        "bytes": 4727195,
+        "sha256": "5881fbd8a934d88ee4997c9f466879e58669ffb8c2af8f2b5cefeb16c2740cd1"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114815-8d1ab72a/accept-20261022T114815-8d1ab72a-r1.refund.jsonl",
+        "bytes": 489651,
+        "sha256": "51a324e97230510643a076d90c487add2f97b10285e7857d84b471d52ad02635"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T114815-8d1ab72a/accept-20261022T114815-8d1ab72a-r1.query.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T115202-8985d1a1/accept-20261022T115202-8985d1a1-r1.json",
+        "bytes": 3736,
+        "sha256": "d0f15efcf05bbda68f739317a552b5bf47583cbf4e476d53a997ed03b4a7b6f4"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T115202-8985d1a1/accept-20261022T115202-8985d1a1-r1.pay.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T115202-8985d1a1/accept-20261022T115202-8985d1a1-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T115202-8985d1a1/accept-20261022T115202-8985d1a1-r1.query.jsonl",
+        "bytes": 11631216,
+        "sha256": "b2906c46d851e0d1137b81507469c1fef7111b934f5569166b8b64a5232b698d"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T115331-45e64388/accept-20261022T115331-45e64388-r1.json",
+        "bytes": 3746,
+        "sha256": "76c23ec146c66ba7dd3d942b8cae4ced0fc43f85e2f1c6092b50f4cd55f62f05"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T115331-45e64388/accept-20261022T115331-45e64388-r1.pay.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T115331-45e64388/accept-20261022T115331-45e64388-r1.refund.jsonl",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": ".work/acceptance/accept-20261022T115331-45e64388/accept-20261022T115331-45e64388-r1.query.jsonl",
+        "bytes": 30450649,
+        "sha256": "35ea98a5263ea9c677865cc797fcf94192973d062c7f4703924d1637fbeadd75"
+      },
+      {
+        "path": ".work/acceptance/flow-optimization-20261022/summary.json",
+        "bytes": 85349,
+        "sha256": "e20cb7a88d9ece62ddebf5d2a69fa10ad3b997bbfdd2816a44b340d9e1b95faa"
+      },
+      {
+        "path": ".work/run-throughput-ladder.ps1",
+        "bytes": 8486,
+        "sha256": "0d9ae6f14c982b3a398c340415c26502f8f643ed72d2fb0d2974450a87d1662a"
+      },
+      {
+        "path": ".work/verify-throughput.mjs",
+        "bytes": 4067,
+        "sha256": "4adc7e7d52f098fd13d480927931a0c6c5d618157df8542342b7d1cbdd1f110a"
+      }
+    ]
+  },
+  "evaluation": {
+    "path": ".work/acceptance/flow-optimization-20261022/target-evaluation.json",
+    "sha256": "0e6c8e3e4c992422835b89bd3489d8ec4d6b7742ed351503c8f278a91754b819",
+    "bytes": 68555
+  },
+  "limits": [
+    "Shared Docker Desktop D0; short windows, no formal R1 or D1 certification",
+    "All financial history retained; final queries cover credential-owned online payments of 32 real merchants, including the initial1024 and newly created API payments, not full D1; each raw report records queryPoolPayments",
+    "HTTP202 is acceptance only; completed TPS requires independent committed balanced ledger/outbox visibility",
+    "Database pool isolation is tested but off by default because no stable throughput gain was shown",
+    "Old four-hour soak results belong to older artifacts; not inherited"
+  ]
+}

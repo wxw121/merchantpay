@@ -1,0 +1,2152 @@
+{
+  "recordedAt": "2026-10-19T07:38:55.0084398Z",
+  "referenceR1Certified": false,
+  "change": "Bounded worker completion commit groups; channel business outcome and final attempt status share a short transaction; raw response persists first",
+  "environment": "D0 shared developer host; no worker, pool, inflight, resource or durability setting changed; schema remainsV12",
+  "backend": {
+    "failures": 0,
+    "skipped": 0,
+    "errors": 0,
+    "tests": 286
+  },
+  "backendLog": ".work/task-commit-full-backend.log",
+  "targetedLog": ".work/task-commit-targeted-final.log",
+  "sourceDigests": [
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\PlatformApplication.java",
+      "Hash": "C0AA64A56D15FFC1E016311C05C32C7B73F8322722AA6FCB0DBB431A63002DB5"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelApi.java",
+      "Hash": "4EF34DD85FC0C0DA548A589E2CC4D6FDFA2AA1F71A22B57AA12524A3636D5CC2"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelBillReader.java",
+      "Hash": "AC17734A3AF677F91FC330D6DD7C63CE04EC0B93E01463E278FB3F0F70EC8770"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelGateway.java",
+      "Hash": "FA7BE9AE1661275E75A81372BEEEC4E563854470B9663A47733B63D2C8EC3303"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\InboxService.java",
+      "Hash": "61EC28F6103A7ADCC0B094A3E68EEDBC7E247FFA0A5C091B73C02B74E225E4D5"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\ApiException.java",
+      "Hash": "C4BA9D3F8948F7202B40FAB91A76D98796F963C96823372E4D37E826923BA438"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\ChannelResult.java",
+      "Hash": "0DE610320D74937EDD9543AD6C32FCFDFE0F635113FD87A3776BF0C0602730FD"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\Csv.java",
+      "Hash": "DF3BCE95879D4D73B653E820CEDB0D159FA0116B3CF7BC99792B65FA1FE54EDF"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\KeyVault.java",
+      "Hash": "7CFDAFDDD810C3B75826820A3CD31CE4438D1560CD96E18441A3165B33C7099D"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\MoneyRules.java",
+      "Hash": "21D4A0CC537302C4DCD164A1E817C062591B3CD84B614FA5BCFB11FAAECF97F1"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\NotificationPolicy.java",
+      "Hash": "041BF8A83196E983C04D378A465764FFFCB7C64622AAEAE9993D6DF7ECE89134"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\Signatures.java",
+      "Hash": "8C217871C6619F3A7236DEB7106E5728A81F01C9A81071C919D6454537DB6AA3"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\ledger\\LedgerService.java",
+      "Hash": "9E785F60954A62E9B81B83DC9339A9D852F8526B1310C0A3BBDC9C4FD58DD264"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\merchant\\MerchantService.java",
+      "Hash": "76753C32613641EF11090AA764E94B73A509339C765C93B8153B50EE1EE953CF"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\BusinessMetrics.java",
+      "Hash": "A5BA91AD416CB488F1311CA51C42CFCDFF46536D2CD7623ECEF1057CB95D6307"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\LocalDemoData.java",
+      "Hash": "EC0AFB6CB06139786A86C492CC3833278599FD3C7BAA110384673690F394229F"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\NotificationService.java",
+      "Hash": "55C7F9D6180D03FA0525C110BB75E1D2BA29388E01A23FFEA4FE8B18F51EF689"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\TaskCompletions.java",
+      "Hash": "A167F25A7935B6B86E8149744C2B657403C7F70DAD0EEC2F933741EC90C80F3D"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\TaskWorker.java",
+      "Hash": "862A87A0053DF5B53CF618EEC5B12A92280DD0545C5F9120B4CB0F2D03A5D9D1"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\outbox\\OutboxService.java",
+      "Hash": "21EDDDB84195B8A10282950E9F7AEC2FFB793F265D976717592593B20A46F6DD"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\outbox\\TaskQueue.java",
+      "Hash": "6717155E89B688E11BDF3C230A0B9498491EBE60910FEFF7362ED3AF82C1FEBD"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\payment\\PaymentService.java",
+      "Hash": "36E8B4F16915F687B85D18CC07C85D2613A79B503C415BE00A108AA4E5191DCD"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\query\\Queries.java",
+      "Hash": "F61A7675E2BBAACCEB2B11B26B5C925F2064AE44CF874697C180D3FFFB1179FE"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\reconciliation\\ExportService.java",
+      "Hash": "076A5EF3E6B805E83706FBE1511656245563054735CF675C53C22B6AA42F4404"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\reconciliation\\ReconciliationService.java",
+      "Hash": "FAABA2898A29FAE375AB156ED7A70D68FF991A857A410AFC3D6A1F9AA5084F0E"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\refund\\RefundService.java",
+      "Hash": "2B5181E3E0B87F1C2C2C70B242FCBF0EAAA17D0F6902B4648C2077822E08CD37"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\Access.java",
+      "Hash": "D4F07C224D55F398D34909E64104A402895F882E80AB89E33A5FCD3D82B2B231"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiErrors.java",
+      "Hash": "D3BE73919B12E86B053E3C8584A65D84617E30199718825BF0C0C92CD90B519B"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiRateLimiter.java",
+      "Hash": "8B0EDC4947EC35844D668E83364B06E282A65C14D23DFDB582CB3E8E3DA12DD9"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ChannelCallbackController.java",
+      "Hash": "E3E85B8BEB8DDEAEEF6F3907262A18C508D2DD4FC81F4A963FDA60A25FF0D9C4"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ChannelStatusController.java",
+      "Hash": "EA62BB564DD0C5DCE5E1EA4A0FF96F2E14ABBC6C24F5432E27251465EF1FE6F6"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ConsoleController.java",
+      "Hash": "95281C3C964AA74B95959A7CBA89921FCB932777919C7CCE56E3A4CB10C3F9F0"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\OpenApiController.java",
+      "Hash": "0628CF9FFED7B857079A411C9EE655AF295B9DDE63937A20D7BF3281365284E8"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ReconciliationController.java",
+      "Hash": "90072E8D97F28A7304C3043137492CFE80401F9DE5FED6CB93BBEA91379F01DA"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\RequestTraceFilter.java",
+      "Hash": "87EC59B93A897A6CD0D801C741A50DD3821921DEDE0F036D64E56A7C2A29229A"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\SecurityConfiguration.java",
+      "Hash": "FF3EAD2EDC8D5BC3CB19F8128768FA06FC0384DE56E8D0C7C4403E46FBCC45FD"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\SignatureFilter.java",
+      "Hash": "EC0D652AE4EB3927F50A1C970C3DBF98BA14ABCEA7D25744C61FD863B22468B9"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\WebConfiguration.java",
+      "Hash": "545BD26BB34EAA11C375B5F697313B83AB6542DCDE310AE260ADE39963764884"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\application.yaml",
+      "Hash": "5E8FC99FA7ADF753E7543DA2A95B29155271C768B4E256E557C7D208158FF17C"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V1__core.sql",
+      "Hash": "7886E929C4AD0575E35798BF8FE268CF365D392C0EE10C8146830BEEF7DBE2A1"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V10__export_execution.sql",
+      "Hash": "63712B0066C17D7148CC3A0E5F48E3BCA791CF9424E4B2B98ABFCB87DC2C66B2"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V11__payment_evidence_paging.sql",
+      "Hash": "F826CBA647A47575A0A41C4933D1C81ADD4A73759C2014BEFECD20551017D796"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V12__payment_backpressure.sql",
+      "Hash": "42C4A059C5715693CC87A7B45370554A07052F513A4D0E88203E5E79E64AB782"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V2__security_and_evidence.sql",
+      "Hash": "A6F4367984437269B10116711AF34360CC268BC592195EFA73214AECD9E3D11E"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V3__notifications.sql",
+      "Hash": "9396FC5DF78972D49DF7496D0469E9446562350898608F3F524606589D123BA6"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V4__reconciliation.sql",
+      "Hash": "D5528042679999640D3263B6D7D0950E477D34C6ED0641FE4D73B27B8CF2117F"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V5__exports.sql",
+      "Hash": "7535AAF722AAAB49E306358B272C7DDDF738063220698D99F8C5C07165967B90"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V6__timeline_and_cursor_indexes.sql",
+      "Hash": "765742FAB1CB1EBC1CEB47606F8CFD53F6CF703A182BD58CAF57F229FEE75F36"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V7__isolated_task_queues.sql",
+      "Hash": "107A3566F279AD3881C231DCBE038C6DA9425785670C542EA9D07C7BC9BB1C88"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V8__export_ownership.sql",
+      "Hash": "BE931902ED6ABA17F46E3222A07A632374B560F62B363823EF74C8EF2FA6A9FF"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\main\\resources\\db\\migration\\V9__reconciliation_execution.sql",
+      "Hash": "626E798C9F281B5C5BE17121FCCD9BA2FF03391273203580A36E4FAF0F6C057D"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\AdmissionTest.java",
+      "Hash": "714322706DCCB9AE7994E9C1D6AF11BC9AB0D534045CBED1049F60777791933B"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ApiRateLimiterTest.java",
+      "Hash": "ADA3507670ACEB2DBB4B3AB9FD66A9EFC50D84EB20EE8B47CCC3E9E440CD56A0"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\AuditTransactionTest.java",
+      "Hash": "CFC87D28232F2649EA8D09F15B6B4A1E3EDB2262B23864228B802F35F63BE3CE"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ChannelEvidenceTest.java",
+      "Hash": "64EF4184A9A1CFAF8BF1DD6928B0593DABE58EB60359FFA078998F448A553FA9"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ChannelHttpContractTest.java",
+      "Hash": "79C3AD0E3E0C19159BCCE1E92D8B7CA26F7C4D9157A202477E590BFB92FA00A7"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ConsoleDetailTest.java",
+      "Hash": "4530D3387DCC5C740FBC1892F0462345C1E59895F07847A417D14AD128F39407"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\DurableTaskTest.java",
+      "Hash": "815AD82B6F0D71A61303EA0E36C88C0CDFDACE393132D0BF2E4A00D85D412AD4"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ExportTest.java",
+      "Hash": "A97FA3E3D892E94C58A741E02948B187E62F4CD6C742159BE9BC4C71DB4892B1"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\FinancialCoreTest.java",
+      "Hash": "7E0CBFA539B5CF7C2862AA454BED6690EAFDDEC4816660D8BB39076101C91D09"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\FinancialFixture.java",
+      "Hash": "C78BC1D9B90A41DEFE773D2318DA10D298FDAE7712E4EE2DDDE7BFC67933A0E2"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ModuleArchitectureTest.java",
+      "Hash": "FBCEFA5BFCF01ED7F473986447F42733CD5CEF64B794B319B65011AC06A9F6B5"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlApiRateLimiterTest.java",
+      "Hash": "ECF94FFBC07E8356A60990C12C61F2E8B158543FBA7B723AA766438F033BB754"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlAuditTransactionTest.java",
+      "Hash": "4EA72316CD3B283079158514897A7FA40D17392C55AF12262F31116A8A8AB7EC"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlChannelEvidenceTest.java",
+      "Hash": "1F0BF72BA1FF818D1EA10FC3C5C4AD0C64CDBA7536DD0E59E6C6440B73B67963"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlConsoleDetailTest.java",
+      "Hash": "9CB769DBF2B8B5D71ED86DBD157AFDEB47E2312A137F92F12844716AC38B04DD"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlConsoleSnapshotTest.java",
+      "Hash": "CAB36590782DD4F9A7FE8A953CC2D3527D4BAA0B30EB4A57D15E40B86AEBD7FD"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlDurableTaskTest.java",
+      "Hash": "C3869B534413E1D2E4FA9F36F1E1C371743B15624BF993289F89D9F0338F276D"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlExportTest.java",
+      "Hash": "0B6EA15BEA21CE38D86C2E7788486CA2005FE82F189E918E56058F4FD2580C79"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlFinancialTest.java",
+      "Hash": "D4D216A01B0F6EC63FB2B39C1E833761E6EDE01BB10F0CDE0948B0C34F329DB6"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlPaymentBackpressureTest.java",
+      "Hash": "3A069213121D2F805ED67CB241CD8AA3EC6FF5EB1BE5E65FAE6F65DB20D569AF"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlReconciliationTest.java",
+      "Hash": "F083B1A24D65323BA2C665721B899761E35B719245A55788A31B2DB982E11B24"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\PausingQueue.java",
+      "Hash": "41E8E6E47956D56E20BEA9997D01CB59BC2DF8DE82C79D7ED30AAF15B31C5F79"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\PaymentBackpressureTest.java",
+      "Hash": "D6BA6C693676C9CB99D95BA736453CE2D8024745F82BBC46CA2C2646BE91B51C"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ReconciliationTest.java",
+      "Hash": "A4F757027E9A9B0271C0654FAF6DC3E1D25688B078240AB3A652D72276F5808C"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\SecurityIntegrationTest.java",
+      "Hash": "FECB89578BAD0950DC4145123F501589F7412374A68512D7BF66BCCFB33E36D9"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\CryptoTest.java",
+      "Hash": "E7D34120A00FD438637E7B428E53BE5D47C956D792D4A62EC4A4E97D6AF2CF20"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\CsvTest.java",
+      "Hash": "27E59A848B7D9CC6C279FF957630D9E033CD0EDD129B96209FAEC4C8AE5CFBB6"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\MoneyRulesTest.java",
+      "Hash": "083E35CEC2A629FBF847ADB6534A36BC5E9E9935F5DB06075611A6B9796A7FDA"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\orchestration\\TaskCompletionsTest.java",
+      "Hash": "234529E3A6FA3FACAFD8B3F1D33CC45322DE8FA093DCDEB9406EF28C7A92F4F9"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\orchestration\\TaskWorkerMetricsTest.java",
+      "Hash": "2C21DBA311F9D89173B4B05D88644A2E210E81638DFF560B2B27538BA16FB2BD"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\CallbackWorker.java",
+      "Hash": "FE8AE519EE820C0FE89269CDB705E4FE71F95C455EB143C7739BA29AE2F3EC15"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\ChannelController.java",
+      "Hash": "52FC8C09F8214476D1AE73365A16F54B0D7A1667BD49C0B1DFB14B2187B45440"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\ChannelStore.java",
+      "Hash": "5BACECDA12F660E53D780ACCEF5E35C5AF93477EA50046ED040FB1A8487F09E5"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\DemoMerchantWebhook.java",
+      "Hash": "39D402B77E274A244C2E1B3FE8E1AC55748C2CB0642F9B5D97DFA6D787EB37F9"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\SimulatorApplication.java",
+      "Hash": "F86C724C08638A1419C40AAB9BBA35A00A6D53ABB9E67676DCC0FDED0EEC8532"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\resources\\application.yaml",
+      "Hash": "2348F85016FF8EFA06DB9983F9D2FCAF682A9D754F60FC556DC3D73E90F32EC9"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\resources\\schema.sql",
+      "Hash": "C6B4EF93753E5641DC10C87FAD089888E4A2BD77EC594443BF5C130B0558C87B"
+    },
+    {
+      "Path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\test\\java\\dev\\merchantpay\\simulator\\ChannelStoreTest.java",
+      "Hash": "8D470697EF2635DFE12ED7FE2CCD61C65561A9E85EB95B028F9DFDD49E589BC3"
+    }
+  ],
+  "regressionLogs": [
+    ".work/task-commit-red.log",
+    ".work/task-commit-conflict-connection-red.log"
+  ],
+  "additionalFailedGate": ".work/task-commit-full-recon-plan-failed.log",
+  "additionalGateFixLog": ".work/task-commit-recon-plan-green.log",
+  "review": {
+    "p2Fixed": 1,
+    "report": "docs/reviews/2026-10-19-task-commit-review.md",
+    "remainingFindings": 0,
+    "p2Found": 1
+  },
+  "beforeJarSha256": "3E9A49F2D498159EC7A08BB20FB5E1C141445BFB8079EFBD3AC57101E8E5D08D",
+  "deployedJarSha256": "A1118C06D3D5021235E60CB379E7685D314A5277CE3972F004A14AB64495B310",
+  "runtimeHealth": {
+    "at": "2026-10-19T07:32:38.0974652Z",
+    "backend": "UP",
+    "consoleStatus": 200,
+    "jarSha256": "A1118C06D3D5021235E60CB379E7685D314A5277CE3972F004A14AB64495B310"
+  },
+  "stoppedVerification": {
+    "verifiedAt": "2026-10-19T07:27:03.30949Z",
+    "trackedProcessesStillAlive": 0,
+    "projectListenersStillActive": 0
+  },
+  "databaseState": {
+    "at": "2026-10-19T07:32:37.915510400Z",
+    "shards": 16,
+    "inflight": 0,
+    "actualNonterminal": 0,
+    "absoluteDrift": 0,
+    "unfinishedTasks": 0
+  },
+  "beforeQueryQuietChannels": {
+    "at": "2026-10-19T07:26:29.5017356Z",
+    "channels": [
+      {
+        "channel": "MOCK_A",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      },
+      {
+        "channel": "MOCK_B",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      }
+    ]
+  },
+  "afterQueryQuietChannels": {
+    "at": "2026-10-19T07:32:05.7582391Z",
+    "channels": [
+      {
+        "channel": "MOCK_A",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      },
+      {
+        "channel": "MOCK_B",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      }
+    ]
+  },
+  "smoke": {
+    "measurementVersion": 2,
+    "runId": "load-1792394841-f4afb252",
+    "environment": "D0 shared developer host",
+    "scenario": "dataset",
+    "generatedAt": "2026-10-19T07:27:26.394383900Z",
+    "requestedRate": 30,
+    "requests": 100,
+    "acceptedOrRead": 100,
+    "rejected": 0,
+    "transportErrors": 0,
+    "notSentDueCapacity": 0,
+    "phaseSeconds": 3.3614952,
+    "arrivalWindowSeconds": 3.333333333,
+    "acceptedOrReadPerSecond": 29.74866660526542,
+    "httpStatuses": {
+      "202": 100
+    },
+    "httpLatencySamples": 100,
+    "httpP95Micros": 187854,
+    "httpP99Micros": 235738,
+    "scheduledHttpP99Micros": 236883,
+    "sendDelayP99Micros": 13404,
+    "postedPayments": 100,
+    "uniquePayments": 100,
+    "successfulPayments": 100,
+    "unfinishedAcceptedPayments": 0,
+    "failedAcceptedPayments": 0,
+    "oldestUnfinishedAcceptedMicros": 0,
+    "unacknowledgedCommittedPayments": 0,
+    "failedResponseWithoutVisiblePayment": 0,
+    "paymentStatuses": {
+      "SUCCEEDED": 100
+    },
+    "acceptedCompletionP99UpperMicros": 1144967,
+    "successfulCompletionP99LowerMicros": 767517,
+    "successfulCompletionP99UpperMicros": 1144967,
+    "completedInArrivalWindowLower": 90,
+    "completedInArrivalWindowUpper": 100,
+    "completedPerArrivalSecondLower": 27.0000000027,
+    "completedPerArrivalSecondUpper": 30.000000003,
+    "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+    "observerPollMillis": 250,
+    "observerSnapshots": 13,
+    "observerErrors": 0,
+    "observerAttempts": 13,
+    "observerTotalQueryMicros": 823883,
+    "observerMaxQueryMicros": 268633,
+    "maxCommitVisibilityIntervalMicros": 427717,
+    "requestedRefunds": 20,
+    "refundHttpStatuses": {
+      "202": 20
+    },
+    "refundedPayments": 20,
+    "journals": 120,
+    "ledgerRows": 358,
+    "outboxBusinessTasks": 240,
+    "ledgerDifferenceMinor": "0",
+    "unbalancedJournals": 0,
+    "moneyInvariantsPassed": true,
+    "correctnessPassed": true,
+    "referenceR1Certified": false,
+    "primaryPhaseStarted": "2026-10-19T07:27:21.230635400Z",
+    "primaryPhaseEnded": "2026-10-19T07:27:24.592229400Z",
+    "arrivalWindowEnded": "2026-10-19T07:27:24.563968733Z"
+  },
+  "excludedInitialRun": {
+    "label": "task-commit-before-pay300",
+    "report": {
+      "measurementVersion": 2,
+      "runId": "load-1792391706-447c0ead",
+      "environment": "D0 shared developer host",
+      "scenario": "pay",
+      "generatedAt": "2026-10-19T06:35:28.109481800Z",
+      "requestedRate": 300,
+      "requests": 4500,
+      "acceptedOrRead": 726,
+      "rejected": 3299,
+      "transportErrors": 371,
+      "notSentDueCapacity": 104,
+      "phaseSeconds": 15.1397429,
+      "arrivalWindowSeconds": 15.0,
+      "acceptedOrReadPerSecond": 47.953258175870346,
+      "httpStatuses": {
+        "202": 726,
+        "503": 3299
+      },
+      "httpLatencySamples": 4396,
+      "httpP95Micros": 1967555,
+      "httpP99Micros": 2393820,
+      "scheduledHttpP99Micros": 2432881,
+      "sendDelayP99Micros": 123183,
+      "postedPayments": 726,
+      "uniquePayments": 726,
+      "successfulPayments": 726,
+      "unfinishedAcceptedPayments": 0,
+      "failedAcceptedPayments": 0,
+      "oldestUnfinishedAcceptedMicros": 0,
+      "unacknowledgedCommittedPayments": 0,
+      "failedResponseWithoutVisiblePayment": 3670,
+      "paymentStatuses": {
+        "SUCCEEDED": 726
+      },
+      "acceptedCompletionP99UpperMicros": 5266364,
+      "successfulCompletionP99LowerMicros": 3931806,
+      "successfulCompletionP99UpperMicros": 5266364,
+      "completedInArrivalWindowLower": 464,
+      "completedInArrivalWindowUpper": 531,
+      "completedPerArrivalSecondLower": 30.933333333333334,
+      "completedPerArrivalSecondUpper": 35.4,
+      "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+      "observerPollMillis": 250,
+      "observerSnapshots": 42,
+      "observerErrors": 0,
+      "observerAttempts": 42,
+      "observerTotalQueryMicros": 10072316,
+      "observerMaxQueryMicros": 1661352,
+      "maxCommitVisibilityIntervalMicros": 2535318,
+      "requestedRefunds": 0,
+      "refundHttpStatuses": {},
+      "refundedPayments": 0,
+      "journals": 726,
+      "ledgerRows": 2172,
+      "outboxBusinessTasks": 1452,
+      "ledgerDifferenceMinor": "0",
+      "unbalancedJournals": 0,
+      "moneyInvariantsPassed": true,
+      "correctnessPassed": false,
+      "referenceR1Certified": false,
+      "primaryPhaseStarted": "2026-10-19T06:35:06.930423700Z",
+      "primaryPhaseEnded": "2026-10-19T06:35:22.070434900Z",
+      "arrivalWindowEnded": "2026-10-19T06:35:21.930423700Z"
+    },
+    "reportSha256": "30DC3B13571CC48D306A9419FCF60BBA79FF18E46035761159F20A017BBACF33",
+    "requestRecordsSha256": "574F70638AC7C18BE5E7114717A47EEF08C3D5A48858D8F728B83A4D74302E1B",
+    "diagnosticId": "diagnosis-1792391702",
+    "firstSample": "2026-10-19T06:35:03.396413400Z",
+    "lastSample": "2026-10-19T06:35:38.212935200Z",
+    "sampleCount": 22,
+    "sampleErrors": 2,
+    "metrics": {
+      "merchantpay_tasks_pending": {
+        "max": 269.0,
+        "samples": 20
+      },
+      "hikaricp_connections_active": {
+        "max": 32.0,
+        "samples": 20
+      },
+      "system_cpu_usage": {
+        "max": 0.7985263995210538,
+        "samples": 20
+      },
+      "merchantpay_tasks_oldest_seconds": {
+        "max": 2.0,
+        "samples": 20
+      },
+      "process_cpu_usage": {
+        "max": 0.23359312711843944,
+        "samples": 20
+      },
+      "hikaricp_connections_pending": {
+        "max": 5.0,
+        "samples": 20
+      },
+      "hikaricp_connections_timeout_total": {
+        "max": 0.0,
+        "samples": 20
+      }
+    },
+    "maxLockWaitEdges": 13.0,
+    "lockSamples": [
+      {
+        "at": "2026-10-19T06:35:12.746934200Z",
+        "lockWaits": 3,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 3
+          }
+        ]
+      },
+      {
+        "at": "2026-10-19T06:35:16.284275300Z",
+        "lockWaits": 8,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 5
+          }
+        ]
+      },
+      {
+        "at": "2026-10-19T06:35:18.013053800Z",
+        "lockWaits": 13,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 13
+          }
+        ]
+      }
+    ],
+    "physicalBufferReadsDelta": 19524,
+    "quotaSql": [
+      {
+        "count": 288,
+        "seconds": 7.202278108,
+        "lockSeconds": 6.96087,
+        "rowsExamined": 0,
+        "sql": "INSERT INTO `api_rate_limits` ( `key_id` , `window_second` , `requests` ) VALUES (...) ON DUPLICATE KEY UPDATE `requests` = `requests` + ?"
+      }
+    ],
+    "topSql": [
+      {
+        "count": 4233,
+        "seconds": 28.274511704,
+        "lockSeconds": 0.0,
+        "rowsExamined": 0,
+        "sql": "COMMIT"
+      },
+      {
+        "count": 764,
+        "seconds": 27.072898033,
+        "lockSeconds": 26.511559,
+        "rowsExamined": 766,
+        "sql": "UPDATE `payment_admission` SET `inflight` = `inflight` + ? WHERE `logical_shard` = ? AND `inflight` < ?"
+      },
+      {
+        "count": 2000,
+        "seconds": 26.283737588,
+        "lockSeconds": 0.003855,
+        "rowsExamined": 1993,
+        "sql": "UPDATE `outbox_tasks` SET STATUS = ? , `lease_token` = ? , `lease_until` = ? , `last_error` = ? , `updated_at` = ? WHERE `id` = ? AND STATUS = ? AND `lease_token` = ?"
+      },
+      {
+        "count": 725,
+        "seconds": 16.668712136,
+        "lockSeconds": 15.999083,
+        "rowsExamined": 1450,
+        "sql": "UPDATE `payment_admission` SET `inflight` = `inflight` - ? WHERE `logical_shard` = ( SELECT `logical_shard` FROM `payments` WHERE `id` = ? ) AND `inflight` > ?"
+      },
+      {
+        "count": 1437,
+        "seconds": 14.829258473,
+        "lockSeconds": 0.002872,
+        "rowsExamined": 1438,
+        "sql": "UPDATE `channel_attempts` SET `response_body` = ? , `updated_at` = ? WHERE CHANNEL = ? AND `request_key` = ?"
+      },
+      {
+        "count": 724,
+        "seconds": 12.086882013,
+        "lockSeconds": 0.001482,
+        "rowsExamined": 723,
+        "sql": "UPDATE `notification_deliveries` SET STATUS = ? , `http_status` = ? WHERE `id` = ?"
+      },
+      {
+        "count": 724,
+        "seconds": 11.254829423,
+        "lockSeconds": 0.001673,
+        "rowsExamined": 0,
+        "sql": "INSERT INTO `notification_deliveries` ( `id` , `task_id` , `event_id` , `merchant_id` , URL , STATUS , `created_at` ) VALUES (...)"
+      }
+    ],
+    "config": {
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "bufferPoolBytes": 134217728,
+      "maxConnections": 200,
+      "performanceSchema": 1
+    }
+  },
+  "earlierUnpairedRun": {
+    "label": "task-commit-baseline-pay300",
+    "report": {
+      "measurementVersion": 2,
+      "runId": "load-1792391857-a68e0f32",
+      "environment": "D0 shared developer host",
+      "scenario": "pay",
+      "generatedAt": "2026-10-19T06:37:58.575337900Z",
+      "requestedRate": 300,
+      "requests": 4500,
+      "acceptedOrRead": 1902,
+      "rejected": 2598,
+      "transportErrors": 0,
+      "notSentDueCapacity": 0,
+      "phaseSeconds": 15.071864,
+      "arrivalWindowSeconds": 15.0,
+      "acceptedOrReadPerSecond": 126.19540622181835,
+      "httpStatuses": {
+        "202": 1902,
+        "503": 2598
+      },
+      "httpLatencySamples": 4500,
+      "httpP95Micros": 170486,
+      "httpP99Micros": 309637,
+      "scheduledHttpP99Micros": 312761,
+      "sendDelayP99Micros": 15268,
+      "postedPayments": 1902,
+      "uniquePayments": 1902,
+      "successfulPayments": 1902,
+      "unfinishedAcceptedPayments": 0,
+      "failedAcceptedPayments": 0,
+      "oldestUnfinishedAcceptedMicros": 0,
+      "unacknowledgedCommittedPayments": 0,
+      "failedResponseWithoutVisiblePayment": 2598,
+      "paymentStatuses": {
+        "SUCCEEDED": 1902
+      },
+      "acceptedCompletionP99UpperMicros": 3178618,
+      "successfulCompletionP99LowerMicros": 2677286,
+      "successfulCompletionP99UpperMicros": 3178618,
+      "completedInArrivalWindowLower": 1635,
+      "completedInArrivalWindowUpper": 1701,
+      "completedPerArrivalSecondLower": 109.0,
+      "completedPerArrivalSecondUpper": 113.4,
+      "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+      "observerPollMillis": 250,
+      "observerSnapshots": 54,
+      "observerErrors": 0,
+      "observerAttempts": 54,
+      "observerTotalQueryMicros": 6963142,
+      "observerMaxQueryMicros": 363757,
+      "maxCommitVisibilityIntervalMicros": 735761,
+      "requestedRefunds": 0,
+      "refundHttpStatuses": {},
+      "refundedPayments": 0,
+      "journals": 1902,
+      "ledgerRows": 5687,
+      "outboxBusinessTasks": 3804,
+      "ledgerDifferenceMinor": "0",
+      "unbalancedJournals": 0,
+      "moneyInvariantsPassed": true,
+      "correctnessPassed": false,
+      "referenceR1Certified": false,
+      "primaryPhaseStarted": "2026-10-19T06:37:37.454312800Z",
+      "primaryPhaseEnded": "2026-10-19T06:37:52.526284300Z",
+      "arrivalWindowEnded": "2026-10-19T06:37:52.454312800Z"
+    },
+    "reportSha256": "EF6EF7EA9589C986C0153CA4788B8E68A84573E551785FCAA60018EE29CF7AC1",
+    "requestRecordsSha256": "A440F39AF45175F7080F167E3A28F1BD212989AF71B8B1FF52A008BD91A02477",
+    "diagnosticId": "diagnosis-1792391853",
+    "firstSample": "2026-10-19T06:37:33.821513500Z",
+    "lastSample": "2026-10-19T06:38:07.657121500Z",
+    "sampleCount": 26,
+    "sampleErrors": 0,
+    "metrics": {
+      "merchantpay_tasks_pending": {
+        "max": 516.0,
+        "samples": 26
+      },
+      "hikaricp_connections_active": {
+        "max": 32.0,
+        "samples": 26
+      },
+      "system_cpu_usage": {
+        "max": 0.568161523967891,
+        "samples": 26
+      },
+      "merchantpay_tasks_oldest_seconds": {
+        "max": 2.0,
+        "samples": 26
+      },
+      "process_cpu_usage": {
+        "max": 0.11758965946886929,
+        "samples": 26
+      },
+      "hikaricp_connections_pending": {
+        "max": 7.0,
+        "samples": 26
+      },
+      "hikaricp_connections_timeout_total": {
+        "max": 0.0,
+        "samples": 26
+      }
+    },
+    "maxLockWaitEdges": 12.0,
+    "lockSamples": [
+      {
+        "at": "2026-10-19T06:37:37.692483300Z",
+        "lockWaits": 5,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 6
+          }
+        ]
+      },
+      {
+        "at": "2026-10-19T06:37:38.963917300Z",
+        "lockWaits": 1,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 2
+          }
+        ]
+      },
+      {
+        "at": "2026-10-19T06:37:40.252813700Z",
+        "lockWaits": 12,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 12
+          }
+        ]
+      },
+      {
+        "at": "2026-10-19T06:37:41.605621Z",
+        "lockWaits": 1,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 1
+          }
+        ]
+      },
+      {
+        "at": "2026-10-19T06:37:44.344671200Z",
+        "lockWaits": 3,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 3
+          }
+        ]
+      },
+      {
+        "at": "2026-10-19T06:37:48.765862Z",
+        "lockWaits": 4,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 6
+          }
+        ]
+      },
+      {
+        "at": "2026-10-19T06:37:50.116592800Z",
+        "lockWaits": 1,
+        "lockWaitIndexes": []
+      },
+      {
+        "at": "2026-10-19T06:37:51.494256700Z",
+        "lockWaits": 4,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 4
+          }
+        ]
+      },
+      {
+        "at": "2026-10-19T06:37:52.992943500Z",
+        "lockWaits": 1,
+        "lockWaitIndexes": [
+          {
+            "OBJECT_NAME": "payment_admission",
+            "INDEX_NAME": "PRIMARY",
+            "LOCK_MODE": "X,REC_NOT_GAP",
+            "waiting": 1
+          }
+        ]
+      }
+    ],
+    "physicalBufferReadsDelta": 52680,
+    "quotaSql": [
+      {
+        "count": 650,
+        "seconds": 1.297878137,
+        "lockSeconds": 0.85389,
+        "rowsExamined": 0,
+        "sql": "INSERT INTO `api_rate_limits` ( `key_id` , `window_second` , `requests` ) VALUES (...) ON DUPLICATE KEY UPDATE `requests` = `requests` + ?"
+      }
+    ],
+    "topSql": [
+      {
+        "count": 7879,
+        "seconds": 65.13100008,
+        "lockSeconds": 0.0,
+        "rowsExamined": 0,
+        "sql": "COMMIT"
+      },
+      {
+        "count": 4611,
+        "seconds": 51.332257128,
+        "lockSeconds": 0.005187,
+        "rowsExamined": 4607,
+        "sql": "UPDATE `outbox_tasks` SET STATUS = ? , `lease_token` = ? , `lease_until` = ? , `last_error` = ? , `updated_at` = ? WHERE `id` = ? AND STATUS = ? AND `lease_token` = ?"
+      },
+      {
+        "count": 3795,
+        "seconds": 41.468574812,
+        "lockSeconds": 0.004345,
+        "rowsExamined": 3798,
+        "sql": "UPDATE `channel_attempts` SET `response_body` = ? , `updated_at` = ? WHERE CHANNEL = ? AND `request_key` = ?"
+      },
+      {
+        "count": 2684,
+        "seconds": 30.724893204,
+        "lockSeconds": 0.003171,
+        "rowsExamined": 0,
+        "sql": "INSERT INTO `signature_nonces` ( `key_id` , `nonce` , `expires_at` ) VALUES (...)"
+      },
+      {
+        "count": 1899,
+        "seconds": 25.352699961,
+        "lockSeconds": 0.002341,
+        "rowsExamined": 0,
+        "sql": "INSERT IGNORE INTO `channel_attempts` ( `id` , `aggregate_id` , `payment_id` , CHANNEL , `operation` , `request_key` , STATUS , `request_body` , `created_at` , `updated_at` ) VALUES (...)"
+      },
+      {
+        "count": 1893,
+        "seconds": 21.580055324,
+        "lockSeconds": 0.002372,
+        "rowsExamined": 0,
+        "sql": "INSERT INTO `notification_deliveries` ( `id` , `task_id` , `event_id` , `merchant_id` , URL , STATUS , `created_at` ) VALUES (...)"
+      },
+      {
+        "count": 1897,
+        "seconds": 20.682053231,
+        "lockSeconds": 0.002124,
+        "rowsExamined": 1895,
+        "sql": "UPDATE `channel_attempts` SET STATUS = ? , `updated_at` = ? WHERE CHANNEL = ? AND `request_key` = ?"
+      }
+    ],
+    "config": {
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "bufferPoolBytes": 134217728,
+      "maxConnections": 200,
+      "performanceSchema": 1
+    }
+  },
+  "controlSmoke": {
+    "measurementVersion": 2,
+    "runId": "load-1792394359-c0a3a7fb",
+    "environment": "D0 shared developer host",
+    "scenario": "dataset",
+    "generatedAt": "2026-10-19T07:19:25.319216300Z",
+    "requestedRate": 30,
+    "requests": 100,
+    "acceptedOrRead": 100,
+    "rejected": 0,
+    "transportErrors": 0,
+    "notSentDueCapacity": 0,
+    "phaseSeconds": 3.3724466,
+    "arrivalWindowSeconds": 3.333333333,
+    "acceptedOrReadPerSecond": 29.65206328248459,
+    "httpStatuses": {
+      "202": 100
+    },
+    "httpLatencySamples": 100,
+    "httpP95Micros": 289754,
+    "httpP99Micros": 351617,
+    "scheduledHttpP99Micros": 352012,
+    "sendDelayP99Micros": 21340,
+    "postedPayments": 100,
+    "uniquePayments": 100,
+    "successfulPayments": 100,
+    "unfinishedAcceptedPayments": 0,
+    "failedAcceptedPayments": 0,
+    "oldestUnfinishedAcceptedMicros": 0,
+    "unacknowledgedCommittedPayments": 0,
+    "failedResponseWithoutVisiblePayment": 0,
+    "paymentStatuses": {
+      "SUCCEEDED": 100
+    },
+    "acceptedCompletionP99UpperMicros": 1478688,
+    "successfulCompletionP99LowerMicros": 1027362,
+    "successfulCompletionP99UpperMicros": 1478688,
+    "completedInArrivalWindowLower": 95,
+    "completedInArrivalWindowUpper": 100,
+    "completedPerArrivalSecondLower": 28.500000002849998,
+    "completedPerArrivalSecondUpper": 30.000000003,
+    "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+    "observerPollMillis": 250,
+    "observerSnapshots": 11,
+    "observerErrors": 0,
+    "observerAttempts": 11,
+    "observerTotalQueryMicros": 1339756,
+    "observerMaxQueryMicros": 468783,
+    "maxCommitVisibilityIntervalMicros": 594826,
+    "requestedRefunds": 20,
+    "refundHttpStatuses": {
+      "202": 20
+    },
+    "refundedPayments": 20,
+    "journals": 120,
+    "ledgerRows": 359,
+    "outboxBusinessTasks": 240,
+    "ledgerDifferenceMinor": "0",
+    "unbalancedJournals": 0,
+    "moneyInvariantsPassed": true,
+    "correctnessPassed": true,
+    "referenceR1Certified": false,
+    "primaryPhaseStarted": "2026-10-19T07:19:19.46058Z",
+    "primaryPhaseEnded": "2026-10-19T07:19:22.832986700Z",
+    "arrivalWindowEnded": "2026-10-19T07:19:22.793913333Z"
+  },
+  "runs": [
+    {
+      "label": "task-commit-control-pay300",
+      "report": {
+        "measurementVersion": 2,
+        "runId": "load-1792394393-f0698c91",
+        "environment": "D0 shared developer host",
+        "scenario": "pay",
+        "generatedAt": "2026-10-19T07:20:14.932700600Z",
+        "requestedRate": 300,
+        "requests": 4500,
+        "acceptedOrRead": 1339,
+        "rejected": 3161,
+        "transportErrors": 0,
+        "notSentDueCapacity": 0,
+        "phaseSeconds": 15.0957921,
+        "arrivalWindowSeconds": 15.0,
+        "acceptedOrReadPerSecond": 88.70021467770478,
+        "httpStatuses": {
+          "202": 1339,
+          "503": 3161
+        },
+        "httpLatencySamples": 4500,
+        "httpP95Micros": 211924,
+        "httpP99Micros": 422206,
+        "scheduledHttpP99Micros": 430797,
+        "sendDelayP99Micros": 16344,
+        "postedPayments": 1339,
+        "uniquePayments": 1339,
+        "successfulPayments": 1339,
+        "unfinishedAcceptedPayments": 0,
+        "failedAcceptedPayments": 0,
+        "oldestUnfinishedAcceptedMicros": 0,
+        "unacknowledgedCommittedPayments": 0,
+        "failedResponseWithoutVisiblePayment": 3161,
+        "paymentStatuses": {
+          "SUCCEEDED": 1339
+        },
+        "acceptedCompletionP99UpperMicros": 3888313,
+        "successfulCompletionP99LowerMicros": 3449040,
+        "successfulCompletionP99UpperMicros": 3888313,
+        "completedInArrivalWindowLower": 1058,
+        "completedInArrivalWindowUpper": 1139,
+        "completedPerArrivalSecondLower": 70.53333333333333,
+        "completedPerArrivalSecondUpper": 75.93333333333334,
+        "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+        "observerPollMillis": 250,
+        "observerSnapshots": 58,
+        "observerErrors": 0,
+        "observerAttempts": 58,
+        "observerTotalQueryMicros": 6075456,
+        "observerMaxQueryMicros": 683597,
+        "maxCommitVisibilityIntervalMicros": 996177,
+        "requestedRefunds": 0,
+        "refundHttpStatuses": {},
+        "refundedPayments": 0,
+        "journals": 1339,
+        "ledgerRows": 4000,
+        "outboxBusinessTasks": 2678,
+        "ledgerDifferenceMinor": "0",
+        "unbalancedJournals": 0,
+        "moneyInvariantsPassed": true,
+        "correctnessPassed": false,
+        "referenceR1Certified": false,
+        "primaryPhaseStarted": "2026-10-19T07:19:53.742832700Z",
+        "primaryPhaseEnded": "2026-10-19T07:20:08.838838800Z",
+        "arrivalWindowEnded": "2026-10-19T07:20:08.742832700Z"
+      },
+      "reportSha256": "D4D5C6E994082C1CC5E5EDCF6DFCDBCD8D2BB358E300F717C88C7CED44AC5671",
+      "requestRecordsSha256": "CDBAAFF50D6308025C03C2FDC80FFECD5C4E010B32E7E5F4CCA267B7CE1E679D",
+      "diagnosticId": "diagnosis-1792394389",
+      "firstSample": "2026-10-19T07:19:50.012316200Z",
+      "lastSample": "2026-10-19T07:20:24.197069400Z",
+      "sampleCount": 25,
+      "sampleErrors": 0,
+      "metrics": {
+        "merchantpay_tasks_pending": {
+          "max": 188.0,
+          "samples": 25
+        },
+        "hikaricp_connections_active": {
+          "max": 32.0,
+          "samples": 25
+        },
+        "system_cpu_usage": {
+          "max": 0.7397205542353066,
+          "samples": 25
+        },
+        "merchantpay_tasks_oldest_seconds": {
+          "max": 1.0,
+          "samples": 25
+        },
+        "process_cpu_usage": {
+          "max": 0.15614906524422614,
+          "samples": 25
+        },
+        "hikaricp_connections_pending": {
+          "max": 8.0,
+          "samples": 25
+        },
+        "hikaricp_connections_timeout_total": {
+          "max": 0.0,
+          "samples": 25
+        }
+      },
+      "maxLockWaitEdges": 6.0,
+      "lockSamples": [
+        {
+          "at": "2026-10-19T07:19:54.019434400Z",
+          "lockWaits": 1,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 4
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:19:55.716164Z",
+          "lockWaits": 2,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 1
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:19:57.146449400Z",
+          "lockWaits": 2,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 2
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:19:58.949700700Z",
+          "lockWaits": 4,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 4
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:20:00.481284200Z",
+          "lockWaits": 5,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 4
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:20:02.087686400Z",
+          "lockWaits": 6,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "api_rate_limits",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 6
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:20:03.648602Z",
+          "lockWaits": 2,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "api_rate_limits",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 1
+            },
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 1
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:20:05.058370600Z",
+          "lockWaits": 1,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 1
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:20:06.484267Z",
+          "lockWaits": 2,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 2
+            }
+          ]
+        }
+      ],
+      "physicalBufferReadsDelta": 33736,
+      "quotaSql": [
+        {
+          "count": 532,
+          "seconds": 4.781573513,
+          "lockSeconds": 4.334323,
+          "rowsExamined": 0,
+          "sql": "INSERT INTO `api_rate_limits` ( `key_id` , `window_second` , `requests` ) VALUES (...) ON DUPLICATE KEY UPDATE `requests` = `requests` + ?"
+        }
+      ],
+      "topSql": [
+        {
+          "count": 5976,
+          "seconds": 64.018318422,
+          "lockSeconds": 0.0,
+          "rowsExamined": 0,
+          "sql": "COMMIT"
+        },
+        {
+          "count": 3275,
+          "seconds": 48.783835417,
+          "lockSeconds": 0.005803,
+          "rowsExamined": 3278,
+          "sql": "UPDATE `outbox_tasks` SET STATUS = ? , `lease_token` = ? , `lease_until` = ? , `last_error` = ? , `updated_at` = ? WHERE `id` = ? AND STATUS = ? AND `lease_token` = ?"
+        },
+        {
+          "count": 2659,
+          "seconds": 37.1005314,
+          "lockSeconds": 0.004967,
+          "rowsExamined": 2658,
+          "sql": "UPDATE `channel_attempts` SET `response_body` = ? , `updated_at` = ? WHERE CHANNEL = ? AND `request_key` = ?"
+        },
+        {
+          "count": 1772,
+          "seconds": 28.004449791,
+          "lockSeconds": 0.003331,
+          "rowsExamined": 0,
+          "sql": "INSERT INTO `signature_nonces` ( `key_id` , `nonce` , `expires_at` ) VALUES (...)"
+        },
+        {
+          "count": 1773,
+          "seconds": 21.143931201,
+          "lockSeconds": 20.314151,
+          "rowsExamined": 1776,
+          "sql": "UPDATE `payment_admission` SET `inflight` = `inflight` + ? WHERE `logical_shard` = ? AND `inflight` < ?"
+        },
+        {
+          "count": 1329,
+          "seconds": 21.077111903,
+          "lockSeconds": 0.002433,
+          "rowsExamined": 0,
+          "sql": "INSERT INTO `notification_deliveries` ( `id` , `task_id` , `event_id` , `merchant_id` , URL , STATUS , `created_at` ) VALUES (...)"
+        },
+        {
+          "count": 1331,
+          "seconds": 20.731238744,
+          "lockSeconds": 0.002395,
+          "rowsExamined": 1324,
+          "sql": "UPDATE `notification_deliveries` SET STATUS = ? , `http_status` = ? WHERE `id` = ?"
+        }
+      ],
+      "config": {
+        "flushOnCommit": 1,
+        "syncBinlog": 1,
+        "bufferPoolBytes": 134217728,
+        "maxConnections": 200,
+        "performanceSchema": 1
+      },
+      "backlogByKindSampledPeaks": {
+        "PROCESS_INBOX": 76.0,
+        "PAYMENT_SUCCEEDED": 237.0,
+        "CHANNEL_PAYMENT": 241.0
+      },
+      "paymentCapacitySampledPeak": 241,
+      "totalQueueSampledPeak": 544,
+      "taskExecutions": [
+        {
+          "kindOutcome": "CHANNEL_REFUND:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "PAYMENT_SUCCEEDED:completed",
+          "executions": 1339.0,
+          "seconds": 95.5998033,
+          "meanMillis": 71.39641769977595
+        },
+        {
+          "kindOutcome": "CHANNEL_PAYMENT:completed",
+          "executions": 1339.0,
+          "seconds": 223.13891770000004,
+          "meanMillis": 166.64594301717705
+        },
+        {
+          "kindOutcome": "REFUND_SUCCEEDED:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "PROCESS_INBOX:completed",
+          "executions": 615.0,
+          "seconds": 20.8566991,
+          "meanMillis": 33.9133318699187
+        }
+      ],
+      "completionBatches": null,
+      "stageSql": [
+        {
+          "sql": "UPDATE `channel_attempts` SET STATUS = ? , `updated_at` = ? WHERE CHANNEL = ? AND `request_key` = ?",
+          "count": 1332,
+          "seconds": 19.360268575,
+          "lockSeconds": 0.002273
+        },
+        {
+          "sql": "UPDATE `outbox_tasks` SET STATUS = ? , `lease_token` = ? , `lease_until` = ? , `last_error` = ? , `updated_at` = ? WHERE `id` = ? AND STATUS = ? AND `lease_token` = ?",
+          "count": 3275,
+          "seconds": 48.783835417,
+          "lockSeconds": 0.005803
+        }
+      ]
+    },
+    {
+      "label": "task-commit-control-query300",
+      "report": {
+        "measurementVersion": 2,
+        "runId": "load-1792394793-aa83aa82",
+        "environment": "D0 shared developer host",
+        "scenario": "query",
+        "generatedAt": "2026-10-19T07:26:44.051443900Z",
+        "requestedRate": 300,
+        "requests": 3000,
+        "acceptedOrRead": 2975,
+        "rejected": 25,
+        "transportErrors": 0,
+        "notSentDueCapacity": 0,
+        "phaseSeconds": 10.0482336,
+        "arrivalWindowSeconds": 10.0,
+        "acceptedOrReadPerSecond": 296.071938454934,
+        "httpStatuses": {
+          "200": 2975,
+          "503": 25
+        },
+        "httpLatencySamples": 3000,
+        "httpP95Micros": 44989,
+        "httpP99Micros": 56643,
+        "scheduledHttpP99Micros": 62186,
+        "sendDelayP99Micros": 15194,
+        "postedPayments": null,
+        "uniquePayments": null,
+        "successfulPayments": null,
+        "unfinishedAcceptedPayments": null,
+        "failedAcceptedPayments": null,
+        "oldestUnfinishedAcceptedMicros": null,
+        "unacknowledgedCommittedPayments": null,
+        "failedResponseWithoutVisiblePayment": null,
+        "paymentStatuses": {},
+        "acceptedCompletionP99UpperMicros": null,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "completedInArrivalWindowLower": null,
+        "completedInArrivalWindowUpper": null,
+        "completedPerArrivalSecondLower": null,
+        "completedPerArrivalSecondUpper": null,
+        "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+        "observerPollMillis": 250,
+        "observerSnapshots": 0,
+        "observerErrors": 0,
+        "observerAttempts": 0,
+        "observerTotalQueryMicros": 0,
+        "observerMaxQueryMicros": 0,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "requestedRefunds": 0,
+        "refundHttpStatuses": {},
+        "refundedPayments": 0,
+        "journals": null,
+        "ledgerRows": null,
+        "outboxBusinessTasks": null,
+        "ledgerDifferenceMinor": null,
+        "unbalancedJournals": null,
+        "moneyInvariantsPassed": null,
+        "correctnessPassed": false,
+        "referenceR1Certified": false,
+        "primaryPhaseStarted": "2026-10-19T07:26:33.975106400Z",
+        "primaryPhaseEnded": "2026-10-19T07:26:44.023532700Z",
+        "arrivalWindowEnded": "2026-10-19T07:26:43.975106400Z"
+      },
+      "reportSha256": "AD5D9FFC627C38B8C22146C22CFBA86FAD6B59CF5E098E4F6474ABE1E8302A58",
+      "requestRecordsSha256": "5A3FB239D839144B5385213F745CEBDBFCC0F69B2B4A10F15B2A7FB0D0400C0C",
+      "diagnosticId": "diagnosis-1792394789",
+      "firstSample": "2026-10-19T07:26:30.189154600Z",
+      "lastSample": "2026-10-19T07:26:59.052097900Z",
+      "sampleCount": 23,
+      "sampleErrors": 0,
+      "metrics": {
+        "merchantpay_tasks_pending": {
+          "max": 0.0,
+          "samples": 23
+        },
+        "hikaricp_connections_active": {
+          "max": 6.0,
+          "samples": 23
+        },
+        "system_cpu_usage": {
+          "max": 0.3531764742766008,
+          "samples": 23
+        },
+        "merchantpay_tasks_oldest_seconds": {
+          "max": 0.0,
+          "samples": 23
+        },
+        "process_cpu_usage": {
+          "max": 0.0894815556160151,
+          "samples": 23
+        },
+        "hikaricp_connections_pending": {
+          "max": 0.0,
+          "samples": 23
+        },
+        "hikaricp_connections_timeout_total": {
+          "max": 0.0,
+          "samples": 23
+        }
+      },
+      "maxLockWaitEdges": 0.0,
+      "lockSamples": [],
+      "physicalBufferReadsDelta": 102,
+      "quotaSql": [
+        {
+          "count": 616,
+          "seconds": 0.15900582,
+          "lockSeconds": 0.059846,
+          "rowsExamined": 0,
+          "sql": "INSERT INTO `api_rate_limits` ( `key_id` , `window_second` , `requests` ) VALUES (...) ON DUPLICATE KEY UPDATE `requests` = `requests` + ?"
+        }
+      ],
+      "topSql": [
+        {
+          "count": 2944,
+          "seconds": 12.209505455,
+          "lockSeconds": 0.002926,
+          "rowsExamined": 0,
+          "sql": "INSERT INTO `signature_nonces` ( `key_id` , `nonce` , `expires_at` ) VALUES (...)"
+        },
+        {
+          "count": 2730,
+          "seconds": 2.022360109,
+          "lockSeconds": 0.0,
+          "rowsExamined": 0,
+          "sql": "COMMIT"
+        },
+        {
+          "count": 2114,
+          "seconds": 0.452203004,
+          "lockSeconds": 0.002676,
+          "rowsExamined": 0,
+          "sql": "SELECT * FROM `outbox_tasks` WHERE STATUS = ? AND `lease_until` < ? AND `queue_class` = ? ORDER BY `lease_until` , `id` LIMIT ? FOR UPDATE SKIP LOCKED"
+        },
+        {
+          "count": 2901,
+          "seconds": 0.39680074,
+          "lockSeconds": 0.002734,
+          "rowsExamined": 2897,
+          "sql": "SELECT * FROM `merchant_keys` WHERE `id` = ? AND `enabled` = TRUE AND ( `expires_at` IS NULL OR `expires_at` > ? )"
+        },
+        {
+          "count": 2114,
+          "seconds": 0.355311092,
+          "lockSeconds": 0.001493,
+          "rowsExamined": 0,
+          "sql": "SELECT * FROM `outbox_tasks` WHERE STATUS = ? AND `due_at` <= ? AND `queue_class` = ? ORDER BY `due_at` , `id` LIMIT ? FOR UPDATE SKIP LOCKED"
+        },
+        {
+          "count": 2885,
+          "seconds": 0.35499032,
+          "lockSeconds": 0.002611,
+          "rowsExamined": 2900,
+          "sql": "SELECT * FROM `payments` WHERE `id` = ? AND `merchant_id` = ?"
+        },
+        {
+          "count": 5454,
+          "seconds": 0.303577491,
+          "lockSeconds": 0.0,
+          "rowsExamined": 0,
+          "sql": "SET `autocommit` = ?"
+        }
+      ],
+      "config": {
+        "flushOnCommit": 1,
+        "syncBinlog": 1,
+        "bufferPoolBytes": 134217728,
+        "maxConnections": 200,
+        "performanceSchema": 1
+      },
+      "backlogByKindSampledPeaks": {},
+      "paymentCapacitySampledPeak": 0,
+      "totalQueueSampledPeak": 0,
+      "taskExecutions": [
+        {
+          "kindOutcome": "CHANNEL_REFUND:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "PAYMENT_SUCCEEDED:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "CHANNEL_PAYMENT:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "REFUND_SUCCEEDED:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "PROCESS_INBOX:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        }
+      ],
+      "completionBatches": null,
+      "stageSql": []
+    },
+    {
+      "label": "task-commit-after-pay300",
+      "report": {
+        "measurementVersion": 2,
+        "runId": "load-1792394850-0bb27733",
+        "environment": "D0 shared developer host",
+        "scenario": "pay",
+        "generatedAt": "2026-10-19T07:27:52.504087400Z",
+        "requestedRate": 300,
+        "requests": 4500,
+        "acceptedOrRead": 1414,
+        "rejected": 3086,
+        "transportErrors": 0,
+        "notSentDueCapacity": 0,
+        "phaseSeconds": 15.4110014,
+        "arrivalWindowSeconds": 15.0,
+        "acceptedOrReadPerSecond": 91.75263587997598,
+        "httpStatuses": {
+          "202": 1414,
+          "503": 3086
+        },
+        "httpLatencySamples": 4500,
+        "httpP95Micros": 170176,
+        "httpP99Micros": 346600,
+        "scheduledHttpP99Micros": 353047,
+        "sendDelayP99Micros": 15984,
+        "postedPayments": 1414,
+        "uniquePayments": 1414,
+        "successfulPayments": 1414,
+        "unfinishedAcceptedPayments": 0,
+        "failedAcceptedPayments": 0,
+        "oldestUnfinishedAcceptedMicros": 0,
+        "unacknowledgedCommittedPayments": 0,
+        "failedResponseWithoutVisiblePayment": 3086,
+        "paymentStatuses": {
+          "SUCCEEDED": 1414
+        },
+        "acceptedCompletionP99UpperMicros": 4248778,
+        "successfulCompletionP99LowerMicros": 3799449,
+        "successfulCompletionP99UpperMicros": 4248778,
+        "completedInArrivalWindowLower": 1154,
+        "completedInArrivalWindowUpper": 1161,
+        "completedPerArrivalSecondLower": 76.93333333333334,
+        "completedPerArrivalSecondUpper": 77.4,
+        "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+        "observerPollMillis": 250,
+        "observerSnapshots": 60,
+        "observerErrors": 0,
+        "observerAttempts": 60,
+        "observerTotalQueryMicros": 5898914,
+        "observerMaxQueryMicros": 710120,
+        "maxCommitVisibilityIntervalMicros": 1051984,
+        "requestedRefunds": 0,
+        "refundHttpStatuses": {},
+        "refundedPayments": 0,
+        "journals": 1414,
+        "ledgerRows": 4227,
+        "outboxBusinessTasks": 2828,
+        "ledgerDifferenceMinor": "0",
+        "unbalancedJournals": 0,
+        "moneyInvariantsPassed": true,
+        "correctnessPassed": false,
+        "referenceR1Certified": false,
+        "primaryPhaseStarted": "2026-10-19T07:27:30.966863500Z",
+        "primaryPhaseEnded": "2026-10-19T07:27:46.377882600Z",
+        "arrivalWindowEnded": "2026-10-19T07:27:45.966863500Z"
+      },
+      "reportSha256": "F89A70CE1A7709B3970AC0571CEE4F2F6163E8215C0A3265C3A18DEC1F2B09C3",
+      "requestRecordsSha256": "3FC74CB159F4738A4DF8234C855EE43F17FC9CF219185421D3DA27B30655BB2D",
+      "diagnosticId": "diagnosis-1792394846",
+      "firstSample": "2026-10-19T07:27:27.371483800Z",
+      "lastSample": "2026-10-19T07:28:01.952442800Z",
+      "sampleCount": 24,
+      "sampleErrors": 0,
+      "metrics": {
+        "merchantpay_tasks_pending": {
+          "max": 370.0,
+          "samples": 24
+        },
+        "hikaricp_connections_active": {
+          "max": 32.0,
+          "samples": 24
+        },
+        "system_cpu_usage": {
+          "max": 0.8004409508696562,
+          "samples": 24
+        },
+        "merchantpay_tasks_oldest_seconds": {
+          "max": 1.0,
+          "samples": 24
+        },
+        "process_cpu_usage": {
+          "max": 0.2404533312671247,
+          "samples": 24
+        },
+        "hikaricp_connections_pending": {
+          "max": 6.0,
+          "samples": 24
+        },
+        "hikaricp_connections_timeout_total": {
+          "max": 0.0,
+          "samples": 24
+        }
+      },
+      "maxLockWaitEdges": 10.0,
+      "lockSamples": [
+        {
+          "at": "2026-10-19T07:27:31.841367900Z",
+          "lockWaits": 10,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 7
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:27:33.494180700Z",
+          "lockWaits": 4,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 2
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:27:35.182362400Z",
+          "lockWaits": 5,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 6
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:27:39.614471300Z",
+          "lockWaits": 1,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 1
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:27:41.207061400Z",
+          "lockWaits": 7,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "api_rate_limits",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 1
+            },
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 6
+            }
+          ]
+        },
+        {
+          "at": "2026-10-19T07:27:44.195539600Z",
+          "lockWaits": 2,
+          "lockWaitIndexes": [
+            {
+              "OBJECT_NAME": "payment_admission",
+              "INDEX_NAME": "PRIMARY",
+              "LOCK_MODE": "X,REC_NOT_GAP",
+              "waiting": 2
+            }
+          ]
+        }
+      ],
+      "physicalBufferReadsDelta": 38216,
+      "quotaSql": [
+        {
+          "count": 639,
+          "seconds": 2.730728147,
+          "lockSeconds": 1.908617,
+          "rowsExamined": 0,
+          "sql": "INSERT INTO `api_rate_limits` ( `key_id` , `window_second` , `requests` ) VALUES (...) ON DUPLICATE KEY UPDATE `requests` = `requests` + ?"
+        }
+      ],
+      "topSql": [
+        {
+          "count": 7687,
+          "seconds": 54.190950946,
+          "lockSeconds": 0.0,
+          "rowsExamined": 0,
+          "sql": "COMMIT"
+        },
+        {
+          "count": 2801,
+          "seconds": 32.879433667,
+          "lockSeconds": 0.00462,
+          "rowsExamined": 2811,
+          "sql": "UPDATE `channel_attempts` SET `response_body` = ? , `updated_at` = ? WHERE CHANNEL = ? AND `request_key` = ?"
+        },
+        {
+          "count": 2311,
+          "seconds": 27.493920703,
+          "lockSeconds": 0.003742,
+          "rowsExamined": 0,
+          "sql": "INSERT INTO `signature_nonces` ( `key_id` , `nonce` , `expires_at` ) VALUES (...)"
+        },
+        {
+          "count": 2314,
+          "seconds": 21.226394242,
+          "lockSeconds": 20.167569,
+          "rowsExamined": 2314,
+          "sql": "UPDATE `payment_admission` SET `inflight` = `inflight` + ? WHERE `logical_shard` = ? AND `inflight` < ?"
+        },
+        {
+          "count": 1405,
+          "seconds": 18.908838082,
+          "lockSeconds": 0.00217,
+          "rowsExamined": 0,
+          "sql": "INSERT INTO `notification_deliveries` ( `id` , `task_id` , `event_id` , `merchant_id` , URL , STATUS , `created_at` ) VALUES (...)"
+        },
+        {
+          "count": 1406,
+          "seconds": 17.099467516,
+          "lockSeconds": 0.002213,
+          "rowsExamined": 0,
+          "sql": "INSERT IGNORE INTO `channel_attempts` ( `id` , `aggregate_id` , `payment_id` , CHANNEL , `operation` , `request_key` , STATUS , `request_body` , `created_at` , `updated_at` ) VALUES (...)"
+        },
+        {
+          "count": 1393,
+          "seconds": 16.825178201,
+          "lockSeconds": 0.00218,
+          "rowsExamined": 1399,
+          "sql": "UPDATE `notification_deliveries` SET STATUS = ? , `http_status` = ? WHERE `id` = ?"
+        }
+      ],
+      "config": {
+        "flushOnCommit": 1,
+        "syncBinlog": 1,
+        "bufferPoolBytes": 134217728,
+        "maxConnections": 200,
+        "performanceSchema": 1
+      },
+      "backlogByKindSampledPeaks": {
+        "PROCESS_INBOX": 87.0,
+        "PAYMENT_SUCCEEDED": 246.0,
+        "CHANNEL_PAYMENT": 252.0
+      },
+      "paymentCapacitySampledPeak": 251,
+      "totalQueueSampledPeak": 572,
+      "taskExecutions": [
+        {
+          "kindOutcome": "CHANNEL_REFUND:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "PAYMENT_SUCCEEDED:completed",
+          "executions": 1414.0,
+          "seconds": 134.6086875,
+          "meanMillis": 95.19709158415841
+        },
+        {
+          "kindOutcome": "CHANNEL_PAYMENT:completed",
+          "executions": 1414.0,
+          "seconds": 220.8843099,
+          "meanMillis": 156.2123832390382
+        },
+        {
+          "kindOutcome": "REFUND_SUCCEEDED:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "PROCESS_INBOX:completed",
+          "executions": 766.0,
+          "seconds": 44.6705796,
+          "meanMillis": 58.316683550913844
+        }
+      ],
+      "completionBatches": {
+        "failedGroups": 0,
+        "meanItemsPerGroup": 4.444993819530285,
+        "summaryGroups": 809.0,
+        "committedGroups": 808.0,
+        "completionItems": 3596.0
+      },
+      "stageSql": [
+        {
+          "sql": "UPDATE `channel_attempts` SET STATUS = ? , `updated_at` = ? WHERE CHANNEL = ? AND `request_key` = ?",
+          "count": 1407,
+          "seconds": 0.547914829,
+          "lockSeconds": 0.001688
+        },
+        {
+          "sql": "UPDATE `outbox_tasks` SET STATUS = ? , `lease_token` = ? , `lease_until` = ? , `last_error` = ? , `updated_at` = ? WHERE `id` = ? AND STATUS = ? AND `lease_token` = ?",
+          "count": 3663,
+          "seconds": 5.392444939,
+          "lockSeconds": 0.004339
+        }
+      ]
+    },
+    {
+      "label": "task-commit-after-query300",
+      "report": {
+        "measurementVersion": 2,
+        "runId": "load-1792395129-defd8c5b",
+        "environment": "D0 shared developer host",
+        "scenario": "query",
+        "generatedAt": "2026-10-19T07:32:20.26836Z",
+        "requestedRate": 300,
+        "requests": 3000,
+        "acceptedOrRead": 2981,
+        "rejected": 19,
+        "transportErrors": 0,
+        "notSentDueCapacity": 0,
+        "phaseSeconds": 10.0402399,
+        "arrivalWindowSeconds": 10.0,
+        "acceptedOrReadPerSecond": 296.90525621803124,
+        "httpStatuses": {
+          "200": 2981,
+          "503": 19
+        },
+        "httpLatencySamples": 3000,
+        "httpP95Micros": 41313,
+        "httpP99Micros": 51365,
+        "scheduledHttpP99Micros": 58259,
+        "sendDelayP99Micros": 15209,
+        "postedPayments": null,
+        "uniquePayments": null,
+        "successfulPayments": null,
+        "unfinishedAcceptedPayments": null,
+        "failedAcceptedPayments": null,
+        "oldestUnfinishedAcceptedMicros": null,
+        "unacknowledgedCommittedPayments": null,
+        "failedResponseWithoutVisiblePayment": null,
+        "paymentStatuses": {},
+        "acceptedCompletionP99UpperMicros": null,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "completedInArrivalWindowLower": null,
+        "completedInArrivalWindowUpper": null,
+        "completedPerArrivalSecondLower": null,
+        "completedPerArrivalSecondUpper": null,
+        "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+        "observerPollMillis": 250,
+        "observerSnapshots": 0,
+        "observerErrors": 0,
+        "observerAttempts": 0,
+        "observerTotalQueryMicros": 0,
+        "observerMaxQueryMicros": 0,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "requestedRefunds": 0,
+        "refundHttpStatuses": {},
+        "refundedPayments": 0,
+        "journals": null,
+        "ledgerRows": null,
+        "outboxBusinessTasks": null,
+        "ledgerDifferenceMinor": null,
+        "unbalancedJournals": null,
+        "moneyInvariantsPassed": null,
+        "correctnessPassed": false,
+        "referenceR1Certified": false,
+        "primaryPhaseStarted": "2026-10-19T07:32:10.192011Z",
+        "primaryPhaseEnded": "2026-10-19T07:32:20.232357Z",
+        "arrivalWindowEnded": "2026-10-19T07:32:20.192011Z"
+      },
+      "reportSha256": "F229A6823CAE280A5EC1F816FE630E1F2C096569C0BD8483CD29730EDB52C110",
+      "requestRecordsSha256": "702437F9EEA837F949732A334E241968D7E985757B98AAB5E21DCCACA4B5EFA6",
+      "diagnosticId": "diagnosis-1792395126",
+      "firstSample": "2026-10-19T07:32:06.412577300Z",
+      "lastSample": "2026-10-19T07:32:35.398394100Z",
+      "sampleCount": 23,
+      "sampleErrors": 0,
+      "metrics": {
+        "merchantpay_tasks_pending": {
+          "max": 0.0,
+          "samples": 23
+        },
+        "hikaricp_connections_active": {
+          "max": 6.0,
+          "samples": 23
+        },
+        "system_cpu_usage": {
+          "max": 0.3411200722319321,
+          "samples": 23
+        },
+        "merchantpay_tasks_oldest_seconds": {
+          "max": 0.0,
+          "samples": 23
+        },
+        "process_cpu_usage": {
+          "max": 0.12823171349680154,
+          "samples": 23
+        },
+        "hikaricp_connections_pending": {
+          "max": 0.0,
+          "samples": 23
+        },
+        "hikaricp_connections_timeout_total": {
+          "max": 0.0,
+          "samples": 23
+        }
+      },
+      "maxLockWaitEdges": 0.0,
+      "lockSamples": [],
+      "physicalBufferReadsDelta": 64,
+      "quotaSql": [
+        {
+          "count": 628,
+          "seconds": 0.116518234,
+          "lockSeconds": 0.026863,
+          "rowsExamined": 0,
+          "sql": "INSERT INTO `api_rate_limits` ( `key_id` , `window_second` , `requests` ) VALUES (...) ON DUPLICATE KEY UPDATE `requests` = `requests` + ?"
+        }
+      ],
+      "topSql": [
+        {
+          "count": 2926,
+          "seconds": 10.515148523,
+          "lockSeconds": 0.002807,
+          "rowsExamined": 0,
+          "sql": "INSERT INTO `signature_nonces` ( `key_id` , `nonce` , `expires_at` ) VALUES (...)"
+        },
+        {
+          "count": 2757,
+          "seconds": 1.727182592,
+          "lockSeconds": 0.0,
+          "rowsExamined": 0,
+          "sql": "COMMIT"
+        },
+        {
+          "count": 2129,
+          "seconds": 0.45444866,
+          "lockSeconds": 0.002801,
+          "rowsExamined": 0,
+          "sql": "SELECT * FROM `outbox_tasks` WHERE STATUS = ? AND `lease_until` < ? AND `queue_class` = ? ORDER BY `lease_until` , `id` LIMIT ? FOR UPDATE SKIP LOCKED"
+        },
+        {
+          "count": 2918,
+          "seconds": 0.392845009,
+          "lockSeconds": 0.002722,
+          "rowsExamined": 2917,
+          "sql": "SELECT * FROM `merchant_keys` WHERE `id` = ? AND `enabled` = TRUE AND ( `expires_at` IS NULL OR `expires_at` > ? )"
+        },
+        {
+          "count": 2908,
+          "seconds": 0.370488982,
+          "lockSeconds": 0.00259,
+          "rowsExamined": 2893,
+          "sql": "SELECT * FROM `payments` WHERE `id` = ? AND `merchant_id` = ?"
+        },
+        {
+          "count": 2129,
+          "seconds": 0.359028753,
+          "lockSeconds": 0.001486,
+          "rowsExamined": 0,
+          "sql": "SELECT * FROM `outbox_tasks` WHERE STATUS = ? AND `due_at` <= ? AND `queue_class` = ? ORDER BY `due_at` , `id` LIMIT ? FOR UPDATE SKIP LOCKED"
+        },
+        {
+          "count": 5511,
+          "seconds": 0.311617457,
+          "lockSeconds": 0.0,
+          "rowsExamined": 0,
+          "sql": "SET `autocommit` = ?"
+        }
+      ],
+      "config": {
+        "flushOnCommit": 1,
+        "syncBinlog": 1,
+        "bufferPoolBytes": 134217728,
+        "maxConnections": 200,
+        "performanceSchema": 1
+      },
+      "backlogByKindSampledPeaks": {},
+      "paymentCapacitySampledPeak": 0,
+      "totalQueueSampledPeak": 0,
+      "taskExecutions": [
+        {
+          "kindOutcome": "CHANNEL_REFUND:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "PAYMENT_SUCCEEDED:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "CHANNEL_PAYMENT:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "REFUND_SUCCEEDED:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        },
+        {
+          "kindOutcome": "PROCESS_INBOX:completed",
+          "executions": 0.0,
+          "seconds": 0.0,
+          "meanMillis": null
+        }
+      ],
+      "completionBatches": {
+        "failedGroups": 0,
+        "meanItemsPerGroup": null,
+        "summaryGroups": 0.0,
+        "committedGroups": 0.0,
+        "completionItems": 0.0
+      },
+      "stageSql": []
+    }
+  ],
+  "notes": [
+    "Initial before-pay300 has371 transport errors,104 unsent requests and2 diagnostic sampling errors; retained but excluded from comparison. Later idle channel-health preflight also timed out. Cause is not proven. Old verified jar was restarted, both old/new versions get the same100-payment/20-refund warmup. Earlier unpaired1902-payment run is retained separately.",
+    "No performance phase overlaps project tests/build. Each pure-query phase starts after both channel callback/payment counts are0.",
+    "Completion summary measures client commit groups/items, not server fsync count. Metrics are sampled independently: after-pay summary809 groups versus committed counter808 reflects non-atomic scrape boundaries. Explicit COMMIT digest changes cannot be compared as total durability commits because the old path used implicit commits.",
+    "Short D0/JIT/cache/shared-host variability and observer interval bounds remain. No R1/D1, long stability, frontend/browser or remoteCI certification."
+  ]
+}

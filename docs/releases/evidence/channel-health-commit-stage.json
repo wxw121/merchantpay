@@ -1,0 +1,1740 @@
+{
+  "generatedAt": "2026-10-19T09:31:37.3728192Z",
+  "scope": "Simulator history scan fix and read-only commit-stage diagnosis; no financial code/durability/concurrency change",
+  "runtime": {
+    "at": "2026-10-19T09:23:30.4141619Z",
+    "platformStatus": "UP",
+    "platformJarSha256": "A1118C06D3D5021235E60CB379E7685D314A5277CE3972F004A14AB64495B310",
+    "simulatorJarSha256": "B712BF2755779EAA2339984258455B90217B3A7055F56305C548BD02666E0D8E",
+    "unchangedBackendFiles": 88
+  },
+  "unchangedBackendSources": 88,
+  "simulatorSourceHashes": [
+    {
+      "path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\CallbackWorker.java",
+      "sha256": "FE8AE519EE820C0FE89269CDB705E4FE71F95C455EB143C7739BA29AE2F3EC15"
+    },
+    {
+      "path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\ChannelController.java",
+      "sha256": "52FC8C09F8214476D1AE73365A16F54B0D7A1667BD49C0B1DFB14B2187B45440"
+    },
+    {
+      "path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\ChannelStore.java",
+      "sha256": "5BACECDA12F660E53D780ACCEF5E35C5AF93477EA50046ED040FB1A8487F09E5"
+    },
+    {
+      "path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\DemoMerchantWebhook.java",
+      "sha256": "39D402B77E274A244C2E1B3FE8E1AC55748C2CB0642F9B5D97DFA6D787EB37F9"
+    },
+    {
+      "path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\SimulatorApplication.java",
+      "sha256": "F86C724C08638A1419C40AAB9BBA35A00A6D53ABB9E67676DCC0FDED0EEC8532"
+    },
+    {
+      "path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\resources\\application.yaml",
+      "sha256": "2348F85016FF8EFA06DB9983F9D2FCAF682A9D754F60FC556DC3D73E90F32EC9"
+    },
+    {
+      "path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\main\\resources\\schema.sql",
+      "sha256": "25925B74F393B7B27649E410059B1EBF0C80193C023D73A6A09A5880928978CB"
+    },
+    {
+      "path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\test\\java\\dev\\merchantpay\\simulator\\ChannelHealthTest.java",
+      "sha256": "D3EE49D57F963904B312870AB53BA520FAF5DF4902225279BB80271567B190D6"
+    },
+    {
+      "path": "D:\\software\\cld_project\\javaProject\\simulator\\src\\test\\java\\dev\\merchantpay\\simulator\\ChannelStoreTest.java",
+      "sha256": "8D470697EF2635DFE12ED7FE2CCD61C65561A9E85EB95B028F9DFDD49E589BC3"
+    }
+  ],
+  "healthBefore": [
+    {
+      "channel": "MOCK_A",
+      "millis": 1356,
+      "health": {
+        "channel": "MOCK_A",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      }
+    },
+    {
+      "channel": "MOCK_B",
+      "millis": 1081,
+      "health": {
+        "channel": "MOCK_B",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      }
+    }
+  ],
+  "healthAfter": [
+    {
+      "round": 1,
+      "channel": "MOCK_A",
+      "millis": 32,
+      "health": {
+        "channel": "MOCK_A",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      }
+    },
+    {
+      "round": 1,
+      "channel": "MOCK_B",
+      "millis": 8,
+      "health": {
+        "channel": "MOCK_B",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      }
+    },
+    {
+      "round": 2,
+      "channel": "MOCK_A",
+      "millis": 7,
+      "health": {
+        "channel": "MOCK_A",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      }
+    },
+    {
+      "round": 2,
+      "channel": "MOCK_B",
+      "millis": 7,
+      "health": {
+        "channel": "MOCK_B",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      }
+    },
+    {
+      "round": 3,
+      "channel": "MOCK_A",
+      "millis": 7,
+      "health": {
+        "channel": "MOCK_A",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      }
+    },
+    {
+      "round": 3,
+      "channel": "MOCK_B",
+      "millis": 7,
+      "health": {
+        "channel": "MOCK_B",
+        "pendingCallbacks": 0,
+        "pendingPayments": 0,
+        "oldestCallbackAt": ""
+      }
+    }
+  ],
+  "jfr": {
+    "samples": 76,
+    "healthSamples": 45,
+    "pollSamples": 12
+  },
+  "load": {
+    "measurementVersion": 2,
+    "runId": "load-1792401888-9ae145df",
+    "environment": "D0 shared developer host",
+    "scenario": "pay",
+    "generatedAt": "2026-10-19T09:25:09.692241600Z",
+    "requestedRate": 300,
+    "requests": 4500,
+    "acceptedOrRead": 1251,
+    "rejected": 3249,
+    "transportErrors": 0,
+    "notSentDueCapacity": 0,
+    "phaseSeconds": 15.0765635,
+    "arrivalWindowSeconds": 15.0,
+    "acceptedOrReadPerSecond": 82.97646874236294,
+    "httpStatuses": {
+      "202": 1251,
+      "503": 3249
+    },
+    "httpLatencySamples": 4500,
+    "httpP95Micros": 201813,
+    "httpP99Micros": 331452,
+    "scheduledHttpP99Micros": 341204,
+    "sendDelayP99Micros": 16360,
+    "postedPayments": 1251,
+    "uniquePayments": 1251,
+    "successfulPayments": 1251,
+    "unfinishedAcceptedPayments": 0,
+    "failedAcceptedPayments": 0,
+    "oldestUnfinishedAcceptedMicros": 0,
+    "unacknowledgedCommittedPayments": 0,
+    "failedResponseWithoutVisiblePayment": 3249,
+    "paymentStatuses": {
+      "SUCCEEDED": 1251
+    },
+    "acceptedCompletionP99UpperMicros": 4748011,
+    "successfulCompletionP99LowerMicros": 4329849,
+    "successfulCompletionP99UpperMicros": 4748011,
+    "completedInArrivalWindowLower": 985,
+    "completedInArrivalWindowUpper": 1010,
+    "completedPerArrivalSecondLower": 65.66666666666667,
+    "completedPerArrivalSecondUpper": 67.33333333333333,
+    "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+    "observerPollMillis": 250,
+    "observerSnapshots": 59,
+    "observerErrors": 0,
+    "observerAttempts": 59,
+    "observerTotalQueryMicros": 5711185,
+    "observerMaxQueryMicros": 625290,
+    "maxCommitVisibilityIntervalMicros": 977028,
+    "requestedRefunds": 0,
+    "refundHttpStatuses": {},
+    "refundedPayments": 0,
+    "journals": 1251,
+    "ledgerRows": 3739,
+    "outboxBusinessTasks": 2502,
+    "ledgerDifferenceMinor": "0",
+    "unbalancedJournals": 0,
+    "moneyInvariantsPassed": true,
+    "correctnessPassed": false,
+    "referenceR1Certified": false,
+    "primaryPhaseStarted": "2026-10-19T09:24:48.626583700Z",
+    "primaryPhaseEnded": "2026-10-19T09:25:03.702902700Z",
+    "arrivalWindowEnded": "2026-10-19T09:25:03.626583700Z"
+  },
+  "smoke": {
+    "measurementVersion": 2,
+    "runId": "load-1792401869-a7091806",
+    "environment": "D0 shared developer host",
+    "scenario": "dataset",
+    "generatedAt": "2026-10-19T09:24:42.229381300Z",
+    "requestedRate": 10,
+    "requests": 100,
+    "acceptedOrRead": 100,
+    "rejected": 0,
+    "transportErrors": 0,
+    "notSentDueCapacity": 0,
+    "phaseSeconds": 9.972148,
+    "arrivalWindowSeconds": 10.0,
+    "acceptedOrReadPerSecond": 10.02792979005125,
+    "httpStatuses": {
+      "202": 100
+    },
+    "httpLatencySamples": 100,
+    "httpP95Micros": 88904,
+    "httpP99Micros": 111114,
+    "scheduledHttpP99Micros": 114072,
+    "sendDelayP99Micros": 14988,
+    "postedPayments": 100,
+    "uniquePayments": 100,
+    "successfulPayments": 100,
+    "unfinishedAcceptedPayments": 0,
+    "failedAcceptedPayments": 0,
+    "oldestUnfinishedAcceptedMicros": 0,
+    "unacknowledgedCommittedPayments": 0,
+    "failedResponseWithoutVisiblePayment": 0,
+    "paymentStatuses": {
+      "SUCCEEDED": 100
+    },
+    "acceptedCompletionP99UpperMicros": 675698,
+    "successfulCompletionP99LowerMicros": 382036,
+    "successfulCompletionP99UpperMicros": 675698,
+    "completedInArrivalWindowLower": 97,
+    "completedInArrivalWindowUpper": 100,
+    "completedPerArrivalSecondLower": 9.7,
+    "completedPerArrivalSecondUpper": 10.0,
+    "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+    "observerPollMillis": 250,
+    "observerSnapshots": 37,
+    "observerErrors": 0,
+    "observerAttempts": 37,
+    "observerTotalQueryMicros": 1394031,
+    "observerMaxQueryMicros": 226951,
+    "maxCommitVisibilityIntervalMicros": 379391,
+    "requestedRefunds": 20,
+    "refundHttpStatuses": {
+      "202": 20
+    },
+    "refundedPayments": 20,
+    "journals": 120,
+    "ledgerRows": 359,
+    "outboxBusinessTasks": 240,
+    "ledgerDifferenceMinor": "0",
+    "unbalancedJournals": 0,
+    "moneyInvariantsPassed": true,
+    "correctnessPassed": true,
+    "referenceR1Certified": false,
+    "primaryPhaseStarted": "2026-10-19T09:24:29.543068100Z",
+    "primaryPhaseEnded": "2026-10-19T09:24:39.515321500Z",
+    "arrivalWindowEnded": "2026-10-19T09:24:39.543068100Z"
+  },
+  "diagnosticId": "diagnosis-1792401884-893d965f",
+  "ioBefore": {
+    "startedAt": "2026-10-19T09:24:45.175882400Z",
+    "config": {
+      "serverUuid": "61680263-ca3c-11f1-8d6b-067f85e6c3df",
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "logBin": 1,
+      "bufferPoolBytes": 134217728,
+      "performanceSchema": 1
+    },
+    "status": {
+      "Innodb_buffer_pool_pages_dirty": "654",
+      "Innodb_buffer_pool_pages_free": "1024",
+      "Innodb_buffer_pool_pages_total": "8192",
+      "Innodb_buffer_pool_read_requests": "181665998",
+      "Innodb_buffer_pool_reads": "756922",
+      "Innodb_buffer_pool_wait_free": "1955",
+      "Innodb_data_fsyncs": "848546",
+      "Innodb_data_read": "12605513728",
+      "Innodb_data_reads": "769550",
+      "Innodb_data_writes": "2238733",
+      "Innodb_data_written": "19779713024",
+      "Innodb_log_waits": "0",
+      "Innodb_os_log_fsyncs": "750648",
+      "Innodb_os_log_written": "1203543040",
+      "Uptime": "29786"
+    },
+    "instruments": [
+      {
+        "NAME": "stage/sql/committing alter table to storage engine",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for commit lock",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for dependent transaction to commit",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for GTID to be committed",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/waiting for handler commit",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for preceding transaction to commit",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_arch_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_clone_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_data_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_dblwr_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_log_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_tablespace_open_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_temp_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/meb::redo_log_archive_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/sql/binlog",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/sql/binlog_cache",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/sql/binlog_index",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/sql/binlog_index_cache",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_checkpointer_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_closer_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_cmdq_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_files_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_flush_notifier_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_flusher_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_governor_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_limits_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_sn_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_sys_arch_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_write_notifier_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_writer_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/sxlock/innodb/index_online_log",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/sxlock/innodb/log_sn_lock",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      }
+    ],
+    "consumers": [
+      {
+        "NAME": "events_stages_current",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_stages_history",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_stages_history_long",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_statements_cpu",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_statements_current",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "events_statements_history",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "events_statements_history_long",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_transactions_current",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "events_transactions_history",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "events_transactions_history_long",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_waits_current",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_waits_history",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_waits_history_long",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "global_instrumentation",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "statements_digest",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "thread_instrumentation",
+        "ENABLED": "YES"
+      }
+    ],
+    "files": [
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_arch_file",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_clone_file",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_data_file",
+        "COUNT_READ": 769100,
+        "SUM_TIMER_READ": 232376019298884,
+        "SUM_NUMBER_OF_BYTES_READ": 12602425344,
+        "COUNT_WRITE": 1103680,
+        "SUM_TIMER_WRITE": 5878540342512,
+        "SUM_NUMBER_OF_BYTES_WRITE": 18333761536,
+        "COUNT_MISC": 98093,
+        "SUM_TIMER_MISC": 125952079018536
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_dblwr_file",
+        "COUNT_READ": 2,
+        "SUM_TIMER_READ": 9389643786,
+        "SUM_NUMBER_OF_BYTES_READ": 16777216,
+        "COUNT_WRITE": 39646,
+        "SUM_TIMER_WRITE": 46667604001896,
+        "SUM_NUMBER_OF_BYTES_WRITE": 18075484160,
+        "COUNT_MISC": 6,
+        "SUM_TIMER_MISC": 35594064
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_log_file",
+        "COUNT_READ": 81,
+        "SUM_TIMER_READ": 2609280126,
+        "SUM_NUMBER_OF_BYTES_READ": 106496,
+        "COUNT_WRITE": 1094410,
+        "SUM_TIMER_WRITE": 12952882628298,
+        "SUM_NUMBER_OF_BYTES_WRITE": 1686227968,
+        "COUNT_MISC": 764338,
+        "SUM_TIMER_MISC": 692647511777928
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_tablespace_open_file",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_temp_file",
+        "COUNT_READ": 31,
+        "SUM_TIMER_READ": 10306761426,
+        "SUM_NUMBER_OF_BYTES_READ": 507904,
+        "COUNT_WRITE": 1028,
+        "SUM_TIMER_WRITE": 57518838288,
+        "SUM_NUMBER_OF_BYTES_WRITE": 18219008,
+        "COUNT_MISC": 71,
+        "SUM_TIMER_MISC": 113540506848
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/meb::redo_log_archive_file",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog",
+        "COUNT_READ": 133894,
+        "SUM_TIMER_READ": 468601051986,
+        "SUM_NUMBER_OF_BYTES_READ": 1096838078,
+        "COUNT_WRITE": 196641,
+        "SUM_TIMER_WRITE": 4359603879342,
+        "SUM_NUMBER_OF_BYTES_WRITE": 467015136,
+        "COUNT_MISC": 159276,
+        "SUM_TIMER_MISC": 291540069161712
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog_cache",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog_index",
+        "COUNT_READ": 5,
+        "SUM_TIMER_READ": 326315628,
+        "SUM_NUMBER_OF_BYTES_READ": 288,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 18,
+        "SUM_TIMER_MISC": 946810548
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog_index_cache",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      }
+    ],
+    "stages": [
+      {
+        "EVENT_NAME": "stage/sql/committing alter table to storage engine",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for commit lock",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for dependent transaction to commit",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for GTID to be committed",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/waiting for handler commit",
+        "COUNT_STAR": 265,
+        "SUM_TIMER_WAIT": 1170428000
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for preceding transaction to commit",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      }
+    ],
+    "finishedAt": "2026-10-19T09:24:45.194680600Z"
+  },
+  "ioAfter": {
+    "startedAt": "2026-10-19T09:25:20.985186500Z",
+    "config": {
+      "serverUuid": "61680263-ca3c-11f1-8d6b-067f85e6c3df",
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "logBin": 1,
+      "bufferPoolBytes": 134217728,
+      "performanceSchema": 1
+    },
+    "status": {
+      "Innodb_buffer_pool_pages_dirty": "657",
+      "Innodb_buffer_pool_pages_free": "1011",
+      "Innodb_buffer_pool_pages_total": "8192",
+      "Innodb_buffer_pool_read_requests": "184317785",
+      "Innodb_buffer_pool_reads": "792078",
+      "Innodb_buffer_pool_wait_free": "2037",
+      "Innodb_data_fsyncs": "869561",
+      "Innodb_data_read": "13181657088",
+      "Innodb_data_reads": "804715",
+      "Innodb_data_writes": "2328767",
+      "Innodb_data_written": "20718829568",
+      "Innodb_log_waits": "0",
+      "Innodb_os_log_fsyncs": "768039",
+      "Innodb_os_log_written": "1252366336",
+      "Uptime": "29821"
+    },
+    "instruments": [
+      {
+        "NAME": "stage/sql/committing alter table to storage engine",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for commit lock",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for dependent transaction to commit",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for GTID to be committed",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/waiting for handler commit",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for preceding transaction to commit",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_arch_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_clone_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_data_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_dblwr_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_log_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_tablespace_open_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/innodb_temp_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/innodb/meb::redo_log_archive_file",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/sql/binlog",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/sql/binlog_cache",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/sql/binlog_index",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/io/file/sql/binlog_index_cache",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_checkpointer_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_closer_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_cmdq_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_files_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_flush_notifier_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_flusher_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_governor_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_limits_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_sn_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_sys_arch_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_write_notifier_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/mutex/innodb/log_writer_mutex",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/sxlock/innodb/index_online_log",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "wait/synch/sxlock/innodb/log_sn_lock",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      }
+    ],
+    "consumers": [
+      {
+        "NAME": "events_stages_current",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_stages_history",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_stages_history_long",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_statements_cpu",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_statements_current",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "events_statements_history",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "events_statements_history_long",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_transactions_current",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "events_transactions_history",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "events_transactions_history_long",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_waits_current",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_waits_history",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "events_waits_history_long",
+        "ENABLED": "NO"
+      },
+      {
+        "NAME": "global_instrumentation",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "statements_digest",
+        "ENABLED": "YES"
+      },
+      {
+        "NAME": "thread_instrumentation",
+        "ENABLED": "YES"
+      }
+    ],
+    "files": [
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_arch_file",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_clone_file",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_data_file",
+        "COUNT_READ": 804255,
+        "SUM_TIMER_READ": 246620403961002,
+        "SUM_NUMBER_OF_BYTES_READ": 13178404864,
+        "COUNT_WRITE": 1156551,
+        "SUM_TIMER_WRITE": 6199912406448,
+        "SUM_NUMBER_OF_BYTES_WRITE": 19208257536,
+        "COUNT_MISC": 101720,
+        "SUM_TIMER_MISC": 134062326098838
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_dblwr_file",
+        "COUNT_READ": 2,
+        "SUM_TIMER_READ": 9389643786,
+        "SUM_NUMBER_OF_BYTES_READ": 16777216,
+        "COUNT_WRITE": 40175,
+        "SUM_TIMER_WRITE": 49268217848922,
+        "SUM_NUMBER_OF_BYTES_WRITE": 18941591552,
+        "COUNT_MISC": 6,
+        "SUM_TIMER_MISC": 35594064
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_log_file",
+        "COUNT_READ": 81,
+        "SUM_TIMER_READ": 2609280126,
+        "SUM_NUMBER_OF_BYTES_READ": 106496,
+        "COUNT_WRITE": 1131006,
+        "SUM_TIMER_WRITE": 13312979202330,
+        "SUM_NUMBER_OF_BYTES_WRITE": 1758601728,
+        "COUNT_MISC": 781823,
+        "SUM_TIMER_MISC": 711005426755128
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_tablespace_open_file",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_temp_file",
+        "COUNT_READ": 31,
+        "SUM_TIMER_READ": 10306761426,
+        "SUM_NUMBER_OF_BYTES_READ": 507904,
+        "COUNT_WRITE": 1070,
+        "SUM_TIMER_WRITE": 57979513062,
+        "SUM_NUMBER_OF_BYTES_WRITE": 18907136,
+        "COUNT_MISC": 71,
+        "SUM_TIMER_MISC": 113540506848
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/meb::redo_log_archive_file",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog",
+        "COUNT_READ": 133894,
+        "SUM_TIMER_READ": 468601051986,
+        "SUM_NUMBER_OF_BYTES_READ": 1096838078,
+        "COUNT_WRITE": 204403,
+        "SUM_TIMER_WRITE": 4574426383674,
+        "SUM_NUMBER_OF_BYTES_WRITE": 489186783,
+        "COUNT_MISC": 165059,
+        "SUM_TIMER_MISC": 306644782439232
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog_cache",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog_index",
+        "COUNT_READ": 5,
+        "SUM_TIMER_READ": 326315628,
+        "SUM_NUMBER_OF_BYTES_READ": 288,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 18,
+        "SUM_TIMER_MISC": 946810548
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog_index_cache",
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      }
+    ],
+    "stages": [
+      {
+        "EVENT_NAME": "stage/sql/committing alter table to storage engine",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for commit lock",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for dependent transaction to commit",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for GTID to be committed",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/waiting for handler commit",
+        "COUNT_STAR": 73651,
+        "SUM_TIMER_WAIT": 174792535530000
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for preceding transaction to commit",
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      }
+    ],
+    "finishedAt": "2026-10-19T09:25:21.001198Z"
+  },
+  "ioDelta": {
+    "valid": true,
+    "problems": [],
+    "statusDeltas": {
+      "Innodb_buffer_pool_reads": 35156,
+      "Innodb_buffer_pool_read_requests": 2651787,
+      "Innodb_buffer_pool_wait_free": 82,
+      "Innodb_data_reads": 35165,
+      "Innodb_data_writes": 90034,
+      "Innodb_data_read": 576143360,
+      "Innodb_data_written": 939116544,
+      "Innodb_data_fsyncs": 21015,
+      "Innodb_os_log_fsyncs": 17391,
+      "Innodb_os_log_written": 48823296,
+      "Innodb_log_waits": 0
+    },
+    "fileDeltas": [
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_arch_file",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_clone_file",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_data_file",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 35155,
+        "SUM_TIMER_READ": 14244384662118,
+        "SUM_NUMBER_OF_BYTES_READ": 575979520,
+        "COUNT_WRITE": 52871,
+        "SUM_TIMER_WRITE": 321372063936,
+        "SUM_NUMBER_OF_BYTES_WRITE": 874496000,
+        "COUNT_MISC": 3627,
+        "SUM_TIMER_MISC": 8110247080302
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_dblwr_file",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 529,
+        "SUM_TIMER_WRITE": 2600613847026,
+        "SUM_NUMBER_OF_BYTES_WRITE": 866107392,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_log_file",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 36596,
+        "SUM_TIMER_WRITE": 360096574032,
+        "SUM_NUMBER_OF_BYTES_WRITE": 72373760,
+        "COUNT_MISC": 17485,
+        "SUM_TIMER_MISC": 18357914977200
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_tablespace_open_file",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/innodb_temp_file",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 42,
+        "SUM_TIMER_WRITE": 460674774,
+        "SUM_NUMBER_OF_BYTES_WRITE": 688128,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/innodb/meb::redo_log_archive_file",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 7762,
+        "SUM_TIMER_WRITE": 214822504332,
+        "SUM_NUMBER_OF_BYTES_WRITE": 22171647,
+        "COUNT_MISC": 5783,
+        "SUM_TIMER_MISC": 15104713277520
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog_cache",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog_index",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      },
+      {
+        "EVENT_NAME": "wait/io/file/sql/binlog_index_cache",
+        "enabled": true,
+        "timed": true,
+        "COUNT_READ": 0,
+        "SUM_TIMER_READ": 0,
+        "SUM_NUMBER_OF_BYTES_READ": 0,
+        "COUNT_WRITE": 0,
+        "SUM_TIMER_WRITE": 0,
+        "SUM_NUMBER_OF_BYTES_WRITE": 0,
+        "COUNT_MISC": 0,
+        "SUM_TIMER_MISC": 0
+      }
+    ],
+    "stageDeltas": [
+      {
+        "EVENT_NAME": "stage/sql/committing alter table to storage engine",
+        "enabled": false,
+        "timed": false,
+        "COUNT_STAR": null,
+        "SUM_TIMER_WAIT": null
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+        "enabled": true,
+        "timed": true,
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for commit lock",
+        "enabled": true,
+        "timed": true,
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for dependent transaction to commit",
+        "enabled": true,
+        "timed": true,
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for GTID to be committed",
+        "enabled": true,
+        "timed": true,
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      },
+      {
+        "EVENT_NAME": "stage/sql/waiting for handler commit",
+        "enabled": true,
+        "timed": true,
+        "COUNT_STAR": 73386,
+        "SUM_TIMER_WAIT": 174791365102000
+      },
+      {
+        "EVENT_NAME": "stage/sql/Waiting for preceding transaction to commit",
+        "enabled": true,
+        "timed": true,
+        "COUNT_STAR": 0,
+        "SUM_TIMER_WAIT": 0
+      }
+    ],
+    "units": "Timers are cumulative picoseconds; MISC includes sync/open/close/etc, not a dedicated fsync count. Missing/untimed values are null. Invalid intervals must not be used for comparisons."
+  },
+  "instrumentation": {
+    "startedAt": "2026-10-19T09:24:44.167864700Z",
+    "original": [
+      {
+        "NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/Waiting for commit lock",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/Waiting for dependent transaction to commit",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/Waiting for GTID to be committed",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/waiting for handler commit",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/Waiting for preceding transaction to commit",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      }
+    ],
+    "enabled": [
+      {
+        "NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for commit lock",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for dependent transaction to commit",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for GTID to be committed",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/waiting for handler commit",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      },
+      {
+        "NAME": "stage/sql/Waiting for preceding transaction to commit",
+        "ENABLED": "YES",
+        "TIMED": "YES"
+      }
+    ],
+    "restored": true,
+    "final": [
+      {
+        "NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/Waiting for commit lock",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/Waiting for dependent transaction to commit",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/Waiting for GTID to be committed",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/waiting for handler commit",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      },
+      {
+        "NAME": "stage/sql/Waiting for preceding transaction to commit",
+        "ENABLED": "NO",
+        "TIMED": "NO"
+      }
+    ],
+    "finishedAt": "2026-10-19T09:25:21.445931300Z",
+    "loadScriptExit": 0
+  },
+  "topSql": [
+    {
+      "sql": "COMMIT",
+      "count": 7251.0,
+      "seconds": 60.339251,
+      "meanMillis": 8.321507516204661426010205489
+    },
+    {
+      "sql": "UPDATE `channel_attempts` SET `response_body` = ? , `updated_at` = ? WHERE CHANNEL = ? AND `request_key` = ?",
+      "count": 2480.0,
+      "seconds": 35.029982555,
+      "meanMillis": 14.124992965725806451612903226
+    },
+    {
+      "sql": "INSERT INTO `signature_nonces` ( `key_id` , `nonce` , `expires_at` ) VALUES (...)",
+      "count": 1933.0,
+      "seconds": 28.939389634,
+      "meanMillis": 14.971231057423693740300051733
+    },
+    {
+      "sql": "INSERT IGNORE INTO `channel_attempts` ( `id` , `aggregate_id` , `payment_id` , CHANNEL , `operation` , `request_key` , STATUS , `request_body` , `created_at` , `updated_at` ) VALUES (...)",
+      "count": 1242.0,
+      "seconds": 20.485979538,
+      "meanMillis": 16.494347454106280193236714976
+    },
+    {
+      "sql": "UPDATE `payment_admission` SET `inflight` = `inflight` + ? WHERE `logical_shard` = ? AND `inflight` < ?",
+      "count": 1935.0,
+      "seconds": 20.3587408,
+      "meanMillis": 10.521313074935400516795865633
+    },
+    {
+      "sql": "UPDATE `notification_deliveries` SET STATUS = ? , `http_status` = ? WHERE `id` = ?",
+      "count": 1239.0,
+      "seconds": 18.160052042,
+      "meanMillis": 14.657023439870863599677158999
+    },
+    {
+      "sql": "INSERT INTO `notification_deliveries` ( `id` , `task_id` , `event_id` , `merchant_id` , URL , STATUS , `created_at` ) VALUES (...)",
+      "count": 1248.0,
+      "seconds": 17.730800442,
+      "meanMillis": 14.207372149038461538461538462
+    },
+    {
+      "sql": "UPDATE `payment_admission` SET `inflight` = `inflight` - ? WHERE `logical_shard` = ( SELECT `logical_shard` FROM `payments` WHERE `id` = ? ) AND `inflight` > ?",
+      "count": 1249.0,
+      "seconds": 10.485514888,
+      "meanMillis": 8.395128012810248198558847078
+    }
+  ],
+  "explicitCommit": [
+    {
+      "sql": "COMMIT",
+      "count": 7251.0,
+      "seconds": 60.339251,
+      "meanMillis": 8.321507516204661426010205489
+    }
+  ],
+  "finalState": {
+    "at": "2026-10-19T09:31:00.035268200Z",
+    "shards": 16,
+    "inflight": 0,
+    "actualNonterminal": 0,
+    "absoluteDrift": 0,
+    "unfinishedTasks": 0
+  },
+  "health": {
+    "groups": [
+      "liveness",
+      "readiness"
+    ],
+    "status": "UP"
+  },
+  "backup": {
+    "Path": "D:\\software\\cld_project\\javaProject\\.data\\backups\\pre-channel-index-20261019T092319Z\\channel.mv.db",
+    "Hash": "839A7CE856DC2F3E408270FD7243D14EE5009068D6827A55425D886480A1BE5F"
+  },
+  "artifacts": [
+    {
+      "path": ".work/performance/diagnosis-1792401884-893d965f.config.json",
+      "sha256": "824A3421840EB84D178244E1689F8AACB40D0F601E4CD8EEF0BA86C4EFE7ECE8"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792401884-893d965f.digests-after.json",
+      "sha256": "DC7EA2A6A063203714D7B70C910A2FC49B186BE9E27B9C210110BC3E08323F84"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792401884-893d965f.digests-before.json",
+      "sha256": "8A9557CB93FA1D57D3486CAEE2C54B689FF506A65606D4865E901139BAE98F56"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792401884-893d965f.io-after.json",
+      "sha256": "4E0A98557E6742181F55CA00E987B574EE3419508D8823DE7B460D9D5A125DA4"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792401884-893d965f.io-before.json",
+      "sha256": "7992017826931B8F6770CEA7336A8CB86A287CE707C4093CB775D5F3D73C2530"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792401884-893d965f.io-delta.json",
+      "sha256": "560E84FC51C381527F93768F314ADB18974A40F55BEF28998162438C058C4D8B"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792401884-893d965f.jsonl",
+      "sha256": "FA19F845A6C36B7322E1CC8AB5A36B42933C90AB54AD56DD7E2897C7172126F7"
+    },
+    {
+      "path": ".work/channel-health-before.jfr",
+      "sha256": "A66074AB48F591856435B2DF92EC50954F08F8AD5580686271B403BB6150AAB5"
+    },
+    {
+      "path": ".work/channel-health-jfr-counts.json",
+      "sha256": "929536E6353A8F10F9070616EC257518EE633C016448DA6C08283979CCC82694"
+    },
+    {
+      "path": ".work/channel-health-profile-before.json",
+      "sha256": "AA1E365F4BE645888A1082E779F39E8709CC6545C86E37F4893B99AF42807A5E"
+    },
+    {
+      "path": ".work/channel-health-red.log",
+      "sha256": "6DF099566FCDDBAEFDC8703E24937D5CFAB14910DEEC6608BA66E41085779CFE"
+    },
+    {
+      "path": ".work/channel-health-fixture-timezone.log",
+      "sha256": "DB10E61F5339E8A573A79F5AA0113F442F9BE83B0C54947016FA15FE8DBC8F9F"
+    },
+    {
+      "path": ".work/channel-index-final-tests.log",
+      "sha256": "D2BD33380B2082008C36BEE4527671E950DD3D30781110448DFE2CEA5E458A79"
+    },
+    {
+      "path": ".work/channel-index-diagnostic-final.log",
+      "sha256": "6671089DE32246E1EA480986321826004366965F321FB11730DF0AEA8A1C89DC"
+    },
+    {
+      "path": ".work/commit-stage-red.log",
+      "sha256": "18D3B52F095FBEDC67A59E5979B1331051DDB7CEF563CBD7D91130F6714511CA"
+    },
+    {
+      "path": ".work/channel-index-package.log",
+      "sha256": "CF4E12B4EE9D23F1D953537EC1C3B807287915057723DF9ECAAD95E10614709B"
+    },
+    {
+      "path": ".work/channel-index-runtime.json",
+      "sha256": "D280528F42D6BBCB9DDA41FAA1E31E24A41BBA6964CF26A484A07BD5E9C4F242"
+    },
+    {
+      "path": ".work/channel-index-stopped.json",
+      "sha256": "0A318EE69B339FA918FE6F3B64AF7D71EAB20C68180EABA75BEFA8093DB5490A"
+    },
+    {
+      "path": ".work/channel-index-backup.json",
+      "sha256": "D2ED3DC1EFA5835DF2DECEB1944158E56D7F56AC180A16F934F0FC4DDF8ED1F3"
+    },
+    {
+      "path": ".work/channel-index-sources.json",
+      "sha256": "8AD5BE4BCBAE466460C79BEB84975931965F8D314B51FDE88E5FFADC0549536A"
+    },
+    {
+      "path": ".work/channel-index-health-after.json",
+      "sha256": "4F12892675F56652FB0249540FA53ABDE123878B742E1ED191246F9762FA8BE0"
+    },
+    {
+      "path": ".work/channel-index-smoke.log",
+      "sha256": "9174A40553BF80A88D7B3EFF255B9824A07A1A414FD6CF51BBD8A6F83C02ADBD"
+    },
+    {
+      "path": ".work/commit-stage-instrumentation.json",
+      "sha256": "57C357A445595D802B75E4A783A5C601EC2E781D28594BA0B9116EA33443054B"
+    },
+    {
+      "path": ".work/channel-index-final-state.json",
+      "sha256": "31E958D014C2D5ADF05DEC706785C92547D6A28DE388EF2E119A10415922F689"
+    },
+    {
+      "path": ".work/channel-index-final-channels.json",
+      "sha256": "7FF425B0EF932D866C84A6B79CA58086462DACA611D1E810623F05C496427A92"
+    },
+    {
+      "path": ".work/channel-index-final-health.json",
+      "sha256": "AA3246F8797900423FD7A2840D09D60101539711F77641A03079847795011934"
+    },
+    {
+      "path": ".work/performance/load-1792401888-9ae145df.json",
+      "sha256": "7C84021220231A423DCA26291F1DEFC2E298A41864FDCFD8F11E85CAC523BB32"
+    },
+    {
+      "path": ".work/performance/load-1792401888-9ae145df.requests.jsonl",
+      "sha256": "0E99A93A0DE2D9E94486A8368CD6438306CA6BC220A47AE1788D979F1BE0FA45"
+    },
+    {
+      "path": ".work/channel-index-final-services.json",
+      "sha256": "3E738491904EDB236FF7C509DDD34A4C9608CB6F6ED2E1DCF402EA9FDDD90F9C"
+    },
+    {
+      "path": ".work/channel-index-final-mysql.json",
+      "sha256": "2A7725EACF5FF4E4E5BDF2FFD434256CADC3D6AC3C02BD5BF9A587A56ACFEFB3"
+    },
+    {
+      "path": ".work/channel-index-restored-diagnostic.log",
+      "sha256": "4C82F776A044659EA6D2AD353F81F568D0C8355642B9CDF6B49BCC9A07EC0C8A"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792402255-df211668.config.json",
+      "sha256": "824A3421840EB84D178244E1689F8AACB40D0F601E4CD8EEF0BA86C4EFE7ECE8"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792402255-df211668.digests-after.json",
+      "sha256": "F8BF7324566A71F31899E9F085ACD9C84B18E874EF59FA9C03AA207281104D82"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792402255-df211668.digests-before.json",
+      "sha256": "C6CBAD0F6FE41A3D693934ABF22C0C2266601AB7E853DBE6A99188F398149858"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792402255-df211668.io-after.json",
+      "sha256": "3FAAC468179BFA4524907E77334CA03E06B0AFA8547668AD062BF4BCD75B7BDA"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792402255-df211668.io-before.json",
+      "sha256": "DEB559DFCF5BB9646AAB973F4406E4C91E215FF085A63819CDDA07C33481D7ED"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792402255-df211668.io-delta.json",
+      "sha256": "E6A2A4F0A6C9B035B696E61456146D7ACFFCECF9BD69AC89B8302C5F5489F2F6"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792402255-df211668.jsonl",
+      "sha256": "D7101A9798E8A2B9DC7A85FE0D9139635A6E57BF7C0EB275863C72B7B0A450EF"
+    }
+  ],
+  "limitations": [
+    "Single D0 15s measured load with commit instruments enabled; no paired control for payment throughput and no overhead calibration",
+    "Before health had JFR enabled; after health follows restart/index creation; query-plan red/green independently confirms scan change",
+    "Commit-stage global event counts include engine calls without durable writes and are not transaction/fsync/payment counts",
+    "Concurrent stage/file/statement timers overlap and cannot be summed into wall-clock or attributed to one payment",
+    "New nonunique indexes add startup construction/storage/write cost; pending queue growth remains proportional work",
+    "No full platform/frontend/browser rerun: platform source/JAR unchanged; remote CI not executed"
+  ],
+  "diagnosticSourceHashes": [
+    {
+      "path": "scripts/load/LocalDiagnosis.java",
+      "sha256": "9F21B71B9A8A022D92AD01C8AA5DDB0C938D41DAE1471D39347A6CF75A9B49AE"
+    },
+    {
+      "path": "scripts/load/DiagnosisMeasurementsTest.java",
+      "sha256": "8687202512253BB48B978E2C0CE560EE59D46A2A401F7651E5EC0583532046A7"
+    }
+  ],
+  "finalServices": {
+    "at": "2026-10-19T09:31:00.4885505Z",
+    "backend": "UP",
+    "console": 200,
+    "config": {
+      "version": "8.4.11",
+      "serverUuid": "61680263-ca3c-11f1-8d6b-067f85e6c3df",
+      "bufferPoolBytes": 134217728,
+      "chunkBytes": 134217728,
+      "instances": 1,
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "logBin": 1
+    },
+    "restoredDiagnosticId": "diagnosis-1792402255-df211668",
+    "disabledStagesUnavailable": true,
+    "platformSha256": "A1118C06D3D5021235E60CB379E7685D314A5277CE3972F004A14AB64495B310",
+    "simulatorSha256": "B712BF2755779EAA2339984258455B90217B3A7055F56305C548BD02666E0D8E"
+  }
+}

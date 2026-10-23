@@ -1,0 +1,15 @@
+name: merchantpay-storage-v1
+services:
+  s3:
+    image: merchantpay/storage:v1-local
+    command: ["/data"]
+    environment:
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY:?Run scripts/storage/start-local.ps1}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_KEY:?Run scripts/storage/start-local.ps1}
+      RUSTFS_ADDRESS: :9000
+    ports: ["127.0.0.1:19002:9000"]
+    volumes: ["objects:/data"]
+    cpus: 1
+    mem_limit: 512m
+volumes:
+  objects:

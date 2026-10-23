@@ -1,0 +1,18 @@
+.tools/
+.work/
+.data/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+**/target/
+**/node_modules/
+console/dist/
+console/playwright-report/
+console/test-results/
+*.log
+.idea/
+.vscode/
+
+# Local-only engineering notes; do not commit or publish.
+/docs/local/

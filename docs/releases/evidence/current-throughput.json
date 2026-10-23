@@ -1,0 +1,1139 @@
+{
+  "published": false,
+  "steps": [
+    {
+      "deliveryConverged": true,
+      "rawReport": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.json",
+      "query": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 6000,
+        "httpStatuses": {
+          "200": 6000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 18842,
+        "httpP95Micros": 107159,
+        "httpP99Micros": 744596,
+        "scheduledHttpP99Micros": 745370,
+        "sendDelayP99Micros": 2815,
+        "successfulPerArrivalSecond": 50.0,
+        "retryReasons": {}
+      },
+      "zeroErrorPassed": true,
+      "moneyInvariantsPassed": true,
+      "offeredQueryRate": 50,
+      "payment": {
+        "scheduled": 1200,
+        "sent": 1200,
+        "acceptedOrRead": 1200,
+        "httpStatuses": {
+          "202": 1200
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 24535,
+        "httpP95Micros": 116225,
+        "httpP99Micros": 753696,
+        "scheduledHttpP99Micros": 753892,
+        "sendDelayP99Micros": 3947,
+        "posted": 1180,
+        "businessFailed": 20,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 9.816666666666666,
+        "completedPerArrivalSecondUpper": 9.825,
+        "successfulCompletionP99LowerMicros": 1784127,
+        "successfulCompletionP99UpperMicros": 2086278,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5664299,
+        "observerSnapshots": 442,
+        "observerMaxQueryMicros": 54807,
+        "maxCommitVisibilityIntervalMicros": 350143,
+        "retryReasons": {}
+      },
+      "offeredPayRate": 10,
+      "name": "warmup",
+      "truthMatched": true,
+      "seconds": 120
+    },
+    {
+      "deliveryConverged": true,
+      "rawReport": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.json",
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0.0,
+        "retryReasons": {}
+      },
+      "zeroErrorPassed": true,
+      "moneyInvariantsPassed": true,
+      "offeredQueryRate": 0,
+      "payment": {
+        "scheduled": 1800,
+        "sent": 1800,
+        "acceptedOrRead": 1800,
+        "httpStatuses": {
+          "202": 1800
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 28459,
+        "httpP95Micros": 499769,
+        "httpP99Micros": 1234520,
+        "scheduledHttpP99Micros": 1235441,
+        "sendDelayP99Micros": 2458,
+        "posted": 1766,
+        "businessFailed": 34,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 29.216666666666665,
+        "completedPerArrivalSecondUpper": 29.266666666666666,
+        "successfulCompletionP99LowerMicros": 2225101,
+        "successfulCompletionP99UpperMicros": 2516766,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 3895693,
+        "observerSnapshots": 219,
+        "observerMaxQueryMicros": 504750,
+        "maxCommitVisibilityIntervalMicros": 388280,
+        "retryReasons": {}
+      },
+      "offeredPayRate": 30,
+      "name": "pay-30",
+      "truthMatched": true,
+      "seconds": 60
+    },
+    {
+      "deliveryConverged": true,
+      "rawReport": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.json",
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0.0,
+        "retryReasons": {}
+      },
+      "zeroErrorPassed": false,
+      "moneyInvariantsPassed": true,
+      "offeredQueryRate": 0,
+      "payment": {
+        "scheduled": 3600,
+        "sent": 3600,
+        "acceptedOrRead": 3194,
+        "httpStatuses": {
+          "202": 3194,
+          "503": 406
+        },
+        "droppedIterations": 0,
+        "systemErrors": 406,
+        "rejected": 0,
+        "httpP50Micros": 34012,
+        "httpP95Micros": 422906,
+        "httpP99Micros": 633187,
+        "scheduledHttpP99Micros": 634190,
+        "sendDelayP99Micros": 2606,
+        "posted": 3111,
+        "businessFailed": 83,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 48.36666666666667,
+        "completedPerArrivalSecondUpper": 48.733333333333334,
+        "successfulCompletionP99LowerMicros": 6084005,
+        "successfulCompletionP99UpperMicros": 6381659,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 10124753,
+        "observerSnapshots": 654,
+        "observerMaxQueryMicros": 486586,
+        "maxCommitVisibilityIntervalMicros": 487207,
+        "retryReasons": {
+          "PAYMENT_CAPACITY": 406
+        }
+      },
+      "offeredPayRate": 60,
+      "name": "pay-60",
+      "truthMatched": true,
+      "seconds": 60
+    },
+    {
+      "deliveryConverged": true,
+      "rawReport": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.json",
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0.0,
+        "retryReasons": {}
+      },
+      "zeroErrorPassed": true,
+      "moneyInvariantsPassed": true,
+      "offeredQueryRate": 0,
+      "payment": {
+        "scheduled": 3600,
+        "sent": 3600,
+        "acceptedOrRead": 3600,
+        "httpStatuses": {
+          "202": 3600
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 28684,
+        "httpP95Micros": 447382,
+        "httpP99Micros": 926991,
+        "scheduledHttpP99Micros": 928392,
+        "sendDelayP99Micros": 1939,
+        "posted": 3533,
+        "businessFailed": 67,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 29.358333333333334,
+        "completedPerArrivalSecondUpper": 29.391666666666666,
+        "successfulCompletionP99LowerMicros": 1273908,
+        "successfulCompletionP99UpperMicros": 1564983,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 6447443,
+        "observerSnapshots": 441,
+        "observerMaxQueryMicros": 484691,
+        "maxCommitVisibilityIntervalMicros": 440800,
+        "retryReasons": {}
+      },
+      "offeredPayRate": 30,
+      "name": "pay-30-repeat",
+      "truthMatched": true,
+      "seconds": 120
+    },
+    {
+      "deliveryConverged": true,
+      "rawReport": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.json",
+      "query": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 6000,
+        "httpStatuses": {
+          "200": 6000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 19173,
+        "httpP95Micros": 34272,
+        "httpP99Micros": 93308,
+        "scheduledHttpP99Micros": 99431,
+        "sendDelayP99Micros": 14780,
+        "successfulPerArrivalSecond": 99.96666666666667,
+        "retryReasons": {}
+      },
+      "zeroErrorPassed": true,
+      "moneyInvariantsPassed": true,
+      "offeredQueryRate": 100,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0.0,
+        "completedPerArrivalSecondUpper": 0.0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 3316954,
+        "observerSnapshots": 215,
+        "observerMaxQueryMicros": 42502,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "offeredPayRate": 0,
+      "name": "query-100",
+      "truthMatched": true,
+      "seconds": 60
+    },
+    {
+      "deliveryConverged": true,
+      "rawReport": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.json",
+      "query": {
+        "scheduled": 18000,
+        "sent": 18000,
+        "acceptedOrRead": 18000,
+        "httpStatuses": {
+          "200": 18000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 23172,
+        "httpP95Micros": 146603,
+        "httpP99Micros": 878815,
+        "scheduledHttpP99Micros": 1402849,
+        "sendDelayP99Micros": 1061644,
+        "successfulPerArrivalSecond": 299.85,
+        "retryReasons": {}
+      },
+      "zeroErrorPassed": true,
+      "moneyInvariantsPassed": true,
+      "offeredQueryRate": 300,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0.0,
+        "completedPerArrivalSecondUpper": 0.0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 6306015,
+        "observerSnapshots": 185,
+        "observerMaxQueryMicros": 361357,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "offeredPayRate": 0,
+      "name": "query-300",
+      "truthMatched": true,
+      "seconds": 60
+    },
+    {
+      "deliveryConverged": true,
+      "rawReport": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.json",
+      "query": {
+        "scheduled": 36000,
+        "sent": 35867,
+        "acceptedOrRead": 34502,
+        "httpStatuses": {
+          "-1": 63,
+          "200": 34502,
+          "429": 49,
+          "503": 1253
+        },
+        "droppedIterations": 133,
+        "systemErrors": 1316,
+        "rejected": 49,
+        "httpP50Micros": 23465,
+        "httpP95Micros": 1972966,
+        "httpP99Micros": 3770635,
+        "scheduledHttpP99Micros": 4687314,
+        "sendDelayP99Micros": 1146866,
+        "successfulPerArrivalSecond": 574.5666666666667,
+        "retryReasons": {
+          "API_INFLIGHT": 1253
+        }
+      },
+      "zeroErrorPassed": false,
+      "moneyInvariantsPassed": true,
+      "offeredQueryRate": 600,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0.0,
+        "completedPerArrivalSecondUpper": 0.0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 8255373,
+        "observerSnapshots": 179,
+        "observerMaxQueryMicros": 542905,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "offeredPayRate": 0,
+      "name": "query-600",
+      "truthMatched": true,
+      "seconds": 60
+    },
+    {
+      "deliveryConverged": true,
+      "rawReport": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.json",
+      "query": {
+        "scheduled": 36000,
+        "sent": 36000,
+        "acceptedOrRead": 35989,
+        "httpStatuses": {
+          "200": 35989,
+          "503": 11
+        },
+        "droppedIterations": 0,
+        "systemErrors": 11,
+        "rejected": 0,
+        "httpP50Micros": 20084,
+        "httpP95Micros": 38979,
+        "httpP99Micros": 342727,
+        "scheduledHttpP99Micros": 432488,
+        "sendDelayP99Micros": 111221,
+        "successfulPerArrivalSecond": 299.85833333333335,
+        "retryReasons": {
+          "API_INFLIGHT": 11
+        }
+      },
+      "zeroErrorPassed": false,
+      "moneyInvariantsPassed": true,
+      "offeredQueryRate": 300,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0.0,
+        "completedPerArrivalSecondUpper": 0.0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 9861348,
+        "observerSnapshots": 396,
+        "observerMaxQueryMicros": 625294,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "offeredPayRate": 0,
+      "name": "query-300-repeat",
+      "truthMatched": true,
+      "seconds": 120
+    },
+    {
+      "deliveryConverged": true,
+      "rawReport": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.json",
+      "query": {
+        "scheduled": 12000,
+        "sent": 12000,
+        "acceptedOrRead": 12000,
+        "httpStatuses": {
+          "200": 12000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 18090,
+        "httpP95Micros": 28535,
+        "httpP99Micros": 38883,
+        "scheduledHttpP99Micros": 50265,
+        "sendDelayP99Micros": 15586,
+        "successfulPerArrivalSecond": 99.975,
+        "retryReasons": {}
+      },
+      "zeroErrorPassed": true,
+      "moneyInvariantsPassed": true,
+      "offeredQueryRate": 100,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0.0,
+        "completedPerArrivalSecondUpper": 0.0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 8331935,
+        "observerSnapshots": 404,
+        "observerMaxQueryMicros": 131439,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "offeredPayRate": 0,
+      "name": "query-100-repeat",
+      "truthMatched": true,
+      "seconds": 120
+    }
+  ],
+  "databaseMemoryBytes": 2147483648,
+  "credentialMerchants": 2,
+  "referenceR1Certified": false,
+  "poolSize": 32,
+  "diagnostic": {
+    "maxUnfinishedTasks": 669,
+    "limits": "Concurrent cumulative times are not wallclock or dedicatedfsync; interval excludesquery600andquery300repeat; sampling has overhead",
+    "physicalReadsDelta": 20897,
+    "redoMiscCumulativeSeconds": 223.086699428125,
+    "first": "2026-10-21T13:47:04.343116900Z",
+    "last": "2026-10-21T13:57:03.283833900Z",
+    "sampleErrors": 0,
+    "samples": 556,
+    "binlogMiscCumulativeSeconds": 201.967859540315,
+    "maxWaitingForHandlerCommit": 32
+  },
+  "performanceTargetPassed": false,
+  "runtimeUnchanged": true,
+  "businessCodeChanged": false,
+  "requestRowsChecked": 124200,
+  "allRequestRowsIndependentlyVerified": true,
+  "artifacts": [
+    {
+      "path": ".work/diagnose-clone.ps1",
+      "sha256": "0083f37959528d4b896ea86aef1e74bba58f222ed093eda173b0039d451b53ee",
+      "bytes": 2228
+    },
+    {
+      "path": ".work/record-throughput.ps1",
+      "sha256": "99aa410858e1c4dd6c198cf92c6663b735400b865f6d55fd532358f53075d760",
+      "bytes": 5119
+    },
+    {
+      "path": ".work/run-throughput-ladder.ps1",
+      "sha256": "0d9ae6f14c982b3a398c340415c26502f8f643ed72d2fb0d2974450a87d1662a",
+      "bytes": 8486
+    },
+    {
+      "path": ".work/verify-throughput.mjs",
+      "sha256": "4adc7e7d52f098fd13d480927931a0c6c5d618157df8542342b7d1cbdd1f110a",
+      "bytes": 4067
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.json",
+      "sha256": "28af9b4d373be7263478d6cd79b6c8ecf3240b0f7c8d8ae72ea2c19962f6cebc",
+      "bytes": 3710
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.pay.jsonl",
+      "sha256": "af73f9d14b8cd00836e7a8cdc74d7204d236cdcb5ab31a6dab3a4c9abe30c192",
+      "bytes": 311009
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.query.jsonl",
+      "sha256": "06f18749a9c43d12665b559d8d3fbc34b1662085b73394017f3e389a6b79eabd",
+      "bytes": 1446220
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.refund.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/accept-20261021T134532-e5c44a7e-r1.started.json",
+      "sha256": "4fb1d854afa4d31bbbab679f04d5f01155c6bab54a12de7fca53f1a5bb1cd57c",
+      "bytes": 86
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/initial.json",
+      "sha256": "b0e4a107b82f08bb87b0678c1bd9121b7bfad468823e86920838c1fb84080d8a",
+      "bytes": 799
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134532-e5c44a7e/protocol.json",
+      "sha256": "d5256458a59db125057b1fcf238474821954fb9f7c23dd1276a6351dd45e6c97",
+      "bytes": 519
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.json",
+      "sha256": "fe042af39fa73784ee6c257d483bcc9edfd0ec40254ca5405165890abbcd3dd0",
+      "bytes": 3694
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.pay.jsonl",
+      "sha256": "daa47cf6436aa485fbe0de805e56e33e76e906ba54eed1b174e9fe2b19678917",
+      "bytes": 464718
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.query.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.refund.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134750-9c2665f9/accept-20261021T134750-9c2665f9-r1.started.json",
+      "sha256": "f717cb8800ffe1a9fdbe63b702eecc14b1da32bc1751c6bea4a710303c64878b",
+      "bytes": 85
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134750-9c2665f9/initial.json",
+      "sha256": "74b3c2ce20b672028c08bc3300ba8f3499ec20f6093f6435d3cee2788eed3936",
+      "bytes": 796
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134750-9c2665f9/protocol.json",
+      "sha256": "66344707469ccd7806a33338a722f6a6dbaeee4b2e6a626b336f7d2538497240",
+      "bytes": 519
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.failure.json",
+      "sha256": "3cac0b43c2b1252181c12a3fbbc9fdb1a7e616d083026918da5b727e8fb2d7b4",
+      "bytes": 106
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.json",
+      "sha256": "c6aca8cee45e109880eb8cf7afe9167d9510ad61f00624b8fb0dbd4ab649db43",
+      "bytes": 3723
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.pay.jsonl",
+      "sha256": "e4f9b4e0f5a3b249f838a34e2e17393a63c35a759e00a799fae2d48170d78b37",
+      "bytes": 928433
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.query.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.refund.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/accept-20261021T134907-c6b6e4a5-r1.started.json",
+      "sha256": "48897c82e2c9689d6ed1688965dfeee7c051cc175c82cd42399fd4068e3c2137",
+      "bytes": 85
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/initial.json",
+      "sha256": "ba52fcf1cf0a98b2659becca5bf71a2b6e2546317983147a6e5bfc02ae4825c2",
+      "bytes": 799
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T134907-c6b6e4a5/protocol.json",
+      "sha256": "5ad176c0a73a1c80d231e60a983c3feb93b326e1d9e0a08509d4b402e7e9c214",
+      "bytes": 591
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.json",
+      "sha256": "82ed7e4d91085fb184e52314ee0aad021da36e74625d5a1f70370779d68c1125",
+      "bytes": 3694
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.pay.jsonl",
+      "sha256": "773f4ab756098c6aff7adbd6af21b05a6ec0121ffc457408459da0c9d4c9b739",
+      "bytes": 935238
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.query.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.refund.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135225-8b41b079/accept-20261021T135225-8b41b079-r1.started.json",
+      "sha256": "382729a45dd9a84e463f20f81d9eafd0d0a0d1313da116f517d25f9dd6bcfc97",
+      "bytes": 86
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135225-8b41b079/initial.json",
+      "sha256": "aae225066e990edb94dc3f207f38ac075d1c5b0c3fb54dd5fd63f9ffd213e376",
+      "bytes": 799
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135225-8b41b079/protocol.json",
+      "sha256": "0ddbdf400396a3902d3ed4b50625b8de831a5286b4c2fb0fb42334185804cd30",
+      "bytes": 519
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.json",
+      "sha256": "7f0fda8b5b4788643563d9af4e7274e0444ca9428ac55a64d369e0c4dfa44003",
+      "bytes": 3657
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.pay.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.query.jsonl",
+      "sha256": "477a289f7562e362801576b4e4053cf2c193e0fbb3af37b03fb21090dc252d5e",
+      "bytes": 1441559
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.refund.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/accept-20261021T135445-c61c6fb4-r1.started.json",
+      "sha256": "8d69fdaed755ca78cfc8ccc03cf9f443895e3cd775d7683bfece033c8a20009f",
+      "bytes": 85
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/initial.json",
+      "sha256": "97d74ac92059d0d22adadca0a6470be0be482572e3dab4d5e08e120324b347f7",
+      "bytes": 799
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135445-c61c6fb4/protocol.json",
+      "sha256": "35fc82737aa0eced62657f77118ec1a94c65d1b4f94bbf38e474740b69e9477b",
+      "bytes": 519
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.json",
+      "sha256": "634a235acbf7ec9beda78aeb14892e62d24152d63406c76447711f2f01d63074",
+      "bytes": 3656
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.pay.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.query.jsonl",
+      "sha256": "bd34e589149bb2b84a3cfafead4df6e57a0fb87b5c6765c2ec973dc960f06b09",
+      "bytes": 4335133
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.refund.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/accept-20261021T135603-d6ba4ad9-r1.started.json",
+      "sha256": "057a853db4a74d8d95a357660b58c3d235baa1202441e9f197a70173496210ec",
+      "bytes": 82
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/initial.json",
+      "sha256": "baa1a841c38a1c498c7f98683a2b7a4f373c542f94a3f4717b814c46fe0150e6",
+      "bytes": 799
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135603-d6ba4ad9/protocol.json",
+      "sha256": "5bf789238ec22db6a1683d08f975dd84af78742c1ca06ff77ff427d499d1cc56",
+      "bytes": 519
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.failure.json",
+      "sha256": "bca3760f6c4f8ba947559b4cf8b91ee77a663ffa6660ccdedf9f20b646c75e4b",
+      "bytes": 106
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.json",
+      "sha256": "8c89c24120af1664de6c3152f97b3358fb8662051e098611f48af0177eb82ff4",
+      "bytes": 3724
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.pay.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.query.jsonl",
+      "sha256": "6d4eb8413c16bd9cf8fdb44c677188d2a1d3c13f8adfab9fd707fa814a56c8b4",
+      "bytes": 8695450
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.refund.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135722-d0e93f66/accept-20261021T135722-d0e93f66-r1.started.json",
+      "sha256": "0db8765f401b90a48f6092bf75df063854f15b9868552698122f7d095067a74f",
+      "bytes": 85
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135722-d0e93f66/initial.json",
+      "sha256": "00eead0fc8d215d7f378867640e21824184e5bbb705270d49fb208f73c981835",
+      "bytes": 799
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135722-d0e93f66/protocol.json",
+      "sha256": "a4d2f5ddc32dbea4cece4ad354f6985f7a7c2a364eecf8a181361e14648834b4",
+      "bytes": 591
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.json",
+      "sha256": "48c7d496bfde8d8d1de67569414d70e34f525ac48b57aedacef00de5d7ad905c",
+      "bytes": 3695
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.pay.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.query.jsonl",
+      "sha256": "965f19d98d7b241bc99aeaa0517d4a9d8cf5e84ec062938cfab83e1128ef43fa",
+      "bytes": 8709139
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.refund.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135841-d971ab9c/accept-20261021T135841-d971ab9c-r1.started.json",
+      "sha256": "7eec8c954c8a8f823f1ae5306cf27997fb5677678d3296e162d3d7d277e63523",
+      "bytes": 86
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135841-d971ab9c/initial.json",
+      "sha256": "717a26b518380564d73eac391785006ad54bc20b9288214293527711389ab5b6",
+      "bytes": 799
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T135841-d971ab9c/protocol.json",
+      "sha256": "cfb771fa519fff4469d80086b01fc4c6eebf1a1e0025afca640019d2dfea01b1",
+      "bytes": 519
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.json",
+      "sha256": "bdb3108c057a29e6f4471ccc618a4f5257af921ec0fdb4e37fa930a57b861aea",
+      "bytes": 3653
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.pay.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.query.jsonl",
+      "sha256": "085264f29e3d590d5e25311e959ec70f451a71578d28d358bc52dddb6c66bb1d",
+      "bytes": 2895564
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.refund.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T140217-102b7082/accept-20261021T140217-102b7082-r1.started.json",
+      "sha256": "bb25687da356e0a39ff4175423615157ce69df1970a47f23bc1ed6883cfed4ba",
+      "bytes": 86
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T140217-102b7082/initial.json",
+      "sha256": "efe1220fe1a62151912595d04c02779a7bdd0418a1e2b09be1dedd82e9861f2c",
+      "bytes": 799
+    },
+    {
+      "path": ".work/acceptance/accept-20261021T140217-102b7082/protocol.json",
+      "sha256": "0617a612af50921cbc71ae5c5bf868798522d5d9d67e5cb7cbf3522a2fd35705",
+      "bytes": 519
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/final-services.json",
+      "sha256": "62472e4cc641c2cf56276dda67b4d99fa4e1adb118405d4117fae03df8d2d0da",
+      "bytes": 1776
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/independent-verification.json",
+      "sha256": "a0bfeef0d23d926f784ee9f36ee8dbbfc056c7d6bf46c9fccd2e7d1945771a55",
+      "bytes": 13013
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/pay-30-repeat.log",
+      "sha256": "2627761884b4729ba9db79e080ca418e742b8f8b71d892ffe3af62d3f74492a4",
+      "bytes": 1059
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/pay-30.log",
+      "sha256": "e483519cd2cb43551f238509b8b03fd63c4821abefe62babaab90545bfa4b72f",
+      "bytes": 1056
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/pay-60.log",
+      "sha256": "17e1d16a313c491815d9ecb801ddf9194269cb8c50a26b800c1ad7ab0d293ea4",
+      "bytes": 1206
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/progress.json",
+      "sha256": "8e649ad5520e48021b01a72e9f1ae24ed5a1c1e1523ecb436f405ac6de5d13d4",
+      "bytes": 24089
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/query-100.log",
+      "sha256": "82bfd17936bcc3f66b8113aafee8c02caeac3ae05635bd2861e46fa665336ed2",
+      "bytes": 1059
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/query-300-repeat.log",
+      "sha256": "ca22a4550c5290f8920eb4da3e69660543c203f666639f7f1f2ebbe50c784734",
+      "bytes": 1059
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/query-300.log",
+      "sha256": "dcf336930bde8ecf0a065bf802aad52e3721cff03c3c23797aff0ae6a36b89ac",
+      "bytes": 1059
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/query-600.log",
+      "sha256": "a593dbf44cce9efe8b1c5865e1d82160b37de1db7190a3c5f1ba6d1164e806d0",
+      "bytes": 1206
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/resources.jsonl",
+      "sha256": "0de7e53a3ba9c20db62101a186c156436ad61ff5a9a93e81f5ebf699a61f0dd1",
+      "bytes": 108191
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/runtime-after.json",
+      "sha256": "504164a27174686f34422d9a886cb5e573bdbc6134710980a8a82cb2c46c80cb",
+      "bytes": 1360
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/runtime-before.json",
+      "sha256": "504164a27174686f34422d9a886cb5e573bdbc6134710980a8a82cb2c46c80cb",
+      "bytes": 1360
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/summary.json",
+      "sha256": "02e1a418cfa958f74e7b965171e52d4094512515120d80a78d3fccf658320d19",
+      "bytes": 28125
+    },
+    {
+      "path": ".work/acceptance/throughput-20261021T134530/warmup.log",
+      "sha256": "8b965bca307cca8650f4d6ed062eb4d6e99e91e4cb38567751bee3cdf88dc684",
+      "bytes": 1059
+    },
+    {
+      "path": ".work/acceptance/throughput-query100-repeat-20261021T140215/independent-verification.json",
+      "sha256": "e1f00f0c87c4b42fe7b61c97f5e4a7682b3587850e4988cba6604385f4492e18",
+      "bytes": 2390
+    },
+    {
+      "path": ".work/acceptance/throughput-query100-repeat-20261021T140215/query-100-repeat.log",
+      "sha256": "745b4e867776d09068b1bce353ed250e855302c25b380c7a5029df67fc32cb24",
+      "bytes": 1059
+    },
+    {
+      "path": ".work/acceptance/throughput-query100-repeat-20261021T140215/resources.jsonl",
+      "sha256": "dbfa357fcaae0ef01531c4aa6a1ea45d4454ce601db41598b8553b3db3b40e99",
+      "bytes": 16225
+    },
+    {
+      "path": ".work/acceptance/throughput-query100-repeat-20261021T140215/summary.json",
+      "sha256": "ac87d4a6eaff158a0f58961e6304a766f7f40c11206f4a8ebc975e8c73f04ba6",
+      "bytes": 3687
+    },
+    {
+      "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.config.json",
+      "sha256": "ffa010c552af29fc37a34321b4269d78ca36d9e7e27a72b6036ccd08d58f5bb5",
+      "bytes": 108
+    },
+    {
+      "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.digests-after.json",
+      "sha256": "da7ee47fd0d75d29874990fd50b013fe33dc3fd1ae9bf6c399346c338f829945",
+      "bytes": 68229
+    },
+    {
+      "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.digests-before.json",
+      "sha256": "32986fa51a4ff5cd71e184a523dbca48509bb54c8a00f2cf2e135549609c01fe",
+      "bytes": 67153
+    },
+    {
+      "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.io-after.json",
+      "sha256": "60b1e4d8a8cfc054478408bf93573de137b856e88bf29afaf38bd24dd41df459",
+      "bytes": 8059
+    },
+    {
+      "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.io-before.json",
+      "sha256": "7d4efd231e99c93e4f84143722dce8a5fff90fe5b31c6d35b27581d2b6030a1e",
+      "bytes": 8056
+    },
+    {
+      "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.io-delta.json",
+      "sha256": "35d71bf3884d9d4017e693db4e3b21297eb56ebb68346fd7a66d7a0454f5e5bc",
+      "bytes": 4776
+    },
+    {
+      "path": ".work/clone-diagnostics/diagnosis-1792590423-92636a03.jsonl",
+      "sha256": "2907d6a4ae1a03248c6a8733d851b63cbf2f0473e13fe2af034fe3ddde6d75fd",
+      "bytes": 10273798
+    },
+    {
+      "path": "docs/quality/2026-10-21-throughput-recheck.md",
+      "sha256": "fd25940c6ff2f082efa6397e21fce9a8b76e1f8ce553bf8bd119559eaed31445",
+      "bytes": 5532
+    },
+    {
+      "path": "scripts/browser/BudgetProcess.cs",
+      "sha256": "a2a3494f19a815997786f95f55800133cd062f49ba326b2220253fccb8f16d68",
+      "bytes": 8003
+    },
+    {
+      "path": "scripts/load/AcceptanceLoad.java",
+      "sha256": "a1469151a7a230323fa0ca50e4004dd84e4a63c5a5506c302bab329b11ed6ae1",
+      "bytes": 38771
+    },
+    {
+      "path": "scripts/load/LoadMeasurements.java",
+      "sha256": "1bf71bf258577b7f115a1b93ba58e9f627b0f403de18569d0a67beb7fcc4b74a",
+      "bytes": 4316
+    },
+    {
+      "path": "scripts/load/LocalDiagnosis.java",
+      "sha256": "968512522fece4a977c621bed62c0cd6a942ffe7f3a0d18bfbf895687c2b0bd8",
+      "bytes": 13231
+    },
+    {
+      "path": "scripts/load/run-v1.ps1",
+      "sha256": "e307f06ec6237ea34c2c919c6056c02561667bb35154351d7cc07f031b88c8ee",
+      "bytes": 6629
+    },
+    {
+      "path": "scripts/load/V1Acceptance.ps1",
+      "sha256": "da1b5fc2ef729b4ab92b67a7a82a4aa4363a3d03d06eda31ec86d21e14820a86",
+      "bytes": 4170
+    }
+  ],
+  "report": "docs/quality/2026-10-21-throughput-recheck.md",
+  "conclusions": [
+    "Payment30/s zero-system-error repeated, successful committed window29.22-29.39TPS; HTTP P99 exceeds300ms",
+    "Payment60/s fails:406PAYMENT_CAPACITY503, completed window48.37-48.73TPS, successful completion P99upper6.382s",
+    "Query100/s repeated zeroerrors, successful window99.97-99.98QPS, HTTP P99 93.31/38.88ms",
+    "Query300/s not stable: first zeroerror but878.82msP99; repeat11API_INFLIGHT503 and342.73msP99",
+    "Query600/s fails:1253API_INFLIGHT503,63transport failures,49quota429;574.57successfulQPS does not imply pass",
+    "Untested intermediate rates and short durations prevent exact capacity inference; different native83TPS result is not a same-resource comparison"
+  ],
+  "finalServices": {
+    "runtimeUnchanged": true,
+    "nativeRefunds": 701,
+    "comparison": "Field-by-field; JSON object property order is not semantic",
+    "published": false,
+    "runtime": [
+      {
+        "name": "merchantpay-container-v1-platform-1",
+        "id": "873c9645641adf573520d635851080ab6fe05b1cb685547ca6a0e98613f629ef",
+        "image": "sha256:7db9c8a069da34130c97ca508227ac087a23a642886c0513170737546c94e205",
+        "started": "2026-10-21T08:37:08.681796326Z",
+        "restarts": 0,
+        "memory": 1073741824,
+        "cpu": 2000000000,
+        "selectedEnvironment": [
+          "JAVA_TOOL_OPTIONS=-Xmx640m -XX:ActiveProcessorCount=2",
+          "API_MAX_INFLIGHT=128"
+        ]
+      },
+      {
+        "name": "merchantpay-container-v1-mysql-1",
+        "id": "476ecdfd1322d79da3f469922f53ef90e663e7f185a11083bf6d77ce2ffabbcb",
+        "image": "sha256:13ea632fbac16588eb0c08aa76c093e496753aec83cd244e2b978a1e7b49b5d8",
+        "started": "2026-10-21T07:24:03.947901508Z",
+        "restarts": 0,
+        "memory": 2147483648,
+        "cpu": 2000000000,
+        "selectedEnvironment": []
+      },
+      {
+        "name": "merchantpay-container-v1-simulator-1",
+        "id": "f2b4c24655a967e59878456c0f300dc158c719852792103c94a8420e161c658e",
+        "image": "sha256:1886eddc64a5db5334dfd96938ad41bae69914a6fd4422e832d57c76822c4a00",
+        "started": "2026-10-21T06:18:54.634907842Z",
+        "restarts": 0,
+        "memory": 536870912,
+        "cpu": 2000000000,
+        "selectedEnvironment": [
+          "SIMULATOR_PROFILE=standard-v1",
+          "JAVA_TOOL_OPTIONS=-Xmx320m -XX:ActiveProcessorCount=2"
+        ]
+      }
+    ],
+    "nativePayments": 200449,
+    "double1": true,
+    "nativeUnfinishedTasks": 0,
+    "checkedAt": "2026-10-21T22:06:41.1313037+08:00",
+    "bufferPoolBytes": 1073741824
+  },
+  "databaseCpu": 2,
+  "bufferPoolBytes": 1073741824,
+  "generatedAt": "2026-10-21T14:07:52.6734175+00:00",
+  "applicationMemoryBytes": 1073741824,
+  "scope": "Current shared Docker Desktop D0 short throughput recheck; performance targets remain unmet",
+  "applicationCpu": 2,
+  "double1": true,
+  "apiMaxInflight": 128
+}

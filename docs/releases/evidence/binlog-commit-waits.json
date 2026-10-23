@@ -1,0 +1,1860 @@
+{
+  "at": "2026-10-19T13:47:00.2216619Z",
+  "scope": "Read-only commit-wait tool and reversibleD0 tuning probe; business jars/schema unchanged",
+  "experiment": {
+    "startedAt": "2026-10-19T13:33:45.528592300Z",
+    "original": {
+      "delayMicros": 0,
+      "noDelayCount": 0,
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "bufferPoolBytes": 1073741824,
+      "logWriterThreads": 1
+    },
+    "phases": [
+      {
+        "label": "group-1",
+        "config": {
+          "delayMicros": 0,
+          "noDelayCount": 0,
+          "flushOnCommit": 1,
+          "syncBinlog": 1,
+          "bufferPoolBytes": 1073741824,
+          "logWriterThreads": 1
+        },
+        "startedAt": "2026-10-19T13:33:45.536446800Z",
+        "exit": 0,
+        "finishedAt": "2026-10-19T13:35:43.576044500Z"
+      },
+      {
+        "label": "group-2",
+        "config": {
+          "delayMicros": 5000,
+          "noDelayCount": 32,
+          "flushOnCommit": 1,
+          "syncBinlog": 1,
+          "bufferPoolBytes": 1073741824,
+          "logWriterThreads": 1
+        },
+        "startedAt": "2026-10-19T13:35:43.586304Z",
+        "exit": 0,
+        "finishedAt": "2026-10-19T13:37:45.513013700Z"
+      },
+      {
+        "label": "group-3",
+        "config": {
+          "delayMicros": 0,
+          "noDelayCount": 0,
+          "flushOnCommit": 1,
+          "syncBinlog": 1,
+          "bufferPoolBytes": 1073741824,
+          "logWriterThreads": 1
+        },
+        "startedAt": "2026-10-19T13:37:45.522134200Z",
+        "exit": 0,
+        "finishedAt": "2026-10-19T13:39:43.863647400Z"
+      }
+    ],
+    "restored": true,
+    "final": {
+      "delayMicros": 0,
+      "noDelayCount": 0,
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "bufferPoolBytes": 1073741824,
+      "logWriterThreads": 1
+    },
+    "finishedAt": "2026-10-19T13:39:43.876286600Z"
+  },
+  "candidateAdopted": false,
+  "finalConfig": [
+    {
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "logWriterThreads": 1,
+      "binlogSyncDelay": 0,
+      "binlogNoDelayCount": 0,
+      "bufferPoolBytes": 1073741824
+    }
+  ],
+  "allMonitoringRestored": true,
+  "timeoutRecovery": {
+    "startedAt": "2026-10-19T13:42:38.697484800Z",
+    "original": {
+      "delayMicros": 0,
+      "noDelayCount": 0,
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "bufferPoolBytes": 1073741824,
+      "logWriterThreads": 1
+    },
+    "phases": [],
+    "forcedTimeout": true,
+    "monitoringRestored": true,
+    "restored": true,
+    "final": {
+      "delayMicros": 0,
+      "noDelayCount": 0,
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "bufferPoolBytes": 1073741824,
+      "logWriterThreads": 1
+    },
+    "finishedAt": "2026-10-19T13:42:38.798039700Z"
+  },
+  "sourceHashes": [
+    {
+      "path": "scripts/load/CommitWaitSampler.java",
+      "sha256": "A8521B513BD9F9554632BACEDD4C4BE3B1FC75B2722AAA16457D147BFF0FE584"
+    },
+    {
+      "path": "scripts/load/CommitWaitSamplerTest.java",
+      "sha256": "02A068CDDB836371CEFD387F5886AB0C7A82B4F34ED4E1FCAF041934DC2CDDDA"
+    },
+    {
+      "path": "scripts/load/LocalDiagnosis.java",
+      "sha256": "2707F3C4EDA482F38B6DF04040B869F96047F82E054BF3C515FDC79244E967EF"
+    },
+    {
+      "path": "scripts/load/test-local.ps1",
+      "sha256": "42DAEE781A63A663B5A33E5A955140F51B640946E5C097AD2109B804CCDD7AF6"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "sha256": "8F9F17D951B0F863CC4D457AF37090C1CC4631B2A4EB5E7B1A0F60B6AC9DB26E"
+    }
+  ],
+  "frozenExperimentSources": [
+    {
+      "path": "scripts/load/LocalLoad.java",
+      "sha256": "A69AECA955C9AF6BA54EC98D19D9B911C987E2D6988648DB91CF7C7995FE8E24"
+    },
+    {
+      "path": "scripts/load/LoadMeasurements.java",
+      "sha256": "1BF71BF258577B7F115A1B93BA58E9F627B0F403DE18569D0A67BEB7FCC4B74A"
+    },
+    {
+      "path": "scripts/load/LocalDiagnosis.java",
+      "sha256": "2707F3C4EDA482F38B6DF04040B869F96047F82E054BF3C515FDC79244E967EF"
+    },
+    {
+      "path": "scripts/load/CommitWaitSampler.java",
+      "sha256": "DF666F32F4216E9B9E6FC38B4A3AF610F78CDADCB550DF7B420DDF4FA00B82C5"
+    },
+    {
+      "path": ".work/CommitWaitWindow.java",
+      "sha256": "27FA4E81C7849F65DCF3554F08654CFDA559304FC1601E03AC19545A39B12D42"
+    },
+    {
+      "path": ".work/RunCommitWaitWindow.ps1",
+      "sha256": "8578FB5759B02895F3C02C533523A4F322F25A65C086940E2D43E73326115A0C"
+    },
+    {
+      "path": ".work/BinlogGroupCommitExperiment.java",
+      "sha256": "368362B08E298DF0778C76D82A7BCBE77DBE030323D13DF6FADA6287B2888186"
+    },
+    {
+      "path": ".work/RunBinlogGroupPhase.ps1",
+      "sha256": "07EBF9E53E9A9E4510158716FB07B9B889422FA90648D5ED709890B290F1DD9A"
+    }
+  ],
+  "summaries": [
+    {
+      "label": "first",
+      "samplerId": "commitwait-1792416557-aa4a3648",
+      "runId": "load-1792416562-1fa13efb",
+      "config": {
+        "serverUuid": "61680263-ca3c-11f1-8d6b-067f85e6c3df",
+        "flushOnCommit": 1,
+        "syncBinlog": 1,
+        "logBin": 1,
+        "bufferPoolBytes": 1073741824,
+        "performanceSchema": 1
+      },
+      "samples": 834,
+      "meanProbeQueryMillis": 3.888031175059952,
+      "maxProbeQueryMillis": 9.948,
+      "accepted": 2905,
+      "http503": 95,
+      "reasons": {
+        "API_INFLIGHT": 95
+      },
+      "moneyPassed": true,
+      "posted": 2905,
+      "tpsLower": 48.266666666666666,
+      "tpsUpper": 48.416666666666664,
+      "httpP99Micros": 480933,
+      "completionP99LowerMicros": 557725,
+      "completionP99UpperMicros": 906897,
+      "nearLongBinlogSync": 33,
+      "nearLongBinlogQueue": 60,
+      "nearLongNonce": 72,
+      "waits": [
+        {
+          "wait": "wait/io/file/sql/binlog, sync",
+          "sampleObservations": 392,
+          "maxObservedAgeMillis": 677.326524498
+        },
+        {
+          "wait": "wait/synch/cond/sql/MYSQL_BIN_LOG::COND_done, wait",
+          "sampleObservations": 1600,
+          "maxObservedAgeMillis": 677.313879282
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_log, lock",
+          "sampleObservations": 183,
+          "maxObservedAgeMillis": 675.063682884
+        },
+        {
+          "wait": "wait/io/table/sql/handler, insert",
+          "sampleObservations": 141,
+          "maxObservedAgeMillis": 550.225103202
+        },
+        {
+          "wait": "wait/io/table/sql/handler, update",
+          "sampleObservations": 63,
+          "maxObservedAgeMillis": 435.629259432
+        },
+        {
+          "wait": "wait/io/file/innodb/innodb_log_file, sync",
+          "sampleObservations": 449,
+          "maxObservedAgeMillis": 383.266052982
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_commit, lock",
+          "sampleObservations": 16,
+          "maxObservedAgeMillis": 292.29217029
+        },
+        {
+          "wait": "wait/io/table/sql/handler, fetch",
+          "sampleObservations": 164,
+          "maxObservedAgeMillis": 231.962835456
+        },
+        {
+          "wait": "wait/io/file/innodb/innodb_log_file, write",
+          "sampleObservations": 11,
+          "maxObservedAgeMillis": 142.489045746
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_sync, lock",
+          "sampleObservations": 125,
+          "maxObservedAgeMillis": 78.480358362
+        },
+        {
+          "wait": "wait/synch/mutex/innodb/log_writer_mutex, lock",
+          "sampleObservations": 1,
+          "maxObservedAgeMillis": 37.802096568
+        },
+        {
+          "wait": "wait/io/file/sql/binlog, write",
+          "sampleObservations": 4,
+          "maxObservedAgeMillis": 0.071109054
+        },
+        {
+          "wait": "wait/io/socket/sql/client_connection, send",
+          "sampleObservations": 27,
+          "maxObservedAgeMillis": 0.0
+        }
+      ],
+      "kinds": [
+        {
+          "kind": "COMMIT_OTHER",
+          "sampleObservations": 1076,
+          "maxObservedStageAgeMillis": 1091.948111
+        },
+        {
+          "kind": "NONCE",
+          "sampleObservations": 419,
+          "maxObservedStageAgeMillis": 782.866087
+        },
+        {
+          "kind": "OTHER",
+          "sampleObservations": 1097,
+          "maxObservedStageAgeMillis": 707.289304
+        },
+        {
+          "kind": "QUOTA_COMMIT",
+          "sampleObservations": 116,
+          "maxObservedStageAgeMillis": 414.78137
+        }
+      ],
+      "io": [
+        {
+          "event": "wait/io/file/innodb/innodb_arch_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_clone_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_data_file",
+          "miscOperations": 6593.0,
+          "miscSeconds": 15.1030134018,
+          "writeOperations": 82077.0,
+          "writeSeconds": 0.776362646502
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_dblwr_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 834.0,
+          "writeSeconds": 9.545648818914
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_log_file",
+          "miscOperations": 58009.0,
+          "miscSeconds": 50.260560896484,
+          "writeOperations": 98885.0,
+          "writeSeconds": 1.042529066928
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_tablespace_open_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_temp_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/meb::redo_log_archive_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog",
+          "miscOperations": 21415.0,
+          "miscSeconds": 42.914929298382,
+          "writeOperations": 25083.0,
+          "writeSeconds": 0.49206176793
+        },
+        {
+          "event": "wait/io/file/sql/binlog_cache",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog_index",
+          "miscOperations": 15.0,
+          "miscSeconds": 0.00061777908,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog_index_cache",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        }
+      ],
+      "restored": true,
+      "limits": [
+        "100ms sleep plus query time; samples can miss shorter events",
+        "Current-event timers are elapsed age, not completed duration; observations repeat the same event",
+        "Same-window association within150ms is not a one-to-one causal trace",
+        "MISC includes sync/open/close; cannot be counted as exactfsync",
+        "Statement/stage/wait reads can change while sampled; nesting checks omit mismatches",
+        "D0 diagnostic60s load, not R1 or stable-baseline qualification"
+      ]
+    },
+    {
+      "label": "group-1",
+      "samplerId": "commitwait-1792416851-9d27ee29",
+      "runId": "load-1792416855-8c2f9d21",
+      "config": {
+        "serverUuid": "61680263-ca3c-11f1-8d6b-067f85e6c3df",
+        "flushOnCommit": 1,
+        "syncBinlog": 1,
+        "logBin": 1,
+        "bufferPoolBytes": 1073741824,
+        "performanceSchema": 1,
+        "binlogSyncDelayMicros": 0,
+        "binlogNoDelayCount": 0,
+        "logWriterThreads": 1
+      },
+      "samples": 834,
+      "meanProbeQueryMillis": 4.124513189448441,
+      "maxProbeQueryMillis": 11.837,
+      "accepted": 2914,
+      "http503": 86,
+      "reasons": {
+        "API_INFLIGHT": 86
+      },
+      "moneyPassed": true,
+      "posted": 2914,
+      "tpsLower": 48.31666666666667,
+      "tpsUpper": 48.56666666666667,
+      "httpP99Micros": 527464,
+      "completionP99LowerMicros": 599135,
+      "completionP99UpperMicros": 979381,
+      "nearLongBinlogSync": 27,
+      "nearLongBinlogQueue": 65,
+      "nearLongNonce": 65,
+      "waits": [
+        {
+          "wait": "wait/io/table/sql/handler, insert",
+          "sampleObservations": 159,
+          "maxObservedAgeMillis": 658.351084554
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_log, lock",
+          "sampleObservations": 175,
+          "maxObservedAgeMillis": 419.42045232
+        },
+        {
+          "wait": "wait/synch/cond/sql/MYSQL_BIN_LOG::COND_done, wait",
+          "sampleObservations": 1521,
+          "maxObservedAgeMillis": 300.856692204
+        },
+        {
+          "wait": "wait/io/table/sql/handler, fetch",
+          "sampleObservations": 153,
+          "maxObservedAgeMillis": 290.488662918
+        },
+        {
+          "wait": "wait/io/table/sql/handler, update",
+          "sampleObservations": 57,
+          "maxObservedAgeMillis": 269.631473328
+        },
+        {
+          "wait": "wait/io/file/sql/binlog, sync",
+          "sampleObservations": 343,
+          "maxObservedAgeMillis": 268.670614932
+        },
+        {
+          "wait": "wait/synch/mutex/innodb/log_writer_mutex, lock",
+          "sampleObservations": 3,
+          "maxObservedAgeMillis": 256.744544256
+        },
+        {
+          "wait": "wait/io/file/innodb/innodb_log_file, sync",
+          "sampleObservations": 424,
+          "maxObservedAgeMillis": 206.271142236
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_sync, lock",
+          "sampleObservations": 103,
+          "maxObservedAgeMillis": 152.12795976
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_commit, lock",
+          "sampleObservations": 18,
+          "maxObservedAgeMillis": 114.992909514
+        },
+        {
+          "wait": "wait/io/file/innodb/innodb_log_file, write",
+          "sampleObservations": 10,
+          "maxObservedAgeMillis": 75.562597728
+        },
+        {
+          "wait": "wait/synch/mutex/innodb/log_flusher_mutex, lock",
+          "sampleObservations": 1,
+          "maxObservedAgeMillis": 38.731996044
+        },
+        {
+          "wait": "wait/io/file/sql/binlog, write",
+          "sampleObservations": 3,
+          "maxObservedAgeMillis": 0.035057106
+        },
+        {
+          "wait": "wait/lock/table/sql/handler, write external",
+          "sampleObservations": 1,
+          "maxObservedAgeMillis": 0.001808352
+        },
+        {
+          "wait": "wait/io/socket/sql/client_connection, send",
+          "sampleObservations": 22,
+          "maxObservedAgeMillis": 0.0
+        }
+      ],
+      "kinds": [
+        {
+          "kind": "COMMIT_OTHER",
+          "sampleObservations": 1104,
+          "maxObservedStageAgeMillis": 534.585076
+        },
+        {
+          "kind": "NONCE",
+          "sampleObservations": 334,
+          "maxObservedStageAgeMillis": 536.064813
+        },
+        {
+          "kind": "OTHER",
+          "sampleObservations": 950,
+          "maxObservedStageAgeMillis": 539.107819
+        },
+        {
+          "kind": "QUOTA_COMMIT",
+          "sampleObservations": 113,
+          "maxObservedStageAgeMillis": 297.495755
+        }
+      ],
+      "io": [
+        {
+          "event": "wait/io/file/innodb/innodb_arch_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_clone_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_data_file",
+          "miscOperations": 7623.0,
+          "miscSeconds": 12.298078677528,
+          "writeOperations": 91558.0,
+          "writeSeconds": 0.665904461562
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_dblwr_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 894.0,
+          "writeSeconds": 7.625940109488
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_log_file",
+          "miscOperations": 56845.0,
+          "miscSeconds": 47.676023572806,
+          "writeOperations": 98835.0,
+          "writeSeconds": 1.25034986457
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_tablespace_open_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_temp_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/meb::redo_log_archive_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog",
+          "miscOperations": 20960.0,
+          "miscSeconds": 41.205576756132,
+          "writeOperations": 24764.0,
+          "writeSeconds": 0.583898297868
+        },
+        {
+          "event": "wait/io/file/sql/binlog_cache",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog_index",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog_index_cache",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        }
+      ],
+      "restored": true,
+      "limits": [
+        "100ms sleep plus query time; samples can miss shorter events",
+        "Current-event timers are elapsed age, not completed duration; observations repeat the same event",
+        "Same-window association within150ms is not a one-to-one causal trace",
+        "MISC includes sync/open/close; cannot be counted as exactfsync",
+        "Statement/stage/wait reads can change while sampled; nesting checks omit mismatches",
+        "D0 diagnostic60s load, not R1 or stable-baseline qualification"
+      ]
+    },
+    {
+      "label": "group-2",
+      "samplerId": "commitwait-1792416970-e6b068fd",
+      "runId": "load-1792416974-9ed8b5f4",
+      "config": {
+        "serverUuid": "61680263-ca3c-11f1-8d6b-067f85e6c3df",
+        "flushOnCommit": 1,
+        "syncBinlog": 1,
+        "logBin": 1,
+        "bufferPoolBytes": 1073741824,
+        "performanceSchema": 1,
+        "binlogSyncDelayMicros": 5000,
+        "binlogNoDelayCount": 32,
+        "logWriterThreads": 1
+      },
+      "samples": 836,
+      "meanProbeQueryMillis": 4.054511961722488,
+      "maxProbeQueryMillis": 11.012,
+      "accepted": 2786,
+      "http503": 214,
+      "reasons": {
+        "API_INFLIGHT": 214
+      },
+      "moneyPassed": true,
+      "posted": 2786,
+      "tpsLower": 45.9,
+      "tpsUpper": 46.31666666666667,
+      "httpP99Micros": 836842,
+      "completionP99LowerMicros": 1411082,
+      "completionP99UpperMicros": 1848037,
+      "nearLongBinlogSync": 86,
+      "nearLongBinlogQueue": 158,
+      "nearLongNonce": 189,
+      "waits": [
+        {
+          "wait": "wait/io/table/sql/handler, insert",
+          "sampleObservations": 258,
+          "maxObservedAgeMillis": 973.257127578
+        },
+        {
+          "wait": "wait/synch/cond/sql/MYSQL_BIN_LOG::COND_done, wait",
+          "sampleObservations": 3119,
+          "maxObservedAgeMillis": 614.433209832
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_commit, lock",
+          "sampleObservations": 14,
+          "maxObservedAgeMillis": 501.93041013
+        },
+        {
+          "wait": "wait/io/table/sql/handler, fetch",
+          "sampleObservations": 186,
+          "maxObservedAgeMillis": 318.169469646
+        },
+        {
+          "wait": "wait/io/file/innodb/innodb_log_file, sync",
+          "sampleObservations": 417,
+          "maxObservedAgeMillis": 304.03635669
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_log, lock",
+          "sampleObservations": 170,
+          "maxObservedAgeMillis": 302.27299407
+        },
+        {
+          "wait": "wait/io/file/sql/binlog, sync",
+          "sampleObservations": 232,
+          "maxObservedAgeMillis": 300.048968682
+        },
+        {
+          "wait": "wait/io/table/sql/handler, update",
+          "sampleObservations": 48,
+          "maxObservedAgeMillis": 273.972369312
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_sync, lock",
+          "sampleObservations": 70,
+          "maxObservedAgeMillis": 196.404139062
+        },
+        {
+          "wait": "wait/synch/mutex/innodb/log_writer_mutex, lock",
+          "sampleObservations": 1,
+          "maxObservedAgeMillis": 77.686949304
+        },
+        {
+          "wait": "wait/io/file/innodb/innodb_log_file, write",
+          "sampleObservations": 14,
+          "maxObservedAgeMillis": 37.754348706
+        },
+        {
+          "wait": "wait/io/file/sql/binlog, write",
+          "sampleObservations": 4,
+          "maxObservedAgeMillis": 3.75592806
+        },
+        {
+          "wait": "wait/io/socket/sql/client_connection, send",
+          "sampleObservations": 26,
+          "maxObservedAgeMillis": 0.0
+        },
+        {
+          "wait": "wait/io/table/sql/handler, send",
+          "sampleObservations": 1,
+          "maxObservedAgeMillis": 0.0
+        }
+      ],
+      "kinds": [
+        {
+          "kind": "COMMIT_OTHER",
+          "sampleObservations": 1808,
+          "maxObservedStageAgeMillis": 555.346768
+        },
+        {
+          "kind": "NONCE",
+          "sampleObservations": 586,
+          "maxObservedStageAgeMillis": 831.790425
+        },
+        {
+          "kind": "OTHER",
+          "sampleObservations": 1641,
+          "maxObservedStageAgeMillis": 838.26425
+        },
+        {
+          "kind": "QUOTA_COMMIT",
+          "sampleObservations": 257,
+          "maxObservedStageAgeMillis": 658.149834
+        }
+      ],
+      "io": [
+        {
+          "event": "wait/io/file/innodb/innodb_arch_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_clone_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_data_file",
+          "miscOperations": 7184.0,
+          "miscSeconds": 13.248024982416,
+          "writeOperations": 86460.0,
+          "writeSeconds": 1.492403699556
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_dblwr_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 893.0,
+          "writeSeconds": 9.322180663158
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_log_file",
+          "miscOperations": 51364.0,
+          "miscSeconds": 47.695578134994,
+          "writeOperations": 89388.0,
+          "writeSeconds": 1.509690252168
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_tablespace_open_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_temp_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/meb::redo_log_archive_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog",
+          "miscOperations": 6357.0,
+          "miscSeconds": 25.824546348678,
+          "writeOperations": 23528.0,
+          "writeSeconds": 0.59582473452
+        },
+        {
+          "event": "wait/io/file/sql/binlog_cache",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog_index",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog_index_cache",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        }
+      ],
+      "restored": true,
+      "limits": [
+        "100ms sleep plus query time; samples can miss shorter events",
+        "Current-event timers are elapsed age, not completed duration; observations repeat the same event",
+        "Same-window association within150ms is not a one-to-one causal trace",
+        "MISC includes sync/open/close; cannot be counted as exactfsync",
+        "Statement/stage/wait reads can change while sampled; nesting checks omit mismatches",
+        "D0 diagnostic60s load, not R1 or stable-baseline qualification"
+      ]
+    },
+    {
+      "label": "group-3",
+      "samplerId": "commitwait-1792417091-3ef3e3bb",
+      "runId": "load-1792417095-fcc8be65",
+      "config": {
+        "serverUuid": "61680263-ca3c-11f1-8d6b-067f85e6c3df",
+        "flushOnCommit": 1,
+        "syncBinlog": 1,
+        "logBin": 1,
+        "bufferPoolBytes": 1073741824,
+        "performanceSchema": 1,
+        "binlogSyncDelayMicros": 0,
+        "binlogNoDelayCount": 0,
+        "logWriterThreads": 1
+      },
+      "samples": 836,
+      "meanProbeQueryMillis": 4.118238038277512,
+      "maxProbeQueryMillis": 8.9,
+      "accepted": 2868,
+      "http503": 132,
+      "reasons": {
+        "API_INFLIGHT": 132
+      },
+      "moneyPassed": true,
+      "posted": 2868,
+      "tpsLower": 47.46666666666667,
+      "tpsUpper": 47.733333333333334,
+      "httpP99Micros": 631937,
+      "completionP99LowerMicros": 658469,
+      "completionP99UpperMicros": 1089340,
+      "nearLongBinlogSync": 30,
+      "nearLongBinlogQueue": 92,
+      "nearLongNonce": 110,
+      "waits": [
+        {
+          "wait": "wait/synch/cond/sql/MYSQL_BIN_LOG::COND_done, wait",
+          "sampleObservations": 2005,
+          "maxObservedAgeMillis": 677.247240186
+        },
+        {
+          "wait": "wait/io/table/sql/handler, insert",
+          "sampleObservations": 193,
+          "maxObservedAgeMillis": 623.828928654
+        },
+        {
+          "wait": "wait/io/file/sql/binlog, sync",
+          "sampleObservations": 357,
+          "maxObservedAgeMillis": 353.740349232
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_log, lock",
+          "sampleObservations": 158,
+          "maxObservedAgeMillis": 299.071998234
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_commit, lock",
+          "sampleObservations": 27,
+          "maxObservedAgeMillis": 296.369360694
+        },
+        {
+          "wait": "wait/io/file/innodb/innodb_log_file, sync",
+          "sampleObservations": 403,
+          "maxObservedAgeMillis": 236.748635298
+        },
+        {
+          "wait": "wait/io/table/sql/handler, update",
+          "sampleObservations": 50,
+          "maxObservedAgeMillis": 216.257859306
+        },
+        {
+          "wait": "wait/io/table/sql/handler, fetch",
+          "sampleObservations": 180,
+          "maxObservedAgeMillis": 208.134123192
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_sync, lock",
+          "sampleObservations": 115,
+          "maxObservedAgeMillis": 195.188437998
+        },
+        {
+          "wait": "wait/io/file/innodb/innodb_log_file, write",
+          "sampleObservations": 11,
+          "maxObservedAgeMillis": 43.070900688
+        },
+        {
+          "wait": "wait/io/file/sql/binlog, write",
+          "sampleObservations": 5,
+          "maxObservedAgeMillis": 20.738509038
+        },
+        {
+          "wait": "wait/io/file/innodb/innodb_log_file, lock",
+          "sampleObservations": 1,
+          "maxObservedAgeMillis": 0.000748512
+        },
+        {
+          "wait": "wait/io/socket/sql/client_connection, send",
+          "sampleObservations": 27,
+          "maxObservedAgeMillis": 0.0
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_done, send",
+          "sampleObservations": 1,
+          "maxObservedAgeMillis": 0.0
+        }
+      ],
+      "kinds": [
+        {
+          "kind": "COMMIT_OTHER",
+          "sampleObservations": 1200,
+          "maxObservedStageAgeMillis": 702.32441
+        },
+        {
+          "kind": "NONCE",
+          "sampleObservations": 489,
+          "maxObservedStageAgeMillis": 693.461507
+        },
+        {
+          "kind": "OTHER",
+          "sampleObservations": 1187,
+          "maxObservedStageAgeMillis": 703.342821
+        },
+        {
+          "kind": "QUOTA_COMMIT",
+          "sampleObservations": 142,
+          "maxObservedStageAgeMillis": 702.925198
+        }
+      ],
+      "io": [
+        {
+          "event": "wait/io/file/innodb/innodb_arch_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_clone_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_data_file",
+          "miscOperations": 7520.0,
+          "miscSeconds": 13.585528522404,
+          "writeOperations": 89225.0,
+          "writeSeconds": 0.472744501434
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_dblwr_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 879.0,
+          "writeSeconds": 8.346013630596
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_log_file",
+          "miscOperations": 55640.0,
+          "miscSeconds": 46.382322077874,
+          "writeOperations": 95109.0,
+          "writeSeconds": 0.852608884086
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_tablespace_open_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_temp_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/meb::redo_log_archive_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog",
+          "miscOperations": 20423.0,
+          "miscSeconds": 40.27260170394,
+          "writeOperations": 24203.0,
+          "writeSeconds": 0.519928442856
+        },
+        {
+          "event": "wait/io/file/sql/binlog_cache",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog_index",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog_index_cache",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        }
+      ],
+      "restored": true,
+      "limits": [
+        "100ms sleep plus query time; samples can miss shorter events",
+        "Current-event timers are elapsed age, not completed duration; observations repeat the same event",
+        "Same-window association within150ms is not a one-to-one causal trace",
+        "MISC includes sync/open/close; cannot be counted as exactfsync",
+        "Statement/stage/wait reads can change while sampled; nesting checks omit mismatches",
+        "D0 diagnostic60s load, not R1 or stable-baseline qualification"
+      ]
+    },
+    {
+      "label": "guarded",
+      "samplerId": "commitwait-1792417359-54477d27",
+      "runId": "load-1792417363-6e1f8395",
+      "config": {
+        "serverUuid": "61680263-ca3c-11f1-8d6b-067f85e6c3df",
+        "flushOnCommit": 1,
+        "syncBinlog": 1,
+        "logBin": 1,
+        "bufferPoolBytes": 1073741824,
+        "performanceSchema": 1,
+        "binlogSyncDelayMicros": 0,
+        "binlogNoDelayCount": 0,
+        "logWriterThreads": 1
+      },
+      "samples": 417,
+      "meanProbeQueryMillis": 4.383232613908873,
+      "maxProbeQueryMillis": 8.152,
+      "accepted": 750,
+      "http503": null,
+      "reasons": {},
+      "moneyPassed": true,
+      "posted": 750,
+      "tpsLower": 49.266666666666666,
+      "tpsUpper": 50.0,
+      "httpP99Micros": 244215,
+      "completionP99LowerMicros": 275667,
+      "completionP99UpperMicros": 622999,
+      "nearLongBinlogSync": 0,
+      "nearLongBinlogQueue": 0,
+      "nearLongNonce": 0,
+      "waits": [
+        {
+          "wait": "wait/io/file/sql/binlog, sync",
+          "sampleObservations": 83,
+          "maxObservedAgeMillis": 139.25212092
+        },
+        {
+          "wait": "wait/synch/cond/sql/MYSQL_BIN_LOG::COND_done, wait",
+          "sampleObservations": 218,
+          "maxObservedAgeMillis": 139.171458402
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_log, lock",
+          "sampleObservations": 35,
+          "maxObservedAgeMillis": 138.91175703
+        },
+        {
+          "wait": "wait/io/table/sql/handler, fetch",
+          "sampleObservations": 20,
+          "maxObservedAgeMillis": 137.303757018
+        },
+        {
+          "wait": "wait/synch/mutex/sql/MYSQL_BIN_LOG::LOCK_sync, lock",
+          "sampleObservations": 24,
+          "maxObservedAgeMillis": 127.219035384
+        },
+        {
+          "wait": "wait/io/file/innodb/innodb_log_file, sync",
+          "sampleObservations": 98,
+          "maxObservedAgeMillis": 126.693891288
+        },
+        {
+          "wait": "wait/io/table/sql/handler, insert",
+          "sampleObservations": 27,
+          "maxObservedAgeMillis": 123.283402344
+        },
+        {
+          "wait": "wait/io/table/sql/handler, update",
+          "sampleObservations": 10,
+          "maxObservedAgeMillis": 22.10080833
+        },
+        {
+          "wait": "wait/synch/mutex/innodb/log_writer_mutex, lock",
+          "sampleObservations": 1,
+          "maxObservedAgeMillis": 0.169826526
+        },
+        {
+          "wait": "wait/io/file/sql/binlog, write",
+          "sampleObservations": 2,
+          "maxObservedAgeMillis": 0.098994852
+        },
+        {
+          "wait": "wait/io/file/sql/io_cache, seek",
+          "sampleObservations": 1,
+          "maxObservedAgeMillis": 0.00353763
+        },
+        {
+          "wait": "wait/io/socket/sql/client_connection, send",
+          "sampleObservations": 10,
+          "maxObservedAgeMillis": 0.0
+        }
+      ],
+      "kinds": [
+        {
+          "kind": "COMMIT_OTHER",
+          "sampleObservations": 216,
+          "maxObservedStageAgeMillis": 154.974367
+        },
+        {
+          "kind": "NONCE",
+          "sampleObservations": 24,
+          "maxObservedStageAgeMillis": 154.092216
+        },
+        {
+          "kind": "OTHER",
+          "sampleObservations": 168,
+          "maxObservedStageAgeMillis": 157.35081
+        },
+        {
+          "kind": "QUOTA_COMMIT",
+          "sampleObservations": 20,
+          "maxObservedStageAgeMillis": 138.710791
+        }
+      ],
+      "io": [
+        {
+          "event": "wait/io/file/innodb/innodb_arch_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_clone_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_data_file",
+          "miscOperations": 2114.0,
+          "miscSeconds": 4.753287689634,
+          "writeOperations": 23731.0,
+          "writeSeconds": 0.160336152702
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_dblwr_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 265.0,
+          "writeSeconds": 2.100227691258
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_log_file",
+          "miscOperations": 17311.0,
+          "miscSeconds": 11.416020415974,
+          "writeOperations": 26904.0,
+          "writeSeconds": 0.184947423084
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_tablespace_open_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/innodb_temp_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/innodb/meb::redo_log_archive_file",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog",
+          "miscOperations": 6304.0,
+          "miscSeconds": 9.553554191142,
+          "writeOperations": 7125.0,
+          "writeSeconds": 0.107207025552
+        },
+        {
+          "event": "wait/io/file/sql/binlog_cache",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog_index",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        },
+        {
+          "event": "wait/io/file/sql/binlog_index_cache",
+          "miscOperations": 0.0,
+          "miscSeconds": 0.0,
+          "writeOperations": 0.0,
+          "writeSeconds": 0.0
+        }
+      ],
+      "restored": true,
+      "limits": [
+        "100ms sleep plus query time; samples can miss shorter events",
+        "Current-event timers are elapsed age, not completed duration; observations repeat the same event",
+        "Same-window association within150ms is not a one-to-one causal trace",
+        "MISC includes sync/open/close; cannot be counted as exactfsync",
+        "Statement/stage/wait reads can change while sampled; nesting checks omit mismatches",
+        "D0 diagnostic60s load, not R1 or stable-baseline qualification"
+      ]
+    }
+  ],
+  "accepted": 14023.0,
+  "planned": 14550.0,
+  "allAcceptedPostedAndBalanced": true,
+  "initialDataset": {
+    "payments": 161316,
+    "ledgerEntries": 484065,
+    "journals": 161935,
+    "tasks": 485866,
+    "merchants": 2
+  },
+  "finalDataset": {
+    "payments": 175339,
+    "ledgerEntries": 525991,
+    "journals": 175958,
+    "tasks": 527935,
+    "merchants": 2
+  },
+  "backlog": 0,
+  "resourcesFixedAcrossABA": true,
+  "services": {
+    "at": "2026-10-19T13:46:59.4110636Z",
+    "backend": "UP",
+    "console": 200,
+    "schema": "V12",
+    "mode": "performance",
+    "businessJarsUnchanged": true,
+    "platformJarSha256": "1B63BC70F3A1BFB2EBEF64C1EDC5098D11F35C71DD50D3C966C31704DC2D2997",
+    "simulatorJarSha256": "B712BF2755779EAA2339984258455B90217B3A7055F56305C548BD02666E0D8E",
+    "preflight": "baseline-20261019T134449Z-772f2e35",
+    "cpuThrottledPeriods": 0
+  },
+  "artifacts": [
+    {
+      "path": ".work\\performance\\load-1792416562-1fa13efb.json",
+      "sha256": "444C10455EFC6988112A997D881390EFA434F1066DC6DFAE64618FFF31E99F70"
+    },
+    {
+      "path": ".work\\performance\\load-1792416562-1fa13efb.requests.jsonl",
+      "sha256": "B433D17F31379BB10D636136FD6CEFE31851AC2CE8A743835D7E87F0E0E6E9BC"
+    },
+    {
+      "path": ".work\\performance\\load-1792416828-41444f82.json",
+      "sha256": "2E53BCAFE83C922E26D9A1575384FD9FF15C83CE51B76400213BE3C3CE58C734"
+    },
+    {
+      "path": ".work\\performance\\load-1792416828-41444f82.requests.jsonl",
+      "sha256": "132E72BEA3F55FB75ADE82A8ECF72B88D1421223DB91B44FA664AB71ED4C149D"
+    },
+    {
+      "path": ".work\\performance\\load-1792416855-8c2f9d21.json",
+      "sha256": "BBEC8FE1493F3C8B54518E0AACC7BE5E1EC7B4CD27EFD0306BB3A2BE406ECBAB"
+    },
+    {
+      "path": ".work\\performance\\load-1792416855-8c2f9d21.requests.jsonl",
+      "sha256": "A2A9A6864C79D538F1B1A05B0E7F375298A40E6184B322958009718B75701404"
+    },
+    {
+      "path": ".work\\performance\\load-1792416946-dfc21215.json",
+      "sha256": "F9C044F3D1D1DB57A771FBD28ED9A992F8C4515A12BE19474BDBCD788D87A261"
+    },
+    {
+      "path": ".work\\performance\\load-1792416946-dfc21215.requests.jsonl",
+      "sha256": "F5F65DDA8F425457F19BACC186F6167F64C529C4F04FD095E099B6F8E818FD87"
+    },
+    {
+      "path": ".work\\performance\\load-1792416974-9ed8b5f4.json",
+      "sha256": "F869C547BE695E2374FBA35EDAD1EAA8059C62F4ECFDA98642F561C9660AB78E"
+    },
+    {
+      "path": ".work\\performance\\load-1792416974-9ed8b5f4.requests.jsonl",
+      "sha256": "E2A68B5329253042E41512793B5A0CFC3E410CA03254BF32DDE0A601ADC1CB64"
+    },
+    {
+      "path": ".work\\performance\\load-1792417068-a0c03144.json",
+      "sha256": "8D298D592EFEAF79E1CD2F4C27F2C6F2C660F7C0A906FFECCFB3B7ED45CE8E2D"
+    },
+    {
+      "path": ".work\\performance\\load-1792417068-a0c03144.requests.jsonl",
+      "sha256": "E34BC67D4EDB0D49DC813A1563F6695AD206E98C8BB745D0D673BCC192F66461"
+    },
+    {
+      "path": ".work\\performance\\load-1792417095-fcc8be65.json",
+      "sha256": "925B4BC166FC72227B8C7B838EEDCF496A5100C7675DC708825FDB43C8DE7394"
+    },
+    {
+      "path": ".work\\performance\\load-1792417095-fcc8be65.requests.jsonl",
+      "sha256": "2F7504E1275889CF813ADDB53D9E7B27460BC96C0E3261D5EAFFC15B3A1FDB1D"
+    },
+    {
+      "path": ".work\\performance\\load-1792417363-6e1f8395.json",
+      "sha256": "0CF72282FB461CD7A0CB20456A7907B8218C5FA916B999242B612D312E32C5E7"
+    },
+    {
+      "path": ".work\\performance\\load-1792417363-6e1f8395.requests.jsonl",
+      "sha256": "1058C6F21A4892DAB7818108A1CEB11448744209886890BA71A396E891A3D081"
+    },
+    {
+      "path": ".work\\binlog-group-experiment.json",
+      "sha256": "1F7E15562F149E3F858B480B8DEB076B75DC036CB95ACB1014BC0F8BE1B5CFC8"
+    },
+    {
+      "path": ".work\\binlog-group-experiment.log",
+      "sha256": "AC9489B5E7487AE4FB977FFF2B2DAB902A28CA32484BE6C51970F51B23767109"
+    },
+    {
+      "path": ".work\\binlog-group-frozen\\.work\\BinlogGroupCommitExperiment.java",
+      "sha256": "368362B08E298DF0778C76D82A7BCBE77DBE030323D13DF6FADA6287B2888186"
+    },
+    {
+      "path": ".work\\binlog-group-frozen\\.work\\CommitWaitWindow.java",
+      "sha256": "27FA4E81C7849F65DCF3554F08654CFDA559304FC1601E03AC19545A39B12D42"
+    },
+    {
+      "path": ".work\\binlog-group-frozen\\.work\\RunBinlogGroupPhase.ps1",
+      "sha256": "07EBF9E53E9A9E4510158716FB07B9B889422FA90648D5ED709890B290F1DD9A"
+    },
+    {
+      "path": ".work\\binlog-group-frozen\\.work\\RunCommitWaitWindow.ps1",
+      "sha256": "8578FB5759B02895F3C02C533523A4F322F25A65C086940E2D43E73326115A0C"
+    },
+    {
+      "path": ".work\\binlog-group-frozen\\scripts\\load\\CommitWaitSampler.java",
+      "sha256": "DF666F32F4216E9B9E6FC38B4A3AF610F78CDADCB550DF7B420DDF4FA00B82C5"
+    },
+    {
+      "path": ".work\\binlog-group-frozen\\scripts\\load\\LoadMeasurements.java",
+      "sha256": "1BF71BF258577B7F115A1B93BA58E9F627B0F403DE18569D0A67BEB7FCC4B74A"
+    },
+    {
+      "path": ".work\\binlog-group-frozen\\scripts\\load\\LocalDiagnosis.java",
+      "sha256": "2707F3C4EDA482F38B6DF04040B869F96047F82E054BF3C515FDC79244E967EF"
+    },
+    {
+      "path": ".work\\binlog-group-frozen\\scripts\\load\\LocalLoad.java",
+      "sha256": "A69AECA955C9AF6BA54EC98D19D9B911C987E2D6988648DB91CF7C7995FE8E24"
+    },
+    {
+      "path": ".work\\binlog-group-source-hashes.json",
+      "sha256": "F91C61ABCACB05A773FDF00EE8E316C68F703F31C4E1F8FC30134AE2A7827731"
+    },
+    {
+      "path": ".work\\binlog-group-timeout-test.json",
+      "sha256": "D2B7132ADEACEFF407520AEE4FC55D7FC4A090A8BDD5F35AEED57BC77F946B3A"
+    },
+    {
+      "path": ".work\\commit-wait-final-baseline-tests.log",
+      "sha256": "1430E4CF22BA412B1B40606C34EE428EBA85EAB6FA35E6600CC12831D0CB398A"
+    },
+    {
+      "path": ".work\\commit-wait-final-cpu.stat",
+      "sha256": "A904C54CE874073C77A3AE6065548E522E497353BAF4D320AB0333EDF5B78CD2"
+    },
+    {
+      "path": ".work\\commit-wait-final-inventory.json",
+      "sha256": "38745CF48353803D2C3AB425C4B60AEC85D8C3973082A155386F7A6382CD7D1B"
+    },
+    {
+      "path": ".work\\commit-wait-final-preflight.log",
+      "sha256": "B483E7604D43E393DB590DFA2364CB4DABF38D5E45B6ADDB34CD7B76971D3924"
+    },
+    {
+      "path": ".work\\commit-wait-final-services.json",
+      "sha256": "1611FD66ECBBF6A7976B0847E6E4D4D60125BB55A06794A9DDFE5914273AF295"
+    },
+    {
+      "path": ".work\\commit-wait-final-tests.log",
+      "sha256": "ED39B6C97F3B7EA45BEEED724B133DB2ADA08251BD51F1616F7533745A3DFAD9"
+    },
+    {
+      "path": ".work\\commit-wait-first-sources.json",
+      "sha256": "5C9F2826BD5DF5043C5357A91CBCC3AF67293E96B26CC7374BA261F8EF04D413"
+    },
+    {
+      "path": ".work\\commit-wait-first-window.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work\\commit-wait-first.coincidences.json",
+      "sha256": "C7CCBFE5171F3BFE32A5DE08BAC99D1548046D4794C7DDD36E3B68E5F9F7D33C"
+    },
+    {
+      "path": ".work\\commit-wait-first.load.log",
+      "sha256": "A77A85D5BAA8B0E450D6E7CB1396340FAB3283942340EB791B95CF7181395518"
+    },
+    {
+      "path": ".work\\commit-wait-first.result.json",
+      "sha256": "B587FCCFB7062F0B7917971D5A3F66F85EA847464D8E5ED0C00E1D829AA882CA"
+    },
+    {
+      "path": ".work\\commit-wait-first.sampler.err.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work\\commit-wait-first.sampler.log",
+      "sha256": "DC1A875F490380DBFB742810EED8505151A1A8746B9577C7DD02BC7F87DAB245"
+    },
+    {
+      "path": ".work\\commit-wait-first.summary.json",
+      "sha256": "D7240E9E97F0E786D77129E4105F89622B6F3B277F0F5E547A450682F245A269"
+    },
+    {
+      "path": ".work\\commit-wait-green.log",
+      "sha256": "75A2A5DD6CCF1C3A535214BF828CE04169E1555E40E681A349FD0F00A99BE600"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.after-channels.json",
+      "sha256": "D7B56CE475FEAE90D334F8467846CCC6BD7D840B8B1FB6F3EE8BD1D29ED522B3"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.after-state.json",
+      "sha256": "23E0B150DDCEE310A30B50F77C1819D8DDD4B01CA0BCB9B065B73C9B544C7E96"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.before-channels.json",
+      "sha256": "B46C171688A8A83C7D68B600F937E900252E3C0FF4AC41424887B8B8BBCCD8C3"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.before-state.json",
+      "sha256": "FC78988CF9CD8D5859D8B0E55D9DD620984D8A7237EEAE369DDCD87A4D11E81F"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.coincidences.json",
+      "sha256": "03D3536DD1D80B1C30B9B9CF9AB19F312DB9C5F60260CEBF1E031F4A81F43CEE"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.load.log",
+      "sha256": "C79A9E62737A52026CBF07F6B96F91655BFBBDB5D1221C020643B99C8CC84C59"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.resources-after.json",
+      "sha256": "09A641A333EBB0B8AD55D57CA4686376BEEED8B04F0681A2F9251F08F8595283"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.resources-before.json",
+      "sha256": "09A641A333EBB0B8AD55D57CA4686376BEEED8B04F0681A2F9251F08F8595283"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.result.json",
+      "sha256": "3E89ECAC223B851AF321B17864D8999CBE3FA0FA0AEA952F7B670A1C6322E868"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.sampler.err.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.sampler.log",
+      "sha256": "09B916DF21D4C5C66EC091DFE02922321E303CBFC675E31A933247D613681384"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.summary.json",
+      "sha256": "91B0BA72EC87ACD7695240333C60A0D28A6DB9D7A6EF4741A832F5FB2A9C7096"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.warm-channels.json",
+      "sha256": "D199FE45E4373D09A0E1DA305EEC8F66C6A4101F5F582C5DA4CFD43F33FEEB8A"
+    },
+    {
+      "path": ".work\\commit-wait-group-1.warmup.log",
+      "sha256": "C0406360B83343EC5E8AE4A7BD1C39C9DABC90FCF0693A9EE36F46F6C7D77EA8"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.after-channels.json",
+      "sha256": "629457509D7F3234AF1C3F9E90651033699B63784F1B7720D494A59EF2D696C6"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.after-state.json",
+      "sha256": "B04B32A9D0828A258C972AD235A7993B9972B88557CEB49794B55B4B6C5DDABD"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.before-channels.json",
+      "sha256": "1B7DE92E342C95E6442D3392879A8C37997B8E5AC8163B5A525DD634DB339D33"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.before-state.json",
+      "sha256": "D1326ED0F56A5BB7726278A9BA270DF6C288D73402FE179961B1FC9905B37A91"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.coincidences.json",
+      "sha256": "25211389B63167F3F20E3A3E4C6E120302B42760ED326E96FC7E800C17954B87"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.load.log",
+      "sha256": "00DF07841A60E0EDE46C1C822A029B9D5460D0CB8163773F27028FBDA75F9162"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.resources-after.json",
+      "sha256": "09A641A333EBB0B8AD55D57CA4686376BEEED8B04F0681A2F9251F08F8595283"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.resources-before.json",
+      "sha256": "09A641A333EBB0B8AD55D57CA4686376BEEED8B04F0681A2F9251F08F8595283"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.result.json",
+      "sha256": "610B62CD0A5A5E31A595DB3A445883261A2FA36024D978DD244ADE16F6700D3E"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.sampler.err.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.sampler.log",
+      "sha256": "9863327FD281574DEA05CD0DBE4014D1E609CAF4526AF68647FB6E160233BA6F"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.summary.json",
+      "sha256": "BF1472669FA36E4C61A8E25211BC284A9BD2E5E598A1F4F68CB6C2055ECAA0B1"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.warm-channels.json",
+      "sha256": "38410B32D808A3FCC3A0CF379C1DC89CC209657E920F2D6C09BACE43DC2D260C"
+    },
+    {
+      "path": ".work\\commit-wait-group-2.warmup.log",
+      "sha256": "3039087949343A39D1D855634259314FB25DF5085DBEE5CC191C78254594EFB9"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.after-channels.json",
+      "sha256": "FFA01C30B9540CB5E45EC08855E4AC141749B000CA295B0B7C750685C7EA7E2A"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.after-state.json",
+      "sha256": "44C704CAA64625FB01D7FE0654EE7EF1CA3AD715C963152C0CEA0A8FF1C3B769"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.before-channels.json",
+      "sha256": "3101A7E928E6F4020FE7D60B4EA1B9108EC66BA15087E3FFBC85F8F3E8600B18"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.before-state.json",
+      "sha256": "F3097EC85A68609896CED88497F28699BB1DD673FDEFB683599E3329A43FA084"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.coincidences.json",
+      "sha256": "490D172B1D088A300C5DAE49E2B2A55270FABEB91E092A1401DBBF9D2C79F72F"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.load.log",
+      "sha256": "4CC53A490F0CCF8C891E654E7889A990710EDE57553272C3E1412997BE2B743D"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.resources-after.json",
+      "sha256": "09A641A333EBB0B8AD55D57CA4686376BEEED8B04F0681A2F9251F08F8595283"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.resources-before.json",
+      "sha256": "09A641A333EBB0B8AD55D57CA4686376BEEED8B04F0681A2F9251F08F8595283"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.result.json",
+      "sha256": "93C7D31EF58AE57CD5DD576EDB5FA97EA3FD8A807E230EDA4147423573670B28"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.sampler.err.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.sampler.log",
+      "sha256": "28C35E8E563D697DDD939C97780505257D3306A644CACBD2B24CACDA78E27C74"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.summary.json",
+      "sha256": "7FA4D266207B00D8C903E1CD1F93C7431550C415A36C59B0AC14878EFCFD6ADB"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.warm-channels.json",
+      "sha256": "406948F40788D78DA3F3F425F316831C06D86A2817867947A501875808843825"
+    },
+    {
+      "path": ".work\\commit-wait-group-3.warmup.log",
+      "sha256": "7AE04D8D228125F2DDB06E6F6BD74E518D3E7AC94CB8EF0F058ED60688545DAB"
+    },
+    {
+      "path": ".work\\commit-wait-guarded-window.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work\\commit-wait-guarded.load.log",
+      "sha256": "0103AF60E6B1D1B878327BB6035684B83049DDEB92D44A692FB995C1515C400B"
+    },
+    {
+      "path": ".work\\commit-wait-guarded.result.json",
+      "sha256": "FDFEA2EC0D615F1D3F8F2BAA646AA86B5FC56E185BB1C4C6D9661880DCDB1A8D"
+    },
+    {
+      "path": ".work\\commit-wait-guarded.sampler.err.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work\\commit-wait-guarded.sampler.log",
+      "sha256": "6903A12A14BBF2A645358C64A984811396EE92E8585131BFD60D0388C50C0889"
+    },
+    {
+      "path": ".work\\commit-wait-guarded.summary.json",
+      "sha256": "F3C6F52F3B2744B8E6B0F659B1A6DC460EC8DFD4B51D0FB14E9C59188A66F294"
+    },
+    {
+      "path": ".work\\commit-wait-inventory.json",
+      "sha256": "D8357E636B70135B3D7E12D611930D68727A899670AC7B3D0C243DD9A19977F3"
+    },
+    {
+      "path": ".work\\commit-wait-negative-consumer.log",
+      "sha256": "A9556A171CC7DC96F9FE91FA0690302A072CC3EBF404F534322F5F72D96F8588"
+    },
+    {
+      "path": ".work\\commit-wait-negative-transaction.log",
+      "sha256": "944D5C51390283B3A6BC681F6E00A64DC5FF5B711260CEE3821BEF7A9833A73E"
+    },
+    {
+      "path": ".work\\commit-wait-red.log",
+      "sha256": "C76E20747C68E28E3BB15F880DCEBD2CF0A60D25EEC74380CEFFB9434C257D71"
+    },
+    {
+      "path": ".work\\commit-wait-review-green.log",
+      "sha256": "75A2A5DD6CCF1C3A535214BF828CE04169E1555E40E681A349FD0F00A99BE600"
+    },
+    {
+      "path": ".work\\commit-wait-review-red.log",
+      "sha256": "D15595276A2D25425FBF732929C8B882631FF2A90832B50C899E7F95C7A26D98"
+    },
+    {
+      "path": ".work\\commit-wait-window-boundary-green.log",
+      "sha256": "E993C97BAF3CC59BBF103BB19A18CECA50A5F8C46C11EFA653588C920CFCF4BE"
+    },
+    {
+      "path": ".work\\commit-wait-window-boundary-red.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work\\commit-wait-window-first.json",
+      "sha256": "980101BBF6D538D9FEE4B7C7EF3718D60AEB76D912AB9302AF842A877BFF248B"
+    },
+    {
+      "path": ".work\\commit-wait-window-group-1.json",
+      "sha256": "FDED13F28A41E986427BF70F440041E09C44AE541F3F813053AB256BDD463646"
+    },
+    {
+      "path": ".work\\commit-wait-window-group-2.json",
+      "sha256": "B110FB1F1E8F9D2606D65327CC34A537CF902EA23300844746EBFFF3255F0E12"
+    },
+    {
+      "path": ".work\\commit-wait-window-group-3.json",
+      "sha256": "B45C56CBF3286A0A7A02FAD899B758B4B8403E72858DC78B30F3357A7E798E54"
+    },
+    {
+      "path": ".work\\commit-wait-window-guarded.json",
+      "sha256": "C71C968FEB94E7E6F99A0094FC983ADC3F81A501C63C1165D67F52D1E9F68215"
+    },
+    {
+      "path": ".work\\performance\\baseline-20261019T134449Z-772f2e35\\initial.resources.json",
+      "sha256": "3795007B9C4747BD77E31BB0D9292A18B61DBD8EBCB29055FE26028DBEE024D0"
+    },
+    {
+      "path": ".work\\performance\\baseline-20261019T134449Z-772f2e35\\initial.runtime.json",
+      "sha256": "9B3341771A7DA07DE3338FDFAA081E9C8DFA6CA3E9554127574BEEEDBC4CE655"
+    },
+    {
+      "path": ".work\\performance\\baseline-20261019T134449Z-772f2e35\\preflight.json",
+      "sha256": "C829CD0BB687029E660CC7FD9FB81A70C9ACAAB455C123042D9E3ADA0685B8E3"
+    },
+    {
+      "path": ".work\\performance\\baseline-20261019T134449Z-772f2e35\\tools.json",
+      "sha256": "0E3C830649AD391D9386F3ED9112E416AF6FEA3F5FCED93264F75C8586760BD0"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416557-aa4a3648.consumers.json",
+      "sha256": "BE7119666F67E79AF92DD82CEF01AE94853FCE3F45A9CB225CAF0D511A8DA33C"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416557-aa4a3648.io-after.json",
+      "sha256": "7705F247D6D30D80E03CA0DC6A67180FCD3B33C3F33AA1A0B58BD23E5501F50B"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416557-aa4a3648.io-before.json",
+      "sha256": "CC24E2668CF426FDD617398A1BD02922C5622140A8611A6783912E87EB21A960"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416557-aa4a3648.jsonl",
+      "sha256": "F09B36B70F2E2B2C254ACFBAF83132467DBEEC25FD1177FE765E12F3A0C96D03"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416557-aa4a3648.waits-after.json",
+      "sha256": "07A6C9A0CB537D436AFEB388506CCCDA2B4B358278CE7710CD5576A90BBCECBF"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416557-aa4a3648.waits-before.json",
+      "sha256": "3D27B1344AB195DF3A010DEC87A953AD82629E4AADD6B22F9F4878764A6D21EB"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416851-9d27ee29.consumers.json",
+      "sha256": "BE7119666F67E79AF92DD82CEF01AE94853FCE3F45A9CB225CAF0D511A8DA33C"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416851-9d27ee29.io-after.json",
+      "sha256": "5BAD5EE0A6B1091F786AFCF2F91C0A8492310B07AB1724A70D9D6F881D7CB254"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416851-9d27ee29.io-before.json",
+      "sha256": "684E23F781A6E2EC0376E0A6772180BA97126EF8463B4BDC727571810B23B292"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416851-9d27ee29.jsonl",
+      "sha256": "54A5FEB435C4E1F5CAE9D041CB8958B7189F42562EBB2BE8D90291A72B081DAE"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416851-9d27ee29.waits-after.json",
+      "sha256": "C37FC90A583E7E2C50782D1A6B5AFFF5E6EC37DBF45D7E88C74FF5BD23F8C41E"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416851-9d27ee29.waits-before.json",
+      "sha256": "6E7B7E97AD18633ED3EB8CCF03E5154302B4C84EBAB301DECF31EFB41C1DDD83"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416970-e6b068fd.consumers.json",
+      "sha256": "BE7119666F67E79AF92DD82CEF01AE94853FCE3F45A9CB225CAF0D511A8DA33C"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416970-e6b068fd.io-after.json",
+      "sha256": "38A1C69471551D36CD0F20E466A6A03054EA96EB8631985F055918CE74D25818"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416970-e6b068fd.io-before.json",
+      "sha256": "35B56E3C15C60E10CB137C034CD7996241CF90EC23622C29336FC9941839005C"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416970-e6b068fd.jsonl",
+      "sha256": "1B3FA760AB8A666F24157EFF7BE81CDD29559EFB7A2AFCD1DE0BDFCE8C7FE074"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416970-e6b068fd.waits-after.json",
+      "sha256": "2FD37729B18B039F6F1FB2B2304AFC5596183A57B2993F7C559B462C4E12A2D2"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792416970-e6b068fd.waits-before.json",
+      "sha256": "86BB7A5236309D05A7CA8CCD15ED29A35A7D38EFC12808AC3800E6615C1630AF"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417091-3ef3e3bb.consumers.json",
+      "sha256": "BE7119666F67E79AF92DD82CEF01AE94853FCE3F45A9CB225CAF0D511A8DA33C"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417091-3ef3e3bb.io-after.json",
+      "sha256": "83010F33F245AC2B5D3A1C2F36A48A5A923D0DF819B423470AD6278E8B1A9098"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417091-3ef3e3bb.io-before.json",
+      "sha256": "90503CDE33B22E0C09551EA48A8B21718859972B2DC8E92F827361C854220357"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417091-3ef3e3bb.jsonl",
+      "sha256": "796193CE56BA7C22FFFF6F6BC65FABED0CB32F78CDEF48207F65B77A7959D200"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417091-3ef3e3bb.waits-after.json",
+      "sha256": "5CC7C3E875BBF2630F8207D60C8045CB324149862E653ED9A983C2AE1784A38B"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417091-3ef3e3bb.waits-before.json",
+      "sha256": "33A834B9A1B30F979F4398A9A28DB5EB191DD6EC785D63D62993DCF34A84CE3B"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417359-54477d27.consumers.json",
+      "sha256": "546831E8FC1B7DB48DE117380F5DEF0AFD96AC3901A400BBF286F68EABBE4A61"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417359-54477d27.io-after.json",
+      "sha256": "52E620647123778F3AF42D5A6D678311B060A26022536B9AD6F838B1E26EF4C0"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417359-54477d27.io-before.json",
+      "sha256": "D12592926AD5B4F2F69B08BBD59AD9B3B22C968B372F8046CA0F9940895403F3"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417359-54477d27.jsonl",
+      "sha256": "F6EB2AE2B79349A533C7BDC034C6D962A0EBD059A0878C6BEEA2BB3481E7B7A7"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417359-54477d27.waits-after.json",
+      "sha256": "7A151FB5298272413D51B3B4D9A277C498D33325BBB6529A50D6B88DCB1BBA7E"
+    },
+    {
+      "path": ".work\\performance\\commitwait-1792417359-54477d27.waits-before.json",
+      "sha256": "21812DAE81B0E4EF1ED68F2B3834DB7B00596C2DC8585F88B4F268EBB47DCCE4"
+    }
+  ],
+  "referenceR1Certified": false,
+  "baselineQualified": false,
+  "limits": [
+    "D0 short instrumented diagnostic windows; no formal10minute warmup/15minute load qualification",
+    "100ms sleep plus query time, not continuous or atomic event tracing",
+    "Elapsed event ages are lower bounds, repeated rows are observations",
+    "150ms coincidence is association, not causality for every rejection",
+    "Original ABA quota labels infer prior connection history; revised tool binds same transaction and guarded trace verifies it",
+    "Lock counts are server-wide dependency edges, not blocked sessions",
+    "MISC is not an exactfsync counter; concurrent timings cannot be added as wall-clock",
+    "No full backend/frontend/browser or remoteCI rerun; unchanged business binaries retain previous regression evidence"
+  ]
+}

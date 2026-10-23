@@ -1,0 +1,15 @@
+{
+  "environment": "D0 shared developer host",
+  "batchId": "04e8b91b-1dcc-4fdf-a188-eb84435909a5",
+  "syntheticFixture": true,
+  "rows": 100000,
+  "amountMinor": "10000000",
+  "sha256": "24e3d3b52b79f801c7b13311155d3394784df0e230a54ff4adb335b3a360b7a3",
+  "fileBytes": 6777915,
+  "processingMilliseconds": 227820,
+  "totalVerificationMilliseconds": 8024,
+  "issueCount": 100000,
+  "distinctAggregates": 100000,
+  "correctnessPassed": true,
+  "referenceR1Certified": false
+}

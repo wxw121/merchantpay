@@ -1,0 +1,6 @@
+# Optional D0 caps; shared Windows/WSL storage and host are not R1 isolation.
+services:
+  mysql:
+    cpus: 4
+    mem_limit: 4g
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_bin", "--max-connections=200", "--innodb-buffer-pool-size=1073741824", "--innodb-flush-log-at-trx-commit=1", "--sync-binlog=1"]

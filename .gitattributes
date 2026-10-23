@@ -1,0 +1,2 @@
+# Preserve archived evidence bytes so recorded SHA-256 checksums remain valid.
+docs/releases/evidence/** -text whitespace=cr-at-eol

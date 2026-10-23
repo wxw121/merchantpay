@@ -1,0 +1,1919 @@
+{
+  "generatedAt": "2026-10-22T02:38:09.221Z",
+  "measurementAndVerificationComplete": true,
+  "performanceGoalsPassed": false,
+  "qualified": false,
+  "referenceR1Certified": false,
+  "d1Qualified": false,
+  "published": false,
+  "targets": {
+    "paymentCompletedTps": 300,
+    "simultaneousRefundCompletedTps": 30,
+    "successfulQueryQps": 2000,
+    "acceptedHttpP99Ms": 300,
+    "successfulPostingP99Ms": 3000,
+    "queryP99Ms": 200
+  },
+  "retained": {
+    "httpConnectionsPerRoute": 64,
+    "fastWorkerNormal": 30,
+    "fastWorkerPerformance": 96,
+    "maximumClaimBatch": 64,
+    "apiInflightPerformance": 128,
+    "databasePool": 32,
+    "flushLogAtTrxCommit": 1,
+    "syncBinlog": 1,
+    "image": "merchantpay/platform:v1-opt-capacity",
+    "imageId": "sha256:83f1eb9359e35a68576259d1db7bd25432612a4c947398aff9589fddf1c75214",
+    "jarSha256": "086187827f46f2649a3a5444b2d80553d62276929b53af03bb61bc12a1655d79"
+  },
+  "regression": {
+    "platformTests": 297,
+    "simulatorTests": 6,
+    "failures": 0,
+    "errors": 0,
+    "formatPassed": true
+  },
+  "imageScan": {
+    "scope": "This platform image only; not a whole-deployment security qualification",
+    "passed": true,
+    "highOrCritical": 0
+  },
+  "runtime": {
+    "nativeRefunds": 701,
+    "container": "UP",
+    "oidc": "UP",
+    "nativeFastConcurrency": 96,
+    "canonicalJarSha256": "086187827f46f2649a3a5444b2d80553d62276929b53af03bb61bc12a1655d79",
+    "at": "2026-10-22T02:33:58.6903754+00:00",
+    "nativePayments": 200449,
+    "native": "UP",
+    "nativeFinancialCountersUnchanged": true
+  },
+  "classVerification": {
+    "at": "2026-10-22T02:36:30.0612598+00:00",
+    "allPackagedClassesMatchFinalCompiledOutput": true,
+    "classCount": 80,
+    "rejectedClassesAbsent": true
+  },
+  "stages": [
+    {
+      "name": "aba-a1",
+      "budget": "app2CPU/1GiB, DB2CPU/2GiB/cache1GiB",
+      "seconds": 60,
+      "offeredPayRate": 100,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 0,
+      "zeroErrorPassed": false,
+      "payment": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 3225,
+        "httpStatuses": {
+          "202": 3225,
+          "503": 2775
+        },
+        "droppedIterations": 0,
+        "systemErrors": 2775,
+        "rejected": 0,
+        "httpP50Micros": 30876,
+        "httpP95Micros": 380502,
+        "httpP99Micros": 650105,
+        "scheduledHttpP99Micros": 651175,
+        "sendDelayP99Micros": 3091,
+        "posted": 3165,
+        "businessFailed": 60,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 48.68333333333333,
+        "completedPerArrivalSecondUpper": 49.1,
+        "successfulCompletionP99LowerMicros": 6321958,
+        "successfulCompletionP99UpperMicros": 6635877,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 16375205,
+        "observerSnapshots": 631,
+        "observerMaxQueryMicros": 494472,
+        "maxCommitVisibilityIntervalMicros": 537177,
+        "retryReasons": {
+          "PAYMENT_CAPACITY": 2775
+        }
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 6318017,
+        "observerSnapshots": 631,
+        "observerMaxQueryMicros": 37772,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {}
+      },
+      "queryPoolPayments": 0,
+      "credentialMerchants": 2,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T012237-c1f38de0\\accept-20261022T012237-c1f38de0-r1.json",
+      "reportSha256": "f17ae5d3ad4a2da8b9ade0ad42399fa796f7ce1f1e26701534b7847dc0560cba"
+    },
+    {
+      "name": "aba-b",
+      "budget": "app2CPU/1GiB, DB2CPU/2GiB/cache1GiB",
+      "seconds": 60,
+      "offeredPayRate": 100,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 0,
+      "zeroErrorPassed": false,
+      "payment": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 5948,
+        "httpStatuses": {
+          "202": 5948,
+          "503": 52
+        },
+        "droppedIterations": 0,
+        "systemErrors": 52,
+        "rejected": 0,
+        "httpP50Micros": 109035,
+        "httpP95Micros": 743389,
+        "httpP99Micros": 1026665,
+        "scheduledHttpP99Micros": 1027254,
+        "sendDelayP99Micros": 2625,
+        "posted": 5828,
+        "businessFailed": 120,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 94.48333333333333,
+        "completedPerArrivalSecondUpper": 95.05,
+        "successfulCompletionP99LowerMicros": 2376450,
+        "successfulCompletionP99UpperMicros": 2713726,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 10405926,
+        "observerSnapshots": 653,
+        "observerMaxQueryMicros": 482200,
+        "maxCommitVisibilityIntervalMicros": 433154,
+        "retryReasons": {
+          "PAYMENT_CAPACITY": 52
+        }
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 6622053,
+        "observerSnapshots": 653,
+        "observerMaxQueryMicros": 77928,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {}
+      },
+      "queryPoolPayments": 0,
+      "credentialMerchants": 2,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T012718-41d4bcd6\\accept-20261022T012718-41d4bcd6-r1.json",
+      "reportSha256": "5875205ed3a2279d94575aa2d57d0a50448172bfd9b79bf4abfd101b63122c56"
+    },
+    {
+      "name": "aba-a2",
+      "budget": "app2CPU/1GiB, DB2CPU/2GiB/cache1GiB",
+      "seconds": 60,
+      "offeredPayRate": 100,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 0,
+      "zeroErrorPassed": false,
+      "payment": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 3213,
+        "httpStatuses": {
+          "202": 3213,
+          "503": 2787
+        },
+        "droppedIterations": 0,
+        "systemErrors": 2787,
+        "rejected": 0,
+        "httpP50Micros": 33375,
+        "httpP95Micros": 445433,
+        "httpP99Micros": 1034839,
+        "scheduledHttpP99Micros": 1035267,
+        "sendDelayP99Micros": 3446,
+        "posted": 3157,
+        "businessFailed": 56,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 48.21666666666667,
+        "completedPerArrivalSecondUpper": 48.666666666666664,
+        "successfulCompletionP99LowerMicros": 6057213,
+        "successfulCompletionP99UpperMicros": 6384652,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 16023542,
+        "observerSnapshots": 633,
+        "observerMaxQueryMicros": 437899,
+        "maxCommitVisibilityIntervalMicros": 402369,
+        "retryReasons": {
+          "API_INFLIGHT": 25,
+          "PAYMENT_CAPACITY": 2762
+        }
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 6255473,
+        "observerSnapshots": 633,
+        "observerMaxQueryMicros": 50513,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {}
+      },
+      "queryPoolPayments": 0,
+      "credentialMerchants": 2,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T013204-33e34934\\accept-20261022T013204-33e34934-r1.json",
+      "reportSha256": "00fd855088ac58de5d93940668ead68407b4175efde4d4bc9cab6aca280202aa"
+    },
+    {
+      "name": "pay60",
+      "budget": "app2CPU/1GiB, DB2CPU/2GiB/cache1GiB",
+      "seconds": 120,
+      "offeredPayRate": 60,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 0,
+      "zeroErrorPassed": true,
+      "payment": {
+        "scheduled": 7200,
+        "sent": 7200,
+        "acceptedOrRead": 7200,
+        "httpStatuses": {
+          "202": 7200
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 40541,
+        "httpP95Micros": 773577,
+        "httpP99Micros": 1302121,
+        "scheduledHttpP99Micros": 1302944,
+        "sendDelayP99Micros": 2312,
+        "posted": 7036,
+        "businessFailed": 164,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 58.50833333333333,
+        "completedPerArrivalSecondUpper": 58.625,
+        "successfulCompletionP99LowerMicros": 1650234,
+        "successfulCompletionP99UpperMicros": 1976048,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 8387523,
+        "observerSnapshots": 430,
+        "observerMaxQueryMicros": 477200,
+        "maxCommitVisibilityIntervalMicros": 617110,
+        "retryReasons": {}
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 5260042,
+        "observerSnapshots": 430,
+        "observerMaxQueryMicros": 73411,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {}
+      },
+      "queryPoolPayments": 0,
+      "credentialMerchants": 2,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T014145-49ea1b70\\accept-20261022T014145-49ea1b70-r1.json",
+      "reportSha256": "bf3ee68f8a6ae64816ce2090e47077ba98c9e1c0836ab6b083be080787879db6"
+    },
+    {
+      "name": "c1-target",
+      "budget": "app2CPU/1GiB, DB2CPU/2GiB/cache1GiB",
+      "seconds": 60,
+      "offeredPayRate": 310,
+      "offeredRefundRate": 32,
+      "offeredQueryRate": 0,
+      "zeroErrorPassed": false,
+      "payment": {
+        "scheduled": 18600,
+        "sent": 18600,
+        "acceptedOrRead": 2541,
+        "httpStatuses": {
+          "202": 2541,
+          "503": 16059
+        },
+        "droppedIterations": 0,
+        "systemErrors": 16059,
+        "rejected": 0,
+        "httpP50Micros": 194504,
+        "httpP95Micros": 722229,
+        "httpP99Micros": 1273629,
+        "scheduledHttpP99Micros": 1274042,
+        "sendDelayP99Micros": 34639,
+        "posted": 2492,
+        "businessFailed": 49,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 37.05,
+        "completedPerArrivalSecondUpper": 37.5,
+        "successfulCompletionP99LowerMicros": 9013685,
+        "successfulCompletionP99UpperMicros": 9667304,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 49393675,
+        "observerSnapshots": 480,
+        "observerMaxQueryMicros": 605363,
+        "maxCommitVisibilityIntervalMicros": 1171950,
+        "retryReasons": {
+          "API_INFLIGHT": 2862,
+          "PAYMENT_CAPACITY": 13197
+        }
+      },
+      "refund": {
+        "scheduled": 1920,
+        "sent": 1920,
+        "acceptedOrRead": 1614,
+        "httpStatuses": {
+          "202": 1614,
+          "503": 306
+        },
+        "droppedIterations": 0,
+        "systemErrors": 306,
+        "rejected": 0,
+        "httpP50Micros": 205225,
+        "httpP95Micros": 735110,
+        "httpP99Micros": 1319794,
+        "scheduledHttpP99Micros": 1320797,
+        "sendDelayP99Micros": 51252,
+        "posted": 1582,
+        "businessFailed": 32,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 23,
+        "completedPerArrivalSecondUpper": 23.55,
+        "successfulCompletionP99LowerMicros": 9143600,
+        "successfulCompletionP99UpperMicros": 9640272,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 11219001,
+        "observerSnapshots": 480,
+        "observerMaxQueryMicros": 109435,
+        "maxCommitVisibilityIntervalMicros": 956332,
+        "retryReasons": {
+          "API_INFLIGHT": 306
+        }
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {}
+      },
+      "queryPoolPayments": 0,
+      "credentialMerchants": 2,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T014414-1cd35a58\\accept-20261022T014414-1cd35a58-r1.json",
+      "reportSha256": "3adfa28a6d09f7171818b6ba374e48ed28c7c77a96cd60345c7ebeaa9731636c"
+    },
+    {
+      "name": "refund32",
+      "budget": "app2CPU/1GiB, DB2CPU/2GiB/cache1GiB",
+      "seconds": 60,
+      "offeredPayRate": 0,
+      "offeredRefundRate": 32,
+      "offeredQueryRate": 0,
+      "zeroErrorPassed": true,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 2670384,
+        "observerSnapshots": 219,
+        "observerMaxQueryMicros": 48390,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "refund": {
+        "scheduled": 1920,
+        "sent": 1920,
+        "acceptedOrRead": 1920,
+        "httpStatuses": {
+          "202": 1920
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 26663,
+        "httpP95Micros": 185967,
+        "httpP99Micros": 441165,
+        "scheduledHttpP99Micros": 441724,
+        "sendDelayP99Micros": 2102,
+        "posted": 1883,
+        "businessFailed": 37,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 31.133333333333333,
+        "completedPerArrivalSecondUpper": 31.383333333333333,
+        "successfulCompletionP99LowerMicros": 651118,
+        "successfulCompletionP99UpperMicros": 954222,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 3920872,
+        "observerSnapshots": 219,
+        "observerMaxQueryMicros": 47485,
+        "maxCommitVisibilityIntervalMicros": 343155,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {}
+      },
+      "queryPoolPayments": 0,
+      "credentialMerchants": 2,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T014741-1ad51674\\accept-20261022T014741-1ad51674-r1.json",
+      "reportSha256": "a885637c7a1c1c932e11dd8e167d34d4935649aab0447b32385130ed0ed12ee0"
+    },
+    {
+      "name": "query300",
+      "budget": "app2CPU/1GiB, DB2CPU/2GiB/cache1GiB",
+      "seconds": 60,
+      "offeredPayRate": 0,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 300,
+      "zeroErrorPassed": true,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 2821273,
+        "observerSnapshots": 221,
+        "observerMaxQueryMicros": 31796,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 2804788,
+        "observerSnapshots": 221,
+        "observerMaxQueryMicros": 39019,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 18000,
+        "sent": 18000,
+        "acceptedOrRead": 18000,
+        "httpStatuses": {
+          "200": 18000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 18451,
+        "httpP95Micros": 40443,
+        "httpP99Micros": 76171,
+        "scheduledHttpP99Micros": 76711,
+        "sendDelayP99Micros": 3300,
+        "successfulPerArrivalSecond": 299.9166666666667,
+        "retryReasons": {}
+      },
+      "queryPoolPayments": 1024,
+      "credentialMerchants": 32,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T014906-245b94c6\\accept-20261022T014906-245b94c6-r1.json",
+      "reportSha256": "d3551960f2a98f97dcf756321012ef78bf4a25b2835f1b32db049aaadb57dca7"
+    },
+    {
+      "name": "query600",
+      "budget": "app2CPU/1GiB, DB2CPU/2GiB/cache1GiB",
+      "seconds": 60,
+      "offeredPayRate": 0,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 600,
+      "zeroErrorPassed": true,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 3171144,
+        "observerSnapshots": 218,
+        "observerMaxQueryMicros": 30836,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 3182575,
+        "observerSnapshots": 218,
+        "observerMaxQueryMicros": 39530,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 36000,
+        "sent": 36000,
+        "acceptedOrRead": 36000,
+        "httpStatuses": {
+          "200": 36000
+        },
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": 19831,
+        "httpP95Micros": 37612,
+        "httpP99Micros": 68628,
+        "scheduledHttpP99Micros": 69317,
+        "sendDelayP99Micros": 4164,
+        "successfulPerArrivalSecond": 599.8166666666667,
+        "retryReasons": {}
+      },
+      "queryPoolPayments": 1024,
+      "credentialMerchants": 32,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T015026-e9bcaa68\\accept-20261022T015026-e9bcaa68-r1.json",
+      "reportSha256": "79263452890be86bf1c75736eba4d40fa6c663fd5bd04307099a5f183998c340"
+    },
+    {
+      "name": "query2050",
+      "budget": "app2CPU/1GiB, DB2CPU/2GiB/cache1GiB",
+      "seconds": 60,
+      "offeredPayRate": 0,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 2050,
+      "zeroErrorPassed": false,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 7037678,
+        "observerSnapshots": 194,
+        "observerMaxQueryMicros": 346461,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 4859988,
+        "observerSnapshots": 194,
+        "observerMaxQueryMicros": 105555,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 123000,
+        "sent": 115018,
+        "acceptedOrRead": 59435,
+        "httpStatuses": {
+          "200": 59435,
+          "503": 55583
+        },
+        "droppedIterations": 7982,
+        "systemErrors": 55583,
+        "rejected": 0,
+        "httpP50Micros": 541268,
+        "httpP95Micros": 1922675,
+        "httpP99Micros": 2739863,
+        "scheduledHttpP99Micros": 2755531,
+        "sendDelayP99Micros": 465214,
+        "successfulPerArrivalSecond": 974.45,
+        "retryReasons": {
+          "API_INFLIGHT": 55583
+        }
+      },
+      "queryPoolPayments": 1024,
+      "credentialMerchants": 32,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T015146-c26f1815\\accept-20261022T015146-c26f1815-r1.json",
+      "reportSha256": "d802d94ee2f1d7e3ac348a95a4fd8b92e78b6d1c8d691e34bc6228f4cd8fec1e"
+    },
+    {
+      "name": "capacity-warmup",
+      "budget": "app4CPU/2GiB, DB8CPU/4GiB/cache2GiB",
+      "seconds": 120,
+      "offeredPayRate": 50,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 100,
+      "zeroErrorPassed": false,
+      "payment": {
+        "scheduled": 6000,
+        "sent": 6000,
+        "acceptedOrRead": 5901,
+        "httpStatuses": {
+          "202": 5901,
+          "503": 99
+        },
+        "droppedIterations": 0,
+        "systemErrors": 99,
+        "rejected": 0,
+        "httpP50Micros": 36254,
+        "httpP95Micros": 475771,
+        "httpP99Micros": 1124695,
+        "scheduledHttpP99Micros": 1130806,
+        "sendDelayP99Micros": 21475,
+        "posted": 5770,
+        "businessFailed": 131,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 47.983333333333334,
+        "completedPerArrivalSecondUpper": 48.075,
+        "successfulCompletionP99LowerMicros": 1444363,
+        "successfulCompletionP99UpperMicros": 1782746,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 17082774,
+        "observerSnapshots": 808,
+        "observerMaxQueryMicros": 497055,
+        "maxCommitVisibilityIntervalMicros": 850586,
+        "retryReasons": {
+          "API_INFLIGHT": 99
+        }
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 13988796,
+        "observerSnapshots": 808,
+        "observerMaxQueryMicros": 100566,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 12000,
+        "sent": 12000,
+        "acceptedOrRead": 11801,
+        "httpStatuses": {
+          "200": 11801,
+          "503": 199
+        },
+        "droppedIterations": 0,
+        "systemErrors": 199,
+        "rejected": 0,
+        "httpP50Micros": 26679,
+        "httpP95Micros": 402485,
+        "httpP99Micros": 1053952,
+        "scheduledHttpP99Micros": 1059483,
+        "sendDelayP99Micros": 20234,
+        "successfulPerArrivalSecond": 98.325,
+        "retryReasons": {
+          "API_INFLIGHT": 199
+        }
+      },
+      "queryPoolPayments": 169466,
+      "credentialMerchants": 2,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T015442-c5f7241e\\accept-20261022T015442-c5f7241e-r1.json",
+      "reportSha256": "a3bb6be18401be7fd1804945d1c4ff263036439e454317f7cd6372c500dcfce3"
+    },
+    {
+      "name": "capacity-c1",
+      "budget": "app4CPU/2GiB, DB8CPU/4GiB/cache2GiB",
+      "seconds": 120,
+      "offeredPayRate": 320,
+      "offeredRefundRate": 32,
+      "offeredQueryRate": 0,
+      "zeroErrorPassed": false,
+      "payment": {
+        "scheduled": 38400,
+        "sent": 38400,
+        "acceptedOrRead": 9144,
+        "httpStatuses": {
+          "202": 9144,
+          "503": 29256
+        },
+        "droppedIterations": 0,
+        "systemErrors": 29256,
+        "rejected": 0,
+        "httpP50Micros": 79505,
+        "httpP95Micros": 1251647,
+        "httpP99Micros": 1722847,
+        "scheduledHttpP99Micros": 1734485,
+        "sendDelayP99Micros": 174650,
+        "posted": 8995,
+        "businessFailed": 149,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 72.48333333333333,
+        "completedPerArrivalSecondUpper": 74.35,
+        "successfulCompletionP99LowerMicros": 5551180,
+        "successfulCompletionP99UpperMicros": 6251740,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 95331023,
+        "observerSnapshots": 475,
+        "observerMaxQueryMicros": 673300,
+        "maxCommitVisibilityIntervalMicros": 1512729,
+        "retryReasons": {
+          "API_INFLIGHT": 12889,
+          "PAYMENT_CAPACITY": 16367
+        }
+      },
+      "refund": {
+        "scheduled": 3840,
+        "sent": 3840,
+        "acceptedOrRead": 2546,
+        "httpStatuses": {
+          "202": 2546,
+          "503": 1294
+        },
+        "droppedIterations": 0,
+        "systemErrors": 1294,
+        "rejected": 0,
+        "httpP50Micros": 83341,
+        "httpP95Micros": 1261561,
+        "httpP99Micros": 1756490,
+        "scheduledHttpP99Micros": 1773550,
+        "sendDelayP99Micros": 214101,
+        "posted": 2496,
+        "businessFailed": 50,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 19.975,
+        "completedPerArrivalSecondUpper": 20.258333333333333,
+        "successfulCompletionP99LowerMicros": 5651544,
+        "successfulCompletionP99UpperMicros": 6257286,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 22617859,
+        "observerSnapshots": 475,
+        "observerMaxQueryMicros": 260093,
+        "maxCommitVisibilityIntervalMicros": 1101522,
+        "retryReasons": {
+          "API_INFLIGHT": 1294
+        }
+      },
+      "query": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "successfulPerArrivalSecond": 0,
+        "retryReasons": {}
+      },
+      "queryPoolPayments": 0,
+      "credentialMerchants": 2,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T015914-83f80e7e\\accept-20261022T015914-83f80e7e-r1.json",
+      "reportSha256": "a5ab6b984e72b453eda1dda88cd8122e2a8b71e6d7afd060f6e05d8bebeb6455"
+    },
+    {
+      "name": "capacity-query2050",
+      "budget": "app4CPU/2GiB, DB8CPU/4GiB/cache2GiB",
+      "seconds": 120,
+      "offeredPayRate": 0,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 2050,
+      "zeroErrorPassed": false,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 20646527,
+        "observerSnapshots": 309,
+        "observerMaxQueryMicros": 1274192,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 17847266,
+        "observerSnapshots": 309,
+        "observerMaxQueryMicros": 1608907,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 246000,
+        "sent": 194473,
+        "acceptedOrRead": 131732,
+        "httpStatuses": {
+          "200": 131732,
+          "503": 61602,
+          "-1": 1139
+        },
+        "droppedIterations": 51527,
+        "systemErrors": 62741,
+        "rejected": 0,
+        "httpP50Micros": 460924,
+        "httpP95Micros": 2843367,
+        "httpP99Micros": 4013793,
+        "scheduledHttpP99Micros": 4471116,
+        "sendDelayP99Micros": 1184147,
+        "successfulPerArrivalSecond": 1096.7,
+        "retryReasons": {
+          "API_INFLIGHT": 61602
+        }
+      },
+      "queryPoolPayments": 1024,
+      "credentialMerchants": 32,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T020345-ff7785ef\\accept-20261022T020345-ff7785ef-r1.json",
+      "reportSha256": "3c7bf8661ae19822d386e341adf179184e7896e409620579beea1b5b6434377f"
+    },
+    {
+      "name": "nativegroup-query2050",
+      "budget": "app4CPU/2GiB, DB8CPU/4GiB/cache2GiB",
+      "seconds": 120,
+      "offeredPayRate": 0,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 2050,
+      "zeroErrorPassed": false,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 21518608,
+        "observerSnapshots": 309,
+        "observerMaxQueryMicros": 2976842,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 17517586,
+        "observerSnapshots": 309,
+        "observerMaxQueryMicros": 1128270,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 246000,
+        "sent": 204285,
+        "acceptedOrRead": 149496,
+        "httpStatuses": {
+          "200": 149496,
+          "503": 53885,
+          "-1": 904
+        },
+        "droppedIterations": 41715,
+        "systemErrors": 54789,
+        "rejected": 0,
+        "httpP50Micros": 135950,
+        "httpP95Micros": 2403517,
+        "httpP99Micros": 3646698,
+        "scheduledHttpP99Micros": 3999415,
+        "sendDelayP99Micros": 1323153,
+        "successfulPerArrivalSecond": 1245.25,
+        "retryReasons": {
+          "API_INFLIGHT": 53885
+        }
+      },
+      "queryPoolPayments": 1024,
+      "credentialMerchants": 32,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T020830-57e97c8a\\accept-20261022T020830-57e97c8a-r1.json",
+      "reportSha256": "0524f563114618eed7ef5449742bd6810958b2c408f1b8552c8fe7822a3bfc2b"
+    },
+    {
+      "name": "nativegroup-control-query2050",
+      "budget": "app4CPU/2GiB, DB8CPU/4GiB/cache2GiB",
+      "seconds": 120,
+      "offeredPayRate": 0,
+      "offeredRefundRate": 0,
+      "offeredQueryRate": 2050,
+      "zeroErrorPassed": false,
+      "payment": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 20375941,
+        "observerSnapshots": 316,
+        "observerMaxQueryMicros": 881457,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "refund": {
+        "scheduled": 0,
+        "sent": 0,
+        "acceptedOrRead": 0,
+        "httpStatuses": {},
+        "droppedIterations": 0,
+        "systemErrors": 0,
+        "rejected": 0,
+        "httpP50Micros": null,
+        "httpP95Micros": null,
+        "httpP99Micros": null,
+        "scheduledHttpP99Micros": null,
+        "sendDelayP99Micros": null,
+        "posted": 0,
+        "businessFailed": 0,
+        "unfinished": 0,
+        "unacknowledgedCommitted": 0,
+        "oldestUnfinishedMicros": 0,
+        "completedPerArrivalSecondLower": 0,
+        "completedPerArrivalSecondUpper": 0,
+        "successfulCompletionP99LowerMicros": null,
+        "successfulCompletionP99UpperMicros": null,
+        "acceptedCompletionP99UpperMicros": null,
+        "observerTotalQueryMicros": 16485631,
+        "observerSnapshots": 316,
+        "observerMaxQueryMicros": 419030,
+        "maxCommitVisibilityIntervalMicros": 0,
+        "retryReasons": {}
+      },
+      "query": {
+        "scheduled": 246000,
+        "sent": 206238,
+        "acceptedOrRead": 150394,
+        "httpStatuses": {
+          "200": 150394,
+          "429": 14,
+          "503": 55212,
+          "-1": 618
+        },
+        "droppedIterations": 39762,
+        "systemErrors": 55830,
+        "rejected": 14,
+        "httpP50Micros": 361796,
+        "httpP95Micros": 2270566,
+        "httpP99Micros": 3775846,
+        "scheduledHttpP99Micros": 4770416,
+        "sendDelayP99Micros": 891155,
+        "successfulPerArrivalSecond": 1239.075,
+        "retryReasons": {
+          "API_INFLIGHT": 55212
+        }
+      },
+      "queryPoolPayments": 1024,
+      "credentialMerchants": 32,
+      "financialAndChannelTruthPassed": true,
+      "report": "D:\\software\\cld_project\\javaProject\\.work\\acceptance\\accept-20261022T021051-09533fe1\\accept-20261022T021051-09533fe1-r1.json",
+      "reportSha256": "4f02c190822a0accc74c76f9921f730ad3f4619532117145fa969edfa177e788"
+    }
+  ],
+  "rejectedExperiments": [
+    "Channel evidence application commit groups",
+    "Nonce application commit groups",
+    "App4CPU2GiB and DB8CPU4GiB/cache2GiB budget, warmup and targets failed",
+    "Native binlog commit delay5000us/count32; restored0/0, not persisted"
+  ],
+  "limitations": [
+    "Shared Docker Desktop host, D0; no formal R1/D1 pass",
+    "Target tests60/120seconds; not three formal900second rounds",
+    "32 legitimate test merchant credentials with original500/s quota; query pool1024 API-created payments; full financial-history invariants checked",
+    "Standalone refunds do not qualify simultaneous C1",
+    "Zero-error payment/refund stages still exceed accepted-HTTP P99 target",
+    "Old four-hour Soak does not qualify this new build"
+  ],
+  "rawRequestRowsIndependentlyVerified": 1033680,
+  "rawFingerprints": [
+    {
+      "path": ".work/acceptance/accept-20261022T012122-ef1ad933/accept-20261022T012122-ef1ad933-r1.json",
+      "bytes": 3725,
+      "sha256": "357dd66ddf60e42f57d23807f4981ab98740d706674a720f7876956cb753d392"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012122-ef1ad933/accept-20261022T012122-ef1ad933-r1.pay.jsonl",
+      "bytes": 154487,
+      "sha256": "77ff9632e26207094bdcc6317b7a158cdb2557d23f53b57a8c9f70a2a7948965"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012122-ef1ad933/accept-20261022T012122-ef1ad933-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012122-ef1ad933/accept-20261022T012122-ef1ad933-r1.query.jsonl",
+      "bytes": 720220,
+      "sha256": "2bb5573b503375e7eb71986522c2c87097226745bbcce22b3ef40ebc2a2de342"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012237-c1f38de0/accept-20261022T012237-c1f38de0-r1.json",
+      "bytes": 3733,
+      "sha256": "f17ae5d3ad4a2da8b9ade0ad42399fa796f7ce1f1e26701534b7847dc0560cba"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012237-c1f38de0/accept-20261022T012237-c1f38de0-r1.pay.jsonl",
+      "bytes": 1539541,
+      "sha256": "0fca2eee4d79a59362d47d45368d7672f3e7c35e020c0572305d1e8c067fb4fa"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012237-c1f38de0/accept-20261022T012237-c1f38de0-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012237-c1f38de0/accept-20261022T012237-c1f38de0-r1.query.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012601-c652c206/accept-20261022T012601-c652c206-r1.json",
+      "bytes": 3729,
+      "sha256": "19cacb0f21e52a36796be7cc0143a14264bd861f01f8b34da305864704dd9b5b"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012601-c652c206/accept-20261022T012601-c652c206-r1.pay.jsonl",
+      "bytes": 154582,
+      "sha256": "232686f81973c24974bf664c7341f37b74de50ccc36dbb5148fcc9ca010270ae"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012601-c652c206/accept-20261022T012601-c652c206-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012601-c652c206/accept-20261022T012601-c652c206-r1.query.jsonl",
+      "bytes": 720219,
+      "sha256": "08bcc92ba0dfde692ae41b090ce9dcbf3cc63fd5c3ecf83d59a22433a32e3b88"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012718-41d4bcd6/accept-20261022T012718-41d4bcd6-r1.json",
+      "bytes": 3733,
+      "sha256": "5875205ed3a2279d94575aa2d57d0a50448172bfd9b79bf4abfd101b63122c56"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012718-41d4bcd6/accept-20261022T012718-41d4bcd6-r1.pay.jsonl",
+      "bytes": 1551422,
+      "sha256": "fab77af5bfcaa9258bd5afb6d44ec191cf7924488b54b0a07d327fc4af193567"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012718-41d4bcd6/accept-20261022T012718-41d4bcd6-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T012718-41d4bcd6/accept-20261022T012718-41d4bcd6-r1.query.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T013047-b3b20fc8/accept-20261022T013047-b3b20fc8-r1.json",
+      "bytes": 3742,
+      "sha256": "12c8f7e8e6b0ab4d5b6f1973b2d0a047520c22a18a31b3dd3942ed750e02171d"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T013047-b3b20fc8/accept-20261022T013047-b3b20fc8-r1.pay.jsonl",
+      "bytes": 154622,
+      "sha256": "d637d9bed6414572ada776c712a003786b0ecbe7470c91d76de77b7cb292d621"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T013047-b3b20fc8/accept-20261022T013047-b3b20fc8-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T013047-b3b20fc8/accept-20261022T013047-b3b20fc8-r1.query.jsonl",
+      "bytes": 720220,
+      "sha256": "efa96026ba438f01aff60fe089630fc0e5d3f9fef823cb71d1a357df13208ff9"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T013204-33e34934/accept-20261022T013204-33e34934-r1.json",
+      "bytes": 3765,
+      "sha256": "00fd855088ac58de5d93940668ead68407b4175efde4d4bc9cab6aca280202aa"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T013204-33e34934/accept-20261022T013204-33e34934-r1.pay.jsonl",
+      "bytes": 1539466,
+      "sha256": "7cd432a8fe6387a1dcc976a7bc5e78da99d7f5949bfb04e7bb8dc0b9c6b4dd6d"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T013204-33e34934/accept-20261022T013204-33e34934-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T013204-33e34934/accept-20261022T013204-33e34934-r1.query.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014145-49ea1b70/accept-20261022T014145-49ea1b70-r1.json",
+      "bytes": 3703,
+      "sha256": "bf3ee68f8a6ae64816ce2090e47077ba98c9e1c0836ab6b083be080787879db6"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014145-49ea1b70/accept-20261022T014145-49ea1b70-r1.pay.jsonl",
+      "bytes": 1871004,
+      "sha256": "2a64c4e326b75b54973fcf6944021cef5bd2f8be3f8a13e0905121e1b1970388"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014145-49ea1b70/accept-20261022T014145-49ea1b70-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014145-49ea1b70/accept-20261022T014145-49ea1b70-r1.query.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014414-1cd35a58/accept-20261022T014414-1cd35a58-r1.json",
+      "bytes": 3833,
+      "sha256": "3adfa28a6d09f7171818b6ba374e48ed28c7c77a96cd60345c7ebeaa9731636c"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014414-1cd35a58/accept-20261022T014414-1cd35a58-r1.pay.jsonl",
+      "bytes": 4739661,
+      "sha256": "9a32cd0c65883f59889804e414556578b7a6f64bef14e0c6a99ad63a9ee7fe57"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014414-1cd35a58/accept-20261022T014414-1cd35a58-r1.refund.jsonl",
+      "bytes": 493399,
+      "sha256": "684ff4d4ea524db55f51b557d15caa771c61162b129f73b6cf20f2a0c95198f1"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014414-1cd35a58/accept-20261022T014414-1cd35a58-r1.query.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014741-1ad51674/accept-20261022T014741-1ad51674-r1.json",
+      "bytes": 3709,
+      "sha256": "a885637c7a1c1c932e11dd8e167d34d4935649aab0447b32385130ed0ed12ee0"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014741-1ad51674/accept-20261022T014741-1ad51674-r1.pay.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014741-1ad51674/accept-20261022T014741-1ad51674-r1.refund.jsonl",
+      "bytes": 495749,
+      "sha256": "520b570306ed7ef2704ae37b271e5d9429e0ef6cbeb6e8ac1560a4fd30fa5511"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014741-1ad51674/accept-20261022T014741-1ad51674-r1.query.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014906-245b94c6/accept-20261022T014906-245b94c6-r1.json",
+      "bytes": 3680,
+      "sha256": "d3551960f2a98f97dcf756321012ef78bf4a25b2835f1b32db049aaadb57dca7"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014906-245b94c6/accept-20261022T014906-245b94c6-r1.pay.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014906-245b94c6/accept-20261022T014906-245b94c6-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T014906-245b94c6/accept-20261022T014906-245b94c6-r1.query.jsonl",
+      "bytes": 4334911,
+      "sha256": "c751d9854058e350360b6f050aa1ed7a897a138945a697a25c33a6de77af3bab"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015026-e9bcaa68/accept-20261022T015026-e9bcaa68-r1.json",
+      "bytes": 3677,
+      "sha256": "79263452890be86bf1c75736eba4d40fa6c663fd5bd04307099a5f183998c340"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015026-e9bcaa68/accept-20261022T015026-e9bcaa68-r1.pay.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015026-e9bcaa68/accept-20261022T015026-e9bcaa68-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015026-e9bcaa68/accept-20261022T015026-e9bcaa68-r1.query.jsonl",
+      "bytes": 8680958,
+      "sha256": "45ee6791c94597fc5b0f52a4af139321f3ca918e984649c0e7c45695fc3c8eae"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015146-c26f1815/accept-20261022T015146-c26f1815-r1.json",
+      "bytes": 3721,
+      "sha256": "d802d94ee2f1d7e3ac348a95a4fd8b92e78b6d1c8d691e34bc6228f4cd8fec1e"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015146-c26f1815/accept-20261022T015146-c26f1815-r1.pay.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015146-c26f1815/accept-20261022T015146-c26f1815-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015146-c26f1815/accept-20261022T015146-c26f1815-r1.query.jsonl",
+      "bytes": 30350911,
+      "sha256": "bf3a294a8f1cbcff521c7b91353e7683db8bba273f4fd9ac7316ffe36808342e"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015442-c5f7241e/accept-20261022T015442-c5f7241e-r1.json",
+      "bytes": 3806,
+      "sha256": "a3bb6be18401be7fd1804945d1c4ff263036439e454317f7cd6372c500dcfce3"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015442-c5f7241e/accept-20261022T015442-c5f7241e-r1.pay.jsonl",
+      "bytes": 1558143,
+      "sha256": "29226839550f3ebb4bf1f70f7ad7810484bf1aeb3138c5362126e38d8db85cd5"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015442-c5f7241e/accept-20261022T015442-c5f7241e-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015442-c5f7241e/accept-20261022T015442-c5f7241e-r1.query.jsonl",
+      "bytes": 2897567,
+      "sha256": "b5618a71e9e91eb435cf7c5917cafe3b647c50736bfdcbb8a2c63b8ae063dfd9"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015914-83f80e7e/accept-20261022T015914-83f80e7e-r1.json",
+      "bytes": 3866,
+      "sha256": "a5ab6b984e72b453eda1dda88cd8122e2a8b71e6d7afd060f6e05d8bebeb6455"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015914-83f80e7e/accept-20261022T015914-83f80e7e-r1.pay.jsonl",
+      "bytes": 9819943,
+      "sha256": "776f78b643af36006227aa84f72ad4a934ace3231ff807ae2cf25e3a82c1bcaf"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015914-83f80e7e/accept-20261022T015914-83f80e7e-r1.refund.jsonl",
+      "bytes": 986285,
+      "sha256": "bd875d52485146e705f0b34920812cde894309b29739e3e657d5b8ccb8acae06"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T015914-83f80e7e/accept-20261022T015914-83f80e7e-r1.query.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T020345-ff7785ef/accept-20261022T020345-ff7785ef-r1.json",
+      "bytes": 3740,
+      "sha256": "3c7bf8661ae19822d386e341adf179184e7896e409620579beea1b5b6434377f"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T020345-ff7785ef/accept-20261022T020345-ff7785ef-r1.pay.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T020345-ff7785ef/accept-20261022T020345-ff7785ef-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T020345-ff7785ef/accept-20261022T020345-ff7785ef-r1.query.jsonl",
+      "bytes": 60831392,
+      "sha256": "b0c74c6e2de627cef77be91a0d4700c7cb370ed5968131c7e53c33c313c15173"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T020830-57e97c8a/accept-20261022T020830-57e97c8a-r1.json",
+      "bytes": 3740,
+      "sha256": "0524f563114618eed7ef5449742bd6810958b2c408f1b8552c8fe7822a3bfc2b"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T020830-57e97c8a/accept-20261022T020830-57e97c8a-r1.pay.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T020830-57e97c8a/accept-20261022T020830-57e97c8a-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T020830-57e97c8a/accept-20261022T020830-57e97c8a-r1.query.jsonl",
+      "bytes": 60663240,
+      "sha256": "59f4346fdcf9f540fa1cba89f155cf1a52fd022c1f61f7ff46b05c26213857db"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T021051-09533fe1/accept-20261022T021051-09533fe1-r1.json",
+      "bytes": 3748,
+      "sha256": "4f02c190822a0accc74c76f9921f730ad3f4619532117145fa969edfa177e788"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T021051-09533fe1/accept-20261022T021051-09533fe1-r1.pay.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T021051-09533fe1/accept-20261022T021051-09533fe1-r1.refund.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".work/acceptance/accept-20261022T021051-09533fe1/accept-20261022T021051-09533fe1-r1.query.jsonl",
+      "bytes": 60662280,
+      "sha256": "638bd9b60bb4a27ea79c61528413b344fa3aa256380713f996f4e970b7613995"
+    },
+    {
+      "path": ".work/acceptance/optimization-final-20261022/summary.json",
+      "bytes": 71331,
+      "sha256": "0395551691d17152b0913c9fde83b2fffa87098076acf91e342a786bbe0efa96"
+    },
+    {
+      "path": ".work/run-throughput-ladder.ps1",
+      "bytes": 8486,
+      "sha256": "0d9ae6f14c982b3a398c340415c26502f8f643ed72d2fb0d2974450a87d1662a"
+    },
+    {
+      "path": ".work/verify-throughput.mjs",
+      "bytes": 4067,
+      "sha256": "4adc7e7d52f098fd13d480927931a0c6c5d618157df8542342b7d1cbdd1f110a"
+    }
+  ],
+  "sourceFingerprints": [
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/PlatformApplication.java",
+      "bytes": 2693,
+      "sha256": "eb986add51d0779632c3196ed42bd5e729b1093e0360cc42eacbe60e64d7eed2"
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/orchestration/TaskWorker.java",
+      "bytes": 5289,
+      "sha256": "2710a344f849b79e146f2738e43caedd4353b7523c0bf7f9f584598bc2d7e01e"
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/SignatureFilter.java",
+      "bytes": 7288,
+      "sha256": "940d95d0a3c8adf3330e87bc865572c7852aa93f82b68375085e449e5a7236e6"
+    },
+    {
+      "path": "platform/src/main/java/dev/merchantpay/platform/web/SecurityConfiguration.java",
+      "bytes": 6358,
+      "sha256": "e8c073c36e7548da76fe4ad7dd10a85f49a187b67fa442faf91b85e03cf51891"
+    },
+    {
+      "path": "platform/src/main/resources/application.yaml",
+      "bytes": 3258,
+      "sha256": "320b7c583e87e8f48b0876829cd13edfc32fe4a147e53cb9132f5ac0e8badae6"
+    },
+    {
+      "path": "infra/compose.app.performance.yaml",
+      "bytes": 474,
+      "sha256": "a11ad9599617161711ea1389071f9b36f3915ab03c80ab556f6912600a14bcc3"
+    },
+    {
+      "path": "scripts/start-local.ps1",
+      "bytes": 6408,
+      "sha256": "b4e758e661b09221cee48dca1f88e4a093f1a06ff55ff2288a72561f81a88213"
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ChannelConcurrencyTest.java",
+      "bytes": 4015,
+      "sha256": "dfe12cbdebd87c292f63907cd6e2cdf87747fa75a470376ce9f48d6374617c99"
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/orchestration/TaskWorkerConcurrencyTest.java",
+      "bytes": 4330,
+      "sha256": "708b3b53fc2fe4446c8b56567dead1c6804ccbf22b2fbe4241eda0d8fc09aa32"
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/orchestration/TaskWorkerMetricsTest.java",
+      "bytes": 2359,
+      "sha256": "d2198dbb314314c61374d5ace4135f6fe35a56d8af3dfec6cdb397eb5e3e6bf5"
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ChannelEvidenceTest.java",
+      "bytes": 25432,
+      "sha256": "140f9c18a6f736943c9b3cf609679e1e67958afa106c44dc3b109d1f5644f44c"
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/DurableTaskTest.java",
+      "bytes": 8574,
+      "sha256": "526510f7631d6223bafd28bf73f20652ea14cf8411b29cf2249845b3623f557a"
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/AdmissionTest.java",
+      "bytes": 7838,
+      "sha256": "e9c9d9bc18d4889513d8a61b6a89aaf70ddc7d5f031ac063b2428f34650050f6"
+    },
+    {
+      "path": "platform/src/test/java/dev/merchantpay/platform/ExportTest.java",
+      "bytes": 13854,
+      "sha256": "8e406c18ad1e101d946fd015d27781337d0ee73ee11930e2ae34878d8bae5c7f"
+    },
+    {
+      "path": "console/tests/prepare-throughput.spec.ts",
+      "bytes": 2925,
+      "sha256": "947aab2f9c2c5d3eed413a315b08acf08ab47f3b30d9c0df05b4c04a6c37d15b"
+    },
+    {
+      "path": "README.md",
+      "bytes": 14076,
+      "sha256": "a2da2a743ae545f6d24101f15b7285644fb0d04191b1a79e5781f4249442d375"
+    },
+    {
+      "path": "docs/releases/v1.0.0.md",
+      "bytes": 23874,
+      "sha256": "4f5559abcad2f1d437ec3b3515cb214e7f43e9f761476a2acd8b0329db8b3c1d"
+    },
+    {
+      "path": "docs/releases/local-delivery.md",
+      "bytes": 14780,
+      "sha256": "0a58cf22a8c200f2cbb04f282e0d9843ed714168ee3adec469d2b2759ee0ebe5"
+    },
+    {
+      "path": "docs/quality/2026-10-22-throughput-optimization.md",
+      "bytes": 6284,
+      "sha256": "6231a0be6ac6e78217145adc1c5c68752a893d8d2e03e1ea38c684ebce4651c1"
+    },
+    {
+      "path": "docs/reviews/2026-10-22-throughput-optimization-review.md",
+      "bytes": 1037,
+      "sha256": "e6c5b5027e2545dd6fdc72bbef0af5445f59e9ee9ea9ffda31d26e78723ef08e"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-21-throughput-optimization.md",
+      "bytes": 6532,
+      "sha256": "a3caaad4f5ba23a1b0cbb383af10e54568d4e1adc84d33d7ea0e42b38b1caf96"
+    }
+  ],
+  "artifactFingerprints": [
+    {
+      "path": ".work/throughput-optimization-20261021/final-backend-regression.log",
+      "bytes": 73878,
+      "sha256": "234d3f5763114dd7df28295b18826260d8d58ff8884808fc3d369369d3c9d97e"
+    },
+    {
+      "path": ".work/throughput-optimization-20261021/final-scan.json",
+      "bytes": 721,
+      "sha256": "229c8a55b2439819ace46594c375ac88d9b35819c6773f33f7ce63b5a512ac8a"
+    },
+    {
+      "path": ".work/throughput-optimization-20261021/final-runtime-check.json",
+      "bytes": 333,
+      "sha256": "58114889bcbd8db85f2bafde12952119a7cf952daa2b9327362bfe655d838074"
+    },
+    {
+      "path": ".work/throughput-optimization-20261021/restored-runtime.json",
+      "bytes": 261,
+      "sha256": "98524e21402c8ab7e062febca99626520daf5a2ee1ffcd2b135e268a1185f19b"
+    },
+    {
+      "path": ".work/throughput-optimization-20261021/capacity-candidate.json",
+      "bytes": 490,
+      "sha256": "01903adfbc7f07470caa8a71be38d82a3dafba79c4fb9a3b37c0d4a1272d17e9"
+    },
+    {
+      "path": ".work/throughput-optimization-20261021/class-verification.json",
+      "bytes": 161,
+      "sha256": "a2d5632b86e19ea96a2c0f7dbb0a4753781b0b18760c3e87cd1fa4c21d591853"
+    },
+    {
+      "path": ".work/throughput-optimization-20261021/capacity-db-diagnostic.txt",
+      "bytes": 9786,
+      "sha256": "aea84fc74c5cd6430aa2c29986a9b783b79049b3e4847d9a1378fc1c040ac13c"
+    },
+    {
+      "path": ".work/throughput-optimization-20261021/cleanup-diagnostic.txt",
+      "bytes": 720,
+      "sha256": "0ad7bfd5b408f8ce31081368fde75bada6cf2971e85b18d87b384f3b3363dfcb"
+    },
+    {
+      "path": ".work/throughput-optimization-20261021/native-group-parameters.json",
+      "bytes": 216,
+      "sha256": "13c619e1dc6e5e17f11e0d9c77a9f46da1c6f4b9d77b1235b92f45e571f68cf7"
+    },
+    {
+      "path": ".work/throughput-optimization-20261021/capacity-budget.json",
+      "bytes": 1587,
+      "sha256": "37be72ab38b3ee759968c513152a708306b333431317d0e5bd375b03d96767c8"
+    },
+    {
+      "path": ".work/acceptance/optimization-final-20261022/summary.json",
+      "bytes": 71331,
+      "sha256": "0395551691d17152b0913c9fde83b2fffa87098076acf91e342a786bbe0efa96"
+    },
+    {
+      "path": ".work/acceptance/optimization-final-20261022/independent-verification.json",
+      "bytes": 22780,
+      "sha256": "3cd654d3cf8c6d7a716162fea12cce4f20070ded751426e054e053aeff63c8e9"
+    },
+    {
+      "path": "D:\\software\\cld_project\\javaProject\\.work\\release\\security-20261022T022541Z\\platform.json",
+      "bytes": 1909727,
+      "sha256": "d0c437ddb875996008bfaf39961babd22fb05472aaaa6d116da9e1867f4bbee3"
+    }
+  ]
+}

@@ -1,0 +1,2034 @@
+{
+  "generatedAt": "2026-10-19T10:06:57.6630222Z",
+  "baselineId": "baseline-20261019T094822Z-94a0156d",
+  "summary": {
+    "id": "baseline-20261019T094822Z-94a0156d",
+    "at": "2026-10-19T10:03:18.8598033Z",
+    "definition": {
+      "id": "d0-v1",
+      "mysqlCpu": 4,
+      "mysqlMemoryBytes": 4294967296,
+      "bufferPoolBytes": 1073741824,
+      "platformAffinity": 15,
+      "platformCpu": 4,
+      "platformHeapMiB": 1536,
+      "simulatorAffinity": 48,
+      "simulatorCpu": 2,
+      "simulatorHeapMiB": 768,
+      "loadAffinity": 192,
+      "loadCpu": 2,
+      "loadHeapMiB": 512
+    },
+    "warmup": {
+      "measurementVersion": 2,
+      "runId": "load-1792403306-1edbfdca",
+      "environment": "D0 shared developer host",
+      "generator": {
+        "pid": 28344,
+        "availableProcessors": 2,
+        "maxHeapBytes": 536870912
+      },
+      "scenario": "pay",
+      "generatedAt": "2026-10-19T09:58:34.382625500Z",
+      "requestedRate": 30,
+      "requests": 18000,
+      "acceptedOrRead": 17913,
+      "rejected": 87,
+      "transportErrors": 0,
+      "notSentDueCapacity": 0,
+      "phaseSeconds": 600.0020488,
+      "arrivalWindowSeconds": 600.0,
+      "acceptedOrReadPerSecond": 29.854898055474774,
+      "httpStatuses": {
+        "202": 17913,
+        "503": 87
+      },
+      "httpLatencySamples": 18000,
+      "httpP95Micros": 174124,
+      "httpP99Micros": 428910,
+      "scheduledHttpP99Micros": 429049,
+      "sendDelayP99Micros": 1881,
+      "postedPayments": 17913,
+      "uniquePayments": 17913,
+      "successfulPayments": 17913,
+      "unfinishedAcceptedPayments": 0,
+      "failedAcceptedPayments": 0,
+      "oldestUnfinishedAcceptedMicros": 0,
+      "unacknowledgedCommittedPayments": 0,
+      "failedResponseWithoutVisiblePayment": 87,
+      "paymentStatuses": {
+        "SUCCEEDED": 17913
+      },
+      "acceptedCompletionP99UpperMicros": 1320750,
+      "successfulCompletionP99LowerMicros": 386977,
+      "successfulCompletionP99UpperMicros": 1320750,
+      "completedInArrivalWindowLower": 17893,
+      "completedInArrivalWindowUpper": 17913,
+      "completedPerArrivalSecondLower": 29.821666666666665,
+      "completedPerArrivalSecondUpper": 29.855,
+      "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+      "observerPollMillis": 250,
+      "observerSnapshots": 1357,
+      "observerErrors": 0,
+      "observerAttempts": 1357,
+      "observerTotalQueryMicros": 266216653,
+      "observerMaxQueryMicros": 700850,
+      "maxCommitVisibilityIntervalMicros": 1393746,
+      "requestedRefunds": 0,
+      "refundHttpStatuses": {},
+      "refundedPayments": 0,
+      "journals": 17913,
+      "ledgerRows": 53559,
+      "outboxBusinessTasks": 35826,
+      "ledgerDifferenceMinor": "0",
+      "unbalancedJournals": 0,
+      "moneyInvariantsPassed": true,
+      "correctnessPassed": false,
+      "referenceR1Certified": false,
+      "primaryPhaseStarted": "2026-10-19T09:48:26.739103200Z",
+      "primaryPhaseEnded": "2026-10-19T09:58:26.741886600Z",
+      "arrivalWindowEnded": "2026-10-19T09:58:26.739103200Z",
+      "profileSignature": "3DDD646EDF41BDD5314A93C7A13D09FE92456BC9EEBBB99A5C60CA91ADD20D26",
+      "loadExit": 1
+    },
+    "rounds": [
+      {
+        "measurementVersion": 2,
+        "runId": "load-1792403921-70cf8304",
+        "environment": "D0 shared developer host",
+        "generator": {
+          "pid": 37556,
+          "maxHeapBytes": 536870912,
+          "availableProcessors": 2
+        },
+        "scenario": "pay",
+        "generatedAt": "2026-10-19T09:59:47.496944Z",
+        "requestedRate": 50,
+        "requests": 3000,
+        "acceptedOrRead": 2896,
+        "rejected": 104,
+        "transportErrors": 0,
+        "notSentDueCapacity": 0,
+        "phaseSeconds": 60.0137595,
+        "arrivalWindowSeconds": 60.0,
+        "acceptedOrReadPerSecond": 48.25560045109322,
+        "httpStatuses": {
+          "202": 2896,
+          "503": 104
+        },
+        "httpLatencySamples": 3000,
+        "httpP95Micros": 262714,
+        "httpP99Micros": 549531,
+        "scheduledHttpP99Micros": 550516,
+        "sendDelayP99Micros": 4602,
+        "postedPayments": 2896,
+        "uniquePayments": 2896,
+        "successfulPayments": 2896,
+        "unfinishedAcceptedPayments": 0,
+        "failedAcceptedPayments": 0,
+        "oldestUnfinishedAcceptedMicros": 0,
+        "unacknowledgedCommittedPayments": 0,
+        "failedResponseWithoutVisiblePayment": 104,
+        "paymentStatuses": {
+          "SUCCEEDED": 2896
+        },
+        "acceptedCompletionP99UpperMicros": 945357,
+        "successfulCompletionP99LowerMicros": 612742,
+        "successfulCompletionP99UpperMicros": 945357,
+        "completedInArrivalWindowLower": 2881,
+        "completedInArrivalWindowUpper": 2896,
+        "completedPerArrivalSecondLower": 48.016666666666666,
+        "completedPerArrivalSecondUpper": 48.266666666666666,
+        "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+        "observerPollMillis": 250,
+        "observerSnapshots": 221,
+        "observerErrors": 0,
+        "observerAttempts": 221,
+        "observerTotalQueryMicros": 10484613,
+        "observerMaxQueryMicros": 685109,
+        "maxCommitVisibilityIntervalMicros": 679433,
+        "requestedRefunds": 0,
+        "refundHttpStatuses": {},
+        "refundedPayments": 0,
+        "journals": 2896,
+        "ledgerRows": 8658,
+        "outboxBusinessTasks": 5792,
+        "ledgerDifferenceMinor": "0",
+        "unbalancedJournals": 0,
+        "moneyInvariantsPassed": true,
+        "correctnessPassed": false,
+        "referenceR1Certified": false,
+        "primaryPhaseStarted": "2026-10-19T09:58:41.965405600Z",
+        "primaryPhaseEnded": "2026-10-19T09:59:41.979330900Z",
+        "arrivalWindowEnded": "2026-10-19T09:59:41.965405600Z",
+        "profileSignature": "3DDD646EDF41BDD5314A93C7A13D09FE92456BC9EEBBB99A5C60CA91ADD20D26",
+        "loadExit": 1,
+        "diagnosticId": "diagnosis-1792403917-6226566c"
+      },
+      {
+        "measurementVersion": 2,
+        "runId": "load-1792404016-c0155f79",
+        "environment": "D0 shared developer host",
+        "generator": {
+          "maxHeapBytes": 536870912,
+          "pid": 43432,
+          "availableProcessors": 2
+        },
+        "scenario": "pay",
+        "generatedAt": "2026-10-19T10:01:21.899356300Z",
+        "requestedRate": 50,
+        "requests": 3000,
+        "acceptedOrRead": 2958,
+        "rejected": 42,
+        "transportErrors": 0,
+        "notSentDueCapacity": 0,
+        "phaseSeconds": 60.0177645,
+        "arrivalWindowSeconds": 60.0,
+        "acceptedOrReadPerSecond": 49.285407822878845,
+        "httpStatuses": {
+          "202": 2958,
+          "503": 42
+        },
+        "httpLatencySamples": 3000,
+        "httpP95Micros": 218014,
+        "httpP99Micros": 402889,
+        "scheduledHttpP99Micros": 404674,
+        "sendDelayP99Micros": 2709,
+        "postedPayments": 2958,
+        "uniquePayments": 2958,
+        "successfulPayments": 2958,
+        "unfinishedAcceptedPayments": 0,
+        "failedAcceptedPayments": 0,
+        "oldestUnfinishedAcceptedMicros": 0,
+        "unacknowledgedCommittedPayments": 0,
+        "failedResponseWithoutVisiblePayment": 42,
+        "paymentStatuses": {
+          "SUCCEEDED": 2958
+        },
+        "acceptedCompletionP99UpperMicros": 763638,
+        "successfulCompletionP99LowerMicros": 430994,
+        "successfulCompletionP99UpperMicros": 763638,
+        "completedInArrivalWindowLower": 2950,
+        "completedInArrivalWindowUpper": 2958,
+        "completedPerArrivalSecondLower": 49.166666666666664,
+        "completedPerArrivalSecondUpper": 49.3,
+        "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+        "observerPollMillis": 250,
+        "observerSnapshots": 221,
+        "observerErrors": 0,
+        "observerAttempts": 221,
+        "observerTotalQueryMicros": 10681722,
+        "observerMaxQueryMicros": 660231,
+        "maxCommitVisibilityIntervalMicros": 653684,
+        "requestedRefunds": 0,
+        "refundHttpStatuses": {},
+        "refundedPayments": 0,
+        "journals": 2958,
+        "ledgerRows": 8844,
+        "outboxBusinessTasks": 5916,
+        "ledgerDifferenceMinor": "0",
+        "unbalancedJournals": 0,
+        "moneyInvariantsPassed": true,
+        "correctnessPassed": false,
+        "referenceR1Certified": false,
+        "primaryPhaseStarted": "2026-10-19T10:00:16.206830600Z",
+        "primaryPhaseEnded": "2026-10-19T10:01:16.224241700Z",
+        "arrivalWindowEnded": "2026-10-19T10:01:16.206830600Z",
+        "profileSignature": "3DDD646EDF41BDD5314A93C7A13D09FE92456BC9EEBBB99A5C60CA91ADD20D26",
+        "loadExit": 1,
+        "diagnosticId": "diagnosis-1792404012-7f57676f"
+      },
+      {
+        "measurementVersion": 2,
+        "runId": "load-1792404110-213531b5",
+        "environment": "D0 shared developer host",
+        "generator": {
+          "maxHeapBytes": 536870912,
+          "availableProcessors": 2,
+          "pid": 12068
+        },
+        "scenario": "pay",
+        "generatedAt": "2026-10-19T10:02:55.566846900Z",
+        "requestedRate": 50,
+        "requests": 3000,
+        "acceptedOrRead": 2870,
+        "rejected": 130,
+        "transportErrors": 0,
+        "notSentDueCapacity": 0,
+        "phaseSeconds": 60.0220227,
+        "arrivalWindowSeconds": 60.0,
+        "acceptedOrReadPerSecond": 47.81578278933942,
+        "httpStatuses": {
+          "202": 2870,
+          "503": 130
+        },
+        "httpLatencySamples": 3000,
+        "httpP95Micros": 220051,
+        "httpP99Micros": 725037,
+        "scheduledHttpP99Micros": 725786,
+        "sendDelayP99Micros": 2414,
+        "postedPayments": 2870,
+        "uniquePayments": 2870,
+        "successfulPayments": 2870,
+        "unfinishedAcceptedPayments": 0,
+        "failedAcceptedPayments": 0,
+        "oldestUnfinishedAcceptedMicros": 0,
+        "unacknowledgedCommittedPayments": 0,
+        "failedResponseWithoutVisiblePayment": 130,
+        "paymentStatuses": {
+          "SUCCEEDED": 2870
+        },
+        "acceptedCompletionP99UpperMicros": 1330590,
+        "successfulCompletionP99LowerMicros": 994924,
+        "successfulCompletionP99UpperMicros": 1330590,
+        "completedInArrivalWindowLower": 2853,
+        "completedInArrivalWindowUpper": 2869,
+        "completedPerArrivalSecondLower": 47.55,
+        "completedPerArrivalSecondUpper": 47.81666666666667,
+        "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+        "observerPollMillis": 250,
+        "observerSnapshots": 221,
+        "observerErrors": 0,
+        "observerAttempts": 221,
+        "observerTotalQueryMicros": 10487547,
+        "observerMaxQueryMicros": 570599,
+        "maxCommitVisibilityIntervalMicros": 562919,
+        "requestedRefunds": 0,
+        "refundHttpStatuses": {},
+        "refundedPayments": 0,
+        "journals": 2870,
+        "ledgerRows": 8580,
+        "outboxBusinessTasks": 5740,
+        "ledgerDifferenceMinor": "0",
+        "unbalancedJournals": 0,
+        "moneyInvariantsPassed": true,
+        "correctnessPassed": false,
+        "referenceR1Certified": false,
+        "primaryPhaseStarted": "2026-10-19T10:01:50.069326Z",
+        "primaryPhaseEnded": "2026-10-19T10:02:50.091431800Z",
+        "arrivalWindowEnded": "2026-10-19T10:02:50.069326Z",
+        "profileSignature": "3DDD646EDF41BDD5314A93C7A13D09FE92456BC9EEBBB99A5C60CA91ADD20D26",
+        "loadExit": 1,
+        "diagnosticId": "diagnosis-1792404106-dd3a29e2"
+      }
+    ],
+    "verdict": {
+      "qualified": false,
+      "problems": [
+        "Generator exited unsuccessfully",
+        "Incomplete, rejected or incorrect run",
+        "Generator exited unsuccessfully",
+        "Incomplete, rejected or incorrect run",
+        "Generator exited unsuccessfully",
+        "Incomplete, rejected or incorrect run",
+        "Generator exited unsuccessfully",
+        "Incomplete, rejected or incorrect run",
+        "P99 upper-bound spread exceeds1.5x"
+      ],
+      "rounds": 3,
+      "throughputSpreadFraction": 0.03350990327038232,
+      "p99UpperRatio": 1.7424355519238173,
+      "referenceR1Certified": false
+    },
+    "limits": [
+      "D0 shared host/WSL/storage, caps are not exclusive CPUs",
+      "Native memory limits are JVM heaps; OS/native overhead sampled, not hard capped",
+      "Single merchant/current-day/mock success workload; not fullR1/D1 distribution",
+      "Data grows between rounds; dataset counters retained; no identical restored dataset claim"
+    ]
+  },
+  "replayedVerdict": {
+    "qualified": false,
+    "problems": [
+      "Generator exited unsuccessfully",
+      "Incomplete, rejected or incorrect run",
+      "Generator exited unsuccessfully",
+      "Incomplete, rejected or incorrect run",
+      "Generator exited unsuccessfully",
+      "Incomplete, rejected or incorrect run",
+      "Generator exited unsuccessfully",
+      "Incomplete, rejected or incorrect run",
+      "P99 upper-bound spread exceeds1.5x"
+    ],
+    "rounds": 3,
+    "throughputSpreadFraction": 0.03350990327038232,
+    "p99UpperRatio": 1.7424355519238173,
+    "referenceR1Certified": false
+  },
+  "resources": {
+    "signature": "3DDD646EDF41BDD5314A93C7A13D09FE92456BC9EEBBB99A5C60CA91ADD20D26",
+    "fingerprint": {
+      "definition": {
+        "id": "d0-v1",
+        "mysqlCpu": 4,
+        "mysqlMemoryBytes": 4294967296,
+        "bufferPoolBytes": 1073741824,
+        "platformAffinity": 15,
+        "platformCpu": 4,
+        "platformHeapMiB": 1536,
+        "simulatorAffinity": 48,
+        "simulatorCpu": 2,
+        "simulatorHeapMiB": 768,
+        "loadAffinity": 192,
+        "loadCpu": 2,
+        "loadHeapMiB": 512
+      },
+      "platformJar": "A1118C06D3D5021235E60CB379E7685D314A5277CE3972F004A14AB64495B310",
+      "simulatorJar": "B712BF2755779EAA2339984258455B90217B3A7055F56305C548BD02666E0D8E",
+      "native": [
+        {
+          "name": "platform",
+          "pid": 31160,
+          "startedTicks": 639279999001252422,
+          "affinity": 15,
+          "cpu": 4,
+          "maxHeapBytes": 1610612736
+        },
+        {
+          "name": "simulator",
+          "pid": 44004,
+          "startedTicks": 639279999001101495,
+          "affinity": 48,
+          "cpu": 2,
+          "maxHeapBytes": 805306368
+        }
+      ],
+      "mysqlContainer": "b6217396027cb6f98fcea976f92f902ad61fd81e2924ca19f3b69cc2ab3be724|sha256:24989179f58856db763f418010c1169fecc944e3ec1ea7e921572d83eb070f70|4294967296|4000000000|0",
+      "mysql": {
+        "serverUuid": "61680263-ca3c-11f1-8d6b-067f85e6c3df",
+        "flushOnCommit": 1,
+        "syncBinlog": 1,
+        "logBin": 1,
+        "bufferPoolBytes": 1073741824,
+        "performanceSchema": 1
+      },
+      "instruments": [
+        {
+          "NAME": "stage/sql/committing alter table to storage engine",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "stage/sql/Waiting for commit lock",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "stage/sql/Waiting for dependent transaction to commit",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "stage/sql/Waiting for GTID to be committed",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "stage/sql/waiting for handler commit",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "stage/sql/Waiting for preceding transaction to commit",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/io/file/innodb/innodb_arch_file",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/innodb/innodb_clone_file",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/innodb/innodb_data_file",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/innodb/innodb_dblwr_file",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/innodb/innodb_log_file",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/innodb/innodb_tablespace_open_file",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/innodb/innodb_temp_file",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/innodb/meb::redo_log_archive_file",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/sql/binlog",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/sql/binlog_cache",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/sql/binlog_index",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/io/file/sql/binlog_index_cache",
+          "ENABLED": "YES",
+          "TIMED": "YES"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_checkpointer_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_closer_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_cmdq_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_files_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_flush_notifier_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_flusher_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_governor_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_limits_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_sn_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_sys_arch_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_write_notifier_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/mutex/innodb/log_writer_mutex",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/sxlock/innodb/index_online_log",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        },
+        {
+          "NAME": "wait/synch/sxlock/innodb/log_sn_lock",
+          "ENABLED": "NO",
+          "TIMED": "NO"
+        }
+      ],
+      "consumers": [
+        {
+          "NAME": "events_stages_current",
+          "ENABLED": "NO"
+        },
+        {
+          "NAME": "events_stages_history",
+          "ENABLED": "NO"
+        },
+        {
+          "NAME": "events_stages_history_long",
+          "ENABLED": "NO"
+        },
+        {
+          "NAME": "events_statements_cpu",
+          "ENABLED": "NO"
+        },
+        {
+          "NAME": "events_statements_current",
+          "ENABLED": "YES"
+        },
+        {
+          "NAME": "events_statements_history",
+          "ENABLED": "YES"
+        },
+        {
+          "NAME": "events_statements_history_long",
+          "ENABLED": "NO"
+        },
+        {
+          "NAME": "events_transactions_current",
+          "ENABLED": "YES"
+        },
+        {
+          "NAME": "events_transactions_history",
+          "ENABLED": "YES"
+        },
+        {
+          "NAME": "events_transactions_history_long",
+          "ENABLED": "NO"
+        },
+        {
+          "NAME": "events_waits_current",
+          "ENABLED": "NO"
+        },
+        {
+          "NAME": "events_waits_history",
+          "ENABLED": "NO"
+        },
+        {
+          "NAME": "events_waits_history_long",
+          "ENABLED": "NO"
+        },
+        {
+          "NAME": "global_instrumentation",
+          "ENABLED": "YES"
+        },
+        {
+          "NAME": "statements_digest",
+          "ENABLED": "YES"
+        },
+        {
+          "NAME": "thread_instrumentation",
+          "ENABLED": "YES"
+        }
+      ]
+    },
+    "native": [
+      {
+        "name": "platform",
+        "pid": 31160,
+        "startedTicks": 639279999001252422,
+        "affinity": 15,
+        "cpu": 4,
+        "maxHeapBytes": 1610612736,
+        "workingSetBytes": 428466176
+      },
+      {
+        "name": "simulator",
+        "pid": 44004,
+        "startedTicks": 639279999001101495,
+        "affinity": 48,
+        "cpu": 2,
+        "maxHeapBytes": 805306368,
+        "workingSetBytes": 360488960
+      }
+    ],
+    "host": {
+      "logicalCpu": 32,
+      "freeMiB": 7670.0,
+      "totalMiB": 32492.0
+    }
+  },
+  "initialDataset": {
+    "payments": 105276,
+    "ledgerEntries": 316442,
+    "journals": 105875,
+    "tasks": 317686,
+    "merchants": 2
+  },
+  "finalDataset": {
+    "payments": 131913,
+    "ledgerEntries": 396083,
+    "journals": 132512,
+    "tasks": 397597,
+    "merchants": 2
+  },
+  "finalState": {
+    "admission": [
+      {
+        "logical_shard": 0,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 1,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 2,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 3,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 4,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 5,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 6,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 7,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 8,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 9,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 10,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 11,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 12,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 13,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 14,
+        "inflight": 0,
+        "actual": 0
+      },
+      {
+        "logical_shard": 15,
+        "inflight": 0,
+        "actual": 0
+      }
+    ],
+    "unfinishedTasks": 0
+  },
+  "rounds": [
+    {
+      "runId": "load-1792403921-70cf8304",
+      "diagnosticId": "diagnosis-1792403917-6226566c",
+      "requestedRate": 50,
+      "requests": 3000,
+      "accepted": 2896,
+      "httpStatuses": {
+        "202": 2896,
+        "503": 104
+      },
+      "tpsLower": 48.016666666666666,
+      "tpsUpper": 48.266666666666666,
+      "p99LowerMillis": 612.742,
+      "p99UpperMillis": 945.357,
+      "observerTotalMillis": 10484.613,
+      "observerMaxMillis": 685.109,
+      "strictPassed": false
+    },
+    {
+      "runId": "load-1792404016-c0155f79",
+      "diagnosticId": "diagnosis-1792404012-7f57676f",
+      "requestedRate": 50,
+      "requests": 3000,
+      "accepted": 2958,
+      "httpStatuses": {
+        "202": 2958,
+        "503": 42
+      },
+      "tpsLower": 49.166666666666664,
+      "tpsUpper": 49.3,
+      "p99LowerMillis": 430.994,
+      "p99UpperMillis": 763.638,
+      "observerTotalMillis": 10681.722,
+      "observerMaxMillis": 660.231,
+      "strictPassed": false
+    },
+    {
+      "runId": "load-1792404110-213531b5",
+      "diagnosticId": "diagnosis-1792404106-dd3a29e2",
+      "requestedRate": 50,
+      "requests": 3000,
+      "accepted": 2870,
+      "httpStatuses": {
+        "202": 2870,
+        "503": 130
+      },
+      "tpsLower": 47.55,
+      "tpsUpper": 47.81666666666667,
+      "p99LowerMillis": 994.924,
+      "p99UpperMillis": 1330.59,
+      "observerTotalMillis": 10487.547,
+      "observerMaxMillis": 570.599,
+      "strictPassed": false
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/failure.json",
+      "sha256": "FE0BC797E58E7A51BFCEE6FE6C1B0E7F52A86F02F6EF781B279567A7B4D2A057"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/initial.resources.json",
+      "sha256": "FD1DA7D189C4D3E3E07F2F7EE89C826B8A517C4BA1C59DCEC0D369AC3572E6EC"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/initial.runtime.json",
+      "sha256": "337D496A7DA2A3DF9DFAB850942CD997EF36BF5669D3454794EFB21A06FB53F7"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-1-after.channels.json",
+      "sha256": "EFC7F7A2AB612FC1BCF6BC5D873D9FCACD68BC237A62B1315049B6063EF60671"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-1-after.resources.json",
+      "sha256": "7FD56214633D222BB13B47FF55FFFAAC737FA5A6DC7D50046B25EF1FC3671C30"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-1-after.runtime.json",
+      "sha256": "DE630BBAB39A3CE9FFE424FB405BD1E7C8660D3EB46790FBB4ACD8C7A4E1E50E"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-1-before.channels.json",
+      "sha256": "298EE4D8BEF95675F901859B4A767F06EB5FF55D58355A6098D39AE4339BF187"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-1-before.resources.json",
+      "sha256": "E6391D88E5A04524B125AC1A6465CD81EE63D6D76A32AF511B4564F86BB56E80"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-1-before.runtime.json",
+      "sha256": "5CDB642A71090222F66812B0E58E17ABBC04167945B0D8435A666454803F6300"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-1.diagnostic.err.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-1.diagnostic.log",
+      "sha256": "6DA6151EF26EC8F0C91426649BB0B3FF97A4BAA623D09314B0E7DD849AC0FB01"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-1.load.log",
+      "sha256": "5CF01480DF5FBB32C4C840B0A4A6AD0EAADEE06B9A6A5BAD01D1ED1150B91724"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-1.report.json",
+      "sha256": "77633111C989DF92D31DF18129213A7CE2F6E413EF0E97C8913484794E8BDFD0"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-2-after.channels.json",
+      "sha256": "A0E8F86AD354AC79998DC41C0EF0A695455839EBCF439A0F35D575E058EB8245"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-2-after.resources.json",
+      "sha256": "93CC7912B02A0D81F4A5D06F149428A387C2D384877FF48A695170FB3430D454"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-2-after.runtime.json",
+      "sha256": "1C7C8D13EC1D5E265D0F0CD8BA085BA89AA63813B2C5771C505B29CE2C88314F"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-2-before.channels.json",
+      "sha256": "A40B0BE31B36102113207C271361F52288250C0D194645B3D348384E0B073A9A"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-2-before.resources.json",
+      "sha256": "4073D0F7A8BA33159A594335D4FD6B43D8E4BAB364FD3DD11FDFB7A22BA090B5"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-2-before.runtime.json",
+      "sha256": "DADF652BDDEC927C9162AFDF362038E5FF13E38CF16FBC8DB59A5C42BC464EE3"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-2.diagnostic.err.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-2.diagnostic.log",
+      "sha256": "16A8F4C2402A5C8E773DD874DC3DD8A98AEAD6D1A756B6B2D718FC6D778D3CA4"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-2.load.log",
+      "sha256": "B76B202725C8032B2A12EDE903C833C7C9F3E8E18ACD1C932E7A245F523AEB6B"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-2.report.json",
+      "sha256": "8CED07E45AE6AE88596FE64BCB8287758209D08931A54022DAF73A39C3401B33"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-3-after.channels.json",
+      "sha256": "A0BC92F5DED85E9C9E92EB7CD068539AA47F356C5E208716C18F31A381D2AC2D"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-3-after.resources.json",
+      "sha256": "DA22BC1D84FB0B1FA1FB68E669F5BD97788365F8F78BB0DBAD13BF04AA07F728"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-3-after.runtime.json",
+      "sha256": "16E538700EF79B0CAD5CD632B2CFA4F1C7E435A8F9AAFF9847EAF561E3C26AF6"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-3-before.channels.json",
+      "sha256": "232078A78F47F0C56A9141DA526E16587251621564076B0C5976E1813E6F1E2F"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-3-before.resources.json",
+      "sha256": "6D9F6638ECE6EE0A8020B957D9397A4AE2D8A18902ABA8C56950B4A0BC8B8478"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-3-before.runtime.json",
+      "sha256": "4A0CD236B1FD9DA5DBC525EDBE9F10A5DE1C3D3A15E70092C103DBF9C3236D0F"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-3.diagnostic.err.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-3.diagnostic.log",
+      "sha256": "7F35D6061F45FF60AA462B57360719451322ECB17BDB7139E28BFA983649CF85"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-3.load.log",
+      "sha256": "DE6EA396B7515159B7E4D0904A52F1D2F54299572E269C79BBEF378980AAB67A"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/round-3.report.json",
+      "sha256": "1670F2373E0FC792521DBE7EF8619DAA95548145D4E5E51E0B012DAF830BC5B5"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/summary.json",
+      "sha256": "8905F8C98BC593C4A4B45E164AF4FF1A35870D3CACDDD1A211D7442305A020ED"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/tools.json",
+      "sha256": "E2ACFD1C5453FC80190F8FADB5CD22956E59FA0BEF1DBDED34BFE9B38E1B4D6E"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/warmup-after.channels.json",
+      "sha256": "B1B37D23D63A8854C8603E3460ACE3C869ACF9686640AEF54C5A5BE00D0BC562"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/warmup-after.resources.json",
+      "sha256": "B99773917A324267AEC9E8EF54625867D0277A7FFBE80B6796EC1555C5DA90C5"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/warmup-after.runtime.json",
+      "sha256": "A4A3C44AD3C0C7B39D516D8762737849046BBF023679FD1C8C6B75099F1B51CF"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/warmup-before.channels.json",
+      "sha256": "8620E63B7A69C7C8E467B02AEEF904C037DA1968CD208F7AD206BC942B57F682"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/warmup-before.resources.json",
+      "sha256": "375129940AD4E99BEC6AC66682D97545CC3A355290435CAF5961358AB3505582"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/warmup-before.runtime.json",
+      "sha256": "8647ADB85748D05CF62805840FEEBE4229F8E29DB89980F4169ABEEB7096B304"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/warmup.load.log",
+      "sha256": "805B0BCC34C9873C4B177263F8FAF0CAF4E852C0124A5371354BD03F8C6C8FBC"
+    },
+    {
+      "path": ".work/performance/baseline-20261019T094822Z-94a0156d/warmup.report.json",
+      "sha256": "0A69B49ACFFA806AAE47F23FF05FB9A66B4EF9ADCDBDAC086CD4A1349BFC9E09"
+    },
+    {
+      "path": ".work/performance/load-1792403306-1edbfdca.json",
+      "sha256": "7F199837090307080AE821FD26C4C1077D724307EFDD8986558029BC9FCD5E73"
+    },
+    {
+      "path": ".work/performance/load-1792403306-1edbfdca.requests.jsonl",
+      "sha256": "50C37CD99D3CBFE31A5A0A2E2106C9140FC079D2CFEE0CB2F92ACE5C9270BA45"
+    },
+    {
+      "path": ".work/performance/load-1792403921-70cf8304.json",
+      "sha256": "B270F01EA9FBE2DC73A31E68188F17AC5AA805B26F761976A3151BF3465B4DA2"
+    },
+    {
+      "path": ".work/performance/load-1792403921-70cf8304.requests.jsonl",
+      "sha256": "8872C970F94E9E43B616922A81E6115672F4AE78AE5155B961734DA879E74D4C"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792403917-6226566c.config.json",
+      "sha256": "FFA010C552AF29FC37A34321B4269D78CA36D9E7E27A72B6036CCD08D58F5BB5"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792403917-6226566c.digests-after.json",
+      "sha256": "E9ECF1E204E4384EB124DC812BB293D2F410FE4009E010160A2BD7D0DF4589E6"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792403917-6226566c.digests-before.json",
+      "sha256": "66A98761C7C4C576CF2ED1EFFB3AB80DCDCFB05E16045D2B0268BAAAA87FE517"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792403917-6226566c.io-after.json",
+      "sha256": "FFD96FCEF0650ED49D49EF234CF11C23EF04EDA993818725718DD026E8DC2B9E"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792403917-6226566c.io-before.json",
+      "sha256": "9FD19AB9BB8DB3E40B485C9A184876815CCE25C1D1D04556F90CEC64956FB311"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792403917-6226566c.io-delta.json",
+      "sha256": "868F2A7D4E5747D91F7E05EE8BFA9920E4E189E624C0AC1138FFEF77FB18BFDE"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792403917-6226566c.jsonl",
+      "sha256": "3A1697CDD55805DF71E0D653C1EA43627C9288FD64BA2A0F72DA83888C263A14"
+    },
+    {
+      "path": ".work/performance/load-1792404016-c0155f79.json",
+      "sha256": "F669E84DCDE7AB5DA60B1FC5E0D0FAA1D2BD3AAB6AAAF36B6C9B95E3AAFCFE42"
+    },
+    {
+      "path": ".work/performance/load-1792404016-c0155f79.requests.jsonl",
+      "sha256": "08C168F67A237625763E8EED3FC0E9F9A15263EF34DFEBB4991953729A5873BF"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404012-7f57676f.config.json",
+      "sha256": "FFA010C552AF29FC37A34321B4269D78CA36D9E7E27A72B6036CCD08D58F5BB5"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404012-7f57676f.digests-after.json",
+      "sha256": "69369CAC1CC4BED43113AA9107505F426BCE20D9E7029FDD5C3F8089CE5B13EF"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404012-7f57676f.digests-before.json",
+      "sha256": "7E66F8EE458F1F17C3F2F58E4AA843A38E2D49CCE417CD0339E010B635CC1E05"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404012-7f57676f.io-after.json",
+      "sha256": "16E764F7A7FBB306F810A90BA153662E731772B7CBC49ACF326D8470B7C3EEF0"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404012-7f57676f.io-before.json",
+      "sha256": "C7F363D26B4792705140F11D5DD0FEF831FA667093EAA5B3FCFAC9B483C09C9C"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404012-7f57676f.io-delta.json",
+      "sha256": "C3AC82DF47A047F5E6CBE3D0A47FC799877804ECC53A7BE9B5BD36CF62AC8878"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404012-7f57676f.jsonl",
+      "sha256": "8B6FF6F062A73180B1A2E1256D3CA5EFB24DCE641EC7AB086B309C08A8BC1AB9"
+    },
+    {
+      "path": ".work/performance/load-1792404110-213531b5.json",
+      "sha256": "DC1BB881FC5A5EF9A508D7F7586F3C9F0AB998225F37C8E8C1A2766190217174"
+    },
+    {
+      "path": ".work/performance/load-1792404110-213531b5.requests.jsonl",
+      "sha256": "45254224E3B8F7B59904366DDBDE0DA5F9CF1F1BBE5C3D644D933BCB979A8B72"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404106-dd3a29e2.config.json",
+      "sha256": "FFA010C552AF29FC37A34321B4269D78CA36D9E7E27A72B6036CCD08D58F5BB5"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404106-dd3a29e2.digests-after.json",
+      "sha256": "F32963E1B6F29289A6DE4263D9FE078FCC99FE8CF17F83B4C8CB791706AF9671"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404106-dd3a29e2.digests-before.json",
+      "sha256": "FF219D68837B2E3D391C2239FEAAEC7EAE99EFEA1FB5F82EE8494464C34111CB"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404106-dd3a29e2.io-after.json",
+      "sha256": "D9767468E1AB86E2D8F9DE035DAF0EA66A65065A3D2AA6E0F17764B9269365D2"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404106-dd3a29e2.io-before.json",
+      "sha256": "191FB2F828DE47F23B026D945C232C245ECE13ECC252D9A0F01B522DE34D4DD7"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404106-dd3a29e2.io-delta.json",
+      "sha256": "34A5FBB7F5FB7FBD6F5E135330BA2ECA9899A86CD7F93F6A54F0F2D786346BA8"
+    },
+    {
+      "path": ".work/performance/diagnosis-1792404106-dd3a29e2.jsonl",
+      "sha256": "45D17830C6A96D9B3010E43838667DC7CDA4FCE728FEB7B3A06B6D944725B748"
+    },
+    {
+      "path": ".work/performance-profile-compose.json",
+      "sha256": "808F968ACFC9B79CF16A00EC9017AEB75E25AE880CAB1F731E70DB9F45661E17"
+    },
+    {
+      "path": ".work/performance-profile-jar-hashes.json",
+      "sha256": "87DE7D150869A661BFF56408AA807287376939A27893EA0C8C3412702C83F0FB"
+    },
+    {
+      "path": ".work/performance-profile-smoke.log",
+      "sha256": "7AB55A84B029CD40EF6FFD75FE8CC6E0EDEAF140F125F65FB8DF237328E0EEAA"
+    },
+    {
+      "path": ".work/performance-profile-stopped.json",
+      "sha256": "FA7D9F519987D463BFE651D54C9E8EFB6A0F64D59D7DD7EBFBB4C21163410F87"
+    },
+    {
+      "path": ".work/performance-profile-activation.log",
+      "sha256": "0A321195B9EF0C093363A8E948289818BE32ACD17083BA5B0FBAFDA6166334F1"
+    },
+    {
+      "path": ".work/performance-baseline-guards.log",
+      "sha256": "1430E4CF22BA412B1B40606C34EE428EBA85EAB6FA35E6600CC12831D0CB398A"
+    },
+    {
+      "path": ".work/performance-baseline-java-tests.log",
+      "sha256": "6671089DE32246E1EA480986321826004366965F321FB11730DF0AEA8A1C89DC"
+    },
+    {
+      "path": ".work/baseline-exit-red.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": ".work/performance-baseline-final-guards.log",
+      "sha256": "1430E4CF22BA412B1B40606C34EE428EBA85EAB6FA35E6600CC12831D0CB398A"
+    },
+    {
+      "path": ".work/performance-baseline-final-java-tests.log",
+      "sha256": "6671089DE32246E1EA480986321826004366965F321FB11730DF0AEA8A1C89DC"
+    },
+    {
+      "path": ".work/performance-warmup-rejections.json",
+      "sha256": "96B10AF329567405BFC42ED2C5A619AC2F9E023915F13A475222171F6E9FDBE4"
+    },
+    {
+      "path": ".work/performance-baseline-final-services.json",
+      "sha256": "2CB8A941CA09F1B0C4E4C9901868B493456E9AF318C1B35D5B8929DCC06F3CA1"
+    },
+    {
+      "path": ".work/performance-baseline-final-preflight.log",
+      "sha256": "76D98DCD55845CAAD4F8EA1C42A8276D40486A6F63265C0E2C19BE690D7AE636"
+    }
+  ],
+  "verification": {
+    "remoteCiRun": false,
+    "fullBackendRerun": false,
+    "guardRegression": "passed",
+    "javaMeasurementRegression": "passed"
+  },
+  "limitations": [
+    "D0 only: shared host/WSL/storage, native heap not totalRSS cap",
+    "Single merchant/current day100% mock success; no standardR1 delay/failure/repeat or D1 distribution",
+    "Growing dataset, no restore/reset; no throughput comparison to previous uncapped experiments",
+    "Original financial/backend binaries unchanged;300TPS not certified",
+    "Observers and diagnostic queries contribute load; full per-round overhead retained"
+  ],
+  "finalServices": {
+    "at": "2026-10-19T10:05:40.804964Z",
+    "backend": "UP",
+    "console": 200,
+    "mode": "performance",
+    "lockReleasedAfterFailedQualification": true,
+    "preflightId": "baseline-20261019T100538Z-1b2cfc8e",
+    "profileSignature": "3DDD646EDF41BDD5314A93C7A13D09FE92456BC9EEBBB99A5C60CA91ADD20D26",
+    "jdk": [
+      "java 25.0.4.1 2026-08-18 LTS",
+      "Java(TM) SE Runtime Environment (build 25.0.4.1+1-LTS-5)",
+      "Java HotSpot(TM) 64-Bit Server VM (build 25.0.4.1+1-LTS-5, mixed mode, sharing)"
+    ],
+    "qualified": false,
+    "referenceR1Certified": false
+  },
+  "diagnostics": [
+    {
+      "runId": "load-1792403921-70cf8304",
+      "diagnosticId": "diagnosis-1792403917-6226566c",
+      "metrics": {
+        "process_cpu_usage": {
+          "first": 0.0023382113944942513,
+          "last": 0.00449349683308121,
+          "sampledMax": 0.03424840447726903
+        },
+        "hikaricp_connections_pending": {
+          "first": 0.0,
+          "last": 0.0,
+          "sampledMax": 0.0
+        },
+        "hikaricp_connections_timeout_total": {
+          "first": 0.0,
+          "last": 0.0,
+          "sampledMax": 0.0
+        },
+        "hikaricp_connections_active": {
+          "first": 1.0,
+          "last": 1.0,
+          "sampledMax": 27.0
+        },
+        "system_cpu_usage": {
+          "first": 0.13933608351523985,
+          "last": 0.09499707665606284,
+          "sampledMax": 0.3465427869942804
+        }
+      },
+      "capacitySampledPeak": 12.0,
+      "shardCapacitySampledPeak": 3.0,
+      "maxLockWaitEdges": 2.0,
+      "ioDelta": {
+        "valid": true,
+        "problems": [],
+        "statusDeltas": {
+          "Innodb_buffer_pool_reads": 1005,
+          "Innodb_buffer_pool_read_requests": 13282275,
+          "Innodb_buffer_pool_wait_free": 0,
+          "Innodb_data_reads": 1005,
+          "Innodb_data_writes": 183838,
+          "Innodb_data_read": 16465920,
+          "Innodb_data_written": 1493537792,
+          "Innodb_data_fsyncs": 67764,
+          "Innodb_os_log_fsyncs": 60953,
+          "Innodb_os_log_written": 120362496,
+          "Innodb_log_waits": 0
+        },
+        "fileDeltas": [
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_arch_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_clone_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_data_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 1005,
+            "SUM_TIMER_READ": 460180838466,
+            "SUM_NUMBER_OF_BYTES_READ": 16465920,
+            "COUNT_WRITE": 80041,
+            "SUM_TIMER_WRITE": 498025644516,
+            "SUM_NUMBER_OF_BYTES_WRITE": 1344421888,
+            "COUNT_MISC": 6811,
+            "SUM_TIMER_MISC": 12777043998024
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_dblwr_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 815,
+            "SUM_TIMER_WRITE": 9648530359632,
+            "SUM_NUMBER_OF_BYTES_WRITE": 1310883840,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_log_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 102920,
+            "SUM_TIMER_WRITE": 997690904154,
+            "SUM_NUMBER_OF_BYTES_WRITE": 181803520,
+            "COUNT_MISC": 61223,
+            "SUM_TIMER_MISC": 48846439483614
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_tablespace_open_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_temp_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 63,
+            "SUM_TIMER_WRITE": 950024844,
+            "SUM_NUMBER_OF_BYTES_WRITE": 1032192,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/meb::redo_log_archive_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 27447,
+            "SUM_TIMER_WRITE": 637490053458,
+            "SUM_NUMBER_OF_BYTES_WRITE": 54703973,
+            "COUNT_MISC": 23802,
+            "SUM_TIMER_MISC": 44166553672716
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog_cache",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog_index",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog_index_cache",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          }
+        ],
+        "stageDeltas": [
+          {
+            "EVENT_NAME": "stage/sql/committing alter table to storage engine",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for commit lock",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for dependent transaction to commit",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for GTID to be committed",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/waiting for handler commit",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for preceding transaction to commit",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          }
+        ],
+        "units": "Timers are cumulative picoseconds; MISC includes sync/open/close/etc, not a dedicated fsync count. Missing/untimed values are null. Invalid intervals must not be used for comparisons."
+      }
+    },
+    {
+      "runId": "load-1792404016-c0155f79",
+      "diagnosticId": "diagnosis-1792404012-7f57676f",
+      "metrics": {
+        "process_cpu_usage": {
+          "first": 0.002772225987959244,
+          "last": 0.0040410393153684845,
+          "sampledMax": 0.027132233214611362
+        },
+        "hikaricp_connections_pending": {
+          "first": 0.0,
+          "last": 0.0,
+          "sampledMax": 0.0
+        },
+        "hikaricp_connections_timeout_total": {
+          "first": 0.0,
+          "last": 0.0,
+          "sampledMax": 0.0
+        },
+        "hikaricp_connections_active": {
+          "first": 0.0,
+          "last": 1.0,
+          "sampledMax": 24.0
+        },
+        "system_cpu_usage": {
+          "first": 0.12991062639102613,
+          "last": 0.06548441147486228,
+          "sampledMax": 0.360681562887846
+        }
+      },
+      "capacitySampledPeak": 17.0,
+      "shardCapacitySampledPeak": 3.0,
+      "maxLockWaitEdges": 2.0,
+      "ioDelta": {
+        "valid": true,
+        "problems": [],
+        "statusDeltas": {
+          "Innodb_buffer_pool_reads": 1628,
+          "Innodb_buffer_pool_read_requests": 13486364,
+          "Innodb_buffer_pool_wait_free": 0,
+          "Innodb_data_reads": 1628,
+          "Innodb_data_writes": 187028,
+          "Innodb_data_read": 26673152,
+          "Innodb_data_written": 1529185280,
+          "Innodb_data_fsyncs": 66968,
+          "Innodb_os_log_fsyncs": 60043,
+          "Innodb_os_log_written": 123897856,
+          "Innodb_log_waits": 0
+        },
+        "fileDeltas": [
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_arch_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_clone_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_data_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 1628,
+            "SUM_TIMER_READ": 766525770936,
+            "SUM_NUMBER_OF_BYTES_READ": 26673152,
+            "COUNT_WRITE": 81942,
+            "SUM_TIMER_WRITE": 665679528738,
+            "SUM_NUMBER_OF_BYTES_WRITE": 1379680256,
+            "COUNT_MISC": 6925,
+            "SUM_TIMER_MISC": 10601036962650
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_dblwr_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 806,
+            "SUM_TIMER_WRITE": 8707434331878,
+            "SUM_NUMBER_OF_BYTES_WRITE": 1341964288,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_log_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 104235,
+            "SUM_TIMER_WRITE": 1021535689554,
+            "SUM_NUMBER_OF_BYTES_WRITE": 186557440,
+            "COUNT_MISC": 60320,
+            "SUM_TIMER_MISC": 49835760845778
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_tablespace_open_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_temp_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 42,
+            "SUM_TIMER_WRITE": 572309874,
+            "SUM_NUMBER_OF_BYTES_WRITE": 688128,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/meb::redo_log_archive_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 27357,
+            "SUM_TIMER_WRITE": 566095797756,
+            "SUM_NUMBER_OF_BYTES_WRITE": 55760853,
+            "COUNT_MISC": 23509,
+            "SUM_TIMER_MISC": 44679180255570
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog_cache",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog_index",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog_index_cache",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          }
+        ],
+        "stageDeltas": [
+          {
+            "EVENT_NAME": "stage/sql/committing alter table to storage engine",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for commit lock",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for dependent transaction to commit",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for GTID to be committed",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/waiting for handler commit",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for preceding transaction to commit",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          }
+        ],
+        "units": "Timers are cumulative picoseconds; MISC includes sync/open/close/etc, not a dedicated fsync count. Missing/untimed values are null. Invalid intervals must not be used for comparisons."
+      }
+    },
+    {
+      "runId": "load-1792404110-213531b5",
+      "diagnosticId": "diagnosis-1792404106-dd3a29e2",
+      "metrics": {
+        "process_cpu_usage": {
+          "first": 0.002478920613735565,
+          "last": 0.005376320160433293,
+          "sampledMax": 0.027358616063999933
+        },
+        "hikaricp_connections_pending": {
+          "first": 0.0,
+          "last": 0.0,
+          "sampledMax": 1.0
+        },
+        "hikaricp_connections_timeout_total": {
+          "first": 0.0,
+          "last": 0.0,
+          "sampledMax": 0.0
+        },
+        "hikaricp_connections_active": {
+          "first": 0.0,
+          "last": 0.0,
+          "sampledMax": 32.0
+        },
+        "system_cpu_usage": {
+          "first": 0.14257890602782608,
+          "last": 0.08844199725837731,
+          "sampledMax": 0.32593265332448285
+        }
+      },
+      "capacitySampledPeak": 20.0,
+      "shardCapacitySampledPeak": 4.0,
+      "maxLockWaitEdges": 19.0,
+      "ioDelta": {
+        "valid": true,
+        "problems": [],
+        "statusDeltas": {
+          "Innodb_buffer_pool_reads": 2302,
+          "Innodb_buffer_pool_read_requests": 13190065,
+          "Innodb_buffer_pool_wait_free": 0,
+          "Innodb_data_reads": 2302,
+          "Innodb_data_writes": 185120,
+          "Innodb_data_read": 37715968,
+          "Innodb_data_written": 1511428096,
+          "Innodb_data_fsyncs": 67230,
+          "Innodb_os_log_fsyncs": 60241,
+          "Innodb_os_log_written": 124498944,
+          "Innodb_log_waits": 0
+        },
+        "fileDeltas": [
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_arch_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_clone_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_data_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 2302,
+            "SUM_TIMER_READ": 987104690658,
+            "SUM_NUMBER_OF_BYTES_READ": 37715968,
+            "COUNT_WRITE": 80849,
+            "SUM_TIMER_WRITE": 393061107096,
+            "SUM_NUMBER_OF_BYTES_WRITE": 1353531392,
+            "COUNT_MISC": 6989,
+            "SUM_TIMER_MISC": 11967599635758
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_dblwr_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 817,
+            "SUM_TIMER_WRITE": 7622235273582,
+            "SUM_NUMBER_OF_BYTES_WRITE": 1324187648,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_log_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 103398,
+            "SUM_TIMER_WRITE": 711734931000,
+            "SUM_NUMBER_OF_BYTES_WRITE": 186439168,
+            "COUNT_MISC": 60520,
+            "SUM_TIMER_MISC": 47959118223048
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_tablespace_open_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/innodb_temp_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 57,
+            "SUM_TIMER_WRITE": 3497995710,
+            "SUM_NUMBER_OF_BYTES_WRITE": 933888,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/innodb/meb::redo_log_archive_file",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 27130,
+            "SUM_TIMER_WRITE": 565407663516,
+            "SUM_NUMBER_OF_BYTES_WRITE": 54307391,
+            "COUNT_MISC": 23542,
+            "SUM_TIMER_MISC": 43583070999798
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog_cache",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog_index",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          },
+          {
+            "EVENT_NAME": "wait/io/file/sql/binlog_index_cache",
+            "enabled": true,
+            "timed": true,
+            "COUNT_READ": 0,
+            "SUM_TIMER_READ": 0,
+            "SUM_NUMBER_OF_BYTES_READ": 0,
+            "COUNT_WRITE": 0,
+            "SUM_TIMER_WRITE": 0,
+            "SUM_NUMBER_OF_BYTES_WRITE": 0,
+            "COUNT_MISC": 0,
+            "SUM_TIMER_MISC": 0
+          }
+        ],
+        "stageDeltas": [
+          {
+            "EVENT_NAME": "stage/sql/committing alter table to storage engine",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for Binlog Group Commit ticket",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for commit lock",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for dependent transaction to commit",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for GTID to be committed",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/waiting for handler commit",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          },
+          {
+            "EVENT_NAME": "stage/sql/Waiting for preceding transaction to commit",
+            "enabled": false,
+            "timed": false,
+            "COUNT_STAR": null,
+            "SUM_TIMER_WAIT": null
+          }
+        ],
+        "units": "Timers are cumulative picoseconds; MISC includes sync/open/close/etc, not a dedicated fsync count. Missing/untimed values are null. Invalid intervals must not be used for comparisons."
+      }
+    }
+  ],
+  "verifiedDatasetGrowth": {
+    "payments": 26637,
+    "journals": 26637,
+    "ledgerEntries": 79641,
+    "reportedPayments": 26637.0,
+    "reportedJournals": 26637.0,
+    "reportedLedgerEntries": 79641.0
+  },
+  "warmupRejectionTimeBins": [
+    {
+      "minute": 1,
+      "rejected": 3,
+      "earliestSecond": 114.9,
+      "latestSecond": 115.1
+    },
+    {
+      "minute": 2,
+      "rejected": 8,
+      "earliestSecond": 134.0,
+      "latestSecond": 179.833333
+    },
+    {
+      "minute": 3,
+      "rejected": 7,
+      "earliestSecond": 210.9,
+      "latestSecond": 236.966666
+    },
+    {
+      "minute": 4,
+      "rejected": 5,
+      "earliestSecond": 255.6,
+      "latestSecond": 271.966666
+    },
+    {
+      "minute": 5,
+      "rejected": 11,
+      "earliestSecond": 345.9,
+      "latestSecond": 355.833333
+    },
+    {
+      "minute": 6,
+      "rejected": 9,
+      "earliestSecond": 378.866666,
+      "latestSecond": 396.966666
+    },
+    {
+      "minute": 8,
+      "rejected": 31,
+      "earliestSecond": 498.033333,
+      "latestSecond": 537.133333
+    },
+    {
+      "minute": 9,
+      "rejected": 13,
+      "earliestSecond": 567.933333,
+      "latestSecond": 585.866666
+    }
+  ]
+}

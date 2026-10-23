@@ -1,0 +1,3372 @@
+{
+  "at": "2026-10-19T15:07:59.4681731Z",
+  "scope": "Transaction census and rejected nonce batching experiment; retained read-only binlog cache diagnostics",
+  "candidateAdopted": false,
+  "protocol": {
+    "scope": "D0 diagnostic ABA; no R1 or stable-baseline certification",
+    "phaseOrder": [
+      "original-a1",
+      "candidate-b",
+      "original-a2"
+    ],
+    "eachPhase": {
+      "restart": true,
+      "warmupRate": 30,
+      "warmupSeconds": 30,
+      "normalRate": 50,
+      "normalSeconds": 60,
+      "highRate": 300,
+      "highSeconds": 15,
+      "observerMode": "full"
+    },
+    "fixed": {
+      "apiInflight": 16,
+      "paymentCapacity": "16shards x16",
+      "mysqlCpu": 4,
+      "mysqlMemoryGiB": 4,
+      "bufferPoolGiB": 1,
+      "flushOnCommit": 1,
+      "syncBinlog": 1,
+      "binlogGroupDelayMicros": 0,
+      "binlogNoDelayCount": 0,
+      "logWriterThreads": 1
+    },
+    "adoption": "Require financial/failure guards, real nonce grouping and lower per-accepted binlog-cache use than both controls; at both rates candidate completedTPS lower bound, rejection count and completionP99 upper bound must stay within the envelope of controls, with a throughput/rejection improvement beyond both controls in at least one rate. Otherwise reject or retain as unadopted evidence; never relax R1 gates.",
+    "limits": [
+      "30second settling is not the600second formal warmup",
+      "Shared host/storage, growing dataset and online observer intervals limit causal/statistical claims",
+      "Binlog cache use is not a committed-business-transaction or fsync counter",
+      "Final original JAR remains running pending analysis"
+    ]
+  },
+  "comparison": {
+    "runs": [
+      {
+        "label": "a1-warm",
+        "runId": "load-1792420829-11605d61",
+        "loadExit": 1,
+        "requests": 900,
+        "accepted": 898,
+        "posted": 898,
+        "rejected": 2,
+        "reasons": {
+          "API_INFLIGHT": 2.0,
+          "QUOTA_CAPACITY": 0.0,
+          "QUOTA_TIMEOUT": 0.0,
+          "QUOTA_INTERRUPTED": 0.0,
+          "QUOTA_UNAVAILABLE": 0.0,
+          "QUOTA_DATABASE": 0.0,
+          "PAYMENT_CAPACITY": 0.0,
+          "DATABASE_UNAVAILABLE": 0.0,
+          "DATABASE_TRANSIENT": 0.0,
+          "UNCLASSIFIED": 0.0
+        },
+        "tpsLower": 29.6,
+        "tpsUpper": 29.933333333333334,
+        "httpP99Micros": 349638,
+        "completionP99LowerMicros": 2460171,
+        "completionP99UpperMicros": 2827117,
+        "binlogCacheUses": 11807.0,
+        "binlogCacheUsesPerAccepted": 13.148106904231625,
+        "lossCounters": [
+          {
+            "counter": "Performance_schema_digest_lost",
+            "delta": 0.0
+          },
+          {
+            "counter": "Performance_schema_nested_statement_lost",
+            "delta": 0.0
+          }
+        ],
+        "nonce": null,
+        "report": {
+          "measurementVersion": 2,
+          "runId": "load-1792420829-11605d61",
+          "environment": "D0 shared developer host",
+          "generator": {
+            "maxHeapBytes": 536870912,
+            "availableProcessors": 2,
+            "pid": 36220
+          },
+          "scenario": "pay",
+          "generatedAt": "2026-10-19T14:41:04.754397400Z",
+          "observerMode": "full",
+          "onlineCompletionMeasured": true,
+          "onlineObserverTotalQueryMicros": 4336352,
+          "onlineObserverSnapshots": 100,
+          "retryReasons": {
+            "API_INFLIGHT": 2
+          },
+          "requestedRate": 30,
+          "requests": 900,
+          "acceptedOrRead": 898,
+          "rejected": 2,
+          "transportErrors": 0,
+          "notSentDueCapacity": 0,
+          "phaseSeconds": 30.023837,
+          "arrivalWindowSeconds": 30.0,
+          "acceptedOrReadPerSecond": 29.909568187437202,
+          "httpStatuses": {
+            "202": 898,
+            "503": 2
+          },
+          "httpLatencySamples": 900,
+          "httpP95Micros": 134233,
+          "httpP99Micros": 349638,
+          "scheduledHttpP99Micros": 358973,
+          "sendDelayP99Micros": 18395,
+          "postedPayments": 898,
+          "uniquePayments": 898,
+          "successfulPayments": 898,
+          "unfinishedAcceptedPayments": 0,
+          "failedAcceptedPayments": 0,
+          "oldestUnfinishedAcceptedMicros": 0,
+          "unacknowledgedCommittedPayments": 0,
+          "failedResponseWithoutVisiblePayment": 2,
+          "paymentStatuses": {
+            "SUCCEEDED": 898
+          },
+          "acceptedCompletionP99UpperMicros": 2827117,
+          "successfulCompletionP99LowerMicros": 2460171,
+          "successfulCompletionP99UpperMicros": 2827117,
+          "completedInArrivalWindowLower": 888,
+          "completedInArrivalWindowUpper": 898,
+          "completedPerArrivalSecondLower": 29.6,
+          "completedPerArrivalSecondUpper": 29.933333333333334,
+          "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+          "observerPollMillis": 250,
+          "observerSnapshots": 119,
+          "observerErrors": 0,
+          "observerAttempts": 119,
+          "observerTotalQueryMicros": 5123280,
+          "observerMaxQueryMicros": 580778,
+          "maxCommitVisibilityIntervalMicros": 393237,
+          "requestedRefunds": 0,
+          "refundHttpStatuses": {},
+          "refundedPayments": 0,
+          "journals": 898,
+          "ledgerRows": 2685,
+          "outboxBusinessTasks": 1796,
+          "ledgerDifferenceMinor": "0",
+          "unbalancedJournals": 0,
+          "moneyInvariantsPassed": true,
+          "correctnessPassed": false,
+          "referenceR1Certified": false,
+          "primaryPhaseStarted": "2026-10-19T14:40:29.482706400Z",
+          "primaryPhaseEnded": "2026-10-19T14:40:59.505746100Z",
+          "arrivalWindowEnded": "2026-10-19T14:40:59.482706400Z"
+        }
+      },
+      {
+        "label": "a1-normal",
+        "runId": "load-1792420871-e383cdbd",
+        "loadExit": 1,
+        "requests": 3000,
+        "accepted": 2995,
+        "posted": 2995,
+        "rejected": 5,
+        "reasons": {
+          "API_INFLIGHT": 5.0,
+          "QUOTA_CAPACITY": 0.0,
+          "QUOTA_TIMEOUT": 0.0,
+          "QUOTA_INTERRUPTED": 0.0,
+          "QUOTA_UNAVAILABLE": 0.0,
+          "QUOTA_DATABASE": 0.0,
+          "PAYMENT_CAPACITY": 0.0,
+          "DATABASE_UNAVAILABLE": 0.0,
+          "DATABASE_TRANSIENT": 0.0,
+          "UNCLASSIFIED": 0.0
+        },
+        "tpsLower": 49.61666666666667,
+        "tpsUpper": 49.916666666666664,
+        "httpP99Micros": 166695,
+        "completionP99LowerMicros": 163709,
+        "completionP99UpperMicros": 569285,
+        "binlogCacheUses": 36628.0,
+        "binlogCacheUsesPerAccepted": 12.229716193656094,
+        "lossCounters": [
+          {
+            "counter": "Performance_schema_digest_lost",
+            "delta": 0.0
+          },
+          {
+            "counter": "Performance_schema_nested_statement_lost",
+            "delta": 0.0
+          }
+        ],
+        "nonce": null,
+        "report": {
+          "measurementVersion": 2,
+          "runId": "load-1792420871-e383cdbd",
+          "environment": "D0 shared developer host",
+          "generator": {
+            "availableProcessors": 2,
+            "maxHeapBytes": 536870912,
+            "pid": 39772
+          },
+          "scenario": "pay",
+          "generatedAt": "2026-10-19T14:42:16.954929600Z",
+          "observerMode": "full",
+          "onlineCompletionMeasured": true,
+          "onlineObserverTotalQueryMicros": 11061315,
+          "onlineObserverSnapshots": 190,
+          "retryReasons": {
+            "API_INFLIGHT": 5
+          },
+          "requestedRate": 50,
+          "requests": 3000,
+          "acceptedOrRead": 2995,
+          "rejected": 5,
+          "transportErrors": 0,
+          "notSentDueCapacity": 0,
+          "phaseSeconds": 60.0445306,
+          "arrivalWindowSeconds": 60.0,
+          "acceptedOrReadPerSecond": 49.87964715640562,
+          "httpStatuses": {
+            "202": 2995,
+            "503": 5
+          },
+          "httpLatencySamples": 3000,
+          "httpP95Micros": 68490,
+          "httpP99Micros": 166695,
+          "scheduledHttpP99Micros": 178895,
+          "sendDelayP99Micros": 15842,
+          "postedPayments": 2995,
+          "uniquePayments": 2995,
+          "successfulPayments": 2995,
+          "unfinishedAcceptedPayments": 0,
+          "failedAcceptedPayments": 0,
+          "oldestUnfinishedAcceptedMicros": 0,
+          "unacknowledgedCommittedPayments": 0,
+          "failedResponseWithoutVisiblePayment": 5,
+          "paymentStatuses": {
+            "SUCCEEDED": 2995
+          },
+          "acceptedCompletionP99UpperMicros": 569285,
+          "successfulCompletionP99LowerMicros": 163709,
+          "successfulCompletionP99UpperMicros": 569285,
+          "completedInArrivalWindowLower": 2977,
+          "completedInArrivalWindowUpper": 2995,
+          "completedPerArrivalSecondLower": 49.61666666666667,
+          "completedPerArrivalSecondUpper": 49.916666666666664,
+          "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+          "observerPollMillis": 250,
+          "observerSnapshots": 208,
+          "observerErrors": 0,
+          "observerAttempts": 208,
+          "observerTotalQueryMicros": 12250732,
+          "observerMaxQueryMicros": 530190,
+          "maxCommitVisibilityIntervalMicros": 525153,
+          "requestedRefunds": 0,
+          "refundHttpStatuses": {},
+          "refundedPayments": 0,
+          "journals": 2995,
+          "ledgerRows": 8955,
+          "outboxBusinessTasks": 5990,
+          "ledgerDifferenceMinor": "0",
+          "unbalancedJournals": 0,
+          "moneyInvariantsPassed": true,
+          "correctnessPassed": false,
+          "referenceR1Certified": false,
+          "primaryPhaseStarted": "2026-10-19T14:41:11.387048200Z",
+          "primaryPhaseEnded": "2026-10-19T14:42:11.431044400Z",
+          "arrivalWindowEnded": "2026-10-19T14:42:11.387048200Z"
+        }
+      },
+      {
+        "label": "a1-high",
+        "runId": "load-1792420947-1a4c9989",
+        "loadExit": 1,
+        "requests": 4500,
+        "accepted": 1783,
+        "posted": 1783,
+        "rejected": 2717,
+        "reasons": {
+          "API_INFLIGHT": 1653.0,
+          "QUOTA_CAPACITY": 0.0,
+          "QUOTA_TIMEOUT": 0.0,
+          "QUOTA_INTERRUPTED": 0.0,
+          "QUOTA_UNAVAILABLE": 0.0,
+          "QUOTA_DATABASE": 0.0,
+          "PAYMENT_CAPACITY": 1064.0,
+          "DATABASE_UNAVAILABLE": 0.0,
+          "DATABASE_TRANSIENT": 0.0,
+          "UNCLASSIFIED": 0.0
+        },
+        "tpsLower": 99.73333333333333,
+        "tpsUpper": 104.53333333333333,
+        "httpP99Micros": 398124,
+        "completionP99LowerMicros": 3163058,
+        "completionP99UpperMicros": 3598776,
+        "binlogCacheUses": 22515.0,
+        "binlogCacheUsesPerAccepted": 12.627593942793045,
+        "lossCounters": [
+          {
+            "counter": "Performance_schema_digest_lost",
+            "delta": 0.0
+          },
+          {
+            "counter": "Performance_schema_nested_statement_lost",
+            "delta": 0.0
+          }
+        ],
+        "nonce": null,
+        "report": {
+          "measurementVersion": 2,
+          "runId": "load-1792420947-1a4c9989",
+          "environment": "D0 shared developer host",
+          "generator": {
+            "maxHeapBytes": 536870912,
+            "pid": 27224,
+            "availableProcessors": 2
+          },
+          "scenario": "pay",
+          "generatedAt": "2026-10-19T14:42:48.493257700Z",
+          "observerMode": "full",
+          "onlineCompletionMeasured": true,
+          "onlineObserverTotalQueryMicros": 6278428,
+          "onlineObserverSnapshots": 35,
+          "retryReasons": {
+            "API_INFLIGHT": 1653,
+            "PAYMENT_CAPACITY": 1064
+          },
+          "requestedRate": 300,
+          "requests": 4500,
+          "acceptedOrRead": 1783,
+          "rejected": 2717,
+          "transportErrors": 0,
+          "notSentDueCapacity": 0,
+          "phaseSeconds": 15.0909406,
+          "arrivalWindowSeconds": 15.0,
+          "acceptedOrReadPerSecond": 118.15035571738981,
+          "httpStatuses": {
+            "202": 1783,
+            "503": 2717
+          },
+          "httpLatencySamples": 4500,
+          "httpP95Micros": 256023,
+          "httpP99Micros": 398124,
+          "scheduledHttpP99Micros": 444019,
+          "sendDelayP99Micros": 66136,
+          "postedPayments": 1783,
+          "uniquePayments": 1783,
+          "successfulPayments": 1783,
+          "unfinishedAcceptedPayments": 0,
+          "failedAcceptedPayments": 0,
+          "oldestUnfinishedAcceptedMicros": 0,
+          "unacknowledgedCommittedPayments": 0,
+          "failedResponseWithoutVisiblePayment": 2717,
+          "paymentStatuses": {
+            "SUCCEEDED": 1783
+          },
+          "acceptedCompletionP99UpperMicros": 3598776,
+          "successfulCompletionP99LowerMicros": 3163058,
+          "successfulCompletionP99UpperMicros": 3598776,
+          "completedInArrivalWindowLower": 1496,
+          "completedInArrivalWindowUpper": 1568,
+          "completedPerArrivalSecondLower": 99.73333333333333,
+          "completedPerArrivalSecondUpper": 104.53333333333333,
+          "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+          "observerPollMillis": 250,
+          "observerSnapshots": 53,
+          "observerErrors": 0,
+          "observerAttempts": 53,
+          "observerTotalQueryMicros": 7328240,
+          "observerMaxQueryMicros": 1805817,
+          "maxCommitVisibilityIntervalMicros": 1798482,
+          "requestedRefunds": 0,
+          "refundHttpStatuses": {},
+          "refundedPayments": 0,
+          "journals": 1783,
+          "ledgerRows": 5328,
+          "outboxBusinessTasks": 3566,
+          "ledgerDifferenceMinor": "0",
+          "unbalancedJournals": 0,
+          "moneyInvariantsPassed": true,
+          "correctnessPassed": false,
+          "referenceR1Certified": false,
+          "primaryPhaseStarted": "2026-10-19T14:42:27.867976Z",
+          "primaryPhaseEnded": "2026-10-19T14:42:42.958503200Z",
+          "arrivalWindowEnded": "2026-10-19T14:42:42.867976Z"
+        }
+      },
+      {
+        "label": "b-warm",
+        "runId": "load-1792421056-6b7057d2",
+        "loadExit": 0,
+        "requests": 900,
+        "accepted": 900,
+        "posted": 900,
+        "rejected": 0,
+        "reasons": {
+          "API_INFLIGHT": 0.0,
+          "QUOTA_CAPACITY": 0.0,
+          "QUOTA_TIMEOUT": 0.0,
+          "QUOTA_INTERRUPTED": 0.0,
+          "QUOTA_UNAVAILABLE": 0.0,
+          "QUOTA_DATABASE": 0.0,
+          "PAYMENT_CAPACITY": 0.0,
+          "DATABASE_UNAVAILABLE": 0.0,
+          "DATABASE_TRANSIENT": 0.0,
+          "UNCLASSIFIED": 0.0
+        },
+        "tpsLower": 29.8,
+        "tpsUpper": 30.0,
+        "httpP99Micros": 364348,
+        "completionP99LowerMicros": 846096,
+        "completionP99UpperMicros": 1145443,
+        "binlogCacheUses": 11910.0,
+        "binlogCacheUsesPerAccepted": 13.233333333333333,
+        "lossCounters": [
+          {
+            "counter": "Performance_schema_digest_lost",
+            "delta": 0.0
+          },
+          {
+            "counter": "Performance_schema_nested_statement_lost",
+            "delta": 0.0
+          }
+        ],
+        "nonce": {
+          "groups": 869.0,
+          "requests": 900.0,
+          "meanGroupSize": 1.0356731875719218,
+          "failedGroups": 0
+        },
+        "report": {
+          "measurementVersion": 2,
+          "runId": "load-1792421056-6b7057d2",
+          "environment": "D0 shared developer host",
+          "generator": {
+            "maxHeapBytes": 536870912,
+            "availableProcessors": 2,
+            "pid": 31960
+          },
+          "scenario": "pay",
+          "generatedAt": "2026-10-19T14:44:46.748555800Z",
+          "observerMode": "full",
+          "onlineCompletionMeasured": true,
+          "onlineObserverTotalQueryMicros": 4247083,
+          "onlineObserverSnapshots": 101,
+          "retryReasons": {},
+          "requestedRate": 30,
+          "requests": 900,
+          "acceptedOrRead": 900,
+          "rejected": 0,
+          "transportErrors": 0,
+          "notSentDueCapacity": 0,
+          "phaseSeconds": 30.0476522,
+          "arrivalWindowSeconds": 30.0,
+          "acceptedOrReadPerSecond": 29.952423371034623,
+          "httpStatuses": {
+            "202": 900
+          },
+          "httpLatencySamples": 900,
+          "httpP95Micros": 243927,
+          "httpP99Micros": 364348,
+          "scheduledHttpP99Micros": 377004,
+          "sendDelayP99Micros": 16360,
+          "postedPayments": 900,
+          "uniquePayments": 900,
+          "successfulPayments": 900,
+          "unfinishedAcceptedPayments": 0,
+          "failedAcceptedPayments": 0,
+          "oldestUnfinishedAcceptedMicros": 0,
+          "unacknowledgedCommittedPayments": 0,
+          "failedResponseWithoutVisiblePayment": 0,
+          "paymentStatuses": {
+            "SUCCEEDED": 900
+          },
+          "acceptedCompletionP99UpperMicros": 1145443,
+          "successfulCompletionP99LowerMicros": 846096,
+          "successfulCompletionP99UpperMicros": 1145443,
+          "completedInArrivalWindowLower": 894,
+          "completedInArrivalWindowUpper": 900,
+          "completedPerArrivalSecondLower": 29.8,
+          "completedPerArrivalSecondUpper": 30.0,
+          "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+          "observerPollMillis": 250,
+          "observerSnapshots": 103,
+          "observerErrors": 0,
+          "observerAttempts": 103,
+          "observerTotalQueryMicros": 4354006,
+          "observerMaxQueryMicros": 432898,
+          "maxCommitVisibilityIntervalMicros": 410095,
+          "requestedRefunds": 0,
+          "refundHttpStatuses": {},
+          "refundedPayments": 0,
+          "journals": 900,
+          "ledgerRows": 2691,
+          "outboxBusinessTasks": 1800,
+          "ledgerDifferenceMinor": "0",
+          "unbalancedJournals": 0,
+          "moneyInvariantsPassed": true,
+          "correctnessPassed": true,
+          "referenceR1Certified": false,
+          "primaryPhaseStarted": "2026-10-19T14:44:16.337067100Z",
+          "primaryPhaseEnded": "2026-10-19T14:44:46.384310700Z",
+          "arrivalWindowEnded": "2026-10-19T14:44:46.337067100Z"
+        }
+      },
+      {
+        "label": "b-normal",
+        "runId": "load-1792421094-b210ac51",
+        "loadExit": 1,
+        "requests": 3000,
+        "accepted": 2989,
+        "posted": 2989,
+        "rejected": 11,
+        "reasons": {
+          "API_INFLIGHT": 11.0,
+          "QUOTA_CAPACITY": 0.0,
+          "QUOTA_TIMEOUT": 0.0,
+          "QUOTA_INTERRUPTED": 0.0,
+          "QUOTA_UNAVAILABLE": 0.0,
+          "QUOTA_DATABASE": 0.0,
+          "PAYMENT_CAPACITY": 0.0,
+          "DATABASE_UNAVAILABLE": 0.0,
+          "DATABASE_TRANSIENT": 0.0,
+          "UNCLASSIFIED": 0.0
+        },
+        "tpsLower": 49.416666666666664,
+        "tpsUpper": 49.5,
+        "httpP99Micros": 247439,
+        "completionP99LowerMicros": 375826,
+        "completionP99UpperMicros": 776199,
+        "binlogCacheUses": 36761.0,
+        "binlogCacheUsesPerAccepted": 12.29876212780194,
+        "lossCounters": [
+          {
+            "counter": "Performance_schema_digest_lost",
+            "delta": 0.0
+          },
+          {
+            "counter": "Performance_schema_nested_statement_lost",
+            "delta": 0.0
+          }
+        ],
+        "nonce": {
+          "groups": 2909.0,
+          "requests": 2989.0,
+          "meanGroupSize": 1.0275008594018562,
+          "failedGroups": 0
+        },
+        "report": {
+          "measurementVersion": 2,
+          "runId": "load-1792421094-b210ac51",
+          "environment": "D0 shared developer host",
+          "generator": {
+            "pid": 39528,
+            "availableProcessors": 2,
+            "maxHeapBytes": 536870912
+          },
+          "scenario": "pay",
+          "generatedAt": "2026-10-19T14:46:00.595966800Z",
+          "observerMode": "full",
+          "onlineCompletionMeasured": true,
+          "onlineObserverTotalQueryMicros": 11244918,
+          "onlineObserverSnapshots": 191,
+          "retryReasons": {
+            "API_INFLIGHT": 11
+          },
+          "requestedRate": 50,
+          "requests": 3000,
+          "acceptedOrRead": 2989,
+          "rejected": 11,
+          "transportErrors": 0,
+          "notSentDueCapacity": 0,
+          "phaseSeconds": 60.1322045,
+          "arrivalWindowSeconds": 60.0,
+          "acceptedOrReadPerSecond": 49.70714153677835,
+          "httpStatuses": {
+            "202": 2989,
+            "503": 11
+          },
+          "httpLatencySamples": 3000,
+          "httpP95Micros": 111786,
+          "httpP99Micros": 247439,
+          "scheduledHttpP99Micros": 251092,
+          "sendDelayP99Micros": 15770,
+          "postedPayments": 2989,
+          "uniquePayments": 2989,
+          "successfulPayments": 2989,
+          "unfinishedAcceptedPayments": 0,
+          "failedAcceptedPayments": 0,
+          "oldestUnfinishedAcceptedMicros": 0,
+          "unacknowledgedCommittedPayments": 0,
+          "failedResponseWithoutVisiblePayment": 11,
+          "paymentStatuses": {
+            "SUCCEEDED": 2989
+          },
+          "acceptedCompletionP99UpperMicros": 776199,
+          "successfulCompletionP99LowerMicros": 375826,
+          "successfulCompletionP99UpperMicros": 776199,
+          "completedInArrivalWindowLower": 2965,
+          "completedInArrivalWindowUpper": 2970,
+          "completedPerArrivalSecondLower": 49.416666666666664,
+          "completedPerArrivalSecondUpper": 49.5,
+          "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+          "observerPollMillis": 250,
+          "observerSnapshots": 209,
+          "observerErrors": 0,
+          "observerAttempts": 209,
+          "observerTotalQueryMicros": 12421460,
+          "observerMaxQueryMicros": 608188,
+          "maxCommitVisibilityIntervalMicros": 603254,
+          "requestedRefunds": 0,
+          "refundHttpStatuses": {},
+          "refundedPayments": 0,
+          "journals": 2989,
+          "ledgerRows": 8937,
+          "outboxBusinessTasks": 5978,
+          "ledgerDifferenceMinor": "0",
+          "unbalancedJournals": 0,
+          "moneyInvariantsPassed": true,
+          "correctnessPassed": false,
+          "referenceR1Certified": false,
+          "primaryPhaseStarted": "2026-10-19T14:44:54.680502700Z",
+          "primaryPhaseEnded": "2026-10-19T14:45:54.811781700Z",
+          "arrivalWindowEnded": "2026-10-19T14:45:54.680502700Z"
+        }
+      },
+      {
+        "label": "b-high",
+        "runId": "load-1792421172-491cf29a",
+        "loadExit": 1,
+        "requests": 4500,
+        "accepted": 1762,
+        "posted": 1762,
+        "rejected": 2738,
+        "reasons": {
+          "API_INFLIGHT": 2350.0,
+          "QUOTA_CAPACITY": 0.0,
+          "QUOTA_TIMEOUT": 0.0,
+          "QUOTA_INTERRUPTED": 0.0,
+          "QUOTA_UNAVAILABLE": 0.0,
+          "QUOTA_DATABASE": 0.0,
+          "PAYMENT_CAPACITY": 388.0,
+          "DATABASE_UNAVAILABLE": 0.0,
+          "DATABASE_TRANSIENT": 0.0,
+          "UNCLASSIFIED": 0.0
+        },
+        "tpsLower": 100.06666666666666,
+        "tpsUpper": 102.46666666666667,
+        "httpP99Micros": 470859,
+        "completionP99LowerMicros": 3332607,
+        "completionP99UpperMicros": 3719520,
+        "binlogCacheUses": 19093.0,
+        "binlogCacheUsesPerAccepted": 10.835981838819523,
+        "lossCounters": [
+          {
+            "counter": "Performance_schema_digest_lost",
+            "delta": 0.0
+          },
+          {
+            "counter": "Performance_schema_nested_statement_lost",
+            "delta": 0.0
+          }
+        ],
+        "nonce": {
+          "groups": 550.0,
+          "requests": 2150.0,
+          "meanGroupSize": 3.909090909090909,
+          "failedGroups": 0
+        },
+        "report": {
+          "measurementVersion": 2,
+          "runId": "load-1792421172-491cf29a",
+          "environment": "D0 shared developer host",
+          "generator": {
+            "pid": 38452,
+            "availableProcessors": 2,
+            "maxHeapBytes": 536870912
+          },
+          "scenario": "pay",
+          "generatedAt": "2026-10-19T14:46:33.539371500Z",
+          "observerMode": "full",
+          "onlineCompletionMeasured": true,
+          "onlineObserverTotalQueryMicros": 5370319,
+          "onlineObserverSnapshots": 39,
+          "retryReasons": {
+            "API_INFLIGHT": 2350,
+            "PAYMENT_CAPACITY": 388
+          },
+          "requestedRate": 300,
+          "requests": 4500,
+          "acceptedOrRead": 1762,
+          "rejected": 2738,
+          "transportErrors": 0,
+          "notSentDueCapacity": 0,
+          "phaseSeconds": 15.0810103,
+          "arrivalWindowSeconds": 15.0,
+          "acceptedOrReadPerSecond": 116.8356738009787,
+          "httpStatuses": {
+            "202": 1762,
+            "503": 2738
+          },
+          "httpLatencySamples": 4500,
+          "httpP95Micros": 252392,
+          "httpP99Micros": 470859,
+          "scheduledHttpP99Micros": 535364,
+          "sendDelayP99Micros": 91081,
+          "postedPayments": 1762,
+          "uniquePayments": 1762,
+          "successfulPayments": 1762,
+          "unfinishedAcceptedPayments": 0,
+          "failedAcceptedPayments": 0,
+          "oldestUnfinishedAcceptedMicros": 0,
+          "unacknowledgedCommittedPayments": 0,
+          "failedResponseWithoutVisiblePayment": 2738,
+          "paymentStatuses": {
+            "SUCCEEDED": 1762
+          },
+          "acceptedCompletionP99UpperMicros": 3719520,
+          "successfulCompletionP99LowerMicros": 3332607,
+          "successfulCompletionP99UpperMicros": 3719520,
+          "completedInArrivalWindowLower": 1501,
+          "completedInArrivalWindowUpper": 1537,
+          "completedPerArrivalSecondLower": 100.06666666666666,
+          "completedPerArrivalSecondUpper": 102.46666666666667,
+          "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+          "observerPollMillis": 250,
+          "observerSnapshots": 57,
+          "observerErrors": 0,
+          "observerAttempts": 57,
+          "observerTotalQueryMicros": 6454638,
+          "observerMaxQueryMicros": 1462034,
+          "maxCommitVisibilityIntervalMicros": 1456246,
+          "requestedRefunds": 0,
+          "refundHttpStatuses": {},
+          "refundedPayments": 0,
+          "journals": 1762,
+          "ledgerRows": 5267,
+          "outboxBusinessTasks": 3524,
+          "ledgerDifferenceMinor": "0",
+          "unbalancedJournals": 0,
+          "moneyInvariantsPassed": true,
+          "correctnessPassed": false,
+          "referenceR1Certified": false,
+          "primaryPhaseStarted": "2026-10-19T14:46:12.750757Z",
+          "primaryPhaseEnded": "2026-10-19T14:46:27.831464900Z",
+          "arrivalWindowEnded": "2026-10-19T14:46:27.750757Z"
+        }
+      },
+      {
+        "label": "a2-warm",
+        "runId": "load-1792421281-96aa7db5",
+        "loadExit": 0,
+        "requests": 900,
+        "accepted": 900,
+        "posted": 900,
+        "rejected": 0,
+        "reasons": {
+          "API_INFLIGHT": 0.0,
+          "QUOTA_CAPACITY": 0.0,
+          "QUOTA_TIMEOUT": 0.0,
+          "QUOTA_INTERRUPTED": 0.0,
+          "QUOTA_UNAVAILABLE": 0.0,
+          "QUOTA_DATABASE": 0.0,
+          "PAYMENT_CAPACITY": 0.0,
+          "DATABASE_UNAVAILABLE": 0.0,
+          "DATABASE_TRANSIENT": 0.0,
+          "UNCLASSIFIED": 0.0
+        },
+        "tpsLower": 29.7,
+        "tpsUpper": 29.866666666666667,
+        "httpP99Micros": 274745,
+        "completionP99LowerMicros": 1926152,
+        "completionP99UpperMicros": 2266184,
+        "binlogCacheUses": 11844.0,
+        "binlogCacheUsesPerAccepted": 13.16,
+        "lossCounters": [
+          {
+            "counter": "Performance_schema_digest_lost",
+            "delta": 0.0
+          },
+          {
+            "counter": "Performance_schema_nested_statement_lost",
+            "delta": 0.0
+          }
+        ],
+        "nonce": null,
+        "report": {
+          "measurementVersion": 2,
+          "runId": "load-1792421281-96aa7db5",
+          "environment": "D0 shared developer host",
+          "generator": {
+            "maxHeapBytes": 536870912,
+            "availableProcessors": 2,
+            "pid": 2448
+          },
+          "scenario": "pay",
+          "generatedAt": "2026-10-19T14:48:32.208904Z",
+          "observerMode": "full",
+          "onlineCompletionMeasured": true,
+          "onlineObserverTotalQueryMicros": 4489415,
+          "onlineObserverSnapshots": 100,
+          "retryReasons": {},
+          "requestedRate": 30,
+          "requests": 900,
+          "acceptedOrRead": 900,
+          "rejected": 0,
+          "transportErrors": 0,
+          "notSentDueCapacity": 0,
+          "phaseSeconds": 30.0317218,
+          "arrivalWindowSeconds": 30.0,
+          "acceptedOrReadPerSecond": 29.968311706989773,
+          "httpStatuses": {
+            "202": 900
+          },
+          "httpLatencySamples": 900,
+          "httpP95Micros": 149608,
+          "httpP99Micros": 274745,
+          "scheduledHttpP99Micros": 287862,
+          "sendDelayP99Micros": 17419,
+          "postedPayments": 900,
+          "uniquePayments": 900,
+          "successfulPayments": 900,
+          "unfinishedAcceptedPayments": 0,
+          "failedAcceptedPayments": 0,
+          "oldestUnfinishedAcceptedMicros": 0,
+          "unacknowledgedCommittedPayments": 0,
+          "failedResponseWithoutVisiblePayment": 0,
+          "paymentStatuses": {
+            "SUCCEEDED": 900
+          },
+          "acceptedCompletionP99UpperMicros": 2266184,
+          "successfulCompletionP99LowerMicros": 1926152,
+          "successfulCompletionP99UpperMicros": 2266184,
+          "completedInArrivalWindowLower": 891,
+          "completedInArrivalWindowUpper": 896,
+          "completedPerArrivalSecondLower": 29.7,
+          "completedPerArrivalSecondUpper": 29.866666666666667,
+          "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+          "observerPollMillis": 250,
+          "observerSnapshots": 103,
+          "observerErrors": 0,
+          "observerAttempts": 103,
+          "observerTotalQueryMicros": 4629694,
+          "observerMaxQueryMicros": 497376,
+          "maxCommitVisibilityIntervalMicros": 426797,
+          "requestedRefunds": 0,
+          "refundHttpStatuses": {},
+          "refundedPayments": 0,
+          "journals": 900,
+          "ledgerRows": 2691,
+          "outboxBusinessTasks": 1800,
+          "ledgerDifferenceMinor": "0",
+          "unbalancedJournals": 0,
+          "moneyInvariantsPassed": true,
+          "correctnessPassed": true,
+          "referenceR1Certified": false,
+          "primaryPhaseStarted": "2026-10-19T14:48:01.525449300Z",
+          "primaryPhaseEnded": "2026-10-19T14:48:31.556956200Z",
+          "arrivalWindowEnded": "2026-10-19T14:48:31.525449300Z"
+        }
+      },
+      {
+        "label": "a2-normal",
+        "runId": "load-1792421320-79d54c26",
+        "loadExit": 1,
+        "requests": 3000,
+        "accepted": 2987,
+        "posted": 2987,
+        "rejected": 13,
+        "reasons": {
+          "API_INFLIGHT": 13.0,
+          "QUOTA_CAPACITY": 0.0,
+          "QUOTA_TIMEOUT": 0.0,
+          "QUOTA_INTERRUPTED": 0.0,
+          "QUOTA_UNAVAILABLE": 0.0,
+          "QUOTA_DATABASE": 0.0,
+          "PAYMENT_CAPACITY": 0.0,
+          "DATABASE_UNAVAILABLE": 0.0,
+          "DATABASE_TRANSIENT": 0.0,
+          "UNCLASSIFIED": 0.0
+        },
+        "tpsLower": 49.38333333333333,
+        "tpsUpper": 49.78333333333333,
+        "httpP99Micros": 269975,
+        "completionP99LowerMicros": 407113,
+        "completionP99UpperMicros": 878755,
+        "binlogCacheUses": 36640.0,
+        "binlogCacheUsesPerAccepted": 12.266488115165718,
+        "lossCounters": [
+          {
+            "counter": "Performance_schema_digest_lost",
+            "delta": 0.0
+          },
+          {
+            "counter": "Performance_schema_nested_statement_lost",
+            "delta": 0.0
+          }
+        ],
+        "nonce": null,
+        "report": {
+          "measurementVersion": 2,
+          "runId": "load-1792421320-79d54c26",
+          "environment": "D0 shared developer host",
+          "generator": {
+            "maxHeapBytes": 536870912,
+            "availableProcessors": 2,
+            "pid": 20896
+          },
+          "scenario": "pay",
+          "generatedAt": "2026-10-19T14:49:46.031811200Z",
+          "observerMode": "full",
+          "onlineCompletionMeasured": true,
+          "onlineObserverTotalQueryMicros": 12450533,
+          "onlineObserverSnapshots": 187,
+          "retryReasons": {
+            "API_INFLIGHT": 13
+          },
+          "requestedRate": 50,
+          "requests": 3000,
+          "acceptedOrRead": 2987,
+          "rejected": 13,
+          "transportErrors": 0,
+          "notSentDueCapacity": 0,
+          "phaseSeconds": 60.0131193,
+          "arrivalWindowSeconds": 60.0,
+          "acceptedOrReadPerSecond": 49.772450338204635,
+          "httpStatuses": {
+            "202": 2987,
+            "503": 13
+          },
+          "httpLatencySamples": 3000,
+          "httpP95Micros": 93006,
+          "httpP99Micros": 269975,
+          "scheduledHttpP99Micros": 270368,
+          "sendDelayP99Micros": 15698,
+          "postedPayments": 2987,
+          "uniquePayments": 2987,
+          "successfulPayments": 2987,
+          "unfinishedAcceptedPayments": 0,
+          "failedAcceptedPayments": 0,
+          "oldestUnfinishedAcceptedMicros": 0,
+          "unacknowledgedCommittedPayments": 0,
+          "failedResponseWithoutVisiblePayment": 13,
+          "paymentStatuses": {
+            "SUCCEEDED": 2987
+          },
+          "acceptedCompletionP99UpperMicros": 878755,
+          "successfulCompletionP99LowerMicros": 407113,
+          "successfulCompletionP99UpperMicros": 878755,
+          "completedInArrivalWindowLower": 2963,
+          "completedInArrivalWindowUpper": 2987,
+          "completedPerArrivalSecondLower": 49.38333333333333,
+          "completedPerArrivalSecondUpper": 49.78333333333333,
+          "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+          "observerPollMillis": 250,
+          "observerSnapshots": 204,
+          "observerErrors": 0,
+          "observerAttempts": 204,
+          "observerTotalQueryMicros": 13687843,
+          "observerMaxQueryMicros": 679661,
+          "maxCommitVisibilityIntervalMicros": 671240,
+          "requestedRefunds": 0,
+          "refundHttpStatuses": {},
+          "refundedPayments": 0,
+          "journals": 2987,
+          "ledgerRows": 8931,
+          "outboxBusinessTasks": 5974,
+          "ledgerDifferenceMinor": "0",
+          "unbalancedJournals": 0,
+          "moneyInvariantsPassed": true,
+          "correctnessPassed": false,
+          "referenceR1Certified": false,
+          "primaryPhaseStarted": "2026-10-19T14:48:40.404067500Z",
+          "primaryPhaseEnded": "2026-10-19T14:49:40.416402300Z",
+          "arrivalWindowEnded": "2026-10-19T14:49:40.404067500Z"
+        }
+      },
+      {
+        "label": "a2-high",
+        "runId": "load-1792421403-632f23ec",
+        "loadExit": 1,
+        "requests": 4500,
+        "accepted": 1751,
+        "posted": 1751,
+        "rejected": 2749,
+        "reasons": {
+          "API_INFLIGHT": 1648.0,
+          "QUOTA_CAPACITY": 0.0,
+          "QUOTA_TIMEOUT": 0.0,
+          "QUOTA_INTERRUPTED": 0.0,
+          "QUOTA_UNAVAILABLE": 0.0,
+          "QUOTA_DATABASE": 0.0,
+          "PAYMENT_CAPACITY": 1101.0,
+          "DATABASE_UNAVAILABLE": 0.0,
+          "DATABASE_TRANSIENT": 0.0,
+          "UNCLASSIFIED": 0.0
+        },
+        "tpsLower": 100.06666666666666,
+        "tpsUpper": 100.6,
+        "httpP99Micros": 479592,
+        "completionP99LowerMicros": 3361314,
+        "completionP99UpperMicros": 3758951,
+        "binlogCacheUses": 22281.0,
+        "binlogCacheUsesPerAccepted": 12.724728726442033,
+        "lossCounters": [
+          {
+            "counter": "Performance_schema_digest_lost",
+            "delta": 0.0
+          },
+          {
+            "counter": "Performance_schema_nested_statement_lost",
+            "delta": 0.0
+          }
+        ],
+        "nonce": null,
+        "report": {
+          "measurementVersion": 2,
+          "runId": "load-1792421403-632f23ec",
+          "environment": "D0 shared developer host",
+          "generator": {
+            "pid": 7144,
+            "maxHeapBytes": 536870912,
+            "availableProcessors": 2
+          },
+          "scenario": "pay",
+          "generatedAt": "2026-10-19T14:50:24.629160500Z",
+          "observerMode": "full",
+          "onlineCompletionMeasured": true,
+          "onlineObserverTotalQueryMicros": 5711765,
+          "onlineObserverSnapshots": 38,
+          "retryReasons": {
+            "API_INFLIGHT": 1648,
+            "PAYMENT_CAPACITY": 1101
+          },
+          "requestedRate": 300,
+          "requests": 4500,
+          "acceptedOrRead": 1751,
+          "rejected": 2749,
+          "transportErrors": 0,
+          "notSentDueCapacity": 0,
+          "phaseSeconds": 15.2114433,
+          "arrivalWindowSeconds": 15.0,
+          "acceptedOrReadPerSecond": 115.1107074763905,
+          "httpStatuses": {
+            "202": 1751,
+            "503": 2749
+          },
+          "httpLatencySamples": 4500,
+          "httpP95Micros": 241651,
+          "httpP99Micros": 479592,
+          "scheduledHttpP99Micros": 557941,
+          "sendDelayP99Micros": 93689,
+          "postedPayments": 1751,
+          "uniquePayments": 1751,
+          "successfulPayments": 1751,
+          "unfinishedAcceptedPayments": 0,
+          "failedAcceptedPayments": 0,
+          "oldestUnfinishedAcceptedMicros": 0,
+          "unacknowledgedCommittedPayments": 0,
+          "failedResponseWithoutVisiblePayment": 2749,
+          "paymentStatuses": {
+            "SUCCEEDED": 1751
+          },
+          "acceptedCompletionP99UpperMicros": 3758951,
+          "successfulCompletionP99LowerMicros": 3361314,
+          "successfulCompletionP99UpperMicros": 3758951,
+          "completedInArrivalWindowLower": 1501,
+          "completedInArrivalWindowUpper": 1509,
+          "completedPerArrivalSecondLower": 100.06666666666666,
+          "completedPerArrivalSecondUpper": 100.6,
+          "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+          "observerPollMillis": 250,
+          "observerSnapshots": 56,
+          "observerErrors": 0,
+          "observerAttempts": 56,
+          "observerTotalQueryMicros": 6743882,
+          "observerMaxQueryMicros": 1629957,
+          "maxCommitVisibilityIntervalMicros": 1614550,
+          "requestedRefunds": 0,
+          "refundHttpStatuses": {},
+          "refundedPayments": 0,
+          "journals": 1751,
+          "ledgerRows": 5229,
+          "outboxBusinessTasks": 3502,
+          "ledgerDifferenceMinor": "0",
+          "unbalancedJournals": 0,
+          "moneyInvariantsPassed": true,
+          "correctnessPassed": false,
+          "referenceR1Certified": false,
+          "primaryPhaseStarted": "2026-10-19T14:50:03.816673Z",
+          "primaryPhaseEnded": "2026-10-19T14:50:19.027694800Z",
+          "arrivalWindowEnded": "2026-10-19T14:50:18.816673Z"
+        }
+      }
+    ],
+    "decision": {
+      "withinControlEnvelopeAtBothRates": true,
+      "throughputAndRejectionsImproveBeyondBothControls": false,
+      "cacheUsesPerAcceptedLowerThanBothControlsAtBothRates": false,
+      "adopt": false,
+      "referenceR1Certified": false
+    }
+  },
+  "candidateSourceHashes": [
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\PlatformApplication.java",
+      "sha256": "C0AA64A56D15FFC1E016311C05C32C7B73F8322722AA6FCB0DBB431A63002DB5"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelApi.java",
+      "sha256": "4EF34DD85FC0C0DA548A589E2CC4D6FDFA2AA1F71A22B57AA12524A3636D5CC2"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelBillReader.java",
+      "sha256": "AC17734A3AF677F91FC330D6DD7C63CE04EC0B93E01463E278FB3F0F70EC8770"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelGateway.java",
+      "sha256": "FA7BE9AE1661275E75A81372BEEEC4E563854470B9663A47733B63D2C8EC3303"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\InboxService.java",
+      "sha256": "61EC28F6103A7ADCC0B094A3E68EEDBC7E247FFA0A5C091B73C02B74E225E4D5"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\ApiException.java",
+      "sha256": "3A7D73EDE525C822B60F9489AA568E7D5E3E33B60D60D1089BAEDBD0967B8514"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\ChannelResult.java",
+      "sha256": "0DE610320D74937EDD9543AD6C32FCFDFE0F635113FD87A3776BF0C0602730FD"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\Csv.java",
+      "sha256": "DF3BCE95879D4D73B653E820CEDB0D159FA0116B3CF7BC99792B65FA1FE54EDF"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\KeyVault.java",
+      "sha256": "7CFDAFDDD810C3B75826820A3CD31CE4438D1560CD96E18441A3165B33C7099D"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\MoneyRules.java",
+      "sha256": "21D4A0CC537302C4DCD164A1E817C062591B3CD84B614FA5BCFB11FAAECF97F1"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\NotificationPolicy.java",
+      "sha256": "041BF8A83196E983C04D378A465764FFFCB7C64622AAEAE9993D6DF7ECE89134"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\Signatures.java",
+      "sha256": "8C217871C6619F3A7236DEB7106E5728A81F01C9A81071C919D6454537DB6AA3"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\ledger\\LedgerService.java",
+      "sha256": "9E785F60954A62E9B81B83DC9339A9D852F8526B1310C0A3BBDC9C4FD58DD264"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\merchant\\MerchantService.java",
+      "sha256": "76753C32613641EF11090AA764E94B73A509339C765C93B8153B50EE1EE953CF"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\BusinessMetrics.java",
+      "sha256": "A5BA91AD416CB488F1311CA51C42CFCDFF46536D2CD7623ECEF1057CB95D6307"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\LocalDemoData.java",
+      "sha256": "EC0AFB6CB06139786A86C492CC3833278599FD3C7BAA110384673690F394229F"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\NotificationService.java",
+      "sha256": "55C7F9D6180D03FA0525C110BB75E1D2BA29388E01A23FFEA4FE8B18F51EF689"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\TaskCompletions.java",
+      "sha256": "A167F25A7935B6B86E8149744C2B657403C7F70DAD0EEC2F933741EC90C80F3D"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\TaskWorker.java",
+      "sha256": "862A87A0053DF5B53CF618EEC5B12A92280DD0545C5F9120B4CB0F2D03A5D9D1"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\outbox\\OutboxService.java",
+      "sha256": "21EDDDB84195B8A10282950E9F7AEC2FFB793F265D976717592593B20A46F6DD"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\outbox\\TaskQueue.java",
+      "sha256": "6717155E89B688E11BDF3C230A0B9498491EBE60910FEFF7362ED3AF82C1FEBD"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\payment\\PaymentService.java",
+      "sha256": "682987A04996BA73043000779BCA137671C80A507B7628046A6C4ECCA4D365F5"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\query\\Queries.java",
+      "sha256": "F61A7675E2BBAACCEB2B11B26B5C925F2064AE44CF874697C180D3FFFB1179FE"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\reconciliation\\ExportService.java",
+      "sha256": "076A5EF3E6B805E83706FBE1511656245563054735CF675C53C22B6AA42F4404"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\reconciliation\\ReconciliationService.java",
+      "sha256": "FAABA2898A29FAE375AB156ED7A70D68FF991A857A410AFC3D6A1F9AA5084F0E"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\refund\\RefundService.java",
+      "sha256": "2B5181E3E0B87F1C2C2C70B242FCBF0EAAA17D0F6902B4648C2077822E08CD37"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\Access.java",
+      "sha256": "D4F07C224D55F398D34909E64104A402895F882E80AB89E33A5FCD3D82B2B231"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiAvailability.java",
+      "sha256": "225CB0E8013ED7C14BD332683101AD40D2365CD453F88201E70E849C49BF0C55"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiErrors.java",
+      "sha256": "29D5C6596B4FB3A80075D9702F9BAE3451EBBCC2FC12BC3F48089CB719F359B5"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiRateLimiter.java",
+      "sha256": "BB0387A016315408ED6D8613DEA2C64BED43FD788ADCA16597D3ABC68404F3DA"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ChannelCallbackController.java",
+      "sha256": "E3E85B8BEB8DDEAEEF6F3907262A18C508D2DD4FC81F4A963FDA60A25FF0D9C4"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ChannelStatusController.java",
+      "sha256": "EA62BB564DD0C5DCE5E1EA4A0FF96F2E14ABBC6C24F5432E27251465EF1FE6F6"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ConsoleController.java",
+      "sha256": "95281C3C964AA74B95959A7CBA89921FCB932777919C7CCE56E3A4CB10C3F9F0"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\OpenApiController.java",
+      "sha256": "0628CF9FFED7B857079A411C9EE655AF295B9DDE63937A20D7BF3281365284E8"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ReconciliationController.java",
+      "sha256": "90072E8D97F28A7304C3043137492CFE80401F9DE5FED6CB93BBEA91379F01DA"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\RequestTraceFilter.java",
+      "sha256": "87EC59B93A897A6CD0D801C741A50DD3821921DEDE0F036D64E56A7C2A29229A"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\SecurityConfiguration.java",
+      "sha256": "F6D4811E17AEE96DE49ED78A775594C6E17A12AE2A93751120B14A302A45EE20"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\SignatureFilter.java",
+      "sha256": "99F813BD41473FBDA7AD26273684E15F9857AE04F41CF1D2CF0438FB1545A243"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\SignatureNonces.java",
+      "sha256": "6680146E8FDECE9EE48AFC09234BD08A4BC9A8EB8CDDA0D32D76A2D30DA3CA21"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\WebConfiguration.java",
+      "sha256": "545BD26BB34EAA11C375B5F697313B83AB6542DCDE310AE260ADE39963764884"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\application.yaml",
+      "sha256": "5E8FC99FA7ADF753E7543DA2A95B29155271C768B4E256E557C7D208158FF17C"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V1__core.sql",
+      "sha256": "7886E929C4AD0575E35798BF8FE268CF365D392C0EE10C8146830BEEF7DBE2A1"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V10__export_execution.sql",
+      "sha256": "63712B0066C17D7148CC3A0E5F48E3BCA791CF9424E4B2B98ABFCB87DC2C66B2"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V11__payment_evidence_paging.sql",
+      "sha256": "F826CBA647A47575A0A41C4933D1C81ADD4A73759C2014BEFECD20551017D796"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V12__payment_backpressure.sql",
+      "sha256": "42C4A059C5715693CC87A7B45370554A07052F513A4D0E88203E5E79E64AB782"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V2__security_and_evidence.sql",
+      "sha256": "A6F4367984437269B10116711AF34360CC268BC592195EFA73214AECD9E3D11E"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V3__notifications.sql",
+      "sha256": "9396FC5DF78972D49DF7496D0469E9446562350898608F3F524606589D123BA6"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V4__reconciliation.sql",
+      "sha256": "D5528042679999640D3263B6D7D0950E477D34C6ED0641FE4D73B27B8CF2117F"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V5__exports.sql",
+      "sha256": "7535AAF722AAAB49E306358B272C7DDDF738063220698D99F8C5C07165967B90"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V6__timeline_and_cursor_indexes.sql",
+      "sha256": "765742FAB1CB1EBC1CEB47606F8CFD53F6CF703A182BD58CAF57F229FEE75F36"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V7__isolated_task_queues.sql",
+      "sha256": "107A3566F279AD3881C231DCBE038C6DA9425785670C542EA9D07C7BC9BB1C88"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V8__export_ownership.sql",
+      "sha256": "BE931902ED6ABA17F46E3222A07A632374B560F62B363823EF74C8EF2FA6A9FF"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V9__reconciliation_execution.sql",
+      "sha256": "626E798C9F281B5C5BE17121FCCD9BA2FF03391273203580A36E4FAF0F6C057D"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\AdmissionTest.java",
+      "sha256": "92D4DBA1F5FB13791A386D78EEF5492BF1B0C7BD1F7B4064D98F405A38721128"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ApiRateLimiterTest.java",
+      "sha256": "801C782625C5A70869AE7F71D5A5D7C0927EEB1C5C35C0D14EAA013581B41E87"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\AuditTransactionTest.java",
+      "sha256": "229D016DE8918561162A16B9E7EFC8CC025AA59BDF7DE98AE484D4364EB58831"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ChannelEvidenceTest.java",
+      "sha256": "64EF4184A9A1CFAF8BF1DD6928B0593DABE58EB60359FFA078998F448A553FA9"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ChannelHttpContractTest.java",
+      "sha256": "79C3AD0E3E0C19159BCCE1E92D8B7CA26F7C4D9157A202477E590BFB92FA00A7"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ConsoleDetailTest.java",
+      "sha256": "81E0F23A6DC3CD584A08340EE11FDC4040DE0B45B8C8BFE8562BDA94585A7AF0"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\DurableTaskTest.java",
+      "sha256": "815AD82B6F0D71A61303EA0E36C88C0CDFDACE393132D0BF2E4A00D85D412AD4"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ExportTest.java",
+      "sha256": "6A0982026738D69682C66C309CB239CF72A7AE9AD6089431B17E183E2BB18DC4"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\FinancialCoreTest.java",
+      "sha256": "7E0CBFA539B5CF7C2862AA454BED6690EAFDDEC4816660D8BB39076101C91D09"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\FinancialFixture.java",
+      "sha256": "C78BC1D9B90A41DEFE773D2318DA10D298FDAE7712E4EE2DDDE7BFC67933A0E2"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ModuleArchitectureTest.java",
+      "sha256": "FBCEFA5BFCF01ED7F473986447F42733CD5CEF64B794B319B65011AC06A9F6B5"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlApiRateLimiterTest.java",
+      "sha256": "ECF94FFBC07E8356A60990C12C61F2E8B158543FBA7B723AA766438F033BB754"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlAuditTransactionTest.java",
+      "sha256": "4EA72316CD3B283079158514897A7FA40D17392C55AF12262F31116A8A8AB7EC"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlChannelEvidenceTest.java",
+      "sha256": "1F0BF72BA1FF818D1EA10FC3C5C4AD0C64CDBA7536DD0E59E6C6440B73B67963"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlConsoleDetailTest.java",
+      "sha256": "9CB769DBF2B8B5D71ED86DBD157AFDEB47E2312A137F92F12844716AC38B04DD"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlConsoleSnapshotTest.java",
+      "sha256": "CAB36590782DD4F9A7FE8A953CC2D3527D4BAA0B30EB4A57D15E40B86AEBD7FD"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlDurableTaskTest.java",
+      "sha256": "C3869B534413E1D2E4FA9F36F1E1C371743B15624BF993289F89D9F0338F276D"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlExportTest.java",
+      "sha256": "0B6EA15BEA21CE38D86C2E7788486CA2005FE82F189E918E56058F4FD2580C79"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlFinancialTest.java",
+      "sha256": "D4D216A01B0F6EC63FB2B39C1E833761E6EDE01BB10F0CDE0948B0C34F329DB6"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlPaymentBackpressureTest.java",
+      "sha256": "3A069213121D2F805ED67CB241CD8AA3EC6FF5EB1BE5E65FAE6F65DB20D569AF"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlReconciliationTest.java",
+      "sha256": "F083B1A24D65323BA2C665721B899761E35B719245A55788A31B2DB982E11B24"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlSignatureNoncesTest.java",
+      "sha256": "BCEBC185C6FC8251B35E0C0A258FCF11A7E853161253AA65AA374FA4A286B779"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\PausingQueue.java",
+      "sha256": "41E8E6E47956D56E20BEA9997D01CB59BC2DF8DE82C79D7ED30AAF15B31C5F79"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\PaymentBackpressureTest.java",
+      "sha256": "9AE1625053C58EC9D0FAC3EB3D8238FD62D5C0D24A5EE85F15BB754EB928F084"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ReconciliationTest.java",
+      "sha256": "A4F757027E9A9B0271C0654FAF6DC3E1D25688B078240AB3A652D72276F5808C"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\SecurityIntegrationTest.java",
+      "sha256": "FECB89578BAD0950DC4145123F501589F7412374A68512D7BF66BCCFB33E36D9"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\SignatureNoncesTest.java",
+      "sha256": "0914CE9A60488112D79B20585DEFA43D5C11CB2BEDF1BE2F86A3FE06727422B3"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\CryptoTest.java",
+      "sha256": "E7D34120A00FD438637E7B428E53BE5D47C956D792D4A62EC4A4E97D6AF2CF20"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\CsvTest.java",
+      "sha256": "27E59A848B7D9CC6C279FF957630D9E033CD0EDD129B96209FAEC4C8AE5CFBB6"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\MoneyRulesTest.java",
+      "sha256": "083E35CEC2A629FBF847ADB6534A36BC5E9E9935F5DB06075611A6B9796A7FDA"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\orchestration\\TaskCompletionsTest.java",
+      "sha256": "234529E3A6FA3FACAFD8B3F1D33CC45322DE8FA093DCDEB9406EF28C7A92F4F9"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\orchestration\\TaskWorkerMetricsTest.java",
+      "sha256": "2C21DBA311F9D89173B4B05D88644A2E210E81638DFF560B2B27538BA16FB2BD"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\web\\ApiAvailabilityTest.java",
+      "sha256": "0975B41EBF8BBA02754352DDCE5DFF59CCF664365799F8E9C3D5B78DF70EBE84"
+    },
+    {
+      "path": "simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\CallbackWorker.java",
+      "sha256": "FE8AE519EE820C0FE89269CDB705E4FE71F95C455EB143C7739BA29AE2F3EC15"
+    },
+    {
+      "path": "simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\ChannelController.java",
+      "sha256": "52FC8C09F8214476D1AE73365A16F54B0D7A1667BD49C0B1DFB14B2187B45440"
+    },
+    {
+      "path": "simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\ChannelStore.java",
+      "sha256": "5BACECDA12F660E53D780ACCEF5E35C5AF93477EA50046ED040FB1A8487F09E5"
+    },
+    {
+      "path": "simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\DemoMerchantWebhook.java",
+      "sha256": "39D402B77E274A244C2E1B3FE8E1AC55748C2CB0642F9B5D97DFA6D787EB37F9"
+    },
+    {
+      "path": "simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\SimulatorApplication.java",
+      "sha256": "F86C724C08638A1419C40AAB9BBA35A00A6D53ABB9E67676DCC0FDED0EEC8532"
+    },
+    {
+      "path": "simulator\\src\\main\\resources\\application.yaml",
+      "sha256": "2348F85016FF8EFA06DB9983F9D2FCAF682A9D754F60FC556DC3D73E90F32EC9"
+    },
+    {
+      "path": "simulator\\src\\main\\resources\\schema.sql",
+      "sha256": "25925B74F393B7B27649E410059B1EBF0C80193C023D73A6A09A5880928978CB"
+    },
+    {
+      "path": "simulator\\src\\test\\java\\dev\\merchantpay\\simulator\\ChannelHealthTest.java",
+      "sha256": "D3EE49D57F963904B312870AB53BA520FAF5DF4902225279BB80271567B190D6"
+    },
+    {
+      "path": "simulator\\src\\test\\java\\dev\\merchantpay\\simulator\\ChannelStoreTest.java",
+      "sha256": "8D470697EF2635DFE12ED7FE2CCD61C65561A9E85EB95B028F9DFDD49E589BC3"
+    }
+  ],
+  "probeSourceHashes": [
+    {
+      "path": ".work/TransactionCensus.java",
+      "sha256": "9405B31B531C4CFFA6BF6C4FC5954CBB03B1D69B49E2C5BA520FD36460AF819C"
+    },
+    {
+      "path": ".work/RunNonceBatchComparison.ps1",
+      "sha256": "2912EF72A87C85942C06A6BF906602762E828BF868BAD2A77A30C29CB5D7B118"
+    },
+    {
+      "path": ".work/nonce-batch-protocol.json",
+      "sha256": "AEF2D7A5833A0A427A5F2676297071515FE2B006A06E7C14E1DD9CD66C6E8642"
+    },
+    {
+      "path": "scripts/load/LocalLoad.java",
+      "sha256": "A69AECA955C9AF6BA54EC98D19D9B911C987E2D6988648DB91CF7C7995FE8E24"
+    },
+    {
+      "path": "scripts/load/LoadMeasurements.java",
+      "sha256": "1BF71BF258577B7F115A1B93BA58E9F627B0F403DE18569D0A67BEB7FCC4B74A"
+    },
+    {
+      "path": "scripts/load/LocalDiagnosis.java",
+      "sha256": "2707F3C4EDA482F38B6DF04040B869F96047F82E054BF3C515FDC79244E967EF"
+    },
+    {
+      "path": "scripts/load/run-local.ps1",
+      "sha256": "CA610BD8D6D00CC57EE4B372CCA6B2C20958CACF79573CF8E0F2700C3CE9F200"
+    },
+    {
+      "path": "scripts/LocalPerformance.ps1",
+      "sha256": "89C2C642F00D93B741723ABD9AA7196152CDBCE6B2E65BE65C71844E5AFAAB57"
+    },
+    {
+      "path": "scripts/start-local.ps1",
+      "sha256": "BDE0332A7C3BF73AF17F3AB90A6B0C481209CC5EF5EF3E4FD90F785499996C02"
+    },
+    {
+      "path": "scripts/stop-local.ps1",
+      "sha256": "E5D2964B438334543678C67C23421C628D2A02952664A4E3A77147326BAB29E6"
+    },
+    {
+      "path": "infra/compose.yaml",
+      "sha256": "63FCD306EB869D5D6ED55048A3BF8D3DA8124376AFED891F4A5083277F8C1290"
+    },
+    {
+      "path": "infra/compose.performance.yaml",
+      "sha256": "BEA9CEDE291438918228B3C93B55E39CD3AAAC66116625B90E903302D5F0AD89"
+    }
+  ],
+  "originalBackendSourceHashes": [
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\PlatformApplication.java",
+      "sha256": "C0AA64A56D15FFC1E016311C05C32C7B73F8322722AA6FCB0DBB431A63002DB5"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelApi.java",
+      "sha256": "4EF34DD85FC0C0DA548A589E2CC4D6FDFA2AA1F71A22B57AA12524A3636D5CC2"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelBillReader.java",
+      "sha256": "AC17734A3AF677F91FC330D6DD7C63CE04EC0B93E01463E278FB3F0F70EC8770"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelGateway.java",
+      "sha256": "FA7BE9AE1661275E75A81372BEEEC4E563854470B9663A47733B63D2C8EC3303"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\InboxService.java",
+      "sha256": "61EC28F6103A7ADCC0B094A3E68EEDBC7E247FFA0A5C091B73C02B74E225E4D5"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\ApiException.java",
+      "sha256": "3A7D73EDE525C822B60F9489AA568E7D5E3E33B60D60D1089BAEDBD0967B8514"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\ChannelResult.java",
+      "sha256": "0DE610320D74937EDD9543AD6C32FCFDFE0F635113FD87A3776BF0C0602730FD"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\Csv.java",
+      "sha256": "DF3BCE95879D4D73B653E820CEDB0D159FA0116B3CF7BC99792B65FA1FE54EDF"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\KeyVault.java",
+      "sha256": "7CFDAFDDD810C3B75826820A3CD31CE4438D1560CD96E18441A3165B33C7099D"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\MoneyRules.java",
+      "sha256": "21D4A0CC537302C4DCD164A1E817C062591B3CD84B614FA5BCFB11FAAECF97F1"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\NotificationPolicy.java",
+      "sha256": "041BF8A83196E983C04D378A465764FFFCB7C64622AAEAE9993D6DF7ECE89134"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\Signatures.java",
+      "sha256": "8C217871C6619F3A7236DEB7106E5728A81F01C9A81071C919D6454537DB6AA3"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\ledger\\LedgerService.java",
+      "sha256": "9E785F60954A62E9B81B83DC9339A9D852F8526B1310C0A3BBDC9C4FD58DD264"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\merchant\\MerchantService.java",
+      "sha256": "76753C32613641EF11090AA764E94B73A509339C765C93B8153B50EE1EE953CF"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\BusinessMetrics.java",
+      "sha256": "A5BA91AD416CB488F1311CA51C42CFCDFF46536D2CD7623ECEF1057CB95D6307"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\LocalDemoData.java",
+      "sha256": "EC0AFB6CB06139786A86C492CC3833278599FD3C7BAA110384673690F394229F"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\NotificationService.java",
+      "sha256": "55C7F9D6180D03FA0525C110BB75E1D2BA29388E01A23FFEA4FE8B18F51EF689"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\TaskCompletions.java",
+      "sha256": "A167F25A7935B6B86E8149744C2B657403C7F70DAD0EEC2F933741EC90C80F3D"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\TaskWorker.java",
+      "sha256": "862A87A0053DF5B53CF618EEC5B12A92280DD0545C5F9120B4CB0F2D03A5D9D1"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\outbox\\OutboxService.java",
+      "sha256": "21EDDDB84195B8A10282950E9F7AEC2FFB793F265D976717592593B20A46F6DD"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\outbox\\TaskQueue.java",
+      "sha256": "6717155E89B688E11BDF3C230A0B9498491EBE60910FEFF7362ED3AF82C1FEBD"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\payment\\PaymentService.java",
+      "sha256": "682987A04996BA73043000779BCA137671C80A507B7628046A6C4ECCA4D365F5"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\query\\Queries.java",
+      "sha256": "F61A7675E2BBAACCEB2B11B26B5C925F2064AE44CF874697C180D3FFFB1179FE"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\reconciliation\\ExportService.java",
+      "sha256": "076A5EF3E6B805E83706FBE1511656245563054735CF675C53C22B6AA42F4404"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\reconciliation\\ReconciliationService.java",
+      "sha256": "FAABA2898A29FAE375AB156ED7A70D68FF991A857A410AFC3D6A1F9AA5084F0E"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\refund\\RefundService.java",
+      "sha256": "2B5181E3E0B87F1C2C2C70B242FCBF0EAAA17D0F6902B4648C2077822E08CD37"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\Access.java",
+      "sha256": "D4F07C224D55F398D34909E64104A402895F882E80AB89E33A5FCD3D82B2B231"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiAvailability.java",
+      "sha256": "225CB0E8013ED7C14BD332683101AD40D2365CD453F88201E70E849C49BF0C55"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiErrors.java",
+      "sha256": "29D5C6596B4FB3A80075D9702F9BAE3451EBBCC2FC12BC3F48089CB719F359B5"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiRateLimiter.java",
+      "sha256": "BB0387A016315408ED6D8613DEA2C64BED43FD788ADCA16597D3ABC68404F3DA"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ChannelCallbackController.java",
+      "sha256": "E3E85B8BEB8DDEAEEF6F3907262A18C508D2DD4FC81F4A963FDA60A25FF0D9C4"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ChannelStatusController.java",
+      "sha256": "EA62BB564DD0C5DCE5E1EA4A0FF96F2E14ABBC6C24F5432E27251465EF1FE6F6"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ConsoleController.java",
+      "sha256": "95281C3C964AA74B95959A7CBA89921FCB932777919C7CCE56E3A4CB10C3F9F0"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\OpenApiController.java",
+      "sha256": "0628CF9FFED7B857079A411C9EE655AF295B9DDE63937A20D7BF3281365284E8"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ReconciliationController.java",
+      "sha256": "90072E8D97F28A7304C3043137492CFE80401F9DE5FED6CB93BBEA91379F01DA"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\RequestTraceFilter.java",
+      "sha256": "87EC59B93A897A6CD0D801C741A50DD3821921DEDE0F036D64E56A7C2A29229A"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\SecurityConfiguration.java",
+      "sha256": "E8C073C36E7548DA76FE4AD7DD10A85F49A187B67FA442FAF91B85E03CF51891"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\SignatureFilter.java",
+      "sha256": "940D95D0A3C8ADF3330E87BC865572C7852AA93F82B68375085E449E5A7236E6"
+    },
+    {
+      "path": "platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\WebConfiguration.java",
+      "sha256": "545BD26BB34EAA11C375B5F697313B83AB6542DCDE310AE260ADE39963764884"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\application.yaml",
+      "sha256": "5E8FC99FA7ADF753E7543DA2A95B29155271C768B4E256E557C7D208158FF17C"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V1__core.sql",
+      "sha256": "7886E929C4AD0575E35798BF8FE268CF365D392C0EE10C8146830BEEF7DBE2A1"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V10__export_execution.sql",
+      "sha256": "63712B0066C17D7148CC3A0E5F48E3BCA791CF9424E4B2B98ABFCB87DC2C66B2"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V11__payment_evidence_paging.sql",
+      "sha256": "F826CBA647A47575A0A41C4933D1C81ADD4A73759C2014BEFECD20551017D796"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V12__payment_backpressure.sql",
+      "sha256": "42C4A059C5715693CC87A7B45370554A07052F513A4D0E88203E5E79E64AB782"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V2__security_and_evidence.sql",
+      "sha256": "A6F4367984437269B10116711AF34360CC268BC592195EFA73214AECD9E3D11E"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V3__notifications.sql",
+      "sha256": "9396FC5DF78972D49DF7496D0469E9446562350898608F3F524606589D123BA6"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V4__reconciliation.sql",
+      "sha256": "D5528042679999640D3263B6D7D0950E477D34C6ED0641FE4D73B27B8CF2117F"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V5__exports.sql",
+      "sha256": "7535AAF722AAAB49E306358B272C7DDDF738063220698D99F8C5C07165967B90"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V6__timeline_and_cursor_indexes.sql",
+      "sha256": "765742FAB1CB1EBC1CEB47606F8CFD53F6CF703A182BD58CAF57F229FEE75F36"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V7__isolated_task_queues.sql",
+      "sha256": "107A3566F279AD3881C231DCBE038C6DA9425785670C542EA9D07C7BC9BB1C88"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V8__export_ownership.sql",
+      "sha256": "BE931902ED6ABA17F46E3222A07A632374B560F62B363823EF74C8EF2FA6A9FF"
+    },
+    {
+      "path": "platform\\src\\main\\resources\\db\\migration\\V9__reconciliation_execution.sql",
+      "sha256": "626E798C9F281B5C5BE17121FCCD9BA2FF03391273203580A36E4FAF0F6C057D"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\AdmissionTest.java",
+      "sha256": "CF31272CAFA85A87834DFBEC362C9F671326101CC0698D6F0B7579779B43088B"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ApiRateLimiterTest.java",
+      "sha256": "801C782625C5A70869AE7F71D5A5D7C0927EEB1C5C35C0D14EAA013581B41E87"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\AuditTransactionTest.java",
+      "sha256": "229D016DE8918561162A16B9E7EFC8CC025AA59BDF7DE98AE484D4364EB58831"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ChannelEvidenceTest.java",
+      "sha256": "64EF4184A9A1CFAF8BF1DD6928B0593DABE58EB60359FFA078998F448A553FA9"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ChannelHttpContractTest.java",
+      "sha256": "79C3AD0E3E0C19159BCCE1E92D8B7CA26F7C4D9157A202477E590BFB92FA00A7"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ConsoleDetailTest.java",
+      "sha256": "81E0F23A6DC3CD584A08340EE11FDC4040DE0B45B8C8BFE8562BDA94585A7AF0"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\DurableTaskTest.java",
+      "sha256": "815AD82B6F0D71A61303EA0E36C88C0CDFDACE393132D0BF2E4A00D85D412AD4"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ExportTest.java",
+      "sha256": "6A0982026738D69682C66C309CB239CF72A7AE9AD6089431B17E183E2BB18DC4"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\FinancialCoreTest.java",
+      "sha256": "7E0CBFA539B5CF7C2862AA454BED6690EAFDDEC4816660D8BB39076101C91D09"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\FinancialFixture.java",
+      "sha256": "C78BC1D9B90A41DEFE773D2318DA10D298FDAE7712E4EE2DDDE7BFC67933A0E2"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ModuleArchitectureTest.java",
+      "sha256": "FBCEFA5BFCF01ED7F473986447F42733CD5CEF64B794B319B65011AC06A9F6B5"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlApiRateLimiterTest.java",
+      "sha256": "ECF94FFBC07E8356A60990C12C61F2E8B158543FBA7B723AA766438F033BB754"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlAuditTransactionTest.java",
+      "sha256": "4EA72316CD3B283079158514897A7FA40D17392C55AF12262F31116A8A8AB7EC"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlChannelEvidenceTest.java",
+      "sha256": "1F0BF72BA1FF818D1EA10FC3C5C4AD0C64CDBA7536DD0E59E6C6440B73B67963"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlConsoleDetailTest.java",
+      "sha256": "9CB769DBF2B8B5D71ED86DBD157AFDEB47E2312A137F92F12844716AC38B04DD"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlConsoleSnapshotTest.java",
+      "sha256": "CAB36590782DD4F9A7FE8A953CC2D3527D4BAA0B30EB4A57D15E40B86AEBD7FD"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlDurableTaskTest.java",
+      "sha256": "C3869B534413E1D2E4FA9F36F1E1C371743B15624BF993289F89D9F0338F276D"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlExportTest.java",
+      "sha256": "0B6EA15BEA21CE38D86C2E7788486CA2005FE82F189E918E56058F4FD2580C79"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlFinancialTest.java",
+      "sha256": "D4D216A01B0F6EC63FB2B39C1E833761E6EDE01BB10F0CDE0948B0C34F329DB6"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlPaymentBackpressureTest.java",
+      "sha256": "3A069213121D2F805ED67CB241CD8AA3EC6FF5EB1BE5E65FAE6F65DB20D569AF"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlReconciliationTest.java",
+      "sha256": "F083B1A24D65323BA2C665721B899761E35B719245A55788A31B2DB982E11B24"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\PausingQueue.java",
+      "sha256": "41E8E6E47956D56E20BEA9997D01CB59BC2DF8DE82C79D7ED30AAF15B31C5F79"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\PaymentBackpressureTest.java",
+      "sha256": "9AE1625053C58EC9D0FAC3EB3D8238FD62D5C0D24A5EE85F15BB754EB928F084"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\ReconciliationTest.java",
+      "sha256": "A4F757027E9A9B0271C0654FAF6DC3E1D25688B078240AB3A652D72276F5808C"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\SecurityIntegrationTest.java",
+      "sha256": "FECB89578BAD0950DC4145123F501589F7412374A68512D7BF66BCCFB33E36D9"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\CryptoTest.java",
+      "sha256": "E7D34120A00FD438637E7B428E53BE5D47C956D792D4A62EC4A4E97D6AF2CF20"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\CsvTest.java",
+      "sha256": "27E59A848B7D9CC6C279FF957630D9E033CD0EDD129B96209FAEC4C8AE5CFBB6"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\MoneyRulesTest.java",
+      "sha256": "083E35CEC2A629FBF847ADB6534A36BC5E9E9935F5DB06075611A6B9796A7FDA"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\orchestration\\TaskCompletionsTest.java",
+      "sha256": "234529E3A6FA3FACAFD8B3F1D33CC45322DE8FA093DCDEB9406EF28C7A92F4F9"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\orchestration\\TaskWorkerMetricsTest.java",
+      "sha256": "2C21DBA311F9D89173B4B05D88644A2E210E81638DFF560B2B27538BA16FB2BD"
+    },
+    {
+      "path": "platform\\src\\test\\java\\dev\\merchantpay\\platform\\web\\ApiAvailabilityTest.java",
+      "sha256": "0975B41EBF8BBA02754352DDCE5DFF59CCF664365799F8E9C3D5B78DF70EBE84"
+    },
+    {
+      "path": "simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\CallbackWorker.java",
+      "sha256": "FE8AE519EE820C0FE89269CDB705E4FE71F95C455EB143C7739BA29AE2F3EC15"
+    },
+    {
+      "path": "simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\ChannelController.java",
+      "sha256": "52FC8C09F8214476D1AE73365A16F54B0D7A1667BD49C0B1DFB14B2187B45440"
+    },
+    {
+      "path": "simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\ChannelStore.java",
+      "sha256": "5BACECDA12F660E53D780ACCEF5E35C5AF93477EA50046ED040FB1A8487F09E5"
+    },
+    {
+      "path": "simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\DemoMerchantWebhook.java",
+      "sha256": "39D402B77E274A244C2E1B3FE8E1AC55748C2CB0642F9B5D97DFA6D787EB37F9"
+    },
+    {
+      "path": "simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\SimulatorApplication.java",
+      "sha256": "F86C724C08638A1419C40AAB9BBA35A00A6D53ABB9E67676DCC0FDED0EEC8532"
+    },
+    {
+      "path": "simulator\\src\\main\\resources\\application.yaml",
+      "sha256": "2348F85016FF8EFA06DB9983F9D2FCAF682A9D754F60FC556DC3D73E90F32EC9"
+    },
+    {
+      "path": "simulator\\src\\main\\resources\\schema.sql",
+      "sha256": "25925B74F393B7B27649E410059B1EBF0C80193C023D73A6A09A5880928978CB"
+    },
+    {
+      "path": "simulator\\src\\test\\java\\dev\\merchantpay\\simulator\\ChannelHealthTest.java",
+      "sha256": "D3EE49D57F963904B312870AB53BA520FAF5DF4902225279BB80271567B190D6"
+    },
+    {
+      "path": "simulator\\src\\test\\java\\dev\\merchantpay\\simulator\\ChannelStoreTest.java",
+      "sha256": "8D470697EF2635DFE12ED7FE2CCD61C65561A9E85EB95B028F9DFDD49E589BC3"
+    }
+  ],
+  "retainedDiagnosticSourceHashes": [
+    {
+      "path": "scripts/load/LocalDiagnosis.java",
+      "sha256": "968512522FECE4A977C621BED62C0CD6A942FFE7F3A0D18BFBF895687C2B0BD8"
+    },
+    {
+      "path": "scripts/load/DiagnosisMeasurementsTest.java",
+      "sha256": "5CA9B1C02AF17A2459F524A559B6B2DC33BEA787F588D00C2F1E6B6C1F62EE1F"
+    }
+  ],
+  "backendRestored": true,
+  "sourceRollback": {
+    "at": "2026-10-19T14:53:20.3256014Z",
+    "candidateArchived": true,
+    "candidateSourceCount": 95,
+    "backendRestoredToOriginal": true,
+    "candidateCompiledOutputsRemoved": true,
+    "runningJarSha256": "1B63BC70F3A1BFB2EBEF64C1EDC5098D11F35C71DD50D3C966C31704DC2D2997",
+    "candidateUnrepackagedJarArchivedSha256": "DF486AD525907FA53154F7DAE9964D3D93CE8E4F2B4FAD0961DDC37125FABFAC",
+    "candidateUnrepackagedJarRemovedFromTarget": true
+  },
+  "lockFailureRegression": {
+    "exit": 1,
+    "rejected": true,
+    "deploymentUnchanged": true,
+    "recoveryNotInvoked": true
+  },
+  "verification": {
+    "candidateFailures": 0,
+    "candidateBackendTests": 307,
+    "candidateErrors": 0,
+    "browserAndRemoteCiRerun": false,
+    "restoredBackend": "Exact original source/JAR; clean compiled39main+31test sources and fmt, tests skipped; original prior full-suite evidence retained",
+    "retainedDiagnostics": "Real MySQL visibility/rollback/balance and load/diagnosis/commit-wait/qualification guards passed",
+    "candidateSkipped": 0
+  },
+  "paymentRequests": 28400.0,
+  "acceptedPayments": 20113.0,
+  "successfulRefunds": 20.0,
+  "rejectedPaymentRequests": 8287.0,
+  "allAcceptedPostedAndBalanced": true,
+  "initialDataset": {
+    "payments": 175339,
+    "ledgerEntries": 525991,
+    "journals": 175958,
+    "tasks": 527935,
+    "merchants": 2
+  },
+  "finalDataset": {
+    "payments": 195452,
+    "ledgerEntries": 586177,
+    "journals": 196091,
+    "tasks": 588334,
+    "merchants": 2
+  },
+  "finalLedger": {
+    "differenceMinor": 0
+  },
+  "unbalancedJournals": 0,
+  "orphanEntries": 0,
+  "backlog": 0,
+  "capacityDrift": 0,
+  "finalTasks": [
+    {
+      "status": "DONE",
+      "n": 588334
+    }
+  ],
+  "services": {
+    "at": "2026-10-19T14:58:07.8199316Z",
+    "backend": "UP",
+    "console": 200,
+    "schema": "12",
+    "mode": "performance",
+    "platformJarSha256": "1B63BC70F3A1BFB2EBEF64C1EDC5098D11F35C71DD50D3C966C31704DC2D2997",
+    "simulatorJarSha256": "B712BF2755779EAA2339984258455B90217B3A7055F56305C548BD02666E0D8E"
+  },
+  "smoke": {
+    "measurementVersion": 2,
+    "runId": "load-1792421686-d8dab10d",
+    "environment": "D0 shared developer host",
+    "generator": {
+      "availableProcessors": 2,
+      "pid": 30612,
+      "maxHeapBytes": 536870912
+    },
+    "scenario": "dataset",
+    "generatedAt": "2026-10-19T14:54:58.524367600Z",
+    "observerMode": "full",
+    "onlineCompletionMeasured": true,
+    "onlineObserverTotalQueryMicros": 1782227,
+    "onlineObserverSnapshots": 32,
+    "retryReasons": {},
+    "requestedRate": 10,
+    "requests": 100,
+    "acceptedOrRead": 100,
+    "rejected": 0,
+    "transportErrors": 0,
+    "notSentDueCapacity": 0,
+    "phaseSeconds": 9.9526358,
+    "arrivalWindowSeconds": 10.0,
+    "acceptedOrReadPerSecond": 10.047589604353854,
+    "httpStatuses": {
+      "202": 100
+    },
+    "httpLatencySamples": 100,
+    "httpP95Micros": 168919,
+    "httpP99Micros": 298923,
+    "scheduledHttpP99Micros": 300793,
+    "sendDelayP99Micros": 19779,
+    "postedPayments": 100,
+    "uniquePayments": 100,
+    "successfulPayments": 100,
+    "unfinishedAcceptedPayments": 0,
+    "failedAcceptedPayments": 0,
+    "oldestUnfinishedAcceptedMicros": 0,
+    "unacknowledgedCommittedPayments": 0,
+    "failedResponseWithoutVisiblePayment": 0,
+    "paymentStatuses": {
+      "SUCCEEDED": 100
+    },
+    "acceptedCompletionP99UpperMicros": 794456,
+    "successfulCompletionP99LowerMicros": 489035,
+    "successfulCompletionP99UpperMicros": 794456,
+    "completedInArrivalWindowLower": 97,
+    "completedInArrivalWindowUpper": 100,
+    "completedPerArrivalSecondLower": 9.7,
+    "completedPerArrivalSecondUpper": 10.0,
+    "completionTimeSource": "independent committed SQL visibility; monotonic-clock interval, not created_at",
+    "observerPollMillis": 250,
+    "observerSnapshots": 34,
+    "observerErrors": 0,
+    "observerAttempts": 34,
+    "observerTotalQueryMicros": 1861031,
+    "observerMaxQueryMicros": 523448,
+    "maxCommitVisibilityIntervalMicros": 517900,
+    "requestedRefunds": 20,
+    "refundHttpStatuses": {
+      "202": 20
+    },
+    "refundedPayments": 20,
+    "journals": 120,
+    "ledgerRows": 359,
+    "outboxBusinessTasks": 240,
+    "ledgerDifferenceMinor": "0",
+    "unbalancedJournals": 0,
+    "moneyInvariantsPassed": true,
+    "correctnessPassed": true,
+    "referenceR1Certified": false,
+    "primaryPhaseStarted": "2026-10-19T14:54:46.118453Z",
+    "primaryPhaseEnded": "2026-10-19T14:54:56.071058700Z",
+    "arrivalWindowEnded": "2026-10-19T14:54:56.118453Z"
+  },
+  "artifacts": [
+    {
+      "path": ".work\\AnalyzeNonceBatchComparison.ps1",
+      "sha256": "75D75BF5FF33B9EB8BE95DFA3CE737DFEC9FA369B1195E52566639F0645807CC"
+    },
+    {
+      "path": ".work\\BuildNonceBatchEvidence.ps1",
+      "sha256": "4674463720EA5A4FA6058004F15E7F0959FD4B5489CDBD9AF7ABBBBA3F307565"
+    },
+    {
+      "path": ".work\\FinalNonceBatchInventory.java",
+      "sha256": "67C4C821B8FF78E77F3787316A50F28B4AABFF6CF8BCD4DD687B654664227927"
+    },
+    {
+      "path": ".work\\performance\\load-1792419002-2d3780b6.json",
+      "sha256": "92D7E54BB98BE75F0267BAA1C3DB4048E9F8DF12BB3E21A7A48A139E96076BF5"
+    },
+    {
+      "path": ".work\\performance\\load-1792419002-2d3780b6.requests.jsonl",
+      "sha256": "7015BF096144E11C7F2EB0BBFB7B87571F6129A8AFA93ACA2FC0F5313A814F72"
+    },
+    {
+      "path": ".work\\performance\\load-1792419026-d85d782e.json",
+      "sha256": "7A1E32313E65E206666E6942EEB48EA55F50F87AED41CF988018C8F47E6D34CF"
+    },
+    {
+      "path": ".work\\performance\\load-1792419026-d85d782e.requests.jsonl",
+      "sha256": "78F03142353BB532C5867FE924F794E3F023FBDE9AB35CE6594DE52102A9564D"
+    },
+    {
+      "path": ".work\\performance\\load-1792420829-11605d61.json",
+      "sha256": "0082235D695557938AE7D02239D352BECCFFFC304F115BE98667A53DFCD2E442"
+    },
+    {
+      "path": ".work\\performance\\load-1792420829-11605d61.requests.jsonl",
+      "sha256": "03FB9E677B118F3A4DBB8CC946555D1D51B454BC559D48464F3312711D2F75BB"
+    },
+    {
+      "path": ".work\\performance\\load-1792420871-e383cdbd.json",
+      "sha256": "70F16E4711918C8FDA96BCEE13AC71939AE77B1B3BC613CAA0A18035C701D78D"
+    },
+    {
+      "path": ".work\\performance\\load-1792420871-e383cdbd.requests.jsonl",
+      "sha256": "05CAD36052B3CA9868E0AE64810A6A2B1D76663F0CF3C1C05CED4F5A0C832403"
+    },
+    {
+      "path": ".work\\performance\\load-1792420947-1a4c9989.json",
+      "sha256": "850EEB7E3E42FDC716C64BC754B4D4C5DB4617743AEFD7DB2237CDB7A2128C87"
+    },
+    {
+      "path": ".work\\performance\\load-1792420947-1a4c9989.requests.jsonl",
+      "sha256": "09321390C616D775389BAF0CB978A4A90BE81EAF45BD080AB1E247DE64A55B3C"
+    },
+    {
+      "path": ".work\\performance\\load-1792421056-6b7057d2.json",
+      "sha256": "DA45779BF539AC49E6E9293FFB90C3A3D24C5F41F5F0034C3C09C3BF5058EFC6"
+    },
+    {
+      "path": ".work\\performance\\load-1792421056-6b7057d2.requests.jsonl",
+      "sha256": "F1A59A59FCF8FDC45D6344B44C11D8EC2C5A4858981BA273D0DBEF9A8F7FE8CA"
+    },
+    {
+      "path": ".work\\performance\\load-1792421094-b210ac51.json",
+      "sha256": "D3244B76B2112F93D1C834FC54323B81180D2ED854053948B233A521E7BA213B"
+    },
+    {
+      "path": ".work\\performance\\load-1792421094-b210ac51.requests.jsonl",
+      "sha256": "FD5791591F00C2C5CA500E260B695E7320D0DD4D76A1CE528DB1DEB7A3B1FE74"
+    },
+    {
+      "path": ".work\\performance\\load-1792421172-491cf29a.json",
+      "sha256": "AB165E17C32A300212B1D912029A35C6AC56E44546656D67E51B10E2D53AE088"
+    },
+    {
+      "path": ".work\\performance\\load-1792421172-491cf29a.requests.jsonl",
+      "sha256": "82EB862AA88408954E1F4DC070B15F1A9BC036A4FEEC910C8C22F6C8FAFF867F"
+    },
+    {
+      "path": ".work\\performance\\load-1792421281-96aa7db5.json",
+      "sha256": "08BF4D1939CB163622747B369CB8D5544A956A138AFCBD2072F8168C6E2AA632"
+    },
+    {
+      "path": ".work\\performance\\load-1792421281-96aa7db5.requests.jsonl",
+      "sha256": "28B628187974B89471B23349F5F75FD7D9ABFF5E5BB7B775046EA5C698E8F2B4"
+    },
+    {
+      "path": ".work\\performance\\load-1792421320-79d54c26.json",
+      "sha256": "7787117C38EAD69B00466B8A66BBE0BA3B8D19097E5B0C23EB57BAD133442320"
+    },
+    {
+      "path": ".work\\performance\\load-1792421320-79d54c26.requests.jsonl",
+      "sha256": "C6C26F1ABC5D0CA9AE897BF45861FE23E7FCE251E494B0C9F89AEF6AA01C39BF"
+    },
+    {
+      "path": ".work\\performance\\load-1792421403-632f23ec.json",
+      "sha256": "DB28D3EEB602F0F929CA9D41F061B58CD8CBF83CF3565BA1AFA8D8EC015FDAE1"
+    },
+    {
+      "path": ".work\\performance\\load-1792421403-632f23ec.requests.jsonl",
+      "sha256": "6C5A9D000B8D53CF1C7CC60C94EC61D7469FC13580695B345E94CC01A76ABAC1"
+    },
+    {
+      "path": ".work\\performance\\load-1792421686-d8dab10d.json",
+      "sha256": "7F213153E7E043AE3BBDF77B1E2362A0EB409C05A0EC3924F042E98D07B892E3"
+    },
+    {
+      "path": ".work\\performance\\load-1792421686-d8dab10d.requests.jsonl",
+      "sha256": "E2852EA0B96C6EC8FC35F2C180C3F32C00DF0D4F85820DA5246568C4B534F01B"
+    },
+    {
+      "path": ".work\\TestNonceComparisonLock.ps1",
+      "sha256": "41664BE2198778F6BF024C7B1880C52B060DA9F2A943216F15F23E79DEC10A72"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high-after.census.json",
+      "sha256": "FC56F77788CAA5E4A29B1F9BFB98D4B1389ED723F54328B815D9FAA5D5321AA8"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high-after.channels.json",
+      "sha256": "3492CD29B810424567D236DF9DDFA86FFAF127C030EC9F4037A971F99D3481B1"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high-after.prom",
+      "sha256": "37DB43D8E1478EC992431C06F76C94E64FCD5AE006BAE8B299EBA3F655AFE7E9"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high-after.resources.json",
+      "sha256": "A3DAE3D5564975B850A2A532E1DB225AAA1703E2F959989E4177948045FEA80A"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high-after.state.json",
+      "sha256": "B0133298545C26C66A3C2A84B51D0B74CF3E6F976D7E6F9F1581CB8A1394A513"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high-before.census.json",
+      "sha256": "38591E785EA97F721AF10F08427C2F2CF01837A5BE16940FD843AC62D5303168"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high-before.channels.json",
+      "sha256": "E2A2B1366EAC8CEA8A78E9B1C267CAAC68EEEA77022F035D88C376F7846A19F0"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high-before.prom",
+      "sha256": "9D43F5B2EE91BABA731573FD363DE9135B447C24131A9C681DB148E4428AA24F"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high-before.resources.json",
+      "sha256": "A3DAE3D5564975B850A2A532E1DB225AAA1703E2F959989E4177948045FEA80A"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high-before.state.json",
+      "sha256": "EEA627D51830C9F7649BB4B1B4FF4EAF5371FE65E191C2300C95F0348C6598BF"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high.load.log",
+      "sha256": "670F5DAEA625785CA9D20A691C142280ACB771461C46FC411C1FF8598B7685B7"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-high.result.json",
+      "sha256": "2B93C2E0FECECC65515612F7688EFB94CDBABF04666FD4223CEEE0CC06EB056A"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal-after.census.json",
+      "sha256": "CF572762721C5ACE6F2584E786C8DC86865C15847BE173A5A0DEDF488767095D"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal-after.channels.json",
+      "sha256": "A645EAC236E19BC8C2F9E9902AFD1C4B9223A11D8BE1CC327D11A4B48EE170A2"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal-after.prom",
+      "sha256": "9D43F5B2EE91BABA731573FD363DE9135B447C24131A9C681DB148E4428AA24F"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal-after.resources.json",
+      "sha256": "A3DAE3D5564975B850A2A532E1DB225AAA1703E2F959989E4177948045FEA80A"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal-after.state.json",
+      "sha256": "CF65BADC98CADF9387298ED78BF5B2CBD796FA59093A0DC51D03BEEDC7DA3AF7"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal-before.census.json",
+      "sha256": "C56BFBE325504658C761B773EBCDDBD7AF4D3D8CE22E3E30D4A7B06F7855F848"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal-before.channels.json",
+      "sha256": "113B3BEDC170574620316E5203B88AD43F337D4799C138644F5463E280D5DA40"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal-before.prom",
+      "sha256": "B4412BF84F2F34C5E93C8174D61BBF56DD76E7EA3BD651EF22F8644DFD895F63"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal-before.resources.json",
+      "sha256": "A3DAE3D5564975B850A2A532E1DB225AAA1703E2F959989E4177948045FEA80A"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal-before.state.json",
+      "sha256": "509217D02F9573D5E303F129F2320ECD3EDCFE582D474E803BF7B4457FC532AD"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal.load.log",
+      "sha256": "96F25FE8C3811DAB8C718D7E6F317D1CFD961C401E738038F6F77E3A5B1EAC34"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-normal.result.json",
+      "sha256": "8ACE91FE9B54A19B6DB6BD2C1499FC7377A2F9F105AB78D891D374DE7E306952"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm-after.census.json",
+      "sha256": "A4A9E162242BE380BEBD29622244E35E50D245B5383D9F5115182CE003884DF8"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm-after.channels.json",
+      "sha256": "03225A574EEF97E64DC9751A70B4E93674096B7A2AE0AF2A826B56FCE67A0F03"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm-after.prom",
+      "sha256": "B4412BF84F2F34C5E93C8174D61BBF56DD76E7EA3BD651EF22F8644DFD895F63"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm-after.resources.json",
+      "sha256": "A3DAE3D5564975B850A2A532E1DB225AAA1703E2F959989E4177948045FEA80A"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm-after.state.json",
+      "sha256": "7E8CBB41E05B5EB46809A4B09F9BE90A48EF7480223DC8A1B65FAD454449403E"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm-before.census.json",
+      "sha256": "73D0B857CB9C77C8C75BD7DD027EC1CBAFC7CC60984CF435AB6AD29EDFA6DD7F"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm-before.channels.json",
+      "sha256": "F47D487C0C121FB5E66C7335FA37DA9C6BF36614E0C59B71A6E13F5930C72908"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm-before.prom",
+      "sha256": "518D7E7A7CE4E82DC33CF1CCDD21643B4845E8435D3C58A41894B192801FAF39"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm-before.resources.json",
+      "sha256": "A3DAE3D5564975B850A2A532E1DB225AAA1703E2F959989E4177948045FEA80A"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm-before.state.json",
+      "sha256": "5C56547E37A22D44745AFCC4EDDF93B1A3CC6FC9FDD337A3317C17F4802EABA5"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm.load.log",
+      "sha256": "B2FDCF51CAA785D222DCEE9700D65C4AB4F5386B5741AA03AC78D2A2B92D1B7F"
+    },
+    {
+      "path": ".work\\nonce-batch-a1-warm.result.json",
+      "sha256": "A71409182EC3B93F6515FB2C37FED178D933820AEC245F3F31180F46CC101818"
+    },
+    {
+      "path": ".work\\nonce-batch-a1.offline-state.json",
+      "sha256": "90CB45F5AEEFFF2A1EBC018432C5C920C7300159F624C3147548CEB51AC58492"
+    },
+    {
+      "path": ".work\\nonce-batch-a1.start.log",
+      "sha256": "AB5D8ED0DA321F61E76F01A301A2E0470A9C552375E0B37F7511B914DAE2136F"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high-after.census.json",
+      "sha256": "79E960BE3A0951C1A69D72B86A2F6978B73FD7717DAA6001A95CC4CD8867E9CF"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high-after.channels.json",
+      "sha256": "08A57F7ECEACAA3B47081661C262861618542F4C49D0FEF7D2B441ED7907722C"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high-after.prom",
+      "sha256": "0F9EEDB5277DC1B74107192D4671AFBDA677A0537C67AAEE035C22E1567DFF73"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high-after.resources.json",
+      "sha256": "54281B2A19E715C42E5969F718C80ECA5C48CA0A379876E3581F68AACA3910B4"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high-after.state.json",
+      "sha256": "52DDF144F02C11E3FDAA77D8B469A072B53B00E3E4280916D098A112E8E000EE"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high-before.census.json",
+      "sha256": "0FA3F152ADFF1427BB2D9C73DAAFF659F4E00855C2B3B21E094E8AFA8469A8A5"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high-before.channels.json",
+      "sha256": "F6B220990276E287595CE2A53B8BAD49C3A59CF8B0DD94D7A76EEBD337089D22"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high-before.prom",
+      "sha256": "5FC63E64ADD10E1EFC8E983BDC409A8E686C5BF8044F7257A49A91792DC9B382"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high-before.resources.json",
+      "sha256": "54281B2A19E715C42E5969F718C80ECA5C48CA0A379876E3581F68AACA3910B4"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high-before.state.json",
+      "sha256": "A837A1EC804C90E6DA4973C8740925634DF24C168BE6227890FF8751EF775CAC"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high.load.log",
+      "sha256": "8842F8ACD174995FBEA7CBE8D4D2551700D3A9F7271A31DDD1E6E281A8D3D796"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-high.result.json",
+      "sha256": "39F5E6844A81AA26BEA4BE5CE0153D46629F1A2B93C016221B92D4F4631B7A51"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal-after.census.json",
+      "sha256": "366C1507656BE9D2DD6300D0770F8F0E4A728F60BFBCF5618B793C8067391060"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal-after.channels.json",
+      "sha256": "023C2EDCBB485E977A5E79DA0FDEFD5C40C5CEFC0B3EFB6D3D66A3D239588D3B"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal-after.prom",
+      "sha256": "5FC63E64ADD10E1EFC8E983BDC409A8E686C5BF8044F7257A49A91792DC9B382"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal-after.resources.json",
+      "sha256": "54281B2A19E715C42E5969F718C80ECA5C48CA0A379876E3581F68AACA3910B4"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal-after.state.json",
+      "sha256": "5A3A16663F195BF432D89B60AC9C371CA7ADF0FB4363A190A0A9E62DBB85388A"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal-before.census.json",
+      "sha256": "D418FEBB3898A5D983D9A453BF73BA34861294F8741319BBD1077987DD8FBC70"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal-before.channels.json",
+      "sha256": "BA6801E132BA60093D185CF0B9715AB30E157BDC671B53B57774A3C32D308729"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal-before.prom",
+      "sha256": "87C5F7328594313E981509B132DF92676F01CE5ECE91C6F3D1EF67A4BBFED1DA"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal-before.resources.json",
+      "sha256": "54281B2A19E715C42E5969F718C80ECA5C48CA0A379876E3581F68AACA3910B4"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal-before.state.json",
+      "sha256": "567B10CE21CB3626113F3609B52F0A6804047C86329871E882395D093773212F"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal.load.log",
+      "sha256": "E382E5067A1380ECE0C0C00FF1B0C888E9E6F1B149527C729B7F532BDA49C0AE"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-normal.result.json",
+      "sha256": "F7AEAC3465AC4AA5880392F1DB45C1B84FAC7651B15AFCAFDD3FA479389CCEE0"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-stop.channels.json",
+      "sha256": "792D3AEE9E0E0759D013E45094604F237781077E7FBC0F82D0931490BD730C11"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-stop.state.json",
+      "sha256": "D46699A6BE33612B042D347E20CF32EBCDC4AAE2C91614D98E711E28295167A2"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm-after.census.json",
+      "sha256": "438A4BC4B084D2855B8EE4C7DB9E20CDE8F6A84C22E348571B0ED54060BE7EB0"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm-after.channels.json",
+      "sha256": "AAEB04CCDB1D25A1EBD6F71EDF05816487C505445D3A19537D9CADFDF09C7734"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm-after.prom",
+      "sha256": "87C5F7328594313E981509B132DF92676F01CE5ECE91C6F3D1EF67A4BBFED1DA"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm-after.resources.json",
+      "sha256": "54281B2A19E715C42E5969F718C80ECA5C48CA0A379876E3581F68AACA3910B4"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm-after.state.json",
+      "sha256": "511BB830663F510DF918250EF37B6739AC5B32BA300C78D9756678346DD0DF7B"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm-before.census.json",
+      "sha256": "FE77B94E764544304B8AD1C0099411CB3078D2F575EC6BFA46F9CF404ACA029B"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm-before.channels.json",
+      "sha256": "12CA3F51CC919AB5CE6FEFBAE47D4A18AD205D22F685C5C55F7FA410C832F980"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm-before.prom",
+      "sha256": "518D7E7A7CE4E82DC33CF1CCDD21643B4845E8435D3C58A41894B192801FAF39"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm-before.resources.json",
+      "sha256": "54281B2A19E715C42E5969F718C80ECA5C48CA0A379876E3581F68AACA3910B4"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm-before.state.json",
+      "sha256": "93EA003321818666C760620DFBE9D528762F959256CD1CAE233C3F01072076B3"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm.load.log",
+      "sha256": "1A4C6805BBDF2B0B1254A1A6FBD3C618005FDCB96191A6E000E74D6861583F7C"
+    },
+    {
+      "path": ".work\\nonce-batch-a2-warm.result.json",
+      "sha256": "BD75633E3B76AF11AC933F88F1EF9D3287B4FCC90A30141A9197978A8E1C83D3"
+    },
+    {
+      "path": ".work\\nonce-batch-a2.start.log",
+      "sha256": "7C1819C8919B0DCA7D96A965FB5A4978D4D9D501006171B84FE775C6337A0FEF"
+    },
+    {
+      "path": ".work\\nonce-batch-a2.stop.log",
+      "sha256": "78DFD9E54D40AB0E2ED2D073BECF56B04ED6036A4BF93EF11111B39F5DCDC1CF"
+    },
+    {
+      "path": ".work\\nonce-batch-analysis.json",
+      "sha256": "91A1D728DEE8EA516C8FB716C2A3B07B9F1688ED1136C238F31572C3D83AF009"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high-after.census.json",
+      "sha256": "0AA1C6BB72DA0C705FDEAB13A20F674F13E64B35CB130001CC4C35C9C9C704CF"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high-after.channels.json",
+      "sha256": "89950B82C5CFEEEF2BF2FB77A66D98E37F905E8CF1D28A9739D0DEE62138C26B"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high-after.prom",
+      "sha256": "DA95C08F411DDD0B1E8CF2EC2DB3A9F5B15D03167BED0AE23CFBBBF014FFA810"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high-after.resources.json",
+      "sha256": "468D155634B1A4EF24FD3F4478D0DD72012E9D0012063722D8FA8B257AB49AB9"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high-after.state.json",
+      "sha256": "3013804DE3727D0BC321A651D6DCAC3F1BDADB59C2709491E46F8DB36F1A96D4"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high-before.census.json",
+      "sha256": "F1DDB40ACB510BC36021C7A8A567344080C9A0AD83D322C04926ECB73FE6971D"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high-before.channels.json",
+      "sha256": "16A97EF0B4D2E3D6BD078B23BB2EBCEE8E47E4316708CCD0584BC07A1F691076"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high-before.prom",
+      "sha256": "F7804EF3DBD0C7A122D7F908958D33B35325AD3667329F46ED6EAE027E468EE8"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high-before.resources.json",
+      "sha256": "468D155634B1A4EF24FD3F4478D0DD72012E9D0012063722D8FA8B257AB49AB9"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high-before.state.json",
+      "sha256": "1EE0D68C86C38B865892D2F6867E0204572754935F15D689F55213B8BEA9500E"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high.load.log",
+      "sha256": "DD1D1A9548E8B9D4C950B328194B07FAA6B4842C1FC8AA54C823981F38420A9E"
+    },
+    {
+      "path": ".work\\nonce-batch-b-high.result.json",
+      "sha256": "62390544F30005FD9478FD21EB298FE06EC881CAF1D6BC85AC3C101051DCC325"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal-after.census.json",
+      "sha256": "CBBE9B2A4C9F501D93533BBBBF18DF51EF63EEC6A7DF1F39FEE93025BFE5DCF2"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal-after.channels.json",
+      "sha256": "768965CFF260FA246C43D1F0219C0B3BD7C5967C6D54EE2E24671642B587E785"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal-after.prom",
+      "sha256": "F7804EF3DBD0C7A122D7F908958D33B35325AD3667329F46ED6EAE027E468EE8"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal-after.resources.json",
+      "sha256": "468D155634B1A4EF24FD3F4478D0DD72012E9D0012063722D8FA8B257AB49AB9"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal-after.state.json",
+      "sha256": "01A5103A0E395D399BC7D8C5EA04E62F74340948CA28DA19547D9A9759533089"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal-before.census.json",
+      "sha256": "CB67D5C3C1A41C01060F31D7DECA0241264E9402394B41215C5CD768C40FF8E6"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal-before.channels.json",
+      "sha256": "7BB99C6DEA4230C306D5B2E1979D1AB457366C7529E5E9B9E14D953C9335EB6D"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal-before.prom",
+      "sha256": "96BE9A71104C730B6C47ABB86B30A826EFC4A47488BA667AD9407244F67E1A5C"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal-before.resources.json",
+      "sha256": "468D155634B1A4EF24FD3F4478D0DD72012E9D0012063722D8FA8B257AB49AB9"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal-before.state.json",
+      "sha256": "74E437F32669A1701FF7C329A8D9AACCE19C644E16AC6A65DD03146DECE92F74"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal.load.log",
+      "sha256": "1668C255B8D608D22FE6097877B0F6B12300E24D6FAF040BA58A82FADEB288D6"
+    },
+    {
+      "path": ".work\\nonce-batch-b-normal.result.json",
+      "sha256": "C6A91126779744289D21F66EF41A816900EA447257EFF4D706603E78E9DDBC2A"
+    },
+    {
+      "path": ".work\\nonce-batch-b-stop.channels.json",
+      "sha256": "0865E5957D22EF053872C6AC981CCEC9B72FD90004FCC01BD1F886F03E3F341C"
+    },
+    {
+      "path": ".work\\nonce-batch-b-stop.state.json",
+      "sha256": "B84A48D154D582E6B840C242B8146774621130E451F16A27FFEC7104E7D7F400"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm-after.census.json",
+      "sha256": "6849A9A7DD0C936534262F43A6A309E94CD5C0162AE9E842D593BAFA58E59A3F"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm-after.channels.json",
+      "sha256": "6593964986B53CB213176E8675CBC0DEA3A2B234060B985530251F03E10397BC"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm-after.prom",
+      "sha256": "96BE9A71104C730B6C47ABB86B30A826EFC4A47488BA667AD9407244F67E1A5C"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm-after.resources.json",
+      "sha256": "468D155634B1A4EF24FD3F4478D0DD72012E9D0012063722D8FA8B257AB49AB9"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm-after.state.json",
+      "sha256": "098D61A8C159D12CA77D8CFF51C1F8A0E022BBA0F0BA3EEA4220A20F3BBCAFFC"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm-before.census.json",
+      "sha256": "C6A382C06CF9A86D5E55FC6F214986F96931847E7B76212A28BB897514364DA3"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm-before.channels.json",
+      "sha256": "75366014FF125675AF0BB75C45810BAFABB1EFED0B9BC17ED61D6107A1241EFB"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm-before.prom",
+      "sha256": "518D7E7A7CE4E82DC33CF1CCDD21643B4845E8435D3C58A41894B192801FAF39"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm-before.resources.json",
+      "sha256": "468D155634B1A4EF24FD3F4478D0DD72012E9D0012063722D8FA8B257AB49AB9"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm-before.state.json",
+      "sha256": "D29E1397C2AF010A76998EBBBDD08126DB4740C730F4F17692C05674E6B7137F"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm.load.log",
+      "sha256": "ED7C0A87716F22F21907DC453C5FC657F9831EF2D4257E20D51B0F9F99CC3849"
+    },
+    {
+      "path": ".work\\nonce-batch-b-warm.result.json",
+      "sha256": "DE78083074DA43E11D8F3AB611D3A96FA447DC79C249A20DB064A5BDE525C906"
+    },
+    {
+      "path": ".work\\nonce-batch-b.start.log",
+      "sha256": "A57138FBF651BDD82D2274C03741B26888B5DC6CB21EF203716390DDC8DC5EE8"
+    },
+    {
+      "path": ".work\\nonce-batch-b.stop.log",
+      "sha256": "78DFD9E54D40AB0E2ED2D073BECF56B04ED6036A4BF93EF11111B39F5DCDC1CF"
+    },
+    {
+      "path": ".work\\nonce-batch-boundaries-green.log",
+      "sha256": "7BE311FD358FC7715820307827417C0C9E3386FD27D865218FA6823EEB74888D"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-platform.jar",
+      "sha256": "727FEC58605D7EFCABDDA067AF8713D85AED47A7FDD0F9920BD15B0EF968DAAB"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-platform.jar.original",
+      "sha256": "DF486AD525907FA53154F7DAE9964D3D93CE8E4F2B4FAD0961DDC37125FABFAC"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.AdmissionTest.xml",
+      "sha256": "204FBC668B0BBE8946366A8BC2A9F32CCC11FEE9B35CF0214822904E9D5933F1"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.ApiRateLimiterTest.xml",
+      "sha256": "7C0D993C544870107971C2A7CBCA3C94C6F95E117B28F804D4FB9CB529FC0482"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.AuditTransactionTest.xml",
+      "sha256": "9CC642D6DECFC757B5853F2D52902CBEE8837AA865BE70A194E4DA22F881B7FA"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.ChannelEvidenceTest.xml",
+      "sha256": "23B1A36E7AF2D3E9F392493079D4B89F24F695EEC9B831A955C8CB995EFF584E"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.ChannelHttpContractTest.xml",
+      "sha256": "4CE7F98CDA798483E406AD8F2833F321CC6A09DBEF6E2D0B01C5D1005B77FB7D"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.common.CryptoTest.xml",
+      "sha256": "ADBBEEFE90E0B11044157FEA92B17CC89999D7AFE9D4487C56B462B2B26C6BDE"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.common.CsvTest.xml",
+      "sha256": "2FB2BA14C2C9AB8A1D95BE43F51431D48CDCBC447B264A064C6B547328660A15"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.common.MoneyRulesTest.xml",
+      "sha256": "B6DC5F101505DA99FDF813DEA7A68495E33AB11D57C05DCEC31D8FE933BAED91"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.ConsoleDetailTest.xml",
+      "sha256": "4504A86AF3141E64B543F8BDC0C30A41203C23EF2488708CC9CDE309C0DD709E"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.DurableTaskTest.xml",
+      "sha256": "38B201DC99A180D346BF84B423937E4CB58EFEDCB8EE90BEC579C2D81FE7EFA1"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.ExportTest.xml",
+      "sha256": "B4843E65A4CF633B24C24CCEF03D70AB3842E4C9F04C1A5FFA5C698CF15E579E"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.FinancialCoreTest.xml",
+      "sha256": "297BCBC8F02DA77B18C58FF486F3E369EC7786B69B8781E6B552E89DA4676A9A"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.ModuleArchitectureTest.xml",
+      "sha256": "F40EC8DA864861F108891AB51EEE9A307FDD9B0B00FE00C5CB1AD20CF0F89AF0"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlApiRateLimiterTest.xml",
+      "sha256": "C90C3B9446AB85EA010AC8ABA9E9672ED2E5E2744FA8D063F5E1C76C1F099A54"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlAuditTransactionTest.xml",
+      "sha256": "289CDA372F65C74519056FC244CFE745BA18012978D279981751FCFDC970CAB2"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlChannelEvidenceTest.xml",
+      "sha256": "C72F398B376514A1EA75EA11ECA811AAD616133997995D651BF0B595208BA549"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlConsoleDetailTest.xml",
+      "sha256": "70C8300E72AAAF468F540BDC9D84EE143DDAD61A10A52C48052304F0556452D9"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlConsoleSnapshotTest.xml",
+      "sha256": "EF3D9E63573C940D146253CC610758A7F89FBD995E1FD691E3D288AB09A41342"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlDurableTaskTest.xml",
+      "sha256": "4F156D0B7EAC86FEDB2CC5BDD8B770A3192C19C88E67F394FF78804D6CB2D2AF"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlExportTest.xml",
+      "sha256": "A858D7EF4CE56A1055507B80DB9CD2B87C044E85AF2B96BDFC685799E0C5ED0E"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlFinancialTest.xml",
+      "sha256": "03C87303A28D28AE15D58462F823F28762F200BE89F8A6E65667B693F0AFAFE1"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlPaymentBackpressureTest.xml",
+      "sha256": "29FA9840FC62C62999F17BB88EB0169B907FBE5280E8C242735073EECD80B5CF"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlReconciliationTest.xml",
+      "sha256": "46C4BB9E94E307B2456D2F5D62261FB211B4B4926AB6A6BCA91BB6BC08231A19"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.MySqlSignatureNoncesTest.xml",
+      "sha256": "BEFE2B35D2B72FDA7AA095B93A069FE66B44A72E0DB233DEF5CF069D02FACF4E"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.orchestration.TaskCompletionsTest.xml",
+      "sha256": "DAF634702839E4377942DE2F58FE45C11C41FC8CE95E1097F510712715B703E3"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.orchestration.TaskWorkerMetricsTest.xml",
+      "sha256": "5E23090E7FF126A1C2D54DC8B251F556873005CB6832356E4DFB8513CF2276B9"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.PaymentBackpressureTest.xml",
+      "sha256": "A4E04213940BEBB700344F9407E17F24CC3A623C6132F98E81295517EB05CBA6"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.ReconciliationTest.xml",
+      "sha256": "E85A7C54E8F4F583F570F19C8F329E98A69B01789E7D4B6AC208E134E1A52D22"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.SecurityIntegrationTest.xml",
+      "sha256": "2AD90E6AE70470A0115D16430290B0F239D920E87DEFB882578A18010795D637"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.SignatureNoncesTest.xml",
+      "sha256": "A380CA6E04FADEC00D033803F18896AC3C4FB10B08289262BE09A3B1EA31F8DA"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\platform\\TEST-dev.merchantpay.platform.web.ApiAvailabilityTest.xml",
+      "sha256": "3B687CE2025C50DA9ECB136361852F107A04F77565708E264120FE24C7332688"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\simulator\\TEST-dev.merchantpay.simulator.ChannelHealthTest.xml",
+      "sha256": "1F9904B5BEC4BC9169900A352FEE99D222F849EF414A60098C10A52EC40ADF3D"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-reports\\simulator\\TEST-dev.merchantpay.simulator.ChannelStoreTest.xml",
+      "sha256": "692F61943B51251B83AEE3115B3F8B8BA8559509A6E82AF5D3790581A94FB701"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelApi.java",
+      "sha256": "4EF34DD85FC0C0DA548A589E2CC4D6FDFA2AA1F71A22B57AA12524A3636D5CC2"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelBillReader.java",
+      "sha256": "AC17734A3AF677F91FC330D6DD7C63CE04EC0B93E01463E278FB3F0F70EC8770"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\ChannelGateway.java",
+      "sha256": "FA7BE9AE1661275E75A81372BEEEC4E563854470B9663A47733B63D2C8EC3303"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\channel\\InboxService.java",
+      "sha256": "61EC28F6103A7ADCC0B094A3E68EEDBC7E247FFA0A5C091B73C02B74E225E4D5"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\ApiException.java",
+      "sha256": "3A7D73EDE525C822B60F9489AA568E7D5E3E33B60D60D1089BAEDBD0967B8514"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\ChannelResult.java",
+      "sha256": "0DE610320D74937EDD9543AD6C32FCFDFE0F635113FD87A3776BF0C0602730FD"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\Csv.java",
+      "sha256": "DF3BCE95879D4D73B653E820CEDB0D159FA0116B3CF7BC99792B65FA1FE54EDF"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\KeyVault.java",
+      "sha256": "7CFDAFDDD810C3B75826820A3CD31CE4438D1560CD96E18441A3165B33C7099D"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\MoneyRules.java",
+      "sha256": "21D4A0CC537302C4DCD164A1E817C062591B3CD84B614FA5BCFB11FAAECF97F1"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\NotificationPolicy.java",
+      "sha256": "041BF8A83196E983C04D378A465764FFFCB7C64622AAEAE9993D6DF7ECE89134"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\common\\Signatures.java",
+      "sha256": "8C217871C6619F3A7236DEB7106E5728A81F01C9A81071C919D6454537DB6AA3"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\ledger\\LedgerService.java",
+      "sha256": "9E785F60954A62E9B81B83DC9339A9D852F8526B1310C0A3BBDC9C4FD58DD264"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\merchant\\MerchantService.java",
+      "sha256": "76753C32613641EF11090AA764E94B73A509339C765C93B8153B50EE1EE953CF"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\BusinessMetrics.java",
+      "sha256": "A5BA91AD416CB488F1311CA51C42CFCDFF46536D2CD7623ECEF1057CB95D6307"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\LocalDemoData.java",
+      "sha256": "EC0AFB6CB06139786A86C492CC3833278599FD3C7BAA110384673690F394229F"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\NotificationService.java",
+      "sha256": "55C7F9D6180D03FA0525C110BB75E1D2BA29388E01A23FFEA4FE8B18F51EF689"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\TaskCompletions.java",
+      "sha256": "A167F25A7935B6B86E8149744C2B657403C7F70DAD0EEC2F933741EC90C80F3D"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\orchestration\\TaskWorker.java",
+      "sha256": "862A87A0053DF5B53CF618EEC5B12A92280DD0545C5F9120B4CB0F2D03A5D9D1"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\outbox\\OutboxService.java",
+      "sha256": "21EDDDB84195B8A10282950E9F7AEC2FFB793F265D976717592593B20A46F6DD"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\outbox\\TaskQueue.java",
+      "sha256": "6717155E89B688E11BDF3C230A0B9498491EBE60910FEFF7362ED3AF82C1FEBD"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\payment\\PaymentService.java",
+      "sha256": "682987A04996BA73043000779BCA137671C80A507B7628046A6C4ECCA4D365F5"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\PlatformApplication.java",
+      "sha256": "C0AA64A56D15FFC1E016311C05C32C7B73F8322722AA6FCB0DBB431A63002DB5"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\query\\Queries.java",
+      "sha256": "F61A7675E2BBAACCEB2B11B26B5C925F2064AE44CF874697C180D3FFFB1179FE"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\reconciliation\\ExportService.java",
+      "sha256": "076A5EF3E6B805E83706FBE1511656245563054735CF675C53C22B6AA42F4404"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\reconciliation\\ReconciliationService.java",
+      "sha256": "FAABA2898A29FAE375AB156ED7A70D68FF991A857A410AFC3D6A1F9AA5084F0E"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\refund\\RefundService.java",
+      "sha256": "2B5181E3E0B87F1C2C2C70B242FCBF0EAAA17D0F6902B4648C2077822E08CD37"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\Access.java",
+      "sha256": "D4F07C224D55F398D34909E64104A402895F882E80AB89E33A5FCD3D82B2B231"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiAvailability.java",
+      "sha256": "225CB0E8013ED7C14BD332683101AD40D2365CD453F88201E70E849C49BF0C55"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiErrors.java",
+      "sha256": "29D5C6596B4FB3A80075D9702F9BAE3451EBBCC2FC12BC3F48089CB719F359B5"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ApiRateLimiter.java",
+      "sha256": "BB0387A016315408ED6D8613DEA2C64BED43FD788ADCA16597D3ABC68404F3DA"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ChannelCallbackController.java",
+      "sha256": "E3E85B8BEB8DDEAEEF6F3907262A18C508D2DD4FC81F4A963FDA60A25FF0D9C4"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ChannelStatusController.java",
+      "sha256": "EA62BB564DD0C5DCE5E1EA4A0FF96F2E14ABBC6C24F5432E27251465EF1FE6F6"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ConsoleController.java",
+      "sha256": "95281C3C964AA74B95959A7CBA89921FCB932777919C7CCE56E3A4CB10C3F9F0"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\OpenApiController.java",
+      "sha256": "0628CF9FFED7B857079A411C9EE655AF295B9DDE63937A20D7BF3281365284E8"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\ReconciliationController.java",
+      "sha256": "90072E8D97F28A7304C3043137492CFE80401F9DE5FED6CB93BBEA91379F01DA"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\RequestTraceFilter.java",
+      "sha256": "87EC59B93A897A6CD0D801C741A50DD3821921DEDE0F036D64E56A7C2A29229A"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\SecurityConfiguration.java",
+      "sha256": "F6D4811E17AEE96DE49ED78A775594C6E17A12AE2A93751120B14A302A45EE20"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\SignatureFilter.java",
+      "sha256": "99F813BD41473FBDA7AD26273684E15F9857AE04F41CF1D2CF0438FB1545A243"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\SignatureNonces.java",
+      "sha256": "6680146E8FDECE9EE48AFC09234BD08A4BC9A8EB8CDDA0D32D76A2D30DA3CA21"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\java\\dev\\merchantpay\\platform\\web\\WebConfiguration.java",
+      "sha256": "545BD26BB34EAA11C375B5F697313B83AB6542DCDE310AE260ADE39963764884"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\application.yaml",
+      "sha256": "5E8FC99FA7ADF753E7543DA2A95B29155271C768B4E256E557C7D208158FF17C"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V1__core.sql",
+      "sha256": "7886E929C4AD0575E35798BF8FE268CF365D392C0EE10C8146830BEEF7DBE2A1"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V10__export_execution.sql",
+      "sha256": "63712B0066C17D7148CC3A0E5F48E3BCA791CF9424E4B2B98ABFCB87DC2C66B2"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V11__payment_evidence_paging.sql",
+      "sha256": "F826CBA647A47575A0A41C4933D1C81ADD4A73759C2014BEFECD20551017D796"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V12__payment_backpressure.sql",
+      "sha256": "42C4A059C5715693CC87A7B45370554A07052F513A4D0E88203E5E79E64AB782"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V2__security_and_evidence.sql",
+      "sha256": "A6F4367984437269B10116711AF34360CC268BC592195EFA73214AECD9E3D11E"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V3__notifications.sql",
+      "sha256": "9396FC5DF78972D49DF7496D0469E9446562350898608F3F524606589D123BA6"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V4__reconciliation.sql",
+      "sha256": "D5528042679999640D3263B6D7D0950E477D34C6ED0641FE4D73B27B8CF2117F"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V5__exports.sql",
+      "sha256": "7535AAF722AAAB49E306358B272C7DDDF738063220698D99F8C5C07165967B90"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V6__timeline_and_cursor_indexes.sql",
+      "sha256": "765742FAB1CB1EBC1CEB47606F8CFD53F6CF703A182BD58CAF57F229FEE75F36"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V7__isolated_task_queues.sql",
+      "sha256": "107A3566F279AD3881C231DCBE038C6DA9425785670C542EA9D07C7BC9BB1C88"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V8__export_ownership.sql",
+      "sha256": "BE931902ED6ABA17F46E3222A07A632374B560F62B363823EF74C8EF2FA6A9FF"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\main\\resources\\db\\migration\\V9__reconciliation_execution.sql",
+      "sha256": "626E798C9F281B5C5BE17121FCCD9BA2FF03391273203580A36E4FAF0F6C057D"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\AdmissionTest.java",
+      "sha256": "92D4DBA1F5FB13791A386D78EEF5492BF1B0C7BD1F7B4064D98F405A38721128"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ApiRateLimiterTest.java",
+      "sha256": "801C782625C5A70869AE7F71D5A5D7C0927EEB1C5C35C0D14EAA013581B41E87"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\AuditTransactionTest.java",
+      "sha256": "229D016DE8918561162A16B9E7EFC8CC025AA59BDF7DE98AE484D4364EB58831"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ChannelEvidenceTest.java",
+      "sha256": "64EF4184A9A1CFAF8BF1DD6928B0593DABE58EB60359FFA078998F448A553FA9"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ChannelHttpContractTest.java",
+      "sha256": "79C3AD0E3E0C19159BCCE1E92D8B7CA26F7C4D9157A202477E590BFB92FA00A7"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\CryptoTest.java",
+      "sha256": "E7D34120A00FD438637E7B428E53BE5D47C956D792D4A62EC4A4E97D6AF2CF20"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\CsvTest.java",
+      "sha256": "27E59A848B7D9CC6C279FF957630D9E033CD0EDD129B96209FAEC4C8AE5CFBB6"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\common\\MoneyRulesTest.java",
+      "sha256": "083E35CEC2A629FBF847ADB6534A36BC5E9E9935F5DB06075611A6B9796A7FDA"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ConsoleDetailTest.java",
+      "sha256": "81E0F23A6DC3CD584A08340EE11FDC4040DE0B45B8C8BFE8562BDA94585A7AF0"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\DurableTaskTest.java",
+      "sha256": "815AD82B6F0D71A61303EA0E36C88C0CDFDACE393132D0BF2E4A00D85D412AD4"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ExportTest.java",
+      "sha256": "6A0982026738D69682C66C309CB239CF72A7AE9AD6089431B17E183E2BB18DC4"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\FinancialCoreTest.java",
+      "sha256": "7E0CBFA539B5CF7C2862AA454BED6690EAFDDEC4816660D8BB39076101C91D09"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\FinancialFixture.java",
+      "sha256": "C78BC1D9B90A41DEFE773D2318DA10D298FDAE7712E4EE2DDDE7BFC67933A0E2"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ModuleArchitectureTest.java",
+      "sha256": "FBCEFA5BFCF01ED7F473986447F42733CD5CEF64B794B319B65011AC06A9F6B5"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlApiRateLimiterTest.java",
+      "sha256": "ECF94FFBC07E8356A60990C12C61F2E8B158543FBA7B723AA766438F033BB754"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlAuditTransactionTest.java",
+      "sha256": "4EA72316CD3B283079158514897A7FA40D17392C55AF12262F31116A8A8AB7EC"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlChannelEvidenceTest.java",
+      "sha256": "1F0BF72BA1FF818D1EA10FC3C5C4AD0C64CDBA7536DD0E59E6C6440B73B67963"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlConsoleDetailTest.java",
+      "sha256": "9CB769DBF2B8B5D71ED86DBD157AFDEB47E2312A137F92F12844716AC38B04DD"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlConsoleSnapshotTest.java",
+      "sha256": "CAB36590782DD4F9A7FE8A953CC2D3527D4BAA0B30EB4A57D15E40B86AEBD7FD"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlDurableTaskTest.java",
+      "sha256": "C3869B534413E1D2E4FA9F36F1E1C371743B15624BF993289F89D9F0338F276D"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlExportTest.java",
+      "sha256": "0B6EA15BEA21CE38D86C2E7788486CA2005FE82F189E918E56058F4FD2580C79"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlFinancialTest.java",
+      "sha256": "D4D216A01B0F6EC63FB2B39C1E833761E6EDE01BB10F0CDE0948B0C34F329DB6"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlPaymentBackpressureTest.java",
+      "sha256": "3A069213121D2F805ED67CB241CD8AA3EC6FF5EB1BE5E65FAE6F65DB20D569AF"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlReconciliationTest.java",
+      "sha256": "F083B1A24D65323BA2C665721B899761E35B719245A55788A31B2DB982E11B24"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\MySqlSignatureNoncesTest.java",
+      "sha256": "BCEBC185C6FC8251B35E0C0A258FCF11A7E853161253AA65AA374FA4A286B779"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\orchestration\\TaskCompletionsTest.java",
+      "sha256": "234529E3A6FA3FACAFD8B3F1D33CC45322DE8FA093DCDEB9406EF28C7A92F4F9"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\orchestration\\TaskWorkerMetricsTest.java",
+      "sha256": "2C21DBA311F9D89173B4B05D88644A2E210E81638DFF560B2B27538BA16FB2BD"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\PausingQueue.java",
+      "sha256": "41E8E6E47956D56E20BEA9997D01CB59BC2DF8DE82C79D7ED30AAF15B31C5F79"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\PaymentBackpressureTest.java",
+      "sha256": "9AE1625053C58EC9D0FAC3EB3D8238FD62D5C0D24A5EE85F15BB754EB928F084"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\ReconciliationTest.java",
+      "sha256": "A4F757027E9A9B0271C0654FAF6DC3E1D25688B078240AB3A652D72276F5808C"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\SecurityIntegrationTest.java",
+      "sha256": "FECB89578BAD0950DC4145123F501589F7412374A68512D7BF66BCCFB33E36D9"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\SignatureNoncesTest.java",
+      "sha256": "0914CE9A60488112D79B20585DEFA43D5C11CB2BEDF1BE2F86A3FE06727422B3"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\platform\\src\\test\\java\\dev\\merchantpay\\platform\\web\\ApiAvailabilityTest.java",
+      "sha256": "0975B41EBF8BBA02754352DDCE5DFF59CCF664365799F8E9C3D5B78DF70EBE84"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\CallbackWorker.java",
+      "sha256": "FE8AE519EE820C0FE89269CDB705E4FE71F95C455EB143C7739BA29AE2F3EC15"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\ChannelController.java",
+      "sha256": "52FC8C09F8214476D1AE73365A16F54B0D7A1667BD49C0B1DFB14B2187B45440"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\ChannelStore.java",
+      "sha256": "5BACECDA12F660E53D780ACCEF5E35C5AF93477EA50046ED040FB1A8487F09E5"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\DemoMerchantWebhook.java",
+      "sha256": "39D402B77E274A244C2E1B3FE8E1AC55748C2CB0642F9B5D97DFA6D787EB37F9"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\simulator\\src\\main\\java\\dev\\merchantpay\\simulator\\SimulatorApplication.java",
+      "sha256": "F86C724C08638A1419C40AAB9BBA35A00A6D53ABB9E67676DCC0FDED0EEC8532"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\simulator\\src\\main\\resources\\application.yaml",
+      "sha256": "2348F85016FF8EFA06DB9983F9D2FCAF682A9D754F60FC556DC3D73E90F32EC9"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\simulator\\src\\main\\resources\\schema.sql",
+      "sha256": "25925B74F393B7B27649E410059B1EBF0C80193C023D73A6A09A5880928978CB"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\simulator\\src\\test\\java\\dev\\merchantpay\\simulator\\ChannelHealthTest.java",
+      "sha256": "D3EE49D57F963904B312870AB53BA520FAF5DF4902225279BB80271567B190D6"
+    },
+    {
+      "path": ".work\\nonce-batch-candidate-sources\\simulator\\src\\test\\java\\dev\\merchantpay\\simulator\\ChannelStoreTest.java",
+      "sha256": "8D470697EF2635DFE12ED7FE2CCD61C65561A9E85EB95B028F9DFDD49E589BC3"
+    },
+    {
+      "path": ".work\\nonce-batch-comparison.log",
+      "sha256": "6E239CAE92E93EFEB5E4BAA189CCC4598E5791EE7D70D6408AB07E767B10A075"
+    },
+    {
+      "path": ".work\\nonce-batch-control-platform.jar",
+      "sha256": "1B63BC70F3A1BFB2EBEF64C1EDC5098D11F35C71DD50D3C966C31704DC2D2997"
+    },
+    {
+      "path": ".work\\nonce-batch-control-simulator.jar",
+      "sha256": "B712BF2755779EAA2339984258455B90217B3A7055F56305C548BD02666E0D8E"
+    },
+    {
+      "path": ".work\\nonce-batch-final-inventory.json",
+      "sha256": "7774A1FA5AAD3BCD5DCD410C363F322A3EFC7E374981C6E64B575C08C3F1FD4C"
+    },
+    {
+      "path": ".work\\nonce-batch-final-preflight.log",
+      "sha256": "F23D9CA39402AA90ED3EA51509EEB0AFDE2416028C21BE23F83485C84358CA54"
+    },
+    {
+      "path": ".work\\nonce-batch-final-services.json",
+      "sha256": "5C17159F62934CED07B5B8556091FE7ECB6A9356C7EC0F85705621E6E834DAE5"
+    },
+    {
+      "path": ".work\\nonce-batch-final.channels.json",
+      "sha256": "D77D2B4712868B583BCEDDF564E662347B90162B67DCFBE1CD6899B2A3960FAA"
+    },
+    {
+      "path": ".work\\nonce-batch-final.state.json",
+      "sha256": "2B327881EE2693DA1AA76428A0690766FA679DEE3D9376B828FB46279F118F35"
+    },
+    {
+      "path": ".work\\nonce-batch-format-final.log",
+      "sha256": "87E9B317C656DDBF7CB67DEC792365DC7E696C5468177E7C6CC68F7397341010"
+    },
+    {
+      "path": ".work\\nonce-batch-format.log",
+      "sha256": "AB72FC5211914C27098C206107D84D4E1F193639392A92F40DE73F9941DFB298"
+    },
+    {
+      "path": ".work\\nonce-batch-full-backend-final.log",
+      "sha256": "AD7C45EF4243C8BF2B5F5F310B4DDC6A2A84D4399B40337332C2F641D76E48A9"
+    },
+    {
+      "path": ".work\\nonce-batch-full-backend.log",
+      "sha256": "4826ECEDBD6AC1606F04F67F67218D0F5D3C1AF42AFF944C6DE888714D745101"
+    },
+    {
+      "path": ".work\\nonce-batch-lock-rejection.log",
+      "sha256": "294BB606686ED616FA123E86F98621E50190C8934485894370B668AE5B5B747F"
+    },
+    {
+      "path": ".work\\nonce-batch-lock-test.json",
+      "sha256": "3FB3F3F75E9D0650C1425D1ED61C01221BB892D316917E36835D97CCD47D8BD3"
+    },
+    {
+      "path": ".work\\nonce-batch-package.log",
+      "sha256": "78A2E9D10B904E245D030B36353DC1CF7B30016783A3F32BC2C85D8397E8852E"
+    },
+    {
+      "path": ".work\\nonce-batch-prepackage.channels.json",
+      "sha256": "F69D2C748E7ED1CE4478E3516083BE19C612D1E1539DB535CF2533CFDC4F8449"
+    },
+    {
+      "path": ".work\\nonce-batch-prepackage.state.json",
+      "sha256": "A74C00CC44BB546F8C3C002E4F5151F3078565921607D23F46567CA73EA73122"
+    },
+    {
+      "path": ".work\\nonce-batch-prepackage.stop.log",
+      "sha256": "78DFD9E54D40AB0E2ED2D073BECF56B04ED6036A4BF93EF11111B39F5DCDC1CF"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-source-hashes.json",
+      "sha256": "375FDEBBD7A633F7D79081582B766937B417FB5086799A9AFDC2472143343B78"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\.work\\nonce-batch-protocol.json",
+      "sha256": "AEF2D7A5833A0A427A5F2676297071515FE2B006A06E7C14E1DD9CD66C6E8642"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\.work\\RunNonceBatchComparison.ps1",
+      "sha256": "2912EF72A87C85942C06A6BF906602762E828BF868BAD2A77A30C29CB5D7B118"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\.work\\TransactionCensus.java",
+      "sha256": "9405B31B531C4CFFA6BF6C4FC5954CBB03B1D69B49E2C5BA520FD36460AF819C"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\infra\\compose.performance.yaml",
+      "sha256": "BEA9CEDE291438918228B3C93B55E39CD3AAAC66116625B90E903302D5F0AD89"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\infra\\compose.yaml",
+      "sha256": "63FCD306EB869D5D6ED55048A3BF8D3DA8124376AFED891F4A5083277F8C1290"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\scripts\\load\\LoadMeasurements.java",
+      "sha256": "1BF71BF258577B7F115A1B93BA58E9F627B0F403DE18569D0A67BEB7FCC4B74A"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\scripts\\load\\LocalDiagnosis.java",
+      "sha256": "2707F3C4EDA482F38B6DF04040B869F96047F82E054BF3C515FDC79244E967EF"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\scripts\\load\\LocalLoad.java",
+      "sha256": "A69AECA955C9AF6BA54EC98D19D9B911C987E2D6988648DB91CF7C7995FE8E24"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\scripts\\load\\run-local.ps1",
+      "sha256": "CA610BD8D6D00CC57EE4B372CCA6B2C20958CACF79573CF8E0F2700C3CE9F200"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\scripts\\LocalPerformance.ps1",
+      "sha256": "89C2C642F00D93B741723ABD9AA7196152CDBCE6B2E65BE65C71844E5AFAAB57"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\scripts\\start-local.ps1",
+      "sha256": "BDE0332A7C3BF73AF17F3AB90A6B0C481209CC5EF5EF3E4FD90F785499996C02"
+    },
+    {
+      "path": ".work\\nonce-batch-probe-sources\\scripts\\stop-local.ps1",
+      "sha256": "E5D2964B438334543678C67C23421C628D2A02952664A4E3A77147326BAB29E6"
+    },
+    {
+      "path": ".work\\nonce-batch-protocol.json",
+      "sha256": "AEF2D7A5833A0A427A5F2676297071515FE2B006A06E7C14E1DD9CD66C6E8642"
+    },
+    {
+      "path": ".work\\nonce-batch-red.log",
+      "sha256": "CA2B438CDEBCEED528543F1F1AA8E9F14255095BD3CCA5475BBFFBBB221DC7CE"
+    },
+    {
+      "path": ".work\\nonce-batch-restored-compile.log",
+      "sha256": "C74F004EDECCA574612053A2A0E2AB68F9FD85F9019FA8727A83AD06EA8FDFBE"
+    },
+    {
+      "path": ".work\\nonce-batch-restored-smoke.json",
+      "sha256": "74CA3FCA6A80BBC67EA508D1E89743072043FD4478D22557ECD3C909ACA8AEA8"
+    },
+    {
+      "path": ".work\\nonce-batch-restored-smoke.log",
+      "sha256": "C53C66FE35A84643C60B7EC1BE31F8EDEE85D508458D4B509BE329FE12E8530E"
+    },
+    {
+      "path": ".work\\nonce-batch-source-hashes.json",
+      "sha256": "DA7C6C7F3371B0BF546B700BB8707588F7EF62E3AAFF17C554897BCA3CC92334"
+    },
+    {
+      "path": ".work\\nonce-batch-source-rollback.json",
+      "sha256": "164ACA5BC4F4F8CFCB3DC321E170B3587B4B5A7B66D826AEED8C4BBD0CFECCBE"
+    },
+    {
+      "path": ".work\\nonce-batch-targeted.log",
+      "sha256": "1B4AB5FBEA87201766C00115EDD2BCE89E4B89BDDCD4D6DA1B8B259CA233896D"
+    },
+    {
+      "path": ".work\\nonce-census-baseline-green.log",
+      "sha256": "1430E4CF22BA412B1B40606C34EE428EBA85EAB6FA35E6600CC12831D0CB398A"
+    },
+    {
+      "path": ".work\\nonce-census-counter-green.log",
+      "sha256": "ED39B6C97F3B7EA45BEEED724B133DB2ADA08251BD51F1616F7533745A3DFAD9"
+    },
+    {
+      "path": ".work\\nonce-census-counter-red.log",
+      "sha256": "FDAE2CF7EB87E2A587EF3DC07D87E378AA3F56C1EB2745C88F33F1DC89691CC2"
+    },
+    {
+      "path": ".work\\performance\\baseline-20261019T145800Z-612c50e5\\initial.resources.json",
+      "sha256": "2B4CEFB48F1FEAABBDA1A8D2359D82090C35642E34F98B8248DD79A5CD377849"
+    },
+    {
+      "path": ".work\\performance\\baseline-20261019T145800Z-612c50e5\\initial.runtime.json",
+      "sha256": "996EE18B3609195B99FFDF1BBD068F7B2327125120597002DA633B6F829F3AE8"
+    },
+    {
+      "path": ".work\\performance\\baseline-20261019T145800Z-612c50e5\\preflight.json",
+      "sha256": "62214939FF0D5640BA706B9BF058AF068463FDEC8F686DD61BDB3CA6E7F8336C"
+    },
+    {
+      "path": ".work\\performance\\baseline-20261019T145800Z-612c50e5\\tools.json",
+      "sha256": "C017D701F2BF21C0B7C9A7DC317D5FFDB7660F108A831B70A750308D7E34D144"
+    }
+  ],
+  "baselineQualified": false,
+  "referenceR1Certified": false,
+  "limits": [
+    "D0 shared-host30second settling plus short workloads, not formal600second warmup or R1/D1 qualification",
+    "Nonce group metrics are not fsync counts; global binlog cache counter includes possible rollback",
+    "Completion timing is an online-observer interval, not an exact commit timestamp",
+    "Candidate connection-failure classification regression is archived and removed by full source/JAR rollback; not retained in product",
+    "Original census and strengthened ABA probes are distinct frozen source versions",
+    "No frontend/browser or remoteCI rerun"
+  ]
+}
