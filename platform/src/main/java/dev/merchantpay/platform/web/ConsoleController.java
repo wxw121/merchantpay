@@ -294,7 +294,17 @@ public class ConsoleController {
                       id,
                       scope);
           if (rows.isEmpty()) {
-            throw new ApiException("TASK_NOT_FOUND", 404, "任务不存在");
+            rows =
+                scope == null
+                    ? queries.rows("SELECT * FROM outbox_task_history WHERE id=? FOR UPDATE", id)
+                    : queries.rows(
+                        "SELECT * FROM outbox_task_history WHERE id=? AND merchant_id=? FOR UPDATE",
+                        id,
+                        scope);
+            if (rows.isEmpty()) throw new ApiException("TASK_NOT_FOUND", 404, "任务不存在");
+            jdbc.update(
+                "INSERT INTO outbox_tasks SELECT * FROM outbox_task_history WHERE id=?", id);
+            jdbc.update("DELETE FROM outbox_task_history WHERE id=?", id);
           }
           var task = rows.getFirst();
           if (access.caller().roles().contains("MERCHANT")

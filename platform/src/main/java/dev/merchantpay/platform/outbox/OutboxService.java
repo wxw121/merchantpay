@@ -22,9 +22,11 @@ public class OutboxService {
       throw new IllegalStateException("Outbox creation must share the business transaction");
     }
     var now = Timestamp.from(clock.instant());
+    String id = UUID.randomUUID().toString();
+    jdbc.update("INSERT INTO outbox_events(id,event_id) VALUES (?,?)", id, eventId);
     jdbc.update(
         "INSERT INTO outbox_tasks(id,event_id,kind,aggregate_id,merchant_id,payload,status,due_at,created_at,updated_at,queue_class) VALUES (?,?,?,?,?,?,'PENDING',?,?,?,?)",
-        UUID.randomUUID().toString(),
+        id,
         eventId,
         kind,
         aggregateId,

@@ -247,7 +247,7 @@ public class ChannelGateway {
             && receipt.reference() != null
             && receipt.reference().startsWith("mock-close-")
             && !jdbc.queryForList(
-                    "SELECT id FROM outbox_tasks WHERE event_id=?",
+                    "SELECT id FROM outbox_events WHERE event_id=?",
                     "channel-close:" + receipt.aggregateId())
                 .isEmpty();
     if (!expected.get("channel").equals(receipt.channel())

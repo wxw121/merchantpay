@@ -45,16 +45,21 @@ public class NotificationService {
         HttpClientSettings.defaults()
             .withTimeouts(Duration.ofSeconds(2), Duration.ofSeconds(5))
             .withRedirects(HttpRedirects.DONT_FOLLOW);
+    var factories =
+        ClientHttpRequestFactoryBuilder.httpComponents()
+            .withConnectionManagerCustomizer(
+                manager -> manager.setMaxConnPerRoute(16).setMaxConnTotal(16))
+            .withDefaultRequestConfigCustomizer(
+                config ->
+                    config.setConnectionRequestTimeout(
+                        org.apache.hc.core5.util.Timeout.ofSeconds(2)));
     external =
         RestClient.builder()
             .requestFactory(
-                ClientHttpRequestFactoryBuilder.httpComponents()
-                    .build(settings.withInetAddressFilter(InetAddressFilter.externalAddresses())))
+                factories.build(
+                    settings.withInetAddressFilter(InetAddressFilter.externalAddresses())))
             .build();
-    local =
-        RestClient.builder()
-            .requestFactory(ClientHttpRequestFactoryBuilder.httpComponents().build(settings))
-            .build();
+    local = RestClient.builder().requestFactory(factories.build(settings)).build();
   }
 
   public void deliver(TaskQueue.Task task) {

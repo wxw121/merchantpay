@@ -29,9 +29,10 @@ class MySqlFinancialTest extends FinancialCoreTest {
     org.assertj.core.api.Assertions.assertThat(dump.getExitCode()).isZero();
     org.assertj.core.api.Assertions.assertThat(dump.getStdout())
         .contains("ledger_journals", "ledger_entries");
+    jdbc.execute("DROP VIEW IF EXISTS outbox_task_records");
     for (var table :
         jdbc.queryForList(
-            "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE()",
+            "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_type='BASE TABLE'",
             String.class)) {
       if (!table.matches("[a-z_]+")) {
         throw new IllegalStateException("Unexpected test table");
@@ -77,9 +78,10 @@ class MySqlFinancialTest extends FinancialCoreTest {
     var source =
         new DriverManagerDataSource(MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
     var sql = new JdbcTemplate(source);
+    sql.execute("DROP VIEW IF EXISTS outbox_task_records");
     for (var table :
         sql.queryForList(
-            "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE()",
+            "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_type='BASE TABLE'",
             String.class)) {
       if (!table.matches("[a-z_]+")) {
         throw new IllegalStateException("Unexpected test table name");

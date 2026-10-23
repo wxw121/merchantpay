@@ -102,7 +102,7 @@ try {
     Compress-Archive -Path (Join-Path $taskFolder '*') -DestinationPath $taskZip
     try {
         $taskArchiveBytes=(Get-Item -LiteralPath $taskZip).Length
-        if(-not (Test-LocalBackupArchiveBudget $taskTotal $taskArchiveBytes $Source)){throw 'Compressed archive exceeds the bounded DPAPI budget (container 256MiB, native 1GiB); source services will resume'}
+        if(-not (Test-LocalBackupArchiveBudget $taskTotal $taskArchiveBytes $Source)){throw 'Compressed archive exceeds the bounded 1GiB DPAPI budget; source services will resume'}
         $taskProtected=[Security.Cryptography.ProtectedData]::Protect([IO.File]::ReadAllBytes($taskZip),$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
         $taskPending=Join-Path $taskBase ($Id+'.dpapi.pending')
         $taskStream=[IO.File]::Open($taskPending,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)

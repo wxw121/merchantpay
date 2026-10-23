@@ -347,7 +347,7 @@ public class PaymentService {
           }
           transition(id, "CLOSE_PENDING");
           String eventId = "channel-close:" + id;
-          if (jdbc.queryForList("SELECT id FROM outbox_tasks WHERE event_id=?", eventId)
+          if (jdbc.queryForList("SELECT id FROM outbox_events WHERE event_id=?", eventId)
               .isEmpty()) {
             outbox.enqueue(eventId, "CHANNEL_CLOSE", id, merchantId);
           }

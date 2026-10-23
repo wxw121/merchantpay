@@ -44,16 +44,19 @@ class AdmissionTest {
   }
 
   MockHttpServletRequest request() {
+    return request("POST", "/api/v1/payments");
+  }
+
+  MockHttpServletRequest request(String method, String path) {
     String time = Long.toString(clock.instant().getEpochSecond()),
-        nonce = UUID.randomUUID().toString(),
-        path = "/api/v1/payments";
-    var request = new MockHttpServletRequest("POST", path);
+        nonce = UUID.randomUUID().toString();
+    var request = new MockHttpServletRequest(method, path);
     request.setContent("{}".getBytes(java.nio.charset.StandardCharsets.UTF_8));
     request.addHeader("X-Key-Id", "key");
     request.addHeader("X-Timestamp", time);
     request.addHeader("X-Nonce", nonce);
     request.addHeader(
-        "X-Signature", Signatures.sign("test-secret", time, nonce, "POST", path, "{}"));
+        "X-Signature", Signatures.sign("test-secret", time, nonce, method, path, "{}"));
     return request;
   }
 
@@ -61,6 +64,73 @@ class AdmissionTest {
     var limiter = mock(ApiRateLimiter.class);
     when(limiter.allow(anyString(), anyLong())).thenReturn(true);
     return limiter;
+  }
+
+  @Test
+  void paymentFloodLeavesReservedRefundAndQueryCapacityWithinOriginalTotal() throws Exception {
+    var filter =
+        new SignatureFilter(
+            merchant(false),
+            jdbc(),
+            clock,
+            JsonMapper.builder().build(),
+            limiter(),
+            16,
+            availability);
+    var release = new CountDownLatch(1);
+    var active = new AtomicInteger();
+    var peak = new AtomicInteger();
+    var requests = new java.util.ArrayList<Future<?>>();
+    try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+      try {
+        for (int i = 0; i < 16; i++) {
+          var response = new MockHttpServletResponse();
+          var reached = new CountDownLatch(1);
+          requests.add(
+              executor.submit(
+                  () -> {
+                    try {
+                      filter.doFilter(
+                          request(),
+                          response,
+                          (req, res) -> {
+                            peak.accumulateAndGet(active.incrementAndGet(), Math::max);
+                            reached.countDown();
+                            try {
+                              release.await(10, TimeUnit.SECONDS);
+                            } catch (InterruptedException e) {
+                              throw new ServletException(e);
+                            } finally {
+                              active.decrementAndGet();
+                            }
+                          });
+                    } catch (Exception e) {
+                      throw new RuntimeException(e);
+                    }
+                  }));
+          org.awaitility.Awaitility.await()
+              .atMost(Duration.ofSeconds(3))
+              .until(() -> reached.getCount() == 0 || response.getStatus() == 503);
+        }
+        assertThat(active.get()).isEqualTo(10);
+        for (var endpoint :
+            java.util.List.of(
+                new String[] {"POST", "/api/v1/payments/p/refunds"},
+                new String[] {"GET", "/api/v1/payments/p"})) {
+          var response = new MockHttpServletResponse();
+          var passed = new AtomicInteger();
+          filter.doFilter(
+              request(endpoint[0], endpoint[1]), response, (req, res) -> passed.incrementAndGet());
+          assertThat(response.getStatus()).isEqualTo(200);
+          assertThat(passed.get()).isEqualTo(1);
+        }
+        assertThat(peak.get()).isLessThanOrEqualTo(16);
+      } finally {
+        release.countDown();
+      }
+      for (var pending : requests) pending.get(5, TimeUnit.SECONDS);
+    }
+    filter.doFilter(request(), new MockHttpServletResponse(), (req, res) -> {});
   }
 
   @Test

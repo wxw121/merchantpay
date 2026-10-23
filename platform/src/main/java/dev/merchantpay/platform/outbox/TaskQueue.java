@@ -216,6 +216,33 @@ public class TaskQueue {
         == 1;
   }
 
+  /** Move only completed, settled deliveries; both copies change in one bounded transaction. */
+  public int archiveDone(int limit) {
+    if (limit < 1 || limit > 500)
+      throw new IllegalArgumentException("Archive batch must contain 1..500 tasks");
+    return transactions.execute(
+        tx -> {
+          var ids =
+              jdbc.queryForList(
+                  "SELECT id FROM outbox_tasks WHERE status='DONE' AND updated_at<? ORDER BY updated_at,id LIMIT ? FOR UPDATE SKIP LOCKED",
+                  String.class,
+                  Timestamp.from(clock.instant().minusSeconds(86400)),
+                  limit);
+          if (ids.isEmpty()) return 0;
+          String placeholders = String.join(",", java.util.Collections.nCopies(ids.size(), "?"));
+          jdbc.update(
+              "INSERT INTO outbox_task_history SELECT * FROM outbox_tasks WHERE id IN ("
+                  + placeholders
+                  + ")",
+              ids.toArray());
+          int removed =
+              jdbc.update(
+                  "DELETE FROM outbox_tasks WHERE id IN (" + placeholders + ")", ids.toArray());
+          if (removed != ids.size()) throw new IllegalStateException("Archive task set changed");
+          return removed;
+        });
+  }
+
   public void retry(Task task, RuntimeException failure) {
     String reason = failure.getMessage();
     String safe = reason == null ? "unknown" : reason.substring(0, Math.min(1000, reason.length()));

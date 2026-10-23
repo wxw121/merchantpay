@@ -13,6 +13,23 @@ import java.util.concurrent.locks.LockSupport;
 
 /** D0 generator: real signed HTTP requests and independent SQL checks, never fabricated success counts. */
 class LocalLoad {
+  private static final Map<String,String> TASK_FACT_TABLES=new ConcurrentHashMap<>();
+  static String taskFactsSql(Connection connection,String sql) throws SQLException {
+    if(!sql.contains("outbox_tasks")) return sql;
+    String url=connection.getMetaData().getURL();
+    String table=TASK_FACT_TABLES.get(url);
+    if(table==null){
+      try(var statement=connection.prepareStatement("SELECT COUNT(*) FROM information_schema.views WHERE table_schema=DATABASE() AND table_name='outbox_task_records'");var rows=statement.executeQuery()){
+        rows.next();table=rows.getLong(1)==1?"outbox_task_records":"outbox_tasks";
+      }
+      TASK_FACT_TABLES.put(url,table);
+    }
+    // The online completion probe only needs the durable event identity. The union view
+    // materializes a large history on every snapshot and widens its completion interval.
+    if(table.equals("outbox_task_records")
+        && sql.contains("LEFT JOIN outbox_tasks o ON o.event_id=")) table="outbox_events";
+    return sql.replaceAll("\\boutbox_tasks\\b",table);
+  }
   static final String OBSERVATION_SQL = """
       SELECT p.merchant_order_no,p.status,
              (p.status='SUCCEEDED' AND j.id IS NOT NULL AND o.id IS NOT NULL
@@ -26,7 +43,7 @@ class LocalLoad {
       """;
   static List<LoadMeasurements.Fact> readFacts(Connection connection, String sql, String merchant, String run) throws SQLException {
     var facts = new ArrayList<LoadMeasurements.Fact>();
-    try (var statement = connection.prepareStatement(sql)) {
+    try (var statement = connection.prepareStatement(taskFactsSql(connection,sql))) {
       statement.setQueryTimeout(5);
       statement.setString(1, merchant); statement.setString(2, run + "-%");
       try (var rows = statement.executeQuery()) {
@@ -121,7 +138,7 @@ class LocalLoad {
     }
   }
   long scalar(Connection connection, String sql) throws SQLException {
-    try (var statement = connection.prepareStatement(sql)) {
+    try (var statement = connection.prepareStatement(taskFactsSql(connection,sql))) {
       statement.setString(1, merchant); statement.setString(2, run + "%");
       try (var row = statement.executeQuery()) { row.next(); return row.getLong(1); }
     }

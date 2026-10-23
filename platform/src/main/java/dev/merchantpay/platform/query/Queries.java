@@ -41,7 +41,7 @@ public class Queries {
           Map.entry(
               "tasks",
               new Table(
-                  "outbox_tasks",
+                  "outbox_task_records",
                   "id,event_id,kind,aggregate_id,merchant_id,status,attempts,due_at,lease_until,last_error,created_at,updated_at")),
           Map.entry(
               "audit",

@@ -39,6 +39,10 @@ public class TaskWorker implements AutoCloseable {
   private final ScheduledExecutorService heartbeats = Executors.newScheduledThreadPool(2);
   private final ReconciliationService reconciliation;
   private final ExportService exports;
+  private final java.util.Map<String, Integer> emptyPolls = new java.util.HashMap<>();
+  private final java.util.Map<String, Long> nextPoll = new java.util.HashMap<>();
+  // Monotonic deadlines are unaffected by wall-clock corrections used for financial timestamps.
+  java.util.function.LongSupplier nanoTime = System::nanoTime;
 
   public TaskWorker(
       TaskQueue queue,
@@ -92,6 +96,9 @@ public class TaskWorker implements AutoCloseable {
   }
 
   private boolean pollCapacity(Semaphore permits, String queueClass) {
+    long started = nanoTime.getAsLong();
+    Long deadline = nextPoll.get(queueClass);
+    if (deadline != null && started - deadline < 0) return false;
     boolean fast = !queueClass.equals("BULK");
     int slots = Math.min(permits.availablePermits(), 64);
     if (fast) slots = Math.min(slots, capacity.availablePermits());
@@ -110,7 +117,23 @@ public class TaskWorker implements AutoCloseable {
       permits.release(slots);
       if (fast) capacity.release(slots);
       metrics.counter("merchantpay.tasks.claim.errors").increment();
+      nextPoll.put(queueClass, nanoTime.getAsLong() + TimeUnit.MILLISECONDS.toNanos(100));
       return false;
+    }
+    if (claimed.isEmpty()) {
+      int empties = Math.min(4, emptyPolls.getOrDefault(queueClass, 0) + 1);
+      emptyPolls.put(queueClass, empties);
+      int delay =
+          switch (empties) {
+            case 1 -> 10;
+            case 2 -> 20;
+            case 3 -> 50;
+            default -> 100;
+          };
+      nextPoll.put(queueClass, nanoTime.getAsLong() + TimeUnit.MILLISECONDS.toNanos(delay));
+    } else {
+      emptyPolls.remove(queueClass);
+      nextPoll.remove(queueClass);
     }
     permits.release(slots - claimed.size());
     if (fast) capacity.release(slots - claimed.size());
@@ -170,16 +193,41 @@ public class TaskWorker implements AutoCloseable {
     return !claimed.isEmpty();
   }
 
-  @Scheduled(fixedDelay = 60000)
+  @Scheduled(fixedDelay = 250)
   void expireSecurityWindows() {
     DatabaseRole.worker(
         () -> {
-          jdbc.update(
-              "DELETE FROM signature_nonces WHERE expires_at<?", Timestamp.from(clock.instant()));
-          jdbc.update(
-              "DELETE FROM api_rate_limits WHERE window_second<?",
+          clean(
+              "DELETE FROM signature_nonces WHERE expires_at<? ORDER BY expires_at LIMIT 500",
+              Timestamp.from(clock.instant()));
+          clean(
+              "DELETE FROM api_rate_limits WHERE window_second<? ORDER BY window_second LIMIT 500",
               clock.instant().minusSeconds(600).getEpochSecond());
         });
+  }
+
+  private void clean(String sql, Object cutoff) {
+    long started = nanoTime.getAsLong();
+    for (int batch = 0; batch < 4; batch++) {
+      // Budget limits starting another transaction; an in-flight database call can exceed it.
+      if (batch > 0 && nanoTime.getAsLong() - started >= TimeUnit.MILLISECONDS.toNanos(50)) break;
+      int deleted =
+          java.util.Objects.requireNonNull(
+              jdbc.execute(
+                  sql,
+                  (org.springframework.jdbc.core.PreparedStatementCallback<Integer>)
+                      statement -> {
+                        statement.setQueryTimeout(1);
+                        statement.setObject(1, cutoff);
+                        return statement.executeUpdate();
+                      }));
+      if (deleted < 500) break;
+    }
+  }
+
+  @Scheduled(fixedDelay = 250, initialDelay = 1000)
+  void archiveCompletedTasks() {
+    DatabaseRole.worker(() -> queue.archiveDone(500));
   }
 
   @Override

@@ -27,6 +27,7 @@ public class SignatureFilter extends OncePerRequestFilter {
   private final ApiRateLimiter rateLimiter;
   private final ApiAvailability availability;
   private final java.util.concurrent.Semaphore admission;
+  private final java.util.concurrent.Semaphore[] reserved;
 
   public SignatureFilter(
       MerchantService merchants,
@@ -44,7 +45,14 @@ public class SignatureFilter extends OncePerRequestFilter {
     this.availability = availability;
     if (maximumInflight < 1 || maximumInflight > 128)
       throw new IllegalArgumentException("API inflight capacity must be 1..128");
-    this.admission = new java.util.concurrent.Semaphore(maximumInflight);
+    int unit = maximumInflight < 8 ? 0 : maximumInflight / 8;
+    this.reserved =
+        new java.util.concurrent.Semaphore[] {
+          new java.util.concurrent.Semaphore(unit),
+          new java.util.concurrent.Semaphore(unit),
+          new java.util.concurrent.Semaphore(2 * unit)
+        };
+    this.admission = new java.util.concurrent.Semaphore(maximumInflight - 4 * unit);
   }
 
   @Override
@@ -56,9 +64,13 @@ public class SignatureFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-    if (!admission.tryAcquire()) {
-      unavailable(response, RetryReason.API_INFLIGHT);
-      return;
+    var permit = admissionFor(request);
+    if (!permit.tryAcquire()) {
+      permit = admission;
+      if (!permit.tryAcquire()) {
+        unavailable(response, RetryReason.API_INFLIGHT);
+        return;
+      }
     }
     try {
       String keyId = request.getHeader("X-Key-Id"),
@@ -162,8 +174,18 @@ public class SignatureFilter extends OncePerRequestFilter {
       unavailable(response, availability.reason(exhausted));
     } finally {
       SecurityContextHolder.clearContext();
-      admission.release();
+      permit.release();
     }
+  }
+
+  private java.util.concurrent.Semaphore admissionFor(HttpServletRequest request) {
+    String method = request.getMethod(), path = request.getRequestURI();
+    if (method.equals("POST") && path.equals("/api/v1/payments")) return reserved[0];
+    if (method.equals("POST") && path.matches("/api/v1/payments/[^/]+/refunds")) return reserved[1];
+    if (method.equals("GET")
+        && (path.matches("/api/v1/payments/[^/]+") || path.matches("/api/v1/refunds/[^/]+")))
+      return reserved[2];
+    return admission;
   }
 
   private void unavailable(HttpServletResponse response, RetryReason reason) throws IOException {

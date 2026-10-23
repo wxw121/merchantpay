@@ -13,7 +13,7 @@ class RuntimeSnapshot {
       out.put("mysql",LocalDiagnosis.ioSnapshot(c));
       out.put("admission",LocalDiagnosis.query(c,"SELECT logical_shard,inflight,(SELECT COUNT(*) FROM payments p WHERE p.logical_shard=a.logical_shard AND p.status NOT IN ('SUCCEEDED','FAILED','CLOSED')) actual FROM payment_admission a ORDER BY logical_shard"));
       out.put("unfinishedTasks",LocalDiagnosis.query(c,"SELECT COUNT(*) unfinished FROM outbox_tasks WHERE status IN ('PENDING','RUNNING')").getFirst().get("unfinished"));
-      out.put("dataset",LocalDiagnosis.query(c,"SELECT (SELECT COUNT(*) FROM payments) payments,(SELECT COUNT(*) FROM ledger_entries) ledgerEntries,(SELECT COUNT(*) FROM ledger_journals) journals,(SELECT COUNT(*) FROM outbox_tasks) tasks,(SELECT COUNT(*) FROM merchants) merchants").getFirst());
+      out.put("dataset",LocalDiagnosis.query(c,LocalLoad.taskFactsSql(c,"SELECT (SELECT COUNT(*) FROM payments) payments,(SELECT COUNT(*) FROM ledger_entries) ledgerEntries,(SELECT COUNT(*) FROM ledger_journals) journals,(SELECT COUNT(*) FROM outbox_tasks) tasks,(SELECT COUNT(*) FROM merchants) merchants")).getFirst());
       c.commit(); System.out.println(LocalLoad.json(out));
     }
   }

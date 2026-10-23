@@ -81,19 +81,19 @@ public class LedgerService {
         sourceId,
         "CNY",
         Timestamp.from(time));
-    for (var entry : entries) {
-      if (entry.amount() == 0) {
-        continue;
-      }
-      jdbc.update(
-          "INSERT INTO ledger_entries(journal_id,payment_id,merchant_id,account_code,side,amount_minor,currency) VALUES (?,?,?,?,?,?,?)",
-          journalId,
-          paymentId,
-          merchantId,
-          entry.account(),
-          entry.side(),
-          entry.amount(),
-          "CNY");
-    }
+    var nonzero = entries.stream().filter(entry -> entry.amount() != 0).toList();
+    jdbc.batchUpdate(
+        "INSERT INTO ledger_entries(journal_id,payment_id,merchant_id,account_code,side,amount_minor,currency) VALUES (?,?,?,?,?,?,?)",
+        nonzero,
+        nonzero.size(),
+        (statement, entry) -> {
+          statement.setString(1, journalId);
+          statement.setString(2, paymentId);
+          statement.setString(3, merchantId);
+          statement.setString(4, entry.account());
+          statement.setString(5, entry.side());
+          statement.setLong(6, entry.amount());
+          statement.setString(7, "CNY");
+        });
   }
 }
