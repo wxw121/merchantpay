@@ -1,0 +1,7 @@
+# Explicit local candidate; append after the channel-evidence overlay.
+# Total API inflight remains 128; idle endpoint reservations may be borrowed above their floors.
+services:
+  platform:
+    image: merchantpay/platform:local-api-borrow
+    environment:
+      API_ADMISSION_BORROW: "true"

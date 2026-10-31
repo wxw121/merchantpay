@@ -1,0 +1,37 @@
+# Local benchmark only: 2/0 durability can lose recent commits after a host/VM crash.
+# Opt in with scripts/release/start-containers.ps1 -LocalMax.
+services:
+  mysql:
+    cpus: 8
+    mem_limit: 6g
+    # Windows currently reserves 13300-13399, including the normal 13307 host port.
+    ports: !override ["127.0.0.1:14007:3306"]
+    command: !override
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_bin
+      - --max-connections=200
+      - --innodb-flush-log-at-trx-commit=2
+      - --sync-binlog=0
+      - --innodb-buffer-pool-size=4294967296
+      - --innodb-redo-log-capacity=536870912
+  platform:
+    image: merchantpay/platform:local-max-tps
+    cpus: 4
+    mem_limit: 2g
+    environment:
+      JAVA_TOOL_OPTIONS: -Xmx1280m -XX:ActiveProcessorCount=4
+      API_MAX_INFLIGHT: "128"
+      PAYMENT_MAX_INFLIGHT_PER_SHARD: "32"
+      FAST_WORKER_CONCURRENCY: "96"
+      CHANNEL_RESULT_BATCH_SIZE: "1"
+      CHANNEL_RESULT_BATCH_DELAY: "0ms"
+      PAYMENT_ADMISSION_SLOTS: "false"
+      OUTBOX_ORDERED_IDS: "true"
+      INBOX_TERMINAL_FAST_PATH: "false"
+      NOTIFICATION_WRITE_BATCH_SIZE: "1"
+      NOTIFICATION_WRITE_BATCH_DELAY: "0ms"
+  simulator:
+    mem_limit: 1g
+    environment:
+      JAVA_TOOL_OPTIONS: -Xmx640m -XX:ActiveProcessorCount=2
+      SIMULATOR_PROFILE: standard-v1

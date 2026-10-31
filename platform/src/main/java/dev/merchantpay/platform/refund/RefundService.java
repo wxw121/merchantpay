@@ -128,6 +128,32 @@ public class RefundService {
         });
   }
 
+  /** Internal bounded lookup; channel callers still verify each record's merchant. */
+  public java.util.Map<String, RefundView> loadForChannelTasks(java.util.Collection<String> ids) {
+    Objects.requireNonNull(ids);
+    if (ids.size() > 64) throw new IllegalArgumentException("Channel input batch exceeds64");
+    if (ids.isEmpty()) return java.util.Map.of();
+    var unique = new java.util.LinkedHashSet<>(ids);
+    if (unique.contains(null)) throw new IllegalArgumentException("Channel input ID required");
+    String sql =
+        "SELECT * FROM refunds WHERE id IN ("
+            + String.join(",", java.util.Collections.nCopies(unique.size(), "?"))
+            + ")";
+    var rows =
+        jdbc.query(
+            connection -> {
+              var statement = connection.prepareStatement(sql);
+              statement.setQueryTimeout(1);
+              int index = 1;
+              for (String id : unique) statement.setString(index++, id);
+              return statement;
+            },
+            MAPPER);
+    var result = new java.util.HashMap<String, RefundView>();
+    for (var row : rows) result.put(row.id(), row);
+    return java.util.Map.copyOf(result);
+  }
+
   public RefundView get(String merchantId, String id) {
     var rows =
         jdbc.query("SELECT * FROM refunds WHERE id=? AND merchant_id=?", MAPPER, id, merchantId);

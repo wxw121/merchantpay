@@ -1,9 +1,11 @@
 package dev.merchantpay.platform.ledger;
 
+import dev.merchantpay.platform.common.TimeOrderedIds;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -11,9 +13,17 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 @Service
 public class LedgerService {
   private final JdbcTemplate jdbc;
+  private final boolean orderedIds;
 
   public LedgerService(JdbcTemplate jdbc) {
+    this(jdbc, false);
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public LedgerService(
+      JdbcTemplate jdbc, @Value("${merchantpay.ledger-ordered-ids:false}") boolean orderedIds) {
     this.jdbc = jdbc;
+    this.orderedIds = orderedIds;
   }
 
   public record Entry(String account, String side, long amount) {}
@@ -70,7 +80,7 @@ public class LedgerService {
     if (balance != 0) {
       throw new IllegalStateException("Journal is not balanced");
     }
-    String journalId = "j_" + UUID.randomUUID();
+    String journalId = "j_" + (orderedIds ? TimeOrderedIds.uuidV7(time) : UUID.randomUUID());
     jdbc.update(
         "INSERT INTO ledger_journals(id,event_id,payment_id,merchant_id,source_type,source_id,currency,created_at) VALUES (?,?,?,?,?,?,?,?)",
         journalId,

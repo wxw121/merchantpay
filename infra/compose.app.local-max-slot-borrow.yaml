@@ -1,0 +1,8 @@
+# Explicit local candidate; append after request gate and bulk claim/completion overlays.
+# Shares the same global slot budget; removes per-business-bucket capacity isolation.
+services:
+  platform:
+    image: merchantpay/platform:local-slot-borrow
+    environment:
+      PAYMENT_ADMISSION_SLOTS: "true"
+      PAYMENT_ADMISSION_SLOT_BORROW: "true"

@@ -160,7 +160,7 @@ class MySqlOptimizationTest extends FinancialFixture {
                 .fixedDelay())
         .isLessThanOrEqualTo(250);
     assertThat(
-            dev.merchantpay.platform.orchestration.TaskWorker.class
+            dev.merchantpay.platform.orchestration.TaskArchiver.class
                 .getDeclaredMethod("archiveCompletedTasks")
                 .getAnnotation(Scheduled.class)
                 .fixedDelay())

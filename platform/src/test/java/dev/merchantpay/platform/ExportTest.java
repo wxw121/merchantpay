@@ -64,12 +64,24 @@ class ExportTest extends FinancialFixture {
 
   @Test
   void backgroundExportContainsOnlyItsTenantAndCannotBeDownloadedByAnother() throws Exception {
-    paid("export-a", "10000");
+    var payment = paid("export-a", "10000");
+    var createdAt =
+        jdbc.queryForObject(
+                "SELECT created_at FROM payments WHERE id=?",
+                java.sql.Timestamp.class,
+                payment.id())
+            .toInstant();
     payments.create(
         "merchant-b",
         new dev.merchantpay.platform.payment.PaymentService.CreatePayment(
             "export-b", "20000", "CNY", "MOCK_B", null));
-    String id = exports.create("merchant-a", "owner-a", "payments", null, null);
+    String id =
+        exports.create(
+            "merchant-a",
+            "owner-a",
+            "payments",
+            createdAt.minusSeconds(1).toString(),
+            createdAt.plusSeconds(1).toString());
     var task = queue.claimBatch(1, true).getFirst();
     exports.process(id, task);
     try (var zip = new ZipFile(exports.file(id, "merchant-a", "owner-a").toFile())) {

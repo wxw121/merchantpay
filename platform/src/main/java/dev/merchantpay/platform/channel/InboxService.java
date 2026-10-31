@@ -14,6 +14,9 @@ import tools.jackson.databind.json.JsonMapper;
 
 @Service
 public class InboxService {
+  private record Original(
+      String merchantId, String status, String amountMinor, String channelReference) {}
+
   private final JdbcTemplate jdbc;
   private final TransactionTemplate transactions;
   private final OutboxService outbox;
@@ -21,6 +24,7 @@ public class InboxService {
   private final JsonMapper json;
   private final Clock clock;
   private final String secret;
+  private final boolean terminalFastPath;
 
   public InboxService(
       JdbcTemplate jdbc,
@@ -29,7 +33,8 @@ public class InboxService {
       ChannelGateway gateway,
       JsonMapper json,
       Clock clock,
-      @Value("${merchantpay.callback-secret}") String secret) {
+      @Value("${merchantpay.callback-secret}") String secret,
+      @Value("${merchantpay.inbox-terminal-fast-path:false}") boolean terminalFastPath) {
     this.jdbc = jdbc;
     this.transactions = transactions;
     this.outbox = outbox;
@@ -37,6 +42,7 @@ public class InboxService {
     this.json = json;
     this.clock = clock;
     this.secret = secret;
+    this.terminalFastPath = terminalFastPath;
   }
 
   public void receive(String timestamp, String signature, String body) {
@@ -55,15 +61,24 @@ public class InboxService {
       throw new ApiException("INVALID_CHANNEL_RECEIPT", 400, "渠道通知关联字段无效");
     }
     String table = receipt.operation().equals("PAYMENT") ? "payments" : "refunds";
-    var merchants =
-        jdbc.queryForList(
-            "SELECT merchant_id FROM " + table + " WHERE id=? AND channel=?",
-            String.class,
+    var originals =
+        jdbc.query(
+            "SELECT merchant_id,status,amount_minor,channel_reference FROM "
+                + table
+                + " WHERE id=? AND channel=?",
+            (rs, row) ->
+                new Original(
+                    rs.getString("merchant_id"),
+                    rs.getString("status"),
+                    rs.getString("amount_minor"),
+                    rs.getString("channel_reference")),
             receipt.aggregateId(),
             receipt.channel());
-    if (merchants.isEmpty()) {
+    if (originals.isEmpty()) {
       throw new ApiException("UNKNOWN_CHANNEL_RECEIPT", 409, "渠道通知未匹配原业务");
     }
+    var original = originals.getFirst();
+    boolean alreadyProcessed = terminalFastPath && matchesSuccessfulOutcome(receipt, original);
     transactions.executeWithoutResult(
         tx -> {
           String fingerprint = dev.merchantpay.platform.common.Signatures.sha256(body),
@@ -71,20 +86,34 @@ public class InboxService {
           var now = Timestamp.from(clock.instant());
           try {
             jdbc.update(
-                "INSERT INTO inbox_notifications(id,channel,fingerprint,aggregate_id,operation,raw_body,status,created_at,updated_at) VALUES (?,?,?,?,?,?,'RECEIVED',?,?)",
+                "INSERT INTO inbox_notifications(id,channel,fingerprint,aggregate_id,operation,raw_body,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?)",
                 id,
                 receipt.channel(),
                 fingerprint,
                 receipt.aggregateId(),
                 receipt.operation(),
                 body,
+                alreadyProcessed ? "PROCESSED" : "RECEIVED",
                 now,
                 now);
           } catch (DuplicateKeyException duplicate) {
             return;
           }
-          outbox.enqueue("inbox:" + id, "PROCESS_INBOX", id, merchants.getFirst());
+          if (!alreadyProcessed) {
+            outbox.enqueue("inbox:" + id, "PROCESS_INBOX", id, original.merchantId());
+          }
         });
+  }
+
+  private static boolean matchesSuccessfulOutcome(ChannelApi.Receipt receipt, Original original) {
+    return "SUCCEEDED".equals(receipt.status())
+        && "SUCCEEDED".equals(original.status())
+        && "CNY".equals(receipt.currency())
+        && original.amountMinor().equals(receipt.amountMinor())
+        && receipt.reference() != null
+        && !receipt.reference().isBlank()
+        && receipt.reference().length() <= 128
+        && receipt.reference().equals(original.channelReference());
   }
 
   public void process(String id) {

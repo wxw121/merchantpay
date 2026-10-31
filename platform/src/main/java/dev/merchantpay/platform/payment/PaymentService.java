@@ -109,6 +109,9 @@ public class PaymentService {
   private final OutboxService outbox;
   private final Clock clock;
   private final int maximumPerShard;
+  private final boolean admissionSlots;
+  private final boolean borrowSlots;
+  private final boolean paymentOrderedIds;
 
   public PaymentService(
       JdbcTemplate jdbc,
@@ -116,9 +119,59 @@ public class PaymentService {
       LedgerService ledger,
       OutboxService outbox,
       Clock clock,
-      @Value("${merchantpay.payment-max-inflight-per-shard:16}") int maximumPerShard) {
+      int maximumPerShard) {
+    this(jdbc, transactions, ledger, outbox, clock, maximumPerShard, false);
+  }
+
+  public PaymentService(
+      JdbcTemplate jdbc,
+      TransactionTemplate transactions,
+      LedgerService ledger,
+      OutboxService outbox,
+      Clock clock,
+      int maximumPerShard,
+      boolean admissionSlots) {
+    this(jdbc, transactions, ledger, outbox, clock, maximumPerShard, admissionSlots, false);
+  }
+
+  public PaymentService(
+      JdbcTemplate jdbc,
+      TransactionTemplate transactions,
+      LedgerService ledger,
+      OutboxService outbox,
+      Clock clock,
+      @Value("${merchantpay.payment-max-inflight-per-shard:16}") int maximumPerShard,
+      @Value("${merchantpay.payment-admission-slots:false}") boolean admissionSlots,
+      @Value("${merchantpay.payment-admission-slot-borrow:false}") boolean borrowSlots) {
+    this(
+        jdbc,
+        transactions,
+        ledger,
+        outbox,
+        clock,
+        maximumPerShard,
+        admissionSlots,
+        borrowSlots,
+        false);
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public PaymentService(
+      JdbcTemplate jdbc,
+      TransactionTemplate transactions,
+      LedgerService ledger,
+      OutboxService outbox,
+      Clock clock,
+      @Value("${merchantpay.payment-max-inflight-per-shard:16}") int maximumPerShard,
+      @Value("${merchantpay.payment-admission-slots:false}") boolean admissionSlots,
+      @Value("${merchantpay.payment-admission-slot-borrow:false}") boolean borrowSlots,
+      @Value("${merchantpay.payment-ordered-ids:false}") boolean paymentOrderedIds) {
+    this.paymentOrderedIds = paymentOrderedIds;
     if (maximumPerShard < 1 || maximumPerShard > 4096) {
       throw new IllegalArgumentException("Payment capacity per shard must be 1..4096");
+    }
+    if (borrowSlots && !admissionSlots) {
+      throw new IllegalArgumentException("Slot borrowing requires payment admission slots");
     }
     this.jdbc = jdbc;
     this.transactions = transactions;
@@ -126,6 +179,66 @@ public class PaymentService {
     this.outbox = outbox;
     this.clock = clock;
     this.maximumPerShard = maximumPerShard;
+    this.admissionSlots = admissionSlots;
+    this.borrowSlots = borrowSlots;
+  }
+
+  @jakarta.annotation.PostConstruct
+  void initializeSlots() {
+    transactions.executeWithoutResult(ignored -> initializeAdmission());
+  }
+
+  private void initializeAdmission() {
+    // Startup-only lock: stop all old writers before changing modes; never lock it per payment.
+    boolean previousSlots =
+        Boolean.TRUE.equals(
+            jdbc.queryForObject(
+                "SELECT slot_mode FROM payment_admission_mode WHERE id=1 FOR UPDATE",
+                Boolean.class));
+    if (!admissionSlots) {
+      if (!previousSlots) return;
+      Long active =
+          jdbc.queryForObject(
+              "SELECT COUNT(*) FROM payments WHERE status NOT IN ('SUCCEEDED','FAILED','CLOSED')",
+              Long.class);
+      if (active != 0)
+        throw new IllegalStateException("Admission mode switch requires drained payments");
+      jdbc.update("UPDATE payment_admission SET inflight=0");
+      jdbc.update(
+          "UPDATE payment_admission_slots SET payment_id=NULL WHERE payment_id IS NOT NULL");
+      jdbc.update("UPDATE payment_admission_mode SET slot_mode=FALSE WHERE id=1");
+      return;
+    }
+    if (!previousSlots) {
+      // A counter-mode deployment may have finalized records backfilled during migration.
+      jdbc.update(
+          "UPDATE payment_admission_slots SET payment_id=NULL WHERE payment_id IN (SELECT id FROM payments WHERE status IN ('SUCCEEDED','FAILED','CLOSED'))");
+    }
+    Long missing =
+        jdbc.queryForObject(
+            "SELECT COUNT(*) FROM payments p LEFT JOIN payment_admission_slots s ON s.payment_id=p.id WHERE p.status NOT IN ('SUCCEEDED','FAILED','CLOSED') AND s.payment_id IS NULL",
+            Long.class);
+    Long stale =
+        jdbc.queryForObject(
+            "SELECT COUNT(*) FROM payment_admission_slots s LEFT JOIN payments p ON p.id=s.payment_id WHERE s.payment_id IS NOT NULL AND (p.id IS NULL OR p.status IN ('SUCCEEDED','FAILED','CLOSED'))",
+            Long.class);
+    if (missing != 0 || stale != 0)
+      throw new IllegalStateException("Admission mode switch requires drained payments and slots");
+    if (!borrowSlots
+        && jdbc.queryForObject(
+                "SELECT COUNT(*) FROM payment_admission_slots s JOIN payments p ON p.id=s.payment_id WHERE s.logical_shard<>p.logical_shard",
+                Long.class)
+            != 0) {
+      throw new IllegalStateException("Disable slot borrowing only after borrowed payments drain");
+    }
+    jdbc.update("UPDATE payment_admission_mode SET slot_mode=TRUE WHERE id=1");
+    if (maximumPerShard <= 16) return;
+    var rows = new java.util.ArrayList<Object[]>();
+    for (int shard = 0; shard < 16; shard++)
+      for (int slot = 16; slot < maximumPerShard; slot++) rows.add(new Object[] {shard, slot});
+    jdbc.batchUpdate(
+        "INSERT INTO payment_admission_slots(logical_shard,slot_no) VALUES (?,?) ON DUPLICATE KEY UPDATE slot_no=slot_no",
+        rows);
   }
 
   public PaymentView create(String merchantId, CreatePayment input) {
@@ -173,8 +286,38 @@ public class PaymentService {
               Integer.parseInt(
                       sha256(merchantId + "\0" + input.merchantOrderNo()).substring(0, 2), 16)
                   & 15;
-          String id = "p" + Integer.toHexString(bucket) + "_" + UUID.randomUUID();
+          Boolean atCapacity =
+              borrowSlots
+                  ? false
+                  : jdbc.queryForObject(
+                      admissionSlots
+                          ? "SELECT COUNT(*)>=? FROM payment_admission_slots WHERE logical_shard=? AND payment_id IS NOT NULL"
+                          : "SELECT inflight>=? FROM payment_admission WHERE logical_shard=?",
+                      Boolean.class,
+                      maximumPerShard,
+                      bucket);
+          if (atCapacity == null || atCapacity) {
+            var existing =
+                jdbc.query(
+                    "SELECT * FROM payments WHERE merchant_id=? AND merchant_order_no=? FOR UPDATE",
+                    MAPPER,
+                    merchantId,
+                    input.merchantOrderNo());
+            if (!existing.isEmpty()) return idempotent(existing.getFirst(), hash);
+            throw new ApiException(
+                "RETRY_WITH_SAME_BUSINESS_KEY",
+                503,
+                "支付处理容量已满，请使用相同业务号退避重试",
+                ApiException.RetryReason.PAYMENT_CAPACITY);
+          }
           var instant = clock.instant().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
+          String id =
+              "p"
+                  + Integer.toHexString(bucket)
+                  + "_"
+                  + (paymentOrderedIds
+                      ? dev.merchantpay.platform.common.TimeOrderedIds.uuidV7(instant)
+                      : UUID.randomUUID().toString());
           var now = Timestamp.from(instant);
           long fee = MoneyRules.fee(amount);
           String notificationUrl =
@@ -183,7 +326,8 @@ public class PaymentService {
                   : (String) merchant.getFirst().get("notification_url");
           try {
             jdbc.update(
-                "INSERT INTO payments(id,merchant_id,merchant_order_no,request_hash,logical_shard,amount_minor,fee_minor,currency,status,channel,notification_url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,'PROCESSING',?,?,?,?)",
+                "INSERT INTO payments(id,merchant_id,merchant_order_no,request_hash,logical_shard,amount_minor,fee_minor,currency,status,channel,notification_url,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,'PROCESSING',?,?,?,?)"
+                    + (borrowSlots ? " ON DUPLICATE KEY UPDATE id=id" : ""),
                 id,
                 merchantId,
                 input.merchantOrderNo(),
@@ -208,13 +352,24 @@ public class PaymentService {
             }
             return idempotent(winner.getFirst(), hash);
           }
+          if (borrowSlots) {
+            // A no-op upsert owns the winner's exclusive lock without a duplicate S-to-X
+            // conversion. Never infer insert ownership from driver-specific affected-row counts.
+            var winner =
+                jdbc.query(
+                    "SELECT * FROM payments WHERE merchant_id=? AND merchant_order_no=? FOR UPDATE",
+                    MAPPER,
+                    merchantId,
+                    input.merchantOrderNo());
+            if (winner.size() != 1) {
+              throw new IllegalStateException(
+                  "Payment creation did not establish business ownership");
+            }
+            if (!winner.getFirst().id().equals(id)) return idempotent(winner.getFirst(), hash);
+          }
           // Acquire only after the unique INSERT: a racing idempotent retry needs no new slot.
           // The increment rolls back with the payment/outbox if admission or creation fails.
-          if (jdbc.update(
-                  "UPDATE payment_admission SET inflight=inflight+1 WHERE logical_shard=? AND inflight<?",
-                  bucket,
-                  maximumPerShard)
-              != 1) {
+          if (!reserveCapacity(bucket, id)) {
             throw new ApiException(
                 "RETRY_WITH_SAME_BUSINESS_KEY",
                 503,
@@ -241,6 +396,32 @@ public class PaymentService {
                   instant)
               .view();
         });
+  }
+
+  /** Internal bounded lookup; channel callers still verify each record's merchant. */
+  public java.util.Map<String, PaymentView> loadForChannelTasks(java.util.Collection<String> ids) {
+    Objects.requireNonNull(ids);
+    if (ids.size() > 64) throw new IllegalArgumentException("Channel input batch exceeds64");
+    if (ids.isEmpty()) return java.util.Map.of();
+    var unique = new java.util.LinkedHashSet<>(ids);
+    if (unique.contains(null)) throw new IllegalArgumentException("Channel input ID required");
+    String sql =
+        "SELECT * FROM payments WHERE id IN ("
+            + String.join(",", java.util.Collections.nCopies(unique.size(), "?"))
+            + ")";
+    var rows =
+        jdbc.query(
+            connection -> {
+              var statement = connection.prepareStatement(sql);
+              statement.setQueryTimeout(1);
+              int index = 1;
+              for (String id : unique) statement.setString(index++, id);
+              return statement;
+            },
+            MAPPER);
+    var result = new java.util.HashMap<String, PaymentView>();
+    for (var row : rows) result.put(row.id(), row.view());
+    return java.util.Map.copyOf(result);
   }
 
   public PaymentView get(String merchantId, String id) {
@@ -366,11 +547,41 @@ public class PaymentService {
   private void releaseCapacity(String id) {
     // Called only after locking a nonterminal payment, inside its outcome/ledger transaction.
     if (jdbc.update(
-            "UPDATE payment_admission SET inflight=inflight-1 WHERE logical_shard=(SELECT logical_shard FROM payments WHERE id=?) AND inflight>0",
+            admissionSlots
+                ? "UPDATE payment_admission_slots SET payment_id=NULL WHERE payment_id=?"
+                : "UPDATE payment_admission SET inflight=inflight-1 WHERE logical_shard=(SELECT logical_shard FROM payments WHERE id=?) AND inflight>0",
             id)
         != 1) {
       throw new IllegalStateException("Payment capacity accounting is inconsistent");
     }
+  }
+
+  private boolean reserveCapacity(int bucket, String id) {
+    if (!admissionSlots)
+      return jdbc.update(
+              "UPDATE payment_admission SET inflight=inflight+1 WHERE logical_shard=? AND inflight<?",
+              bucket,
+              maximumPerShard)
+          == 1;
+    // Physical slot ownership remains unique; borrowing changes isolation, not the global bound.
+    for (int offset = 0; offset < (borrowSlots ? 16 : 1); offset++) {
+      int physicalBucket = (bucket + offset) & 15;
+      var free =
+          jdbc.queryForList(
+              "SELECT slot_no FROM payment_admission_slots WHERE logical_shard=? AND slot_no<? AND payment_id IS NULL ORDER BY slot_no LIMIT 1 FOR UPDATE SKIP LOCKED",
+              Integer.class,
+              physicalBucket,
+              maximumPerShard);
+      if (!free.isEmpty()) {
+        return jdbc.update(
+                "UPDATE payment_admission_slots SET payment_id=? WHERE logical_shard=? AND slot_no=? AND payment_id IS NULL",
+                id,
+                physicalBucket,
+                free.getFirst())
+            == 1;
+      }
+    }
+    return false;
   }
 
   private static boolean terminal(String status) {

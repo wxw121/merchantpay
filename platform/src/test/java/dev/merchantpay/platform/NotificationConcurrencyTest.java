@@ -12,17 +12,19 @@ import java.net.InetSocketAddress;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.concurrent.*;
-import org.junit.jupiter.api.Test;
 import tools.jackson.databind.json.JsonMapper;
 
 class NotificationConcurrencyTest extends FinancialFixture {
-  @Test
-  void allSixteenNotificationWorkersReachTheRealReceiverBeforeAnyResponse() throws Exception {
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(ints = {1, 16})
+  void allSixteenNotificationWorkersReachTheRealReceiverBeforeAnyResponse(int batchSize)
+      throws Exception {
     org.springframework.jdbc.datasource.init.ScriptUtils.executeSqlScript(
         schemaConnection,
         new org.springframework.core.io.ClassPathResource("db/migration/V3__notifications.sql"));
     var entered = new CountDownLatch(16);
     var release = new CountDownLatch(1);
+    var uncommittedAtReceiver = new java.util.concurrent.atomic.AtomicInteger();
     var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
     try (var serverThreads = Executors.newVirtualThreadPerTaskExecutor();
         var clients = Executors.newVirtualThreadPerTaskExecutor()) {
@@ -30,7 +32,15 @@ class NotificationConcurrencyTest extends FinancialFixture {
       server.createContext(
           "/webhook",
           exchange -> {
-            exchange.getRequestBody().readAllBytes();
+            var payload =
+                JsonMapper.builder()
+                    .build()
+                    .readValue(exchange.getRequestBody().readAllBytes(), java.util.Map.class);
+            if (jdbc.queryForObject(
+                    "SELECT COUNT(*) FROM notification_deliveries WHERE event_id=? AND status='SENDING'",
+                    Integer.class,
+                    payload.get("eventId"))
+                != 1) uncommittedAtReceiver.incrementAndGet();
             entered.countDown();
             try {
               release.await(8, TimeUnit.SECONDS);
@@ -56,7 +66,13 @@ class NotificationConcurrencyTest extends FinancialFixture {
                 new NotificationPolicy(url),
                 JsonMapper.builder().build(),
                 jdbc,
-                Clock.systemUTC());
+                Clock.systemUTC(),
+                new dev.merchantpay.platform.orchestration.NotificationWrites(
+                    new org.springframework.jdbc.datasource.DataSourceTransactionManager(
+                        jdbc.getDataSource()),
+                    new io.micrometer.core.instrument.simple.SimpleMeterRegistry(),
+                    batchSize,
+                    java.time.Duration.ofMillis(batchSize == 1 ? 0 : 10)));
         var pending = new ArrayList<Future<?>>();
         long observed;
         try {
@@ -78,6 +94,7 @@ class NotificationConcurrencyTest extends FinancialFixture {
         assertThat(observed)
             .as("actual concurrent webhook requests before releasing receiver")
             .isEqualTo(16);
+        assertThat(uncommittedAtReceiver.get()).isZero();
         assertThat(
                 jdbc.queryForObject(
                     "SELECT COUNT(*) FROM notification_deliveries WHERE status='DELIVERED'",

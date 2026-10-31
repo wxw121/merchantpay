@@ -58,11 +58,33 @@ spring:
             user-name-attribute: sub
 merchantpay:
   api-max-inflight: ${API_MAX_INFLIGHT:16}
+  api-quota-dedicated-executor: ${API_QUOTA_DEDICATED_EXECUTOR:false}
+  api-nonce-coalesced: ${API_NONCE_COALESCED:false}
+  api-admission-write-bias: ${API_ADMISSION_WRITE_BIAS:false}
+  api-admission-borrow: ${API_ADMISSION_BORROW:false}
   payment-max-inflight-per-shard: ${PAYMENT_MAX_INFLIGHT_PER_SHARD:16}
+  payment-admission-slots: ${PAYMENT_ADMISSION_SLOTS:false}
+  payment-admission-slot-borrow: ${PAYMENT_ADMISSION_SLOT_BORROW:false}
+  outbox-ordered-ids: ${OUTBOX_ORDERED_IDS:false}
+  ledger-ordered-ids: ${LEDGER_ORDERED_IDS:false}
+  inbox-terminal-fast-path: ${INBOX_TERMINAL_FAST_PATH:false}
+  notification-write-batch-size: ${NOTIFICATION_WRITE_BATCH_SIZE:1}
+  notification-write-batch-delay: ${NOTIFICATION_WRITE_BATCH_DELAY:0ms}
+  channel-result-batch-size: ${CHANNEL_RESULT_BATCH_SIZE:1}
+  channel-result-batch-delay: ${CHANNEL_RESULT_BATCH_DELAY:0ms}
+  payment-ordered-ids: ${PAYMENT_ORDERED_IDS:false}
+  channel-attempt-ordered-ids: ${CHANNEL_ATTEMPT_ORDERED_IDS:false}
+  channel-task-prefetch: ${CHANNEL_TASK_PREFETCH:false}
+  channel-receipt-bulk-sql: ${CHANNEL_RECEIPT_BULK_SQL:false}
+  channel-evidence-batch-size: ${CHANNEL_EVIDENCE_BATCH_SIZE:1}
+  channel-evidence-batch-delay: ${CHANNEL_EVIDENCE_BATCH_DELAY:0ms}
   database-isolation-enabled: ${DATABASE_ISOLATION_ENABLED:false}
   database-api-connections: ${DATABASE_API_CONNECTIONS:12}
   channel-http-connections-per-route: ${CHANNEL_HTTP_CONNECTIONS_PER_ROUTE:64}
   tasks-fast-concurrency: ${FAST_WORKER_CONCURRENCY:30}
+  task-completion-bulk-sql: ${TASK_COMPLETION_BULK_SQL:false}
+  task-claim-bulk-sql: ${TASK_CLAIM_BULK_SQL:false}
+  tasks-archive-enabled: ${TASK_ARCHIVE_ENABLED:true}
   console-url: ${CONSOLE_URL:http://127.0.0.1:5173}
   metrics-password: ${METRICS_PASSWORD}
   master-key: ${MASTER_KEY}

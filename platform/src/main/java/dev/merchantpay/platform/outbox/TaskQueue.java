@@ -26,13 +26,36 @@ public class TaskQueue {
   private final TransactionTemplate transactions;
   private final TransactionTemplate completionTransactions;
   private final Clock clock;
+  private final boolean bulkSql;
+  private final boolean claimBulkSql;
 
   public TaskQueue(JdbcTemplate jdbc, TransactionTemplate transactions, Clock clock) {
+    this(jdbc, transactions, clock, false);
+  }
+
+  public TaskQueue(
+      JdbcTemplate jdbc, TransactionTemplate transactions, Clock clock, boolean bulkSql) {
+    this(jdbc, transactions, clock, bulkSql, false);
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public TaskQueue(
+      JdbcTemplate jdbc,
+      TransactionTemplate transactions,
+      Clock clock,
+      @org.springframework.beans.factory.annotation.Value(
+              "${merchantpay.task-completion-bulk-sql:false}")
+          boolean bulkSql,
+      @org.springframework.beans.factory.annotation.Value(
+              "${merchantpay.task-claim-bulk-sql:false}")
+          boolean claimBulkSql) {
     this.jdbc = jdbc;
     this.transactions = transactions;
     this.completionTransactions = new TransactionTemplate(transactions.getTransactionManager());
     this.completionTransactions.setTimeout(3);
     this.clock = clock;
+    this.bulkSql = bulkSql;
+    this.claimBulkSql = claimBulkSql;
   }
 
   public Optional<Task> claim() {
@@ -66,6 +89,12 @@ public class TaskQueue {
         && !java.util.Set.of("FAST", "BULK", "INBOX", "NOTIFY").contains(queueClass)) {
       throw new IllegalArgumentException("Unknown task queue class");
     }
+    if (claimBulkSql
+        && org.springframework.transaction.support.TransactionSynchronizationManager
+            .isActualTransactionActive()) {
+      throw new IllegalStateException(
+          "Claim tasks outside a business transaction so leases commit before dispatch");
+    }
     return transactions.execute(
         tx -> {
           var now = Timestamp.from(clock.instant());
@@ -93,20 +122,48 @@ public class TaskQueue {
           }
           if (!tasks.isEmpty()) {
             var lease = Timestamp.from(clock.instant().plusSeconds(60));
-            jdbc.batchUpdate(
-                "UPDATE outbox_tasks SET status='RUNNING',attempts=?,lease_token=?,lease_until=?,updated_at=? WHERE id=?",
-                tasks,
-                tasks.size(),
-                (statement, task) -> {
-                  statement.setInt(1, task.attempts());
-                  statement.setString(2, task.token());
-                  statement.setTimestamp(3, lease);
-                  statement.setTimestamp(4, now);
-                  statement.setString(5, task.id());
-                });
+            if (claimBulkSql && tasks.size() > 1) {
+              claimBulk(tasks, lease, now);
+            } else {
+              jdbc.batchUpdate(
+                  "UPDATE outbox_tasks SET status='RUNNING',attempts=?,lease_token=?,lease_until=?,updated_at=? WHERE id=?",
+                  tasks,
+                  tasks.size(),
+                  (statement, task) -> {
+                    statement.setInt(1, task.attempts());
+                    statement.setString(2, task.token());
+                    statement.setTimestamp(3, lease);
+                    statement.setTimestamp(4, now);
+                    statement.setString(5, task.id());
+                  });
+            }
           }
           return List.copyOf(tasks);
         });
+  }
+
+  private void claimBulk(List<Task> tasks, Timestamp lease, Timestamp now) {
+    // The preceding SKIP LOCKED selects already own every affected row until commit.
+    // CASE preserves independently generated tokens; no worker sees this list before commit.
+    var ordered = tasks.stream().sorted(java.util.Comparator.comparing(Task::id)).toList();
+    var bindings = new ArrayList<Object>(ordered.size() * 3 + 2);
+    for (var task : ordered) {
+      bindings.add(task.id());
+      bindings.add(task.token());
+    }
+    bindings.add(lease);
+    bindings.add(now);
+    for (var task : ordered) bindings.add(task.id());
+    int changed =
+        jdbc.update(
+            "UPDATE outbox_tasks SET status='RUNNING',attempts=attempts+1,lease_token=CASE id "
+                + String.join(" ", java.util.Collections.nCopies(ordered.size(), "WHEN ? THEN ?"))
+                + " END,lease_until=?,updated_at=? WHERE id IN ("
+                + String.join(",", java.util.Collections.nCopies(ordered.size(), "?"))
+                + ")",
+            bindings.toArray());
+    if (changed != ordered.size())
+      throw new IllegalStateException("Task claim affected row count does not match locked rows");
   }
 
   public boolean complete(Task task) {
@@ -128,6 +185,7 @@ public class TaskQueue {
         .isActualTransactionActive()) {
       throw new IllegalStateException("Acknowledge tasks after the business transaction commits");
     }
+    if (bulkSql && batch.size() > 1) return completeBulk(batch);
     return completionTransactions.execute(
         tx -> {
           var results = new ArrayList<Boolean>(java.util.Collections.nCopies(batch.size(), false));
@@ -138,6 +196,61 @@ public class TaskQueue {
                   .sorted(java.util.Comparator.comparing(index -> batch.get(index).id()))
                   .toList();
           for (int index : indices) results.set(index, complete(batch.get(index)));
+          return List.copyOf(results);
+        });
+  }
+
+  private record Owner(String id, String status, String token) {}
+
+  private List<Boolean> completeBulk(List<Task> batch) {
+    return completionTransactions.execute(
+        tx -> {
+          var ids = batch.stream().map(Task::id).distinct().sorted().toList();
+          var owners = new java.util.HashMap<String, String>();
+          // PK-only predicates keep the locking read bounded to this group's rows. Locks survive
+          // until commit, preventing reclaim between ownership checks and the shared UPDATE.
+          var rows =
+              jdbc.query(
+                  "SELECT id,status,lease_token FROM outbox_tasks WHERE id IN ("
+                      + String.join(",", java.util.Collections.nCopies(ids.size(), "?"))
+                      + ") ORDER BY id FOR UPDATE",
+                  (rs, index) ->
+                      new Owner(
+                          rs.getString("id"), rs.getString("status"), rs.getString("lease_token")),
+                  ids.toArray());
+          for (var row : rows)
+            if (row.status().equals("RUNNING") && row.token() != null)
+              owners.put(row.id(), row.token());
+          var results = new ArrayList<Boolean>(java.util.Collections.nCopies(batch.size(), false));
+          var accepted = new ArrayList<Task>();
+          for (int index = 0; index < batch.size(); index++) {
+            var task = batch.get(index);
+            var owner = owners.get(task.id());
+            if (owner != null && owner.equals(task.token())) {
+              results.set(index, true);
+              accepted.add(task);
+              owners.remove(task.id()); // The same lease can win only its first input occurrence.
+            }
+          }
+          if (!accepted.isEmpty()) {
+            var bindings = new ArrayList<Object>();
+            bindings.add(Timestamp.from(clock.instant()));
+            for (var task : accepted) {
+              bindings.add(task.id());
+              bindings.add(task.token());
+            }
+            int changed =
+                jdbc.update(
+                    "UPDATE outbox_tasks SET status='DONE',lease_token=NULL,lease_until=NULL,last_error=NULL,updated_at=? WHERE status='RUNNING' AND ("
+                        + String.join(
+                            " OR ",
+                            java.util.Collections.nCopies(
+                                accepted.size(), "(id=? AND lease_token=?)"))
+                        + ")",
+                    bindings.toArray());
+            if (changed != accepted.size())
+              throw new IllegalStateException("Task completion ownership changed while locked");
+          }
           return List.copyOf(results);
         });
   }

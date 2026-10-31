@@ -28,6 +28,9 @@ public class SignatureFilter extends OncePerRequestFilter {
   private final ApiAvailability availability;
   private final java.util.concurrent.Semaphore admission;
   private final java.util.concurrent.Semaphore[] reserved;
+  private final boolean coalescedNonce;
+  private final boolean borrowReservations;
+  private final int[] reservationFloors;
 
   public SignatureFilter(
       MerchantService merchants,
@@ -37,22 +40,77 @@ public class SignatureFilter extends OncePerRequestFilter {
       ApiRateLimiter rateLimiter,
       int maximumInflight,
       ApiAvailability availability) {
+    this(merchants, jdbc, clock, json, rateLimiter, maximumInflight, availability, false);
+  }
+
+  public SignatureFilter(
+      MerchantService merchants,
+      JdbcTemplate jdbc,
+      Clock clock,
+      JsonMapper json,
+      ApiRateLimiter rateLimiter,
+      int maximumInflight,
+      ApiAvailability availability,
+      boolean writeBias) {
+    this(
+        merchants, jdbc, clock, json, rateLimiter, maximumInflight, availability, writeBias, false);
+  }
+
+  public SignatureFilter(
+      MerchantService merchants,
+      JdbcTemplate jdbc,
+      Clock clock,
+      JsonMapper json,
+      ApiRateLimiter rateLimiter,
+      int maximumInflight,
+      ApiAvailability availability,
+      boolean writeBias,
+      boolean coalescedNonce) {
+    this(
+        merchants,
+        jdbc,
+        clock,
+        json,
+        rateLimiter,
+        maximumInflight,
+        availability,
+        writeBias,
+        coalescedNonce,
+        false);
+  }
+
+  public SignatureFilter(
+      MerchantService merchants,
+      JdbcTemplate jdbc,
+      Clock clock,
+      JsonMapper json,
+      ApiRateLimiter rateLimiter,
+      int maximumInflight,
+      ApiAvailability availability,
+      boolean writeBias,
+      boolean coalescedNonce,
+      boolean borrowReservations) {
     this.merchants = merchants;
     this.jdbc = jdbc;
     this.clock = clock;
     this.json = json;
     this.rateLimiter = rateLimiter;
     this.availability = availability;
+    this.coalescedNonce = coalescedNonce;
+    this.borrowReservations = borrowReservations;
     if (maximumInflight < 1 || maximumInflight > 128)
       throw new IllegalArgumentException("API inflight capacity must be 1..128");
     int unit = maximumInflight < 8 ? 0 : maximumInflight / 8;
+    int queryReserved = writeBias ? unit : 2 * unit;
+    this.reservationFloors =
+        new int[] {Math.max(1, unit / 4), Math.max(1, unit / 4), Math.max(1, queryReserved / 4)};
     this.reserved =
         new java.util.concurrent.Semaphore[] {
           new java.util.concurrent.Semaphore(unit),
           new java.util.concurrent.Semaphore(unit),
-          new java.util.concurrent.Semaphore(2 * unit)
+          new java.util.concurrent.Semaphore(queryReserved)
         };
-    this.admission = new java.util.concurrent.Semaphore(maximumInflight - 4 * unit);
+    this.admission = new java.util.concurrent.Semaphore(maximumInflight - 2 * unit - queryReserved);
   }
 
   @Override
@@ -64,14 +122,12 @@ public class SignatureFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-    var permit = admissionFor(request);
-    if (!permit.tryAcquire()) {
-      permit = admission;
-      if (!permit.tryAcquire()) {
-        unavailable(response, RetryReason.API_INFLIGHT);
-        return;
-      }
+    var permit = acquireAdmission(request);
+    if (permit == null) {
+      unavailable(response, RetryReason.API_INFLIGHT);
+      return;
     }
+    availability.entered();
     try {
       String keyId = request.getHeader("X-Key-Id"),
           timestamp = request.getHeader("X-Timestamp"),
@@ -101,20 +157,31 @@ public class SignatureFilter extends OncePerRequestFilter {
           key.secret(), signature, timestamp, nonce, request.getMethod(), path, body)) {
         throw new ApiException("INVALID_SIGNATURE", 401, "签名校验失败");
       }
-      try {
-        availability.time(
-            Stage.NONCE,
-            () ->
-                jdbc.update(
-                    "INSERT INTO signature_nonces(key_id,nonce,expires_at) VALUES (?,?,?)",
-                    keyId,
-                    nonce,
-                    Timestamp.from(clock.instant().plusSeconds(601))));
-      } catch (DuplicateKeyException replay) {
-        throw new ApiException("REPLAY_REJECTED", 409, "请求已使用，请使用新 nonce 和原业务号重试");
-      }
-      if (!availability.time(Stage.QUOTA, () -> rateLimiter.allow(keyId, now))) {
-        throw new ApiException("RATE_LIMITED", 429, "商户接口超过每秒 500 次配额");
+      if (coalescedNonce) {
+        var decision =
+            availability.time(
+                Stage.GATE,
+                () -> rateLimiter.admit(keyId, now, nonce, clock.instant().plusSeconds(601)));
+        if (decision == ApiRateLimiter.Decision.REPLAY)
+          throw new ApiException("REPLAY_REJECTED", 409, "请求已使用，请使用新 nonce 和原业务号重试");
+        if (decision == ApiRateLimiter.Decision.RATE_LIMITED)
+          throw new ApiException("RATE_LIMITED", 429, "商户接口超过每秒 500 次配额");
+      } else {
+        try {
+          availability.time(
+              Stage.NONCE,
+              () ->
+                  jdbc.update(
+                      "INSERT INTO signature_nonces(key_id,nonce,expires_at) VALUES (?,?,?)",
+                      keyId,
+                      nonce,
+                      Timestamp.from(clock.instant().plusSeconds(601))));
+        } catch (DuplicateKeyException replay) {
+          throw new ApiException("REPLAY_REJECTED", 409, "请求已使用，请使用新 nonce 和原业务号重试");
+        }
+        if (!availability.time(Stage.QUOTA, () -> rateLimiter.allow(keyId, now))) {
+          throw new ApiException("RATE_LIMITED", 429, "商户接口超过每秒 500 次配额");
+        }
       }
       var caller = new Access.Caller("api:" + keyId, key.merchantId(), Set.of("MERCHANT"));
       var context = SecurityContextHolder.createEmptyContext();
@@ -174,8 +241,28 @@ public class SignatureFilter extends OncePerRequestFilter {
       unavailable(response, availability.reason(exhausted));
     } finally {
       SecurityContextHolder.clearContext();
+      availability.exited();
       permit.release();
     }
+  }
+
+  // Selection alone holds this lock; no authentication, JDBC or handler work runs inside it.
+  private synchronized java.util.concurrent.Semaphore acquireAdmission(HttpServletRequest request) {
+    var preferred = admissionFor(request);
+    if (preferred.tryAcquire()) return preferred;
+    if (preferred != admission && admission.tryAcquire()) return admission;
+    if (borrowReservations) {
+      for (int i = 0; i < reserved.length; i++) {
+        var candidate = reserved[i];
+        if (candidate == preferred) continue;
+        // Only selectors decrement these pools, under this same lock; releases only add capacity.
+        if (candidate.availablePermits() > reservationFloors[i] && candidate.tryAcquire()) {
+          availability.borrowedEntry();
+          return candidate;
+        }
+      }
+    }
+    return null;
   }
 
   private java.util.concurrent.Semaphore admissionFor(HttpServletRequest request) {

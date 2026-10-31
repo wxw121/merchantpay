@@ -1,0 +1,15 @@
+# Same proxy and callback path in both one- and two-platform benchmark rounds.
+services:
+  simulator:
+    environment:
+      CALLBACK_URL: http://load-edge:8080/api/channel/callback
+  load-edge:
+    image: nginxinc/nginx-unprivileged:stable-alpine
+    ports: ["127.0.0.1:18082:8080"]
+    volumes:
+      - ./nginx/local-max-single.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - platform
+    restart: on-failure:3
+    mem_limit: 128m
+    cpus: 1

@@ -25,6 +25,7 @@ public class NotificationService {
   private final JdbcTemplate jdbc;
   private final Clock clock;
   private final RestClient external, local;
+  private final NotificationWrites writes;
 
   public NotificationService(
       PaymentService payments,
@@ -34,6 +35,19 @@ public class NotificationService {
       JsonMapper json,
       JdbcTemplate jdbc,
       Clock clock) {
+    this(payments, refunds, merchants, policy, json, jdbc, clock, null);
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public NotificationService(
+      PaymentService payments,
+      RefundService refunds,
+      MerchantService merchants,
+      NotificationPolicy policy,
+      JsonMapper json,
+      JdbcTemplate jdbc,
+      Clock clock,
+      NotificationWrites writes) {
     this.payments = payments;
     this.refunds = refunds;
     this.merchants = merchants;
@@ -41,6 +55,7 @@ public class NotificationService {
     this.json = json;
     this.jdbc = jdbc;
     this.clock = clock;
+    this.writes = writes;
     var settings =
         HttpClientSettings.defaults()
             .withTimeouts(Duration.ofSeconds(2), Duration.ofSeconds(5))
@@ -86,14 +101,16 @@ public class NotificationService {
     String timestamp = Long.toString(clock.instant().getEpochSecond()),
         nonce = UUID.randomUUID().toString();
     String id = UUID.randomUUID().toString();
-    jdbc.update(
-        "INSERT INTO notification_deliveries(id,task_id,event_id,merchant_id,url,status,created_at) VALUES (?,?,?,?,?,'SENDING',?)",
-        id,
-        task.id(),
-        task.eventId(),
-        task.merchantId(),
-        url,
-        Timestamp.from(clock.instant()));
+    write(
+        () ->
+            jdbc.update(
+                "INSERT INTO notification_deliveries(id,task_id,event_id,merchant_id,url,status,created_at) VALUES (?,?,?,?,?,'SENDING',?)",
+                id,
+                task.id(),
+                task.eventId(),
+                task.merchantId(),
+                url,
+                Timestamp.from(clock.instant())));
     try {
       var response =
           (policy.isLocalDemo(url) ? local : external)
@@ -113,16 +130,25 @@ public class NotificationService {
       if (status / 100 != 2) {
         throw new IllegalStateException("Webhook HTTP " + status);
       }
-      jdbc.update(
-          "UPDATE notification_deliveries SET status='DELIVERED',http_status=? WHERE id=?",
-          status,
-          id);
+      write(
+          () ->
+              jdbc.update(
+                  "UPDATE notification_deliveries SET status='DELIVERED',http_status=? WHERE id=?",
+                  status,
+                  id));
     } catch (RuntimeException failure) {
-      jdbc.update(
-          "UPDATE notification_deliveries SET status='FAILED',error_detail=? WHERE id=?",
-          failure.getClass().getSimpleName(),
-          id);
+      write(
+          () ->
+              jdbc.update(
+                  "UPDATE notification_deliveries SET status='FAILED',error_detail=? WHERE id=?",
+                  failure.getClass().getSimpleName(),
+                  id));
       throw new IllegalStateException("Merchant webhook delivery failed", failure);
     }
+  }
+
+  private void write(Runnable action) {
+    if (writes == null) action.run();
+    else writes.execute(action);
   }
 }

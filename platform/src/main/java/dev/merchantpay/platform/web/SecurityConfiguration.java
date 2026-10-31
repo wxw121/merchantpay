@@ -65,6 +65,9 @@ public class SecurityConfiguration {
       ApiRateLimiter rateLimiter,
       ApiAvailability availability,
       @Value("${merchantpay.api-max-inflight:16}") int maximumInflight,
+      @Value("${merchantpay.api-admission-write-bias:false}") boolean writeBias,
+      @Value("${merchantpay.api-nonce-coalesced:false}") boolean coalescedNonce,
+      @Value("${merchantpay.api-admission-borrow:false}") boolean borrowReservations,
       @Value("${merchantpay.console-url:http://127.0.0.1:5173}") String consoleUrl)
       throws Exception {
     http.authorizeHttpRequests(
@@ -104,7 +107,16 @@ public class SecurityConfiguration {
                 request -> request.getRequestURI().startsWith("/api/")));
     http.addFilterBefore(
         new SignatureFilter(
-            merchants, jdbc, clock, json, rateLimiter, maximumInflight, availability),
+            merchants,
+            jdbc,
+            clock,
+            json,
+            rateLimiter,
+            maximumInflight,
+            availability,
+            writeBias,
+            coalescedNonce,
+            borrowReservations),
         UsernamePasswordAuthenticationFilter.class);
     http.addFilterAfter(
         new org.springframework.web.filter.OncePerRequestFilter() {
