@@ -57,6 +57,38 @@ spring:
             user-info-uri: ${OIDC_BASE_URL:http://127.0.0.1:8180}/realms/merchantpay/protocol/openid-connect/userinfo
             user-name-attribute: sub
 merchantpay:
+  v2-metrics-enabled: ${V2_METRICS_ENABLED:true}
+  shared-sessions-enabled: ${SHARED_SESSIONS_ENABLED:false}
+  console-high-risk-enabled: ${CONSOLE_HIGH_RISK_ENABLED:false}
+  console-mfa-required: ${CONSOLE_MFA_REQUIRED:false}
+  event-transport: ${EVENT_TRANSPORT:POLLING}
+  channel-controls-enabled: ${CHANNEL_CONTROLS_ENABLED:false}
+  redis-admission-enabled: ${REDIS_ADMISSION_ENABLED:false}
+  redis-uri: ${REDIS_URI:}
+  read-model-enabled: ${READ_MODEL_ENABLED:false}
+  read-model-consumer-enabled: ${READ_MODEL_CONSUMER_ENABLED:false}
+  read-model-worker-enabled: ${READ_MODEL_WORKER_ENABLED:false}
+  projection-batch-size: ${PROJECTION_BATCH_SIZE:128}
+  projection-concurrency: ${PROJECTION_CONCURRENCY:2}
+  projection-poll-delay: ${PROJECTION_POLL_DELAY:50}
+  clickhouse-url: ${CLICKHOUSE_URL:http://127.0.0.1:18123/}
+  clickhouse-user: ${CLICKHOUSE_USER:merchantpay}
+  clickhouse-password: ${CLICKHOUSE_PASSWORD:}
+  maximum-api-instances: ${MAXIMUM_API_INSTANCES:2}
+  alipay:
+    enabled: ${ALIPAY_SANDBOX_ENABLED:false}
+    gateway: ${ALIPAY_SANDBOX_GATEWAY:https://openapi.alipaydev.com/gateway.do}
+    app-id: ${ALIPAY_APP_ID:}
+    private-key: ${ALIPAY_PRIVATE_KEY:}
+    public-key: ${ALIPAY_PUBLIC_KEY:}
+    seller-id: ${ALIPAY_SELLER_ID:}
+    notify-url: ${ALIPAY_NOTIFY_URL:}
+  result-write-only-enabled: ${RESULT_WRITE_ONLY_ENABLED:false}
+  locked-evidence-enabled: ${LOCKED_EVIDENCE_ENABLED:false}
+  notification-task-prefetch: ${NOTIFICATION_TASK_PREFETCH:false}
+  worker-queues: ${WORKER_QUEUES:ALL}
+  events-consumer-enabled: ${EVENT_CONSUMER_ENABLED:false}
+  events-topic: ${EVENTS_TOPIC:outbox.event.merchantpay}
   api-max-inflight: ${API_MAX_INFLIGHT:16}
   api-quota-dedicated-executor: ${API_QUOTA_DEDICATED_EXECUTOR:false}
   api-nonce-coalesced: ${API_NONCE_COALESCED:false}

@@ -23,6 +23,7 @@ class TaskWorkerConcurrencyTest {
   @Test
   void emptyPollsDoNotResetFairnessWhileTheOnlyWorkerIsBlocked() throws Exception {
     var queue = mock(TaskQueue.class);
+    when(queue.notificationMayRun(any())).thenReturn(true);
     var gateway = mock(ChannelGateway.class);
     var inbox = mock(InboxService.class);
     var notifications = mock(NotificationService.class);
@@ -104,6 +105,7 @@ class TaskWorkerConcurrencyTest {
   @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2})
   void smallGlobalBudgetsStillMakeProgressOnEveryContinuouslyBackloggedLane(int budget) {
     var queue = mock(TaskQueue.class);
+    when(queue.notificationMayRun(any())).thenReturn(true);
     var gateway = mock(ChannelGateway.class);
     var inbox = mock(InboxService.class);
     var notifications = mock(NotificationService.class);
@@ -169,6 +171,7 @@ class TaskWorkerConcurrencyTest {
   @Test
   void configuredBudgetUsesAllSlotsWithoutExceedingClaimBoundsOrLosingPermits() {
     var queue = mock(TaskQueue.class);
+    when(queue.notificationMayRun(any())).thenReturn(true);
     var gateway = mock(ChannelGateway.class);
     var inbox = mock(InboxService.class);
     var notifications = mock(NotificationService.class);

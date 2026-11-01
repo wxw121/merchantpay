@@ -29,6 +29,7 @@ public class ConsoleController {
   private final JdbcTemplate jdbc;
   private final TransactionTemplate transactions;
   private final Clock clock;
+  private final OutboxService outbox;
 
   public ConsoleController(
       Access access,
@@ -39,7 +40,8 @@ public class ConsoleController {
       NotificationPolicy urls,
       JdbcTemplate jdbc,
       TransactionTemplate transactions,
-      Clock clock) {
+      Clock clock,
+      OutboxService outbox) {
     this.access = access;
     this.queries = queries;
     this.payments = payments;
@@ -49,6 +51,7 @@ public class ConsoleController {
     this.jdbc = jdbc;
     this.transactions = transactions;
     this.clock = clock;
+    this.outbox = outbox;
   }
 
   @GetMapping("/session")
@@ -218,8 +221,7 @@ public class ConsoleController {
     String merchant = queries.paymentMerchant(id, access.merchant(merchantId, false));
     transactions.executeWithoutResult(
         tx -> {
-          new OutboxService(jdbc, clock)
-              .enqueue("manual-query:" + UUID.randomUUID(), "CHANNEL_PAYMENT", id, merchant);
+          outbox.enqueue("manual-query:" + UUID.randomUUID(), "CHANNEL_PAYMENT", id, merchant);
           merchants.audit(
               merchant,
               access.caller().actor(),
@@ -321,7 +323,8 @@ public class ConsoleController {
             throw new ApiException("TASK_BUSY", 409, "仅已结束或死信任务可以人工重放");
           }
           jdbc.update(
-              "UPDATE outbox_tasks SET status='PENDING',attempts=0,due_at=?,last_error=NULL,updated_at=? WHERE id=?",
+              "UPDATE outbox_tasks SET status='PENDING',attempts=0,due_at=?,retry_started_at=?,recovery_stage='STANDARD',lease_token=NULL,lease_until=NULL,last_error=NULL,updated_at=? WHERE id=?",
+              Timestamp.from(clock.instant()),
               Timestamp.from(clock.instant()),
               Timestamp.from(clock.instant()),
               id);

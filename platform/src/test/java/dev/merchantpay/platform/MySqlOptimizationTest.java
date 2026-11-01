@@ -107,6 +107,8 @@ class MySqlOptimizationTest extends FinancialFixture {
     jdbc.execute("DROP TABLE outbox_task_history");
     jdbc.execute("DROP TABLE outbox_events");
     jdbc.execute("DROP INDEX ix_task_archive_due ON outbox_tasks");
+    jdbc.execute(
+        "ALTER TABLE outbox_tasks DROP COLUMN retry_started_at, DROP COLUMN recovery_stage");
     jdbc.update(
         "INSERT INTO outbox_tasks(id,event_id,kind,aggregate_id,merchant_id,payload,status,due_at,created_at,updated_at,queue_class) VALUES ('old-task','old-event','CHANNEL_PAYMENT','p','m','{}','DONE',CURRENT_TIMESTAMP(6),CURRENT_TIMESTAMP(6),CURRENT_TIMESTAMP(6),'FAST')");
     ScriptUtils.executeSqlScript(

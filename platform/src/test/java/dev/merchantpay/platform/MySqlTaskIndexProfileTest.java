@@ -59,7 +59,8 @@ class MySqlTaskIndexProfileTest {
               "V1__core.sql",
               "V6__timeline_and_cursor_indexes.sql",
               "V7__isolated_task_queues.sql",
-              "V14__completed_task_history.sql"))
+              "V14__completed_task_history.sql",
+              "V23__recovery_windows.sql"))
         ScriptUtils.executeSqlScript(c, new ClassPathResource("db/migration/" + name));
     }
     var data = new ArrayList<Object[]>();
@@ -130,7 +131,7 @@ class MySqlTaskIndexProfileTest {
     assertThatThrownBy(
             () ->
                 jdbc.update(
-                    "INSERT INTO outbox_tasks SELECT 'new',event_id,kind,aggregate_id,merchant_id,payload,status,attempts,due_at,lease_until,lease_token,last_error,created_at,updated_at,queue_class FROM outbox_tasks WHERE id='task-0001'"))
+                    "INSERT INTO outbox_tasks(id,event_id,kind,aggregate_id,merchant_id,payload,status,attempts,due_at,lease_until,lease_token,last_error,created_at,updated_at,queue_class) SELECT 'new',event_id,kind,aggregate_id,merchant_id,payload,status,attempts,due_at,lease_until,lease_token,last_error,created_at,updated_at,queue_class FROM outbox_tasks WHERE id='task-0001'"))
         .isInstanceOf(DuplicateKeyException.class);
     profile("restore");
     assertThat(indexes()).isEqualTo(original);

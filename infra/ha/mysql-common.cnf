@@ -1,0 +1,26 @@
+# MySQL 8.4 single-primary InnoDB Cluster. Include one node-specific cnf as well.
+[mysqld]
+plugin-load-add=group_replication.so
+character-set-server=utf8mb4
+collation-server=utf8mb4_0900_bin
+gtid_mode=ON
+enforce_gtid_consistency=ON
+log_bin=mysql-bin
+binlog_format=ROW
+binlog_row_image=FULL
+log_replica_updates=ON
+binlog_expire_logs_seconds=604800
+sync_binlog=1
+innodb_flush_log_at_trx_commit=1
+innodb_doublewrite=ON
+innodb_redo_log_capacity=2147483648
+max_connections=200
+require_secure_transport=ON
+group_replication_single_primary_mode=ON
+group_replication_consistency=BEFORE_ON_PRIMARY_FAILOVER
+group_replication_exit_state_action=READ_ONLY
+group_replication_bootstrap_group=OFF
+group_replication_start_on_boot=OFF
+group_replication_member_expel_timeout=10
+group_replication_unreachable_majority_timeout=30
+# Provision TLS files and a dedicated cluster administrator outside version control.

@@ -1,0 +1,22 @@
+# Copy to .env.native (git-ignored). Keep existing merchant keys when reusing a database.
+# Native Windows MySQL and Keycloak must already be running; this project never starts them.
+DATABASE_URL=jdbc:mysql://127.0.0.1:3306/merchantpay?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&connectTimeout=3000&socketTimeout=30000&rewriteBatchedStatements=true
+DATABASE_USER=merchantpay
+DATABASE_PASSWORD=REPLACE_WITH_EXISTING_DATABASE_PASSWORD
+OIDC_BASE_URL=http://127.0.0.1:8180
+OIDC_CLIENT_SECRET=REPLACE_WITH_EXISTING_CLIENT_SECRET
+MASTER_KEY=REPLACE_WITH_EXISTING_BASE64_AES_KEY
+CHANNEL_TOKEN=REPLACE_WITH_EXISTING_CHANNEL_TOKEN
+CALLBACK_SECRET=REPLACE_WITH_EXISTING_CALLBACK_SECRET
+METRICS_PASSWORD=REPLACE_WITH_EXISTING_METRICS_PASSWORD
+LOCAL_WEBHOOK=http://127.0.0.1:9091/merchant-webhook
+CONSOLE_URL=http://127.0.0.1:5173
+# Optional V2 dependencies may run on a separate native Linux host. See native-local.md.
+# EVENT_TRANSPORT remains POLLING unless a deliberate CDC cutover has been performed.
+EVENT_TRANSPORT=POLLING
+EVENT_CONSUMER_ENABLED=false
+READ_MODEL_ENABLED=false
+READ_MODEL_CONSUMER_ENABLED=false
+READ_MODEL_WORKER_ENABLED=false
+REDIS_ADMISSION_ENABLED=false
+ALIPAY_SANDBOX_ENABLED=false

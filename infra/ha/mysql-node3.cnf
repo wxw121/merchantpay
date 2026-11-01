@@ -1,0 +1,5 @@
+[mysqld]
+server_id=284003
+report_host=db3.internal
+bind_address=0.0.0.0
+group_replication_local_address=db3.internal:33061

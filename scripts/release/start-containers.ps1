@@ -11,7 +11,7 @@ try {
     New-Item -ItemType Directory (Join-Path $taskRoot '.work') -Force|Out-Null
     try {$taskWorkloadLock=[IO.File]::Open((Join-Path $taskRoot '.work/performance-baseline.lock'),[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None)}catch [IO.IOException]{throw 'Container startup refused: a workload or maintenance operation holds the workspace lock'}
     & scripts/release/build-infrastructure.ps1
-    . scripts/Import-LocalEnvironment.ps1
+    . scripts/Import-LocalEnvironment.ps1 -EnvironmentFile '.env'
     $taskRealm=[IO.File]::ReadAllText((Join-Path $taskRoot 'infra/keycloak/realm.template.json'))
     $taskRealm=$taskRealm.Replace('__CLIENT_SECRET__',$env:OIDC_CLIENT_SECRET).Replace('__DEMO_PASSWORD__',$env:DEMO_PASSWORD)
     $taskRealm=$taskRealm.Replace('http://127.0.0.1:8080/login/oauth2/code/keycloak','http://127.0.0.1:15173/login/oauth2/code/keycloak').Replace('http://127.0.0.1:5173','http://127.0.0.1:15173')

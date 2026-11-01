@@ -64,6 +64,9 @@ public class SecurityConfiguration {
       Access access,
       ApiRateLimiter rateLimiter,
       ApiAvailability availability,
+      dev.merchantpay.platform.control.RedisAdmission redisAdmission,
+      ConsoleSecurity consoleSecurity,
+      org.springframework.security.oauth2.client.registration.ClientRegistrationRepository clients,
       @Value("${merchantpay.api-max-inflight:16}") int maximumInflight,
       @Value("${merchantpay.api-admission-write-bias:false}") boolean writeBias,
       @Value("${merchantpay.api-nonce-coalesced:false}") boolean coalescedNonce,
@@ -74,6 +77,7 @@ public class SecurityConfiguration {
         auth ->
             auth.requestMatchers(
                     "/api/channel/callback",
+                    "/api/channel/alipay/callback",
                     "/actuator/health/**",
                     "/",
                     "/index.html",
@@ -92,10 +96,50 @@ public class SecurityConfiguration {
             csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                 .ignoringRequestMatchers(
-                    request ->
-                        request.getRequestURI().startsWith("/api/v1/")
-                            || request.getRequestURI().equals("/api/channel/callback")));
-    http.oauth2Login(login -> login.defaultSuccessUrl(consoleUrl + "/", true));
+                    request -> {
+                      var path = ApiPaths.path(request);
+                      return ApiPaths.MERCHANT.matches(path) || ApiPaths.callback(path);
+                    }));
+    var resolver =
+        new org.springframework.security.oauth2.client.web
+            .DefaultOAuth2AuthorizationRequestResolver(clients, "/oauth2/authorization");
+    org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver stepUp =
+        new org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver() {
+          private org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
+              customize(
+                  jakarta.servlet.http.HttpServletRequest request,
+                  org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
+                      value) {
+            if (value == null || !"1".equals(request.getParameter("step_up"))) return value;
+            return org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
+                .from(value)
+                .additionalParameters(
+                    parameters -> {
+                      parameters.put("acr_values", "2");
+                      parameters.put("max_age", "0");
+                      parameters.put("prompt", "login");
+                    })
+                .build();
+          }
+
+          public org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
+              resolve(jakarta.servlet.http.HttpServletRequest request) {
+            return customize(request, resolver.resolve(request));
+          }
+
+          public org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest
+              resolve(jakarta.servlet.http.HttpServletRequest request, String id) {
+            return customize(request, resolver.resolve(request, id));
+          }
+        };
+    http.oauth2Login(
+        login ->
+            login
+                .authorizationEndpoint(endpoint -> endpoint.authorizationRequestResolver(stepUp))
+                .defaultSuccessUrl(consoleUrl + "/", true));
+    http.addFilterAfter(
+        new HighRiskFilter(consoleSecurity, json),
+        org.springframework.security.web.access.intercept.AuthorizationFilter.class);
     http.exceptionHandling(
         errors ->
             errors.defaultAuthenticationEntryPointFor(
@@ -104,19 +148,20 @@ public class SecurityConfiguration {
                   response.setContentType("application/json;charset=UTF-8");
                   response.getWriter().write("{\"code\":\"UNAUTHENTICATED\",\"message\":\"请登录\"}");
                 },
-                request -> request.getRequestURI().startsWith("/api/")));
+                request -> ApiPaths.API.matches(ApiPaths.path(request))));
     http.addFilterBefore(
         new SignatureFilter(
-            merchants,
-            jdbc,
-            clock,
-            json,
-            rateLimiter,
-            maximumInflight,
-            availability,
-            writeBias,
-            coalescedNonce,
-            borrowReservations),
+                merchants,
+                jdbc,
+                clock,
+                json,
+                rateLimiter,
+                maximumInflight,
+                availability,
+                writeBias,
+                coalescedNonce,
+                borrowReservations)
+            .withRedisAdmission(redisAdmission),
         UsernamePasswordAuthenticationFilter.class);
     http.addFilterAfter(
         new org.springframework.web.filter.OncePerRequestFilter() {
@@ -126,8 +171,8 @@ public class SecurityConfiguration {
               jakarta.servlet.http.HttpServletResponse response,
               jakarta.servlet.FilterChain chain)
               throws java.io.IOException, jakarta.servlet.ServletException {
-            if (!request.getRequestURI().startsWith("/api/")
-                || request.getRequestURI().equals("/api/channel/callback")) {
+            var path = ApiPaths.path(request);
+            if (!ApiPaths.API.matches(path) || ApiPaths.callback(path)) {
               chain.doFilter(request, response);
               return;
             }

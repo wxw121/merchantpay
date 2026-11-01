@@ -112,6 +112,12 @@ public class PaymentService {
   private final boolean admissionSlots;
   private final boolean borrowSlots;
   private final boolean paymentOrderedIds;
+  private dev.merchantpay.platform.control.ChannelControl channelControl;
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public void setChannelControl(dev.merchantpay.platform.control.ChannelControl control) {
+    this.channelControl = control;
+  }
 
   public PaymentService(
       JdbcTemplate jdbc,
@@ -244,8 +250,12 @@ public class PaymentService {
   public PaymentView create(String merchantId, CreatePayment input) {
     requireBusinessNo(input.merchantOrderNo());
     long amount = MoneyRules.parsePositive(input.amountMinor());
+    boolean routedRequest =
+        "AUTO".equals(input.channel()) || "ALIPAY_SANDBOX".equals(input.channel());
     if (!"CNY".equals(input.currency())
-        || !("MOCK_A".equals(input.channel()) || "MOCK_B".equals(input.channel()))) {
+        || !("MOCK_A".equals(input.channel())
+            || "MOCK_B".equals(input.channel())
+            || routedRequest)) {
       throw new ApiException("INVALID_PAYMENT", 400, "币种或支付渠道不受支持");
     }
     if (input.notificationUrl() != null
@@ -282,6 +292,22 @@ public class PaymentService {
             if (!existing.isEmpty()) return idempotent(existing.getFirst(), hash);
             throw new ApiException("MERCHANT_DISABLED", 403, "商户不存在或已停用");
           }
+          // Existing V2 business keys remain retryable even after their capabilities are disabled.
+          if (routedRequest || channelControl != null && channelControl.routingEnabled()) {
+            var existing =
+                jdbc.query(
+                    "SELECT * FROM payments WHERE merchant_id=? AND merchant_order_no=? FOR UPDATE",
+                    MAPPER,
+                    merchantId,
+                    input.merchantOrderNo());
+            if (!existing.isEmpty()) return idempotent(existing.getFirst(), hash);
+          }
+          if (channelControl == null && routedRequest)
+            throw new ApiException("INVALID_PAYMENT", 400, "币种或支付渠道不受支持");
+          String chosenChannel =
+              channelControl == null
+                  ? input.channel()
+                  : channelControl.route(merchantId, input.channel());
           int bucket =
               Integer.parseInt(
                       sha256(merchantId + "\0" + input.merchantOrderNo()).substring(0, 2), 16)
@@ -336,7 +362,7 @@ public class PaymentService {
                 amount,
                 fee,
                 "CNY",
-                input.channel(),
+                chosenChannel,
                 notificationUrl,
                 now,
                 now);
@@ -389,7 +415,7 @@ public class PaymentService {
                   0,
                   0,
                   0,
-                  input.channel(),
+                  chosenChannel,
                   null,
                   notificationUrl,
                   instant,
@@ -442,9 +468,34 @@ public class PaymentService {
   }
 
   public PaymentView applyResult(String id, ChannelResult result) {
+    return applyResult(id, result, true, null);
+  }
+
+  public void applyResultWithoutView(String id, ChannelResult result) {
+    applyResult(id, result, false, null);
+  }
+
+  public void applyObservation(
+      String id, ChannelResult result, dev.merchantpay.platform.common.ReceiptEvidence evidence) {
+    applyResult(id, result, false, Objects.requireNonNull(evidence));
+  }
+
+  private PaymentView applyResult(
+      String id,
+      ChannelResult result,
+      boolean resultView,
+      dev.merchantpay.platform.common.ReceiptEvidence evidence) {
     return transactions.execute(
         transaction -> {
           var current = lock(id);
+          if (evidence != null) {
+            boolean closeIntent =
+                "CLOSED".equals(evidence.status())
+                    && !jdbc.queryForList(
+                            "SELECT id FROM outbox_events WHERE event_id=?", "channel-close:" + id)
+                        .isEmpty();
+            evidence.verify(current.amount(), current.channel(), closeIntent);
+          }
           if (!current.channel().equals(result.channel())) {
             throw evidenceConflict();
           }
@@ -501,15 +552,25 @@ public class PaymentService {
               }
             }
             case ChannelResult.Unknown ignored -> {
-              if (!terminal(current.status()) && !current.status().equals("CLOSE_PENDING")) {
+              if (current.status().equals("CLOSE_PENDING")) {
+                jdbc.update(
+                    "UPDATE payments SET unknown_since=COALESCE(unknown_since,?) WHERE id=?",
+                    Timestamp.from(clock.instant()),
+                    id);
+              }
+              if (!terminal(current.status())
+                  && !current.status().equals("CLOSE_PENDING")
+                  && !current.status().equals("UNKNOWN")) {
                 transition(id, "UNKNOWN");
+                outbox.fact(
+                    "payment-unknown:" + id, "PAYMENT_STATE_CHANGED", id, current.merchantId());
               }
             }
             case ChannelResult.Pending ignored -> {
               /* A pending observation cannot undo a stronger observation. */
             }
           }
-          return lock(id).view();
+          return resultView ? lock(id).view() : null;
         });
   }
 
@@ -537,6 +598,15 @@ public class PaymentService {
   }
 
   private void transition(String id, String status) {
+    if (status.equals("UNKNOWN")) {
+      var now = Timestamp.from(clock.instant());
+      jdbc.update(
+          "UPDATE payments SET status='UNKNOWN',updated_at=?,unknown_since=COALESCE(unknown_since,?) WHERE id=?",
+          now,
+          now,
+          id);
+      return;
+    }
     jdbc.update(
         "UPDATE payments SET status=?,updated_at=? WHERE id=?",
         status,

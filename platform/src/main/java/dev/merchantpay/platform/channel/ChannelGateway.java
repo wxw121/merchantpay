@@ -36,6 +36,43 @@ public class ChannelGateway {
   private final MeterRegistry metrics;
   private final ChannelEvidenceWrites evidenceWrites;
   private final boolean channelAttemptOrderedIds;
+  private boolean lockedEvidence, writeOnly;
+  private ChannelTransport transport;
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public void setTransport(ChannelTransport transport) {
+    this.transport = transport;
+  }
+
+  private ChannelApi.Receipt pay(String channel, ChannelApi.Request request) {
+    return transport == null
+        ? api.pay(channel, token, request)
+        : transport.pay(channel, token, request);
+  }
+
+  private ChannelApi.Receipt refund(String channel, ChannelApi.Request request) {
+    return transport == null
+        ? api.refund(channel, token, request)
+        : transport.refund(channel, token, request);
+  }
+
+  private ChannelApi.Receipt query(String channel, String operation, String id) {
+    return transport == null
+        ? api.query(channel, operation, id, token)
+        : transport.query(channel, operation, id, token);
+  }
+
+  private ChannelApi.Receipt close(String channel, String id) {
+    return transport == null ? api.close(channel, id, token) : transport.close(channel, id, token);
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public void configureResultPath(
+      @Value("${merchantpay.locked-evidence-enabled:false}") boolean lockedEvidence,
+      @Value("${merchantpay.result-write-only-enabled:false}") boolean writeOnly) {
+    this.lockedEvidence = lockedEvidence;
+    this.writeOnly = writeOnly;
+  }
 
   public ChannelGateway(
       ChannelApi api,
@@ -246,23 +283,17 @@ public class ChannelGateway {
           && task.attempts() == 1
           && state.equals("PROCESSING")
           && !task.kind().equals("CHANNEL_CLOSE")) {
-        receipt =
-            isRefund
-                ? api.refund(payment.channel(), token, request)
-                : api.pay(payment.channel(), token, request);
+        receipt = isRefund ? refund(payment.channel(), request) : pay(payment.channel(), request);
       } else {
-        receipt = api.query(payment.channel(), operation, task.aggregateId(), token);
+        receipt = query(payment.channel(), operation, task.aggregateId());
         if (task.kind().equals("CHANNEL_CLOSE") || receipt.status().equals("NOT_FOUND")) {
           retainResponse(receipt, payment.channel(), attemptKey, operation);
           validate(receipt, task.aggregateId(), operation, payment.channel());
         }
         if (task.kind().equals("CHANNEL_CLOSE")) {
-          receipt = api.close(payment.channel(), task.aggregateId(), token);
+          receipt = close(payment.channel(), task.aggregateId());
         } else if (receipt.status().equals("NOT_FOUND")) {
-          receipt =
-              isRefund
-                  ? api.refund(payment.channel(), token, request)
-                  : api.pay(payment.channel(), token, request);
+          receipt = isRefund ? refund(payment.channel(), request) : pay(payment.channel(), request);
         }
       }
       retainResponse(receipt, payment.channel(), attemptKey, operation);
@@ -358,7 +389,7 @@ public class ChannelGateway {
       String expectedOperation,
       String expectedChannel) {
     verifyIdentity(receipt, expectedId, expectedOperation, expectedChannel);
-    verifyTerminalEvidence(receipt);
+    if (!lockedEvidence) verifyTerminalEvidence(receipt);
   }
 
   private void apply(
@@ -377,10 +408,23 @@ public class ChannelGateway {
 
   private void applyBusiness(ChannelApi.Receipt receipt) {
     var result = normalize(receipt);
+    var evidence =
+        new dev.merchantpay.platform.common.ReceiptEvidence(
+            receipt.operation(),
+            receipt.status(),
+            receipt.channel(),
+            receipt.amountMinor(),
+            receipt.feeMinor(),
+            receipt.currency(),
+            receipt.reference());
     if (receipt.operation().equals("PAYMENT")) {
-      payments.applyResult(receipt.aggregateId(), result);
+      if (lockedEvidence) payments.applyObservation(receipt.aggregateId(), result, evidence);
+      else if (writeOnly) payments.applyResultWithoutView(receipt.aggregateId(), result);
+      else payments.applyResult(receipt.aggregateId(), result);
     } else if (receipt.operation().equals("REFUND")) {
-      refunds.applyResult(receipt.aggregateId(), result);
+      if (lockedEvidence) refunds.applyObservation(receipt.aggregateId(), result, evidence);
+      else if (writeOnly) refunds.applyResultWithoutView(receipt.aggregateId(), result);
+      else refunds.applyResult(receipt.aggregateId(), result);
     } else {
       throw new IllegalArgumentException("Unknown channel operation");
     }
@@ -448,6 +492,8 @@ public class ChannelGateway {
       java.time.Instant observedAt) {}
 
   public ChannelStatus health(String channel, String merchant) {
+    if (AlipaySandbox.CHANNEL.equals(channel))
+      return new ChannelStatus(channel, "SANDBOX_UNVERIFIED", null, null, "", clock.instant());
     try {
       var health = api.health(channel, merchant, token);
       return new ChannelStatus(

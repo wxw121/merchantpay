@@ -362,15 +362,80 @@ public class TaskQueue {
     boolean conflict =
         failure instanceof dev.merchantpay.platform.common.ApiException error
             && error.code().equals("CHANNEL_EVIDENCE_CONFLICT");
-    // Money outcomes remain UNKNOWN when delivery exhausts; only this delivery enters DEAD.
-    jdbc.update(
-        "UPDATE outbox_tasks SET status=?,due_at=?,lease_token=NULL,lease_until=NULL,last_error=?,updated_at=? WHERE id=? AND status='RUNNING' AND lease_token=?",
-        conflict || task.attempts() >= 12 ? "DEAD" : "PENDING",
-        Timestamp.from(
-            clock.instant().plusSeconds(Math.min(3600, 1L << Math.min(task.attempts(), 11)))),
-        safe,
-        Timestamp.from(clock.instant()),
-        task.id(),
-        task.token());
+    transactions.executeWithoutResult(
+        tx -> {
+          var now = clock.instant();
+          var windows =
+              jdbc.queryForList(
+                  "SELECT retry_started_at FROM outbox_tasks WHERE id=? AND status='RUNNING' AND lease_token=? AND lease_until>? FOR UPDATE",
+                  Timestamp.class,
+                  task.id(),
+                  task.token(),
+                  Timestamp.from(now));
+          if (windows.isEmpty()) return;
+          boolean channel = TaskRecovery.channel(task.kind());
+          boolean notification = TaskRecovery.notification(task.kind());
+          var deadline = windows.getFirst().toInstant().plus(TaskRecovery.NOTIFICATION_WINDOW);
+          String stage = "STANDARD";
+          if (channel) {
+            String table = task.kind().equals("CHANNEL_REFUND") ? "refunds" : "payments";
+            var unknown =
+                jdbc.queryForList(
+                    "SELECT unknown_since FROM "
+                        + table
+                        + " WHERE id=? AND merchant_id=? AND status IN ('UNKNOWN','CLOSE_PENDING')",
+                    Timestamp.class,
+                    task.aggregateId(),
+                    task.merchantId());
+            if (!unknown.isEmpty() && unknown.getFirst() != null)
+              stage = TaskRecovery.stage(unknown.getFirst().toInstant(), now);
+          }
+          boolean dead =
+              conflict
+                  || (notification ? !now.isBefore(deadline) : !channel && task.attempts() >= 12);
+          var due =
+              now.plus(
+                  channel || notification
+                      ? TaskRecovery.queryDelay(task.attempts())
+                      : java.time.Duration.ofSeconds(
+                          Math.min(3600, 1L << Math.min(task.attempts(), 11))));
+          if (notification && due.isAfter(deadline)) due = deadline;
+          // Exhaustion changes only delivery state. Unknown money and refund reservations survive.
+          jdbc.update(
+              "UPDATE outbox_tasks SET status=?,due_at=?,recovery_stage=?,lease_token=NULL,lease_until=NULL,last_error=?,updated_at=? WHERE id=? AND status='RUNNING' AND lease_token=?",
+              dead ? "DEAD" : "PENDING",
+              Timestamp.from(due),
+              stage,
+              safe,
+              Timestamp.from(now),
+              task.id(),
+              task.token());
+        });
+  }
+
+  /** Check immediately before a notification send, including after a long outage or reclaim. */
+  public boolean notificationMayRun(Task task) {
+    if (!TaskRecovery.notification(task.kind()))
+      throw new IllegalArgumentException("Not a notification task");
+    return transactions.execute(
+        tx -> {
+          var now = clock.instant();
+          var windows =
+              jdbc.queryForList(
+                  "SELECT retry_started_at FROM outbox_tasks WHERE id=? AND status='RUNNING' AND lease_token=? AND lease_until>? FOR UPDATE",
+                  Timestamp.class,
+                  task.id(),
+                  task.token(),
+                  Timestamp.from(now));
+          if (windows.isEmpty()) return false;
+          if (now.isBefore(windows.getFirst().toInstant().plus(TaskRecovery.NOTIFICATION_WINDOW)))
+            return true;
+          jdbc.update(
+              "UPDATE outbox_tasks SET status='DEAD',lease_token=NULL,lease_until=NULL,last_error='Notification automatic retry window expired',updated_at=? WHERE id=? AND status='RUNNING' AND lease_token=?",
+              Timestamp.from(now),
+              task.id(),
+              task.token());
+          return false;
+        });
   }
 }

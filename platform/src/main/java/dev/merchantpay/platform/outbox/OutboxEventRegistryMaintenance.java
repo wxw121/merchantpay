@@ -22,12 +22,44 @@ public final class OutboxEventRegistryMaintenance {
   }
 
   public static Result reconcile(Connection connection) throws SQLException {
+    // Pre-V18 installations have only task facts; V2 also has CDC and descriptive event facts.
+    boolean v2;
+    try (ResultSet tables =
+        connection
+            .getMetaData()
+            .getTables(connection.getCatalog(), null, "%", new String[] {"TABLE"})) {
+      v2 = false;
+      while (tables.next())
+        if ("domain_events".equalsIgnoreCase(tables.getString("TABLE_NAME"))) v2 = true;
+    }
+    String factsSql =
+        v2
+            ? "(SELECT id,event_id FROM outbox_task_records UNION SELECT id,event_id FROM domain_events)"
+            : "outbox_task_records";
     if (exists(
             connection,
-            "SELECT 1 FROM outbox_task_records t JOIN outbox_events e ON e.id=t.id WHERE e.event_id<>t.event_id LIMIT 1")
+            "SELECT 1 FROM "
+                + factsSql
+                + " t JOIN outbox_events e ON e.id=t.id WHERE e.event_id<>t.event_id LIMIT 1")
         || exists(
             connection,
-            "SELECT 1 FROM outbox_task_records t JOIN outbox_events e ON e.event_id=t.event_id WHERE e.id<>t.id LIMIT 1")) {
+            "SELECT 1 FROM "
+                + factsSql
+                + " t JOIN outbox_events e ON e.event_id=t.event_id WHERE e.id<>t.id LIMIT 1")
+        || exists(
+            connection,
+            "SELECT 1 FROM "
+                + factsSql
+                + " a JOIN "
+                + factsSql
+                + " b ON a.id=b.id WHERE a.event_id<>b.event_id LIMIT 1")
+        || exists(
+            connection,
+            "SELECT 1 FROM "
+                + factsSql
+                + " a JOIN "
+                + factsSql
+                + " b ON a.event_id=b.event_id WHERE a.id<>b.id LIMIT 1")) {
       throw new IllegalStateException(
           "Conflicting outbox event identity; registry was not changed");
     }
@@ -41,7 +73,9 @@ public final class OutboxEventRegistryMaintenance {
         List<Event> page = new ArrayList<>();
         try (PreparedStatement select =
             connection.prepareStatement(
-                "SELECT t.id,t.event_id,e.id FROM outbox_task_records t LEFT JOIN outbox_events e ON e.id=t.id WHERE t.id>? ORDER BY t.id LIMIT 500")) {
+                "SELECT t.id,t.event_id,e.id FROM "
+                    + factsSql
+                    + " t LEFT JOIN outbox_events e ON e.id=t.id WHERE t.id>? ORDER BY t.id LIMIT 500")) {
           select.setString(1, afterId);
           try (ResultSet rows = select.executeQuery()) {
             while (rows.next()) {
@@ -68,12 +102,14 @@ public final class OutboxEventRegistryMaintenance {
         afterId = page.getLast().id();
         connection.commit();
       }
-      long facts = count(connection, "SELECT COUNT(*) FROM outbox_task_records");
+      long facts = count(connection, "SELECT COUNT(*) FROM " + factsSql + " t");
       long registered = count(connection, "SELECT COUNT(*) FROM outbox_events");
       long matching =
           count(
               connection,
-              "SELECT COUNT(*) FROM outbox_task_records t JOIN outbox_events e ON e.id=t.id AND e.event_id=t.event_id");
+              "SELECT COUNT(*) FROM "
+                  + factsSql
+                  + " t JOIN outbox_events e ON e.id=t.id AND e.event_id=t.event_id");
       if (facts != registered || facts != matching) {
         throw new IllegalStateException(
             "Outbox registry verification failed: facts="

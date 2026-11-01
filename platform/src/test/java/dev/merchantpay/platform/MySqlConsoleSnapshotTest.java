@@ -87,7 +87,8 @@ class MySqlConsoleSnapshotTest extends FinancialFixture {
             null,
             jdbc,
             tx,
-            Clock.systemUTC());
+            Clock.systemUTC(),
+            new dev.merchantpay.platform.outbox.OutboxService(jdbc, Clock.systemUTC()));
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
       var detail =
           executor.submit(

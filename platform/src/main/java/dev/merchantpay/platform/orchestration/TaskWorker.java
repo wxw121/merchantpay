@@ -36,12 +36,36 @@ public class TaskWorker implements AutoCloseable {
   private final boolean rotateLanes;
   private final boolean channelTaskPrefetch;
   private int firstLane;
+  private boolean notificationTaskPrefetch;
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public void setNotificationTaskPrefetch(
+      @Value("${merchantpay.notification-task-prefetch:false}") boolean enabled) {
+    notificationTaskPrefetch = enabled;
+  }
+
   private final Semaphore bulkCapacity = new Semaphore(2);
   private final ScheduledExecutorService heartbeats = Executors.newScheduledThreadPool(2);
   private final ReconciliationService reconciliation;
   private final ExportService exports;
   private final java.util.Map<String, Integer> emptyPolls = new java.util.HashMap<>();
   private final java.util.Map<String, Long> nextPoll = new java.util.HashMap<>();
+  private java.util.Set<String> workerQueues = java.util.Set.of("INBOX", "FAST", "NOTIFY", "BULK");
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public void setWorkerQueues(@Value("${merchantpay.worker-queues:ALL}") String queues) {
+    var selected =
+        new java.util.HashSet<>(
+            java.util.List.of(queues.toUpperCase(java.util.Locale.ROOT).split(",")));
+    if (selected.equals(java.util.Set.of("ALL")))
+      selected = new java.util.HashSet<>(java.util.Set.of("INBOX", "FAST", "NOTIFY", "BULK"));
+    if (selected.isEmpty()
+        || !java.util.Set.of("INBOX", "FAST", "NOTIFY", "BULK").containsAll(selected))
+      throw new IllegalArgumentException(
+          "Worker queues must be ALL or a comma-separated subset of INBOX,FAST,NOTIFY,BULK");
+    workerQueues = java.util.Set.copyOf(selected);
+  }
+
   // Monotonic deadlines are unaffected by wall-clock corrections used for financial timestamps.
   java.util.function.LongSupplier nanoTime = System::nanoTime;
 
@@ -125,6 +149,7 @@ public class TaskWorker implements AutoCloseable {
   }
 
   private boolean pollCapacity(Semaphore permits, String queueClass) {
+    if (!workerQueues.contains(queueClass)) return false;
     long started = nanoTime.getAsLong();
     Long deadline = nextPoll.get(queueClass);
     if (deadline != null && started - deadline < 0) return false;
@@ -174,8 +199,17 @@ public class TaskWorker implements AutoCloseable {
         metrics.counter("merchantpay.channel.prefetch.failures").increment();
       }
     }
+    java.util.Map<String, NotificationService.TaskInput> notificationInputs = java.util.Map.of();
+    if (notificationTaskPrefetch && queueClass.equals("NOTIFY") && claimed.size() > 1) {
+      try {
+        notificationInputs = notifications.prefetch(claimed);
+      } catch (RuntimeException unavailable) {
+        metrics.counter("merchantpay.notification.prefetch.failures").increment();
+      }
+    }
     for (var task : claimed) {
       var input = inputs.get(task.id());
+      var notificationInput = notificationInputs.get(task.id());
       try {
         executor.submit(
             () ->
@@ -201,8 +235,14 @@ public class TaskWorker implements AutoCloseable {
                               "PAYMENT_FAILED",
                               "PAYMENT_CLOSED",
                               "REFUND_SUCCEEDED",
-                              "REFUND_FAILED" ->
-                              notifications.deliver(task);
+                              "REFUND_FAILED" -> {
+                            if (!queue.notificationMayRun(task)) {
+                              outcome = "expired_or_lease_lost";
+                              return;
+                            }
+                            if (notificationInput == null) notifications.deliver(task);
+                            else notifications.deliver(task, notificationInput);
+                          }
                           case "RECONCILE" -> reconciliation.process(task.aggregateId(), task);
                           case "EXPORT" -> exports.process(task.aggregateId(), task);
                           default ->

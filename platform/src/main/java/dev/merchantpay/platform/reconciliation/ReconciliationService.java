@@ -209,11 +209,16 @@ public class ReconciliationService {
       match(id, batch, task);
       queue.fenced(
           task,
-          () ->
-              jdbc.update(
-                  "UPDATE recon_batches SET status='COMPLETE',error_detail=NULL,updated_at=? WHERE id=?",
-                  Timestamp.from(clock.instant()),
-                  id));
+          () -> {
+            // Serialize finalized freeze publication with settlement execution, not payment
+            // posting.
+            jdbc.queryForList(
+                "SELECT id FROM merchants WHERE id=? FOR UPDATE", batch.get("merchant_id"));
+            jdbc.update(
+                "UPDATE recon_batches SET status='COMPLETE',error_detail=NULL,updated_at=? WHERE id=?",
+                Timestamp.from(clock.instant()),
+                id);
+          });
     } catch (TaskQueue.LeaseLost stale) {
       return;
     } catch (InvalidBill invalid) {

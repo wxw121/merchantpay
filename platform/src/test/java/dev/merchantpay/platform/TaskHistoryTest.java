@@ -2,6 +2,7 @@ package dev.merchantpay.platform;
 
 import static org.assertj.core.api.Assertions.*;
 
+import dev.merchantpay.platform.outbox.OutboxService;
 import dev.merchantpay.platform.outbox.TaskQueue;
 import java.time.*;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,9 @@ class TaskHistoryTest extends FinancialFixture {
     var tasks = queue.claimBatch(10);
     queue.completeBatch(tasks);
     jdbc.update("UPDATE outbox_tasks SET updated_at=?", java.sql.Timestamp.from(Instant.now()));
+    jdbc.update(
+        "UPDATE outbox_tasks SET retry_started_at=?",
+        java.sql.Timestamp.from(Instant.now().minus(Duration.ofDays(2))));
     queue.archiveDone(10);
     String notice =
         tasks.stream()
@@ -57,6 +61,11 @@ class TaskHistoryTest extends FinancialFixture {
             .findFirst()
             .orElseThrow()
             .id();
+    var previousWindow =
+        jdbc.queryForObject(
+            "SELECT retry_started_at FROM outbox_task_history WHERE id=?",
+            java.sql.Timestamp.class,
+            notice);
     var tx = new TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
     var queries =
         new dev.merchantpay.platform.query.Queries(jdbc, Clock.systemUTC(), "cursor-test");
@@ -77,7 +86,8 @@ class TaskHistoryTest extends FinancialFixture {
             null,
             jdbc,
             tx,
-            Clock.systemUTC());
+            Clock.systemUTC(),
+            new OutboxService(jdbc, Clock.systemUTC()));
     var mvc =
         org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup(controller)
             .build();
@@ -100,6 +110,13 @@ class TaskHistoryTest extends FinancialFixture {
             });
     assertThat(count("outbox_task_records")).isEqualTo(2);
     assertThat(count("outbox_events")).isEqualTo(2);
+    assertThat(
+            jdbc.queryForObject(
+                    "SELECT retry_started_at FROM outbox_tasks WHERE id=?",
+                    java.sql.Timestamp.class,
+                    notice)
+                .toInstant())
+        .isAfter(previousWindow.toInstant().plus(Duration.ofDays(1)));
     assertThat(queue.claimBatch(10))
         .singleElement()
         .extracting(TaskQueue.Task::id)

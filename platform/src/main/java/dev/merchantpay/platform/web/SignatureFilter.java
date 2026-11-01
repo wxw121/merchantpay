@@ -31,6 +31,12 @@ public class SignatureFilter extends OncePerRequestFilter {
   private final boolean coalescedNonce;
   private final boolean borrowReservations;
   private final int[] reservationFloors;
+  private dev.merchantpay.platform.control.RedisAdmission redisAdmission;
+
+  public SignatureFilter withRedisAdmission(dev.merchantpay.platform.control.RedisAdmission value) {
+    redisAdmission = value;
+    return this;
+  }
 
   public SignatureFilter(
       MerchantService merchants,
@@ -115,7 +121,7 @@ public class SignatureFilter extends OncePerRequestFilter {
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
-    return !request.getRequestURI().startsWith("/api/v1/");
+    return !ApiPaths.MERCHANT.matches(ApiPaths.path(request));
   }
 
   @Override
@@ -157,6 +163,9 @@ public class SignatureFilter extends OncePerRequestFilter {
           key.secret(), signature, timestamp, nonce, request.getMethod(), path, body)) {
         throw new ApiException("INVALID_SIGNATURE", 401, "签名校验失败");
       }
+      // Redis can reject pressure early, but cannot authorize nonce reuse or bypass durable quota.
+      if (redisAdmission != null && !redisAdmission.allow(key.merchantId(), now, 500))
+        throw new ApiException("RATE_LIMITED", 429, "商户请求过多，请退避重试");
       if (coalescedNonce) {
         var decision =
             availability.time(
@@ -266,11 +275,11 @@ public class SignatureFilter extends OncePerRequestFilter {
   }
 
   private java.util.concurrent.Semaphore admissionFor(HttpServletRequest request) {
-    String method = request.getMethod(), path = request.getRequestURI();
-    if (method.equals("POST") && path.equals("/api/v1/payments")) return reserved[0];
-    if (method.equals("POST") && path.matches("/api/v1/payments/[^/]+/refunds")) return reserved[1];
-    if (method.equals("GET")
-        && (path.matches("/api/v1/payments/[^/]+") || path.matches("/api/v1/refunds/[^/]+")))
+    String method = request.getMethod();
+    var path = ApiPaths.path(request);
+    if (method.equals("POST") && ApiPaths.PAYMENTS.matches(path)) return reserved[0];
+    if (method.equals("POST") && ApiPaths.REFUNDS.matches(path)) return reserved[1];
+    if (method.equals("GET") && (ApiPaths.PAYMENT.matches(path) || ApiPaths.REFUND.matches(path)))
       return reserved[2];
     return admission;
   }

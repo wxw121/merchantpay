@@ -164,6 +164,23 @@ public class RefundService {
   }
 
   public RefundView applyResult(String id, ChannelResult result) {
+    return applyResult(id, result, true, null);
+  }
+
+  public void applyResultWithoutView(String id, ChannelResult result) {
+    applyResult(id, result, false, null);
+  }
+
+  public void applyObservation(
+      String id, ChannelResult result, dev.merchantpay.platform.common.ReceiptEvidence evidence) {
+    applyResult(id, result, false, Objects.requireNonNull(evidence));
+  }
+
+  private RefundView applyResult(
+      String id,
+      ChannelResult result,
+      boolean resultView,
+      dev.merchantpay.platform.common.ReceiptEvidence evidence) {
     return transactions.execute(
         transaction -> {
           var initial = jdbc.query("SELECT * FROM refunds WHERE id=?", MAPPER, id);
@@ -179,6 +196,7 @@ public class RefundService {
             throw conflict();
           }
           long amount = Long.parseLong(refund.amountMinor());
+          if (evidence != null) evidence.verify(amount, refund.channel(), false);
           switch (result) {
             case ChannelResult.Success success -> {
               if (success.amountMinor() != amount
@@ -240,11 +258,14 @@ public class RefundService {
               }
             }
             case ChannelResult.Unknown ignored -> {
-              if (!terminal(refund.status())) {
+              if (!terminal(refund.status()) && !refund.status().equals("UNKNOWN")) {
                 jdbc.update(
-                    "UPDATE refunds SET status='UNKNOWN',updated_at=? WHERE id=?",
+                    "UPDATE refunds SET status='UNKNOWN',unknown_since=COALESCE(unknown_since,?),updated_at=? WHERE id=?",
+                    Timestamp.from(clock.instant()),
                     Timestamp.from(clock.instant()),
                     id);
+                outbox.fact(
+                    "refund-unknown:" + id, "REFUND_STATE_CHANGED", id, refund.merchantId());
               }
             }
             case ChannelResult.Pending ignored -> {}
@@ -252,7 +273,7 @@ public class RefundService {
               throw conflict();
             }
           }
-          return get(refund.merchantId(), id);
+          return resultView ? get(refund.merchantId(), id) : null;
         });
   }
 

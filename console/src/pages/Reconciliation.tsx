@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   App,
@@ -45,6 +46,8 @@ interface BillInput {
   version: number;
 }
 export function Reconciliation() {
+  const navigate = useNavigate();
+  const [caseOpening, setCaseOpening] = useState<string | null>(null);
   const { session, merchant } = useWorkspace();
   const { message } = App.useApp();
   const client = useQueryClient();
@@ -418,6 +421,42 @@ export function Reconciliation() {
                             render: (value: string) => <Money value={value} />,
                           },
                           { title: "原始行", dataIndex: "lineNo" },
+                          ...(session.roles.includes("FINANCE")
+                            ? [
+                                {
+                                  title: "处理",
+                                  key: "case",
+                                  render: (_: unknown, row: Row) => (
+                                    <Button
+                                      type="link"
+                                      disabled={!!caseOpening}
+                                      loading={caseOpening === field(row, "id")}
+                                      onClick={async () => {
+                                        setCaseOpening(field(row, "id"));
+                                        try {
+                                          const result = await post<{
+                                            id: string;
+                                          }>("/api/console/finance/cases", {
+                                            issueId: field(row, "id"),
+                                          });
+                                          navigate(
+                                            `/finance?tab=cases&id=${encodeURIComponent(result.id)}`,
+                                          );
+                                        } catch (error) {
+                                          void message.error(
+                                            (error as Error).message,
+                                          );
+                                        } finally {
+                                          setCaseOpening(null);
+                                        }
+                                      }}
+                                    >
+                                      创建或查看案件
+                                    </Button>
+                                  ),
+                                },
+                              ]
+                            : []),
                         ]}
                       />
                       <div className="table-footer">

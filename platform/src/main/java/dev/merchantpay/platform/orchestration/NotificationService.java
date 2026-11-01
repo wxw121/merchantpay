@@ -78,10 +78,73 @@ public class NotificationService {
   }
 
   public void deliver(TaskQueue.Task task) {
+    deliver(task, null);
+  }
+
+  public record TaskInput(
+      TaskQueue.Task task, PaymentService.PaymentView payment, RefundService.RefundView refund) {}
+
+  public Map<String, TaskInput> prefetch(List<TaskQueue.Task> tasks) {
+    if (tasks.size() > 64) throw new IllegalArgumentException("Notification batch exceeds64");
+    var refundIds = new LinkedHashSet<String>();
+    var paymentIds = new LinkedHashSet<String>();
+    var taskIds = new HashSet<String>();
+    for (var task : tasks) {
+      if (!taskIds.add(task.id())
+          || !Set.of(
+                  "PAYMENT_SUCCEEDED",
+                  "PAYMENT_FAILED",
+                  "PAYMENT_CLOSED",
+                  "REFUND_SUCCEEDED",
+                  "REFUND_FAILED")
+              .contains(task.kind()))
+        throw new IllegalArgumentException("Invalid notification batch");
+      if (task.kind().startsWith("REFUND_")) refundIds.add(task.aggregateId());
+      else paymentIds.add(task.aggregateId());
+    }
+    var refundRows = refunds.loadForChannelTasks(refundIds);
+    for (var refund : refundRows.values()) paymentIds.add(refund.paymentId());
+    var paymentRows = payments.loadForChannelTasks(paymentIds);
+    var inputs = new HashMap<String, TaskInput>();
+    for (var task : tasks) {
+      var refund = task.kind().startsWith("REFUND_") ? refundRows.get(task.aggregateId()) : null;
+      var payment = paymentRows.get(refund == null ? task.aggregateId() : refund.paymentId());
+      if (payment == null || task.kind().startsWith("REFUND_") && refund == null) continue;
+      var input = new TaskInput(task, payment, refund);
+      verify(task, input);
+      inputs.put(task.id(), input);
+    }
+    return Map.copyOf(inputs);
+  }
+
+  private static void verify(TaskQueue.Task task, TaskInput input) {
+    var p = input.payment();
+    var r = input.refund();
+    boolean refund = task.kind().startsWith("REFUND_");
+    if (!task.equals(input.task())
+        || p == null
+        || !task.merchantId().equals(p.merchantId())
+        || refund
+            && (r == null
+                || !task.aggregateId().equals(r.id())
+                || !r.paymentId().equals(p.id())
+                || !r.merchantId().equals(task.merchantId())
+                || !r.channel().equals(p.channel()))
+        || !refund && (r != null || !task.aggregateId().equals(p.id())))
+      throw new IllegalArgumentException("Notification snapshot does not belong to claimed task");
+  }
+
+  public void deliver(TaskQueue.Task task, TaskInput input) {
+    if (input != null) verify(task, input);
     boolean isRefund = task.kind().startsWith("REFUND_");
-    var refund = isRefund ? refunds.get(task.merchantId(), task.aggregateId()) : null;
+    var refund =
+        input != null
+            ? input.refund()
+            : (isRefund ? refunds.get(task.merchantId(), task.aggregateId()) : null);
     var payment =
-        payments.get(task.merchantId(), isRefund ? refund.paymentId() : task.aggregateId());
+        input != null
+            ? input.payment()
+            : payments.get(task.merchantId(), isRefund ? refund.paymentId() : task.aggregateId());
     String url = policy.validate(payment.notificationUrl());
     if (url == null) {
       return;

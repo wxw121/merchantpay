@@ -44,6 +44,7 @@ services:
     volumes:
       - ../.data/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - ./prometheus/v2-alerts.yml:/etc/prometheus/v2-alerts.yml:ro
       - prometheus-data:/prometheus
 volumes:
   mysql-data:

@@ -1,0 +1,5 @@
+[mysqld]
+server_id=284002
+report_host=db2.internal
+bind_address=0.0.0.0
+group_replication_local_address=db2.internal:33061

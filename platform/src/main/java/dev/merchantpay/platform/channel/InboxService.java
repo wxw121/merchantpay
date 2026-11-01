@@ -60,6 +60,22 @@ public class InboxService {
         || !("PAYMENT".equals(receipt.operation()) || "REFUND".equals(receipt.operation()))) {
       throw new ApiException("INVALID_CHANNEL_RECEIPT", 400, "渠道通知关联字段无效");
     }
+    storeVerified(receipt, body, Signatures.sha256(body), null);
+  }
+
+  /** Only the official sandbox adapter may call this after RSA2/app/seller/amount validation. */
+  public void receiveVerifiedAlipay(ChannelApi.Receipt receipt, String signedForm) {
+    if (!AlipaySandbox.CHANNEL.equals(receipt.channel()) || !"PAYMENT".equals(receipt.operation()))
+      throw new ApiException("INVALID_CHANNEL_RECEIPT", 400, "沙箱通知来源无效");
+    storeVerified(
+        receipt,
+        json.writeValueAsString(receipt),
+        Signatures.sha256("ALIPAY:" + signedForm),
+        signedForm);
+  }
+
+  private void storeVerified(
+      ChannelApi.Receipt receipt, String body, String fingerprint, String signedForm) {
     String table = receipt.operation().equals("PAYMENT") ? "payments" : "refunds";
     var originals =
         jdbc.query(
@@ -81,8 +97,7 @@ public class InboxService {
     boolean alreadyProcessed = terminalFastPath && matchesSuccessfulOutcome(receipt, original);
     transactions.executeWithoutResult(
         tx -> {
-          String fingerprint = dev.merchantpay.platform.common.Signatures.sha256(body),
-              id = UUID.randomUUID().toString();
+          String id = UUID.randomUUID().toString();
           var now = Timestamp.from(clock.instant());
           try {
             jdbc.update(
@@ -99,6 +114,15 @@ public class InboxService {
           } catch (DuplicateKeyException duplicate) {
             return;
           }
+          if (signedForm != null)
+            jdbc.update(
+                "INSERT INTO alipay_evidence(id,aggregate_id,operation,body,sha256,created_at) VALUES (?,?,?,?,?,?)",
+                UUID.randomUUID().toString(),
+                receipt.aggregateId(),
+                "CALLBACK",
+                signedForm,
+                Signatures.sha256(signedForm),
+                now);
           if (!alreadyProcessed) {
             outbox.enqueue("inbox:" + id, "PROCESS_INBOX", id, original.merchantId());
           }
