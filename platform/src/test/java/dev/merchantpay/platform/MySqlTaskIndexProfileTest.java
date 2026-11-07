@@ -76,11 +76,13 @@ class MySqlTaskIndexProfileTest {
             Timestamp.from(NOW.minusSeconds(86400L * 3)),
             Timestamp.from(NOW.minusSeconds(60)),
             "old-" + i,
+            Timestamp.from(NOW.minusSeconds(86400L * 3)),
+            Timestamp.from(NOW.minusSeconds(86400L * 3)),
             List.of("FAST", "INBOX", "NOTIFY", "BULK").get(i % 4)
           });
     }
     jdbc.batchUpdate(
-        "INSERT INTO outbox_tasks(id,event_id,kind,aggregate_id,merchant_id,payload,status,due_at,lease_until,lease_token,created_at,updated_at,queue_class) VALUES (?,?,'CHANNEL_PAYMENT',?,?,'{}',?,?,?,?,CURRENT_TIMESTAMP(6)-INTERVAL 3 DAY,CURRENT_TIMESTAMP(6)-INTERVAL 3 DAY,?)",
+        "INSERT INTO outbox_tasks(id,event_id,kind,aggregate_id,merchant_id,payload,status,due_at,lease_until,lease_token,created_at,updated_at,queue_class) VALUES (?,?,'CHANNEL_PAYMENT',?,?,'{}',?,?,?,?,?,?,?)",
         data);
     jdbc.update("INSERT INTO outbox_events(id,event_id) SELECT id,event_id FROM outbox_tasks");
     jdbc.execute("ANALYZE TABLE outbox_tasks");

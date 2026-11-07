@@ -34,7 +34,7 @@ class MySqlFinancialTest extends FinancialCoreTest {
         jdbc.queryForList(
             "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_type='BASE TABLE'",
             String.class)) {
-      if (!table.matches("[a-z_]+")) {
+      if (!table.matches("[a-z_][a-z0-9_]*")) {
         throw new IllegalStateException("Unexpected test table");
       }
       jdbc.execute("DROP TABLE " + table);
@@ -45,7 +45,9 @@ class MySqlFinancialTest extends FinancialCoreTest {
     var restored =
         MYSQL.execInContainer(
             "sh", "-c", "MYSQL_PWD=test mysql -utest financial_test < /tmp/project-backup.sql");
-    org.assertj.core.api.Assertions.assertThat(restored.getExitCode()).isZero();
+    org.assertj.core.api.Assertions.assertThat(restored.getExitCode())
+        .as("mysql restore stderr: %s", restored.getStderr())
+        .isZero();
     org.assertj.core.api.Assertions.assertThat(
             payments.get("merchant-a", payment.id()).refundedMinor())
         .isEqualTo("3000");
@@ -83,7 +85,7 @@ class MySqlFinancialTest extends FinancialCoreTest {
         sql.queryForList(
             "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_type='BASE TABLE'",
             String.class)) {
-      if (!table.matches("[a-z_]+")) {
+      if (!table.matches("[a-z_][a-z0-9_]*")) {
         throw new IllegalStateException("Unexpected test table name");
       }
       sql.execute("DROP TABLE " + table);

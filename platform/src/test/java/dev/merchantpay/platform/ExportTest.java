@@ -221,7 +221,7 @@ class ExportTest extends FinancialFixture {
     String id = exports.create("merchant-a", "owner-a", "payments", null, null);
     jdbc.update(
         "UPDATE outbox_tasks SET due_at=? WHERE aggregate_id=?",
-        java.sql.Timestamp.from(java.time.Instant.EPOCH),
+        java.sql.Timestamp.from(java.time.Instant.parse("2000-01-01T00:00:00Z")),
         id);
     var tx = new TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
     var queue = new dev.merchantpay.platform.outbox.TaskQueue(jdbc, tx, exportClock);
@@ -263,7 +263,7 @@ class ExportTest extends FinancialFixture {
             createdAt.plusSeconds(1).toString());
     jdbc.update(
         "UPDATE outbox_tasks SET due_at=? WHERE aggregate_id=?",
-        java.sql.Timestamp.from(java.time.Instant.EPOCH),
+        java.sql.Timestamp.from(java.time.Instant.parse("2000-01-01T00:00:00Z")),
         id);
     var old = queue.claimBatch(1, true).getFirst();
     var tx = new TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
@@ -288,7 +288,7 @@ class ExportTest extends FinancialFixture {
                       .enqueue("retry:" + id, "EXPORT", id, "merchant-a"));
           jdbc.update(
               "UPDATE outbox_tasks SET due_at=? WHERE event_id=?",
-              java.sql.Timestamp.from(java.time.Instant.EPOCH),
+              java.sql.Timestamp.from(java.time.Instant.parse("2000-01-01T00:00:00Z")),
               "retry:" + id);
         } else {
           jdbc.update(

@@ -567,8 +567,7 @@ class MySqlShardChannelTest extends MySqlShardFixture {
     var expected = routes.currentRoute(1);
     var execution = channels.claim(expected, "FAST", 1).getFirst();
     var target = new JdbcTemplate(SOURCES.get(1));
-    when(api.pay(anyString(), anyString(), any()))
-        .thenAnswer(
+    doAnswer(
             call -> {
               assertThat(
                       org.springframework.transaction.support.TransactionSynchronizationManager
@@ -586,7 +585,9 @@ class MySqlShardChannelTest extends MySqlShardFixture {
               }
               return new ChannelApi.Receipt(
                   payment.id(), "PAYMENT", "MOCK_A", "SUCCEEDED", "late-ref", "10000", "CNY", "60");
-            });
+            })
+        .when(api)
+        .pay(anyString(), anyString(), any());
     var failure = assertThatThrownBy(() -> channels.execute(execution));
     if (epochChanges) failure.isInstanceOf(ApiException.class);
     else failure.isInstanceOf(TaskQueue.LeaseLost.class);

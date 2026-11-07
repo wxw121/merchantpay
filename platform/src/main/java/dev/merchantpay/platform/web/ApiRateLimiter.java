@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -153,22 +154,7 @@ public class ApiRateLimiter implements AutoCloseable {
       // Map operations serialize enqueue/removal; after removal this batch has a single owner.
       pending.remove(window, group);
       int size = group.requests.size();
-      var decisions =
-          transactions.execute(
-              tx -> {
-                boolean[] fresh = claimNonces(window.key(), group.requests);
-                int count = 0;
-                for (boolean claimed : fresh) if (claimed) count++;
-                int allowed = count == 0 ? 0 : reserveQuota(window, count);
-                var results = new ArrayList<Decision>(size);
-                for (boolean claimed : fresh) {
-                  results.add(
-                      !claimed
-                          ? Decision.REPLAY
-                          : allowed-- > 0 ? Decision.ALLOWED : Decision.RATE_LIMITED);
-                }
-                return results;
-              });
+      var decisions = decide(window, group, size);
       // Both durable decisions are published only after their shared commit.
       for (int i = 0; i < size; i++) group.requests.get(i).result().complete(decisions.get(i));
       if (metrics != null) {
@@ -186,6 +172,32 @@ public class ApiRateLimiter implements AutoCloseable {
     } finally {
       // A timed-out caller cannot release capacity still occupied by JDBC/COMMIT.
       workers.release();
+    }
+  }
+
+  private List<Decision> decide(Window window, Group group, int size) throws InterruptedException {
+    for (int attempt = 0; ; attempt++) {
+      try {
+        return transactions.execute(
+            tx -> {
+              boolean[] fresh = claimNonces(window.key(), group.requests);
+              int count = 0;
+              for (boolean claimed : fresh) if (claimed) count++;
+              int allowed = count == 0 ? 0 : reserveQuota(window, count);
+              var results = new ArrayList<Decision>(size);
+              for (boolean claimed : fresh) {
+                results.add(
+                    !claimed
+                        ? Decision.REPLAY
+                        : allowed-- > 0 ? Decision.ALLOWED : Decision.RATE_LIMITED);
+              }
+              return results;
+            });
+      } catch (CannotAcquireLockException contention) {
+        if (attempt == 2) throw contention;
+        // A deadlock rolls back the complete attempt; retry before publishing any decision.
+        Thread.sleep(5L << attempt);
+      }
     }
   }
 

@@ -50,8 +50,9 @@ class MySqlCdcPipelineTest extends FinancialFixture {
           .withNetwork(NETWORK)
           .withListener("kafka:19093")
           .withEnv("KAFKA_HEAP_OPTS", "-Xms256m -Xmx512m -XX:ActiveProcessorCount=1")
+          .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofMinutes(2)))
           .withCreateContainerCmdModifier(
-              c -> c.getHostConfig().withNanoCPUs(1000000000L).withMemory(805306368L));
+              c -> c.getHostConfig().withNanoCPUs(1000000000L).withMemory(1610612736L));
   static final GenericContainer<?> CONNECT =
       new GenericContainer<>("quay.io/debezium/connect:3.7.0.Final")
           .withNetwork(NETWORK)

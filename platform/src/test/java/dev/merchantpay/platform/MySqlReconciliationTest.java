@@ -32,7 +32,7 @@ class MySqlReconciliationTest extends ReconciliationTest {
         sql.queryForList(
             "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_type='BASE TABLE'",
             String.class)) {
-      if (!table.matches("[a-z_]+")) {
+      if (!table.matches("[a-z_][a-z0-9_]*")) {
         throw new IllegalStateException("Unexpected test table");
       }
       sql.execute("DROP TABLE " + table);

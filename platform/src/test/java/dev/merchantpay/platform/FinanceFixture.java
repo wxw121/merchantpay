@@ -30,19 +30,26 @@ abstract class FinanceFixture extends FinancialFixture {
           "V19__financial_workflows.sql"
         })
       ScriptUtils.executeSqlScript(schemaConnection, new ClassPathResource("db/migration/" + file));
-    // H2 cannot parse MySQL's combined DROP/ADD PRIMARY KEY in V32.
-    jdbc.execute(
-        "ALTER TABLE settlement_lines ADD COLUMN physical_shard TINYINT NOT NULL DEFAULT 0");
-    replacePrimaryKey("settlement_lines", "settlement_id,revision,physical_shard,entry_id");
-    jdbc.execute(
-        "ALTER TABLE settlement_reservations ADD COLUMN physical_shard TINYINT NOT NULL DEFAULT 0");
-    replacePrimaryKey("settlement_reservations", "physical_shard,entry_id");
-    jdbc.execute("ALTER TABLE finance_settlements ADD COLUMN source_routes_hash VARCHAR(64)");
-    jdbc.execute("ALTER TABLE finance_settlements ADD COLUMN source_event_watermarks VARCHAR(120)");
-    jdbc.execute(
-        "CREATE TABLE sharded_settlement_cursors (merchant_id VARCHAR(64) NOT NULL,"
-            + "physical_shard TINYINT NOT NULL,last_entry_id BIGINT NOT NULL DEFAULT 0,"
-            + "PRIMARY KEY(merchant_id,physical_shard))");
+    if ("MySQL".equals(schemaConnection.getMetaData().getDatabaseProductName())) {
+      ScriptUtils.executeSqlScript(
+          schemaConnection,
+          new ClassPathResource("db/migration/V32__sharded_settlement_sources.sql"));
+    } else {
+      // H2 cannot parse MySQL's DROP/ADD PRIMARY KEY in V32.
+      jdbc.execute(
+          "ALTER TABLE settlement_lines ADD COLUMN physical_shard TINYINT NOT NULL DEFAULT 0");
+      replacePrimaryKey("settlement_lines", "settlement_id,revision,physical_shard,entry_id");
+      jdbc.execute(
+          "ALTER TABLE settlement_reservations ADD COLUMN physical_shard TINYINT NOT NULL DEFAULT 0");
+      replacePrimaryKey("settlement_reservations", "physical_shard,entry_id");
+      jdbc.execute("ALTER TABLE finance_settlements ADD COLUMN source_routes_hash VARCHAR(64)");
+      jdbc.execute(
+          "ALTER TABLE finance_settlements ADD COLUMN source_event_watermarks VARCHAR(120)");
+      jdbc.execute(
+          "CREATE TABLE sharded_settlement_cursors (merchant_id VARCHAR(64) NOT NULL,"
+              + "physical_shard TINYINT NOT NULL,last_entry_id BIGINT NOT NULL DEFAULT 0,"
+              + "PRIMARY KEY(merchant_id,physical_shard))");
+    }
     ScriptUtils.executeSqlScript(
         schemaConnection,
         new ClassPathResource("db/migration/V33__sharded_adjustment_intents.sql"));

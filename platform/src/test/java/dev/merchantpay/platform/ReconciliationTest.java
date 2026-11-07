@@ -53,7 +53,7 @@ class ReconciliationTest extends FinancialFixture {
   void process(String id) {
     jdbc.update(
         "UPDATE outbox_tasks SET due_at=? WHERE aggregate_id=?",
-        java.sql.Timestamp.from(Instant.EPOCH),
+        java.sql.Timestamp.from(Instant.parse("2000-01-01T00:00:00Z")),
         id);
     var task = executions.computeIfAbsent(id, ignored -> queue.claimBatch(1, true).getFirst());
     reconciliation.process(id, task);
@@ -459,7 +459,7 @@ class ReconciliationTest extends FinancialFixture {
     String id = submit("PAYMENT,remote,SUCCEEDED,100,1,CNY,x\n", 1, 100, 1);
     jdbc.update(
         "UPDATE outbox_tasks SET due_at=? WHERE aggregate_id=?",
-        java.sql.Timestamp.from(Instant.EPOCH),
+        java.sql.Timestamp.from(Instant.parse("2000-01-01T00:00:00Z")),
         id);
     var old = queue.claimBatch(1, true).getFirst();
     jdbc.update(
@@ -485,7 +485,7 @@ class ReconciliationTest extends FinancialFixture {
     String id = submit("PAYMENT,remote,SUCCEEDED,100,1,CNY,x\n", 1, 100, 1);
     jdbc.update(
         "UPDATE outbox_tasks SET due_at=? WHERE aggregate_id=?",
-        java.sql.Timestamp.from(Instant.EPOCH),
+        java.sql.Timestamp.from(Instant.parse("2000-01-01T00:00:00Z")),
         id);
     var old = queue.claimBatch(1, true).getFirst();
     var tx = new TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
@@ -509,7 +509,7 @@ class ReconciliationTest extends FinancialFixture {
                       .enqueue("retry:" + id, "RECONCILE", id, "merchant-a"));
           jdbc.update(
               "UPDATE outbox_tasks SET due_at=? WHERE event_id=?",
-              java.sql.Timestamp.from(Instant.EPOCH),
+              java.sql.Timestamp.from(Instant.parse("2000-01-01T00:00:00Z")),
               "retry:" + id);
         } else {
           jdbc.update(
