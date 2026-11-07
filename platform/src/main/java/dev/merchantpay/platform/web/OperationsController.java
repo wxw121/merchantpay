@@ -35,6 +35,12 @@ public class OperationsController {
   private final JdbcTemplate jdbc;
   private final PaymentService payments;
   private final Clock clock;
+  private dev.merchantpay.platform.sharding.ShardReads shardReads;
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardReads(dev.merchantpay.platform.sharding.ShardReads reader) {
+    this.shardReads = reader;
+  }
 
   public OperationsController(
       Access access,
@@ -110,7 +116,22 @@ public class OperationsController {
   @GetMapping("/payments/{id}/checkout")
   Map<String, Object> checkout(
       @PathVariable String id, @RequestParam(required = false) String merchantId) {
-    var payment = payments.get(access.merchant(merchantId, true), id);
+    String merchant = access.merchant(merchantId, true);
+    if (shardReads != null) {
+      var checkout = shardReads.sandboxCheckout(merchant, id);
+      return Map.of(
+          "paymentId",
+          id,
+          "environment",
+          "ALIPAY_SANDBOX",
+          "status",
+          checkout.payment().status(),
+          "qrCode",
+          checkout.qrCode(),
+          "externallyVerified",
+          false);
+    }
+    var payment = payments.get(merchant, id);
     if (!"ALIPAY_SANDBOX".equals(payment.channel()))
       throw new ApiException("NOT_SANDBOX", 409, "该支付未选择沙箱渠道");
     var rows =

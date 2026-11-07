@@ -1,9 +1,13 @@
 package dev.merchantpay.platform.reconciliation;
 
 import dev.merchantpay.platform.common.*;
+import dev.merchantpay.platform.history.HistoryExportService;
 import dev.merchantpay.platform.outbox.OutboxService;
 import dev.merchantpay.platform.outbox.TaskQueue;
 import dev.merchantpay.platform.query.Queries;
+import dev.merchantpay.platform.sharding.ShardCoreOnlyGuard;
+import dev.merchantpay.platform.sharding.ShardExportReadGate;
+import dev.merchantpay.platform.storage.ObjectStorage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -29,6 +33,43 @@ public class ExportService {
   private final Clock clock;
   private final ObjectStorage storage;
   private final TaskQueue queue;
+  private ShardCoreOnlyGuard shardBulkGuard;
+  private ShardExportReadGate shardExportReadGate;
+  private HistoryExportService historyExporter;
+
+  @Autowired(required = false)
+  public void setHistoryExporter(HistoryExportService exporter) {
+    historyExporter = exporter;
+  }
+
+  @Autowired(required = false)
+  public void setShardBulkGuard(ShardCoreOnlyGuard guard) {
+    shardBulkGuard = guard;
+  }
+
+  @Autowired(required = false)
+  public void setShardExportReadGate(ShardExportReadGate gate) {
+    shardExportReadGate = gate;
+  }
+
+  private ShardExportReadGate.Snapshot sourceSnapshot() {
+    if (shardBulkGuard == null) return null;
+    try {
+      shardBulkGuard.requireCoreOnly();
+      return null;
+    } catch (ApiException moved) {
+      if (!"SHARDED_CORE_WORKFLOW_PENDING".equals(moved.code()) || shardExportReadGate == null)
+        throw moved;
+      return shardExportReadGate.capture();
+    }
+  }
+
+  private void validate(ShardExportReadGate.Snapshot snapshot) {
+    if (snapshot == null) {
+      if (shardBulkGuard != null) shardBulkGuard.requireCoreOnly();
+    } else shardExportReadGate.validate(snapshot);
+  }
+
   private static final Map<String, String> TABLES =
       Map.of("payments", "payments", "refunds", "refunds", "journals", "ledger_journals");
   private static final Map<String, String> COLUMNS =
@@ -71,16 +112,19 @@ public class ExportService {
 
   public String create(
       String merchant, String requester, String resource, String from, String until) {
+    var snapshot = sourceSnapshot();
     if (merchant == null
         || requester == null
         || requester.isBlank()
         || requester.length() > 160
-        || !TABLES.containsKey(resource)) {
+        || !TABLES.containsKey(resource)
+            && !("history".equals(resource) && historyExporter != null)) {
       throw new ApiException("INVALID_EXPORT", 400, "导出必须选择商户和支付、退款或凭证资源");
     }
     var range = queries.range(from, until, 365);
     return tx.execute(
         transaction -> {
+          validate(snapshot);
           if (jdbc.queryForList("SELECT id FROM merchants WHERE id=?", merchant).isEmpty()) {
             throw new ApiException("MERCHANT_NOT_FOUND", 404, "商户不存在");
           }
@@ -98,12 +142,21 @@ public class ExportService {
               requester,
               Timestamp.from(clock.instant().plus(Duration.ofHours(24))));
           outbox.enqueue("export:" + id, "EXPORT", id, merchant);
+          validate(snapshot);
           return id;
         });
   }
 
   public void process(String id, TaskQueue.Task task) {
+    var initialSnapshot = sourceSnapshot();
     var job = job(id, null);
+    final ShardExportReadGate.Snapshot snapshot =
+        "history".equals(job.get("resource"))
+                && initialSnapshot == null
+                && historyExporter != null
+                && shardExportReadGate != null
+            ? shardExportReadGate.capture()
+            : initialSnapshot;
     if (job.get("status").equals("COMPLETE")) {
       return;
     }
@@ -118,99 +171,22 @@ public class ExportService {
                   "UPDATE exports SET status='RUNNING',row_count=0,error_detail=NULL,updated_at=? WHERE id=?",
                   Timestamp.from(clock.instant()),
                   id));
-      long count = 0;
-      int parts = 1;
-      Instant snapshotAt = clock.instant();
-      String resource = (String) job.get("resource");
-      try (var zip =
-              new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(temporary)));
-          var connection = jdbc.getDataSource().getConnection()) {
-        connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
-        connection.setReadOnly(true);
-        connection.setAutoCommit(false);
-        String sql =
-            "SELECT "
-                + COLUMNS.get(resource)
-                + " FROM "
-                + TABLES.get(resource)
-                + " WHERE merchant_id=? AND created_at>=? AND created_at<? ORDER BY created_at,id";
-        try (var statement =
-            connection.prepareStatement(
-                sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
-          statement.setString(1, (String) job.get("merchant_id"));
-          statement.setTimestamp(2, (Timestamp) job.get("from_time"));
-          statement.setTimestamp(3, (Timestamp) job.get("until_time"));
-          statement.setFetchSize(
-              connection.getMetaData().getURL().startsWith("jdbc:mysql:")
-                  ? Integer.MIN_VALUE
-                  : 1000);
-          try (var rows = statement.executeQuery()) {
-            var writer = new BufferedWriter(new OutputStreamWriter(zip, StandardCharsets.UTF_8));
-            String header = COLUMNS.get(resource) + "\n";
-            zip.putNextEntry(new ZipEntry(resource + "-001.csv"));
-            writer.write(header);
-            while (rows.next()) {
-              if (count > 0 && count % 1_000_000 == 0) {
-                writer.flush();
-                zip.closeEntry();
-                parts++;
-                zip.putNextEntry(
-                    new ZipEntry(
-                        resource + "-" + String.format(Locale.ROOT, "%03d", parts) + ".csv"));
-                writer.write(header);
-              }
-              for (int column = 1; column <= rows.getMetaData().getColumnCount(); column++) {
-                if (column > 1) {
-                  writer.write(',');
-                }
-                writer.write(Csv.cell(rows.getString(column)));
-              }
-              writer.write('\n');
-              count++;
-              if (count % 1000 == 0) {
-                long progress = count;
-                queue.fenced(
-                    task,
-                    () ->
-                        jdbc.update(
-                            "UPDATE exports SET row_count=?,updated_at=? WHERE id=?",
-                            progress,
-                            Timestamp.from(clock.instant()),
-                            id));
-              }
-            }
-            writer.flush();
-            zip.closeEntry();
-            zip.putNextEntry(new ZipEntry("manifest.json"));
-            writer.write(
-                "{\"exportId\":\""
-                    + id
-                    + "\",\"resource\":\""
-                    + resource
-                    + "\",\"rows\":"
-                    + count
-                    + ",\"parts\":"
-                    + parts
-                    + ",\"readSnapshotAt\":\""
-                    + snapshotAt
-                    + "\",\"moneyUnit\":\"minor\",\"currency\":\"CNY\"}");
-            writer.flush();
-            zip.closeEntry();
-          }
-        }
-        connection.commit();
-      }
+      long count = writeArchive(temporary, id, job, task, snapshot);
+      validate(snapshot);
       String storageKey = storage.publish(temporary, "exports/" + id + "-" + task.token() + ".zip");
       long finalCount = count;
       queue.fenced(
           task,
-          () ->
-              jdbc.update(
-                  "UPDATE exports SET status='COMPLETE',storage_key=?,row_count=?,updated_at=? WHERE id=?",
-                  storageKey,
-                  finalCount,
-                  Timestamp.from(clock.instant()),
-                  id));
+          () -> {
+            if (snapshot == null) validate(null);
+            else shardExportReadGate.validateForPublish(snapshot);
+            jdbc.update(
+                "UPDATE exports SET status='COMPLETE',storage_key=?,row_count=?,updated_at=? WHERE id=?",
+                storageKey,
+                finalCount,
+                Timestamp.from(clock.instant()),
+                id);
+          });
     } catch (TaskQueue.LeaseLost stale) {
       // A private attempt file may remain, but it is never the published pointer.
       return;
@@ -237,6 +213,129 @@ public class ExportService {
         }
       }
     }
+  }
+
+  private long writeArchive(
+      Path temporary,
+      String id,
+      Map<String, Object> job,
+      TaskQueue.Task task,
+      ShardExportReadGate.Snapshot snapshot)
+      throws IOException, SQLException {
+    String resource = (String) job.get("resource");
+    if ("history".equals(resource)) {
+      if (historyExporter == null || snapshot == null)
+        throw new ApiException("HISTORY_EXPORT_DISABLED", 503, "历史归档导出未启用");
+      return historyExporter.write(
+          temporary,
+          id,
+          (String) job.get("merchant_id"),
+          (Timestamp) job.get("from_time"),
+          (Timestamp) job.get("until_time"),
+          snapshot,
+          count ->
+              queue.fenced(
+                  task,
+                  () ->
+                      jdbc.update(
+                          "UPDATE exports SET row_count=?,updated_at=? WHERE id=?",
+                          count,
+                          Timestamp.from(clock.instant()),
+                          id)));
+    }
+    String sql =
+        "SELECT "
+            + COLUMNS.get(resource)
+            + " FROM "
+            + TABLES.get(resource)
+            + " WHERE merchant_id=? AND created_at>=? AND created_at<? ORDER BY created_at,id";
+    Instant snapshotAt = clock.instant();
+    long count = 0;
+    int parts = 1;
+    try (var zip =
+        new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(temporary)))) {
+      var writer = new BufferedWriter(new OutputStreamWriter(zip, StandardCharsets.UTF_8));
+      String header = COLUMNS.get(resource) + "\n";
+      zip.putNextEntry(new ZipEntry(resource + "-001.csv"));
+      writer.write(header);
+      int sources = snapshot == null ? 1 : 4;
+      for (int physical = 0; physical < sources; physical++) {
+        validate(snapshot);
+        var source = snapshot == null ? jdbc.getDataSource() : shardExportReadGate.source(physical);
+        try (var connection = source.getConnection()) {
+          connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+          connection.setReadOnly(true);
+          connection.setAutoCommit(false);
+          try (var statement =
+              connection.prepareStatement(
+                  sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+            statement.setString(1, (String) job.get("merchant_id"));
+            statement.setTimestamp(2, (Timestamp) job.get("from_time"));
+            statement.setTimestamp(3, (Timestamp) job.get("until_time"));
+            statement.setFetchSize(
+                connection.getMetaData().getURL().startsWith("jdbc:mysql:")
+                    ? Integer.MIN_VALUE
+                    : 1000);
+            try (var rows = statement.executeQuery()) {
+              int columns = rows.getMetaData().getColumnCount();
+              while (rows.next()) {
+                if (snapshot != null
+                    && !shardExportReadGate.includeOwned(snapshot, physical, resource, rows))
+                  continue;
+                if (count > 0 && count % 1_000_000 == 0) {
+                  writer.flush();
+                  zip.closeEntry();
+                  parts++;
+                  zip.putNextEntry(
+                      new ZipEntry(
+                          resource + "-" + String.format(Locale.ROOT, "%03d", parts) + ".csv"));
+                  writer.write(header);
+                }
+                for (int column = 1; column <= columns; column++) {
+                  if (column > 1) writer.write(',');
+                  writer.write(Csv.cell(rows.getString(column)));
+                }
+                writer.write('\n');
+                count++;
+                if (count % 1000 == 0) {
+                  long progress = count;
+                  queue.fenced(
+                      task,
+                      () ->
+                          jdbc.update(
+                              "UPDATE exports SET row_count=?,updated_at=? WHERE id=?",
+                              progress,
+                              Timestamp.from(clock.instant()),
+                              id));
+                }
+              }
+            }
+          }
+          connection.commit();
+        }
+        validate(snapshot);
+      }
+      writer.flush();
+      zip.closeEntry();
+      zip.putNextEntry(new ZipEntry("manifest.json"));
+      writer.write(
+          "{\"exportId\":\""
+              + id
+              + "\",\"resource\":\""
+              + resource
+              + "\",\"rows\":"
+              + count
+              + ",\"parts\":"
+              + parts
+              + ",\"readSnapshotAt\":\""
+              + snapshotAt
+              + "\",\"sourceMode\":\""
+              + (snapshot == null ? "CORE" : "PER_SOURCE")
+              + "\",\"moneyUnit\":\"minor\",\"currency\":\"CNY\"}");
+      writer.flush();
+      zip.closeEntry();
+    }
+    return count;
   }
 
   private Map<String, Object> job(String id, String merchant) {

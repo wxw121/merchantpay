@@ -9,6 +9,7 @@ import java.net.URI;
 import java.sql.Timestamp;
 import java.time.*;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,12 @@ import tools.jackson.databind.json.JsonMapper;
  */
 @Service
 public class AlipaySandbox {
+  private java.util.function.Function<String, Map<String, Object>> callbackOriginal;
+
+  public void setCallbackOriginal(java.util.function.Function<String, Map<String, Object>> lookup) {
+    callbackOriginal = lookup;
+  }
+
   public static final String CHANNEL = "ALIPAY_SANDBOX";
   private final AlipayClient client;
   private final SandboxHttp transport;
@@ -28,7 +35,11 @@ public class AlipaySandbox {
   private final JsonMapper json;
   private final Clock clock;
   private final String appId, seller, publicKey, notifyUrl;
+  private final java.util.function.Consumer<Runnable> shardWrite;
+  private final Runnable beforeNetwork;
+  private final boolean ownsTransport;
 
+  @Autowired
   public AlipaySandbox(
       JdbcTemplate jdbc,
       JsonMapper json,
@@ -48,6 +59,9 @@ public class AlipaySandbox {
     this.publicKey = publicKey;
     this.seller = seller;
     this.notifyUrl = notifyUrl;
+    this.shardWrite = null;
+    this.beforeNetwork = null;
+    this.ownsTransport = true;
     if (!enabled) {
       client = null;
       transport = null;
@@ -96,13 +110,71 @@ public class AlipaySandbox {
     }
   }
 
+  private AlipaySandbox(
+      AlipaySandbox original,
+      JdbcTemplate selected,
+      java.util.function.Consumer<Runnable> shardWrite,
+      Runnable beforeNetwork) {
+    this.client = original.client;
+    this.transport = original.transport;
+    this.jdbc = Objects.requireNonNull(selected);
+    this.json = original.json;
+    this.clock = original.clock;
+    this.appId = original.appId;
+    this.seller = original.seller;
+    this.publicKey = original.publicKey;
+    this.notifyUrl = original.notifyUrl;
+    this.shardWrite = Objects.requireNonNull(shardWrite);
+    this.beforeNetwork = Objects.requireNonNull(beforeNetwork);
+    this.ownsTransport = false;
+  }
+
+  /**
+   * Shares the configured SDK client, while all original-business and evidence SQL uses the
+   * selected shard.
+   */
+  public AlipaySandbox forShard(
+      JdbcTemplate selected,
+      java.util.function.Consumer<Runnable> shardWrite,
+      Runnable beforeNetwork) {
+    return new AlipaySandbox(this, selected, shardWrite, beforeNetwork);
+  }
+
+  private void write(Runnable action) {
+    if (shardWrite == null) action.run();
+    else shardWrite.accept(action);
+  }
+
+  void saveEvidence(String id, String operation, String body) {
+    write(
+        () ->
+            jdbc.update(
+                "INSERT INTO alipay_evidence(id,aggregate_id,operation,body,sha256,created_at) VALUES (?,?,?,?,?,?)",
+                UUID.randomUUID().toString(),
+                id,
+                operation,
+                body,
+                Signatures.sha256(body),
+                Timestamp.from(clock.instant())));
+  }
+
+  void saveCheckout(String id, String qr) {
+    write(
+        () ->
+            jdbc.update(
+                "INSERT INTO sandbox_checkouts(payment_id,qr_code,created_at) VALUES (?,?,?) ON DUPLICATE KEY UPDATE qr_code=VALUES(qr_code)",
+                id,
+                qr,
+                Timestamp.from(clock.instant())));
+  }
+
   public boolean enabled() {
     return client != null;
   }
 
   @jakarta.annotation.PreDestroy
   public void close() {
-    if (transport != null) transport.close();
+    if (ownsTransport && transport != null) transport.close();
   }
 
   private void requireEnabled() {
@@ -124,6 +196,7 @@ public class AlipaySandbox {
 
   private JsonNode execute(AlipayRequest<?> request, String id) {
     requireEnabled();
+    if (beforeNetwork != null) beforeNetwork.run();
     try {
       AlipayResponse response = client.execute(request);
       String raw = response.getBody();
@@ -135,16 +208,12 @@ public class AlipaySandbox {
         throw new RestClientException("Unsigned sandbox response; query original business key");
       var body = outer.get(request.getApiMethodName().replace('.', '_') + "_response");
       if (body == null) throw new RestClientException("Invalid sandbox response envelope");
-      jdbc.update(
-          "INSERT INTO alipay_evidence(id,aggregate_id,operation,body,sha256,created_at) VALUES (?,?,?,?,?,?)",
-          UUID.randomUUID().toString(),
+      saveEvidence(
           id,
           request
               .getApiMethodName()
               .substring(0, Math.min(24, request.getApiMethodName().length())),
-          raw,
-          Signatures.sha256(raw),
-          Timestamp.from(clock.instant()));
+          raw);
       return body;
     } catch (AlipayApiException invalid) {
       throw new RestClientException(
@@ -193,11 +262,7 @@ public class AlipaySandbox {
     String qr = text(row, "qr_code");
     if (qr.isBlank() || qr.length() > 2048 || !qr.startsWith("https://"))
       throw new RestClientException("Invalid sandbox checkout artifact");
-    jdbc.update(
-        "INSERT INTO sandbox_checkouts(payment_id,qr_code,created_at) VALUES (?,?,?) ON DUPLICATE KEY UPDATE qr_code=VALUES(qr_code)",
-        id,
-        qr,
-        Timestamp.from(clock.instant()));
+    saveCheckout(id, qr);
     return receipt(id, "PAYMENT", "PENDING", "", amount);
   }
 
@@ -292,13 +357,7 @@ public class AlipaySandbox {
                 major(input.amountMinor()))));
     // Persist before I/O: a timeout/crash must not erase the ten-second retry boundary.
     String intent = request.getBizContent();
-    jdbc.update(
-        "INSERT INTO alipay_evidence(id,aggregate_id,operation,body,sha256,created_at) VALUES (?,?,'REFUND_SUBMIT',?,?,?)",
-        UUID.randomUUID().toString(),
-        input.aggregateId(),
-        intent,
-        Signatures.sha256(intent),
-        Timestamp.from(clock.instant()));
+    saveEvidence(input.aggregateId(), "REFUND_SUBMIT", intent);
     var row = execute(request, input.aggregateId());
     if (!"10000".equals(text(row, "code")))
       return receipt(input.aggregateId(), "REFUND", "UNKNOWN", "", input.amountMinor());
@@ -326,7 +385,7 @@ public class AlipaySandbox {
       throw new ApiException("INVALID_CHANNEL_SIGNATURE", 401, "支付宝沙箱回调验签失败");
     }
     String id = values.get("out_trade_no");
-    var row = original(id, "PAYMENT");
+    var row = callbackOriginal == null ? original(id, "PAYMENT") : callbackOriginal.apply(id);
     String amount = minor(values.get("total_amount"));
     if (!row.get("amount_minor").toString().equals(amount))
       throw new ApiException("CHANNEL_EVIDENCE_CONFLICT", 409, "沙箱回调金额不一致");

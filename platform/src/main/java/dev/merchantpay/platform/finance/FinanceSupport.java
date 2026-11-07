@@ -2,10 +2,12 @@ package dev.merchantpay.platform.finance;
 
 import dev.merchantpay.platform.common.*;
 import dev.merchantpay.platform.query.Queries;
+import dev.merchantpay.platform.sharding.ShardCoreOnlyGuard;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.util.*;
 import java.util.function.Supplier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionDefinition;
@@ -17,6 +19,16 @@ public class FinanceSupport {
   final JdbcTemplate jdbc;
   final Clock clock;
   private final TransactionTemplate tx;
+  private ShardCoreOnlyGuard shardCoreOnlyGuard;
+
+  @Autowired(required = false)
+  public void setShardCoreOnlyGuard(ShardCoreOnlyGuard guard) {
+    shardCoreOnlyGuard = guard;
+  }
+
+  private void requireCoreOnly() {
+    if (shardCoreOnlyGuard != null) shardCoreOnlyGuard.requireCoreOnly();
+  }
 
   public FinanceSupport(JdbcTemplate jdbc, TransactionTemplate template, Clock clock) {
     this.jdbc = jdbc;
@@ -27,7 +39,12 @@ public class FinanceSupport {
   }
 
   <T> T transaction(Supplier<T> action) {
-    return tx.execute(t -> action.get());
+    requireCoreOnly();
+    return tx.execute(
+        t -> {
+          requireCoreOnly();
+          return action.get();
+        });
   }
 
   Timestamp now() {
@@ -57,6 +74,7 @@ public class FinanceSupport {
   }
 
   Map<String, Object> row(String table, String id, Actor actor, boolean lock) {
+    requireCoreOnly();
     actor.require("ADMIN", "OPS", "FINANCE", "AUDITOR", "MERCHANT");
     var found =
         jdbc.query(
@@ -69,6 +87,7 @@ public class FinanceSupport {
   }
 
   List<Map<String, Object>> list(String table, String merchant, Actor actor) {
+    requireCoreOnly();
     actor.require("ADMIN", "OPS", "FINANCE", "AUDITOR", "MERCHANT");
     String scope = actor.scope(merchant, false);
     return scope == null

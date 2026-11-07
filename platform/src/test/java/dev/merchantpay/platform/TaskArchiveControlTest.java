@@ -50,6 +50,9 @@ class TaskArchiveControlTest extends FinancialFixture {
         .withBean(Clock.class, () -> clock)
         .withBean(MeterRegistry.class, SimpleMeterRegistry::new)
         .withBean(ChannelGateway.class, () -> gateway)
+        .withBean(
+            dev.merchantpay.platform.channel.ChannelTransport.class,
+            () -> mock(dev.merchantpay.platform.channel.ChannelTransport.class))
         .withBean(InboxService.class, () -> mock(InboxService.class))
         .withBean(NotificationService.class, () -> mock(NotificationService.class))
         .withBean(ReconciliationService.class, () -> mock(ReconciliationService.class))

@@ -60,11 +60,14 @@ public class SettlementService {
 
   private Map<String, Object> locked(String id, Actor actor) {
     var view = f.row("finance_settlements", id, actor, false);
+    if (view.get("sourceRoutesHash") != null) throw conflict("四库结算须使用四库财务入口");
+    requireNoTargetReservations(text(view, "merchantId"));
     f.merchantLock(text(view, "merchantId"));
     return f.row("finance_settlements", id, actor, true);
   }
 
   private void noPending(String merchant) {
+    requireNoTargetReservations(merchant);
     if (!f.jdbc
         .queryForList(
             "SELECT id FROM finance_settlements WHERE merchant_id=? AND status IN ('DRAFT','APPROVED','REJECTED') LIMIT 1",
@@ -72,12 +75,20 @@ public class SettlementService {
         .isEmpty()) throw conflict("该商户有未完成的结算，请先处理或取消");
   }
 
+  private void requireNoTargetReservations(String merchant) {
+    if (f.jdbc.queryForObject(
+            "SELECT COUNT(*) FROM settlement_reservations r JOIN finance_settlements s ON s.id=r.settlement_id WHERE s.merchant_id=? AND r.physical_shard<>0",
+            Long.class,
+            merchant)
+        > 0) throw conflict("商户仍有目标库结算来源，须先完成四库财务恢复");
+  }
+
   private List<Map<String, Object>> sources(String merchant, Timestamp cutoff) {
     // ponytail: bounded 1000-source batches; explicit rejection until a reviewed pagination policy
     // exists.
     var rows =
         f.jdbc.query(
-            "SELECT e.id AS entry_id,e.payment_id,e.journal_id,e.side,e.amount_minor,r.settlement_id AS prior_settlement_id,r.revision AS prior_revision FROM ledger_entries e JOIN ledger_journals j ON j.id=e.journal_id LEFT JOIN settlement_reservations r ON r.entry_id=e.id LEFT JOIN finance_settlements s ON s.id=r.settlement_id WHERE e.merchant_id=? AND e.account_code='MERCHANT_PAYABLE' AND j.source_type IN ('PAYMENT','REFUND','ADJUSTMENT') AND j.created_at<=? AND (r.entry_id IS NULL OR s.status='CARRIED_FORWARD') ORDER BY e.id LIMIT 1001",
+            "SELECT e.id AS entry_id,e.payment_id,e.journal_id,e.side,e.amount_minor,r.settlement_id AS prior_settlement_id,r.revision AS prior_revision FROM ledger_entries e JOIN ledger_journals j ON j.id=e.journal_id LEFT JOIN settlement_reservations r ON r.physical_shard=0 AND r.entry_id=e.id LEFT JOIN finance_settlements s ON s.id=r.settlement_id WHERE e.merchant_id=? AND e.account_code='MERCHANT_PAYABLE' AND j.source_type IN ('PAYMENT','REFUND','ADJUSTMENT') AND j.created_at<=? AND (r.entry_id IS NULL OR s.status='CARRIED_FORWARD') ORDER BY e.id LIMIT 1001",
             Queries.ROW,
             merchant,
             cutoff);
@@ -86,7 +97,7 @@ public class SettlementService {
     // Always include every outstanding carry source, even when an earlier cutoff was requested.
     long allCarry =
         f.jdbc.queryForObject(
-            "SELECT COUNT(*) FROM settlement_reservations r JOIN finance_settlements s ON s.id=r.settlement_id WHERE s.merchant_id=? AND s.status='CARRIED_FORWARD'",
+            "SELECT COUNT(*) FROM settlement_reservations r JOIN finance_settlements s ON s.id=r.settlement_id WHERE s.merchant_id=? AND r.physical_shard=0 AND s.status='CARRIED_FORWARD'",
             Long.class,
             merchant);
     if (rows.stream().filter(r -> r.get("priorSettlementId") != null).count() != allCarry)
@@ -152,7 +163,7 @@ public class SettlementService {
       } else {
         int updated =
             f.jdbc.update(
-                "UPDATE settlement_reservations SET settlement_id=?,revision=? WHERE entry_id=? AND settlement_id=? AND revision=?",
+                "UPDATE settlement_reservations SET settlement_id=?,revision=? WHERE physical_shard=0 AND entry_id=? AND settlement_id=? AND revision=?",
                 id,
                 revision,
                 row.get("entryId"),
@@ -175,12 +186,12 @@ public class SettlementService {
       int changed =
           line.get("priorSettlementId") == null
               ? f.jdbc.update(
-                  "DELETE FROM settlement_reservations WHERE entry_id=? AND settlement_id=? AND revision=?",
+                  "DELETE FROM settlement_reservations WHERE physical_shard=0 AND entry_id=? AND settlement_id=? AND revision=?",
                   line.get("entryId"),
                   id,
                   revision)
               : f.jdbc.update(
-                  "UPDATE settlement_reservations SET settlement_id=?,revision=? WHERE entry_id=? AND settlement_id=? AND revision=?",
+                  "UPDATE settlement_reservations SET settlement_id=?,revision=? WHERE physical_shard=0 AND entry_id=? AND settlement_id=? AND revision=?",
                   line.get("priorSettlementId"),
                   line.get("priorRevision"),
                   line.get("entryId"),
@@ -255,6 +266,8 @@ public class SettlementService {
     return f.transaction(
         () -> {
           var row = f.row("finance_settlements", id, actor, true);
+          if (row.get("sourceRoutesHash") != null) throw conflict("四库结算须使用四库财务入口");
+          requireNoTargetReservations(text(row, "merchantId"));
           f.review(
               "SETTLEMENT",
               row,
@@ -298,7 +311,7 @@ public class SettlementService {
           approved(row, expected, text(row, "sourceHash"));
           var lines =
               f.jdbc.query(
-                  "SELECT l.payment_id,r.entry_id FROM settlement_lines l LEFT JOIN settlement_reservations r ON r.entry_id=l.entry_id AND r.settlement_id=l.settlement_id AND r.revision=l.revision WHERE l.settlement_id=? AND l.revision=?",
+                  "SELECT l.payment_id,r.entry_id FROM settlement_lines l LEFT JOIN settlement_reservations r ON r.physical_shard=0 AND r.entry_id=l.entry_id AND r.settlement_id=l.settlement_id AND r.revision=l.revision WHERE l.settlement_id=? AND l.revision=? AND l.physical_shard=0",
                   Queries.ROW,
                   id,
                   expected);

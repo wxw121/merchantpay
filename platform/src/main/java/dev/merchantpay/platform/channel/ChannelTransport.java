@@ -2,6 +2,8 @@ package dev.merchantpay.platform.channel;
 
 import dev.merchantpay.platform.control.ChannelControl;
 import java.util.function.Supplier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,11 +14,28 @@ public class ChannelTransport {
   private final ChannelApi mock;
   private final AlipaySandbox alipay;
   private final ChannelControl controls;
+  private final boolean routedSandbox;
 
+  @Autowired
   public ChannelTransport(ChannelApi mock, AlipaySandbox alipay, ChannelControl controls) {
+    this(mock, alipay, controls, false);
+  }
+
+  private ChannelTransport(
+      ChannelApi mock, AlipaySandbox alipay, ChannelControl controls, boolean routedSandbox) {
     this.mock = mock;
     this.alipay = alipay;
     this.controls = controls;
+    this.routedSandbox = routedSandbox;
+  }
+
+  public ChannelTransport forShard(JdbcTemplate selected, ChannelShardContext context) {
+    var local = alipay.forShard(selected, context::commit, () -> context.commit(() -> {}));
+    return new ChannelTransport(mock, local, controls, true);
+  }
+
+  public boolean routedSandbox() {
+    return routedSandbox;
   }
 
   private <T> T call(String channel, Supplier<T> action) {

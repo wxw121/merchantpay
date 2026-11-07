@@ -123,6 +123,15 @@ class V2ProjectionTest extends FinanceFixture {
         jdbc.queryForList("SELECT revision,snapshot FROM projection_batches ORDER BY revision");
     assertThat(rows).hasSize(2);
     assertThat(
+            json.readTree(rows.getLast().get("snapshot").toString()).get("succeededAt").asString())
+        .isEqualTo(
+            jdbc.queryForObject(
+                    "SELECT succeeded_at FROM payments WHERE id=?",
+                    java.sql.Timestamp.class,
+                    p.id())
+                .toInstant()
+                .toString());
+    assertThat(
             json.readTree(rows.getLast().get("snapshot").toString())
                 .get("reservedMinor")
                 .asString())

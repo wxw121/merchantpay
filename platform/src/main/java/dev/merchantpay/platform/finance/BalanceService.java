@@ -2,12 +2,14 @@ package dev.merchantpay.platform.finance;
 
 import dev.merchantpay.platform.common.*;
 import dev.merchantpay.platform.query.Queries;
+import dev.merchantpay.platform.sharding.ShardCoreOnlyGuard;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
@@ -21,6 +23,16 @@ public class BalanceService {
   private final TransactionTemplate tx;
   private final Clock clock;
   private final JsonMapper json;
+  private ShardCoreOnlyGuard shardCoreOnlyGuard;
+
+  @Autowired(required = false)
+  public void setShardCoreOnlyGuard(ShardCoreOnlyGuard guard) {
+    shardCoreOnlyGuard = guard;
+  }
+
+  private void requireCoreOnly() {
+    if (shardCoreOnlyGuard != null) shardCoreOnlyGuard.requireCoreOnly();
+  }
 
   public BalanceService(
       JdbcTemplate jdbc, TransactionTemplate template, Clock clock, JsonMapper json) {
@@ -33,6 +45,7 @@ public class BalanceService {
   }
 
   public List<Map<String, Object>> list(String merchant, Actor actor) {
+    requireCoreOnly();
     actor.require("FINANCE", "AUDITOR", "ADMIN", "OPS", "MERCHANT");
     return jdbc.query(
         "SELECT * FROM balance_checkpoints WHERE merchant_id=? ORDER BY created_at DESC,id DESC LIMIT 50",
@@ -41,6 +54,7 @@ public class BalanceService {
   }
 
   public List<Map<String, Object>> holds(String merchant, Actor actor) {
+    requireCoreOnly();
     actor.require("FINANCE", "AUDITOR", "ADMIN", "OPS", "MERCHANT");
     return jdbc.query(
         "SELECT * FROM merchant_finance_holds WHERE merchant_id=? ORDER BY hold_type",
@@ -49,6 +63,7 @@ public class BalanceService {
   }
 
   public void assertUnheld(String merchant) {
+    requireCoreOnly();
     if (jdbc.queryForObject(
             "SELECT COUNT(*) FROM merchant_finance_holds WHERE merchant_id=? AND active=true",
             Long.class,
@@ -57,11 +72,13 @@ public class BalanceService {
   }
 
   public Map<String, Object> checkpoint(String merchant, String reason, Actor actor) {
+    requireCoreOnly();
     actor.require("FINANCE", "OPS");
     String scope = actor.scope(merchant, true);
     FinanceSupport.reason(reason);
     return tx.execute(
         t -> {
+          requireCoreOnly();
           if (jdbc.queryForList("SELECT id FROM merchants WHERE id=? FOR UPDATE", scope).isEmpty())
             throw new ApiException("NOT_FOUND", 404, "商户不存在");
           Timestamp cutoff = Timestamp.from(clock.instant());

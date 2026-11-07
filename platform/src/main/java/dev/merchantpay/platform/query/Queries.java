@@ -261,6 +261,10 @@ public class Queries {
   }
 
   public String paymentMerchant(String id, String scope) {
+    return paymentMerchant(jdbc, id, scope);
+  }
+
+  public static String paymentMerchant(JdbcTemplate jdbc, String id, String scope) {
     var rows =
         scope == null
             ? jdbc.queryForList("SELECT merchant_id FROM payments WHERE id=?", String.class, id)

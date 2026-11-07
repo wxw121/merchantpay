@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.*;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -27,8 +29,30 @@ public class EventDelivery {
   private final TransactionTemplate tx;
   private final Clock clock;
   private final JsonMapper json;
+  private final boolean sharded;
+  private final ColdEventResolver cold;
 
   public EventDelivery(JdbcTemplate jdbc, TransactionTemplate tx, Clock clock, JsonMapper json) {
+    this(jdbc, tx, clock, json, false, null);
+  }
+
+  @Autowired
+  public EventDelivery(
+      JdbcTemplate jdbc,
+      TransactionTemplate tx,
+      Clock clock,
+      JsonMapper json,
+      ObjectProvider<ColdEventResolver> resolver) {
+    this(jdbc, tx, clock, json, false, resolver.getIfAvailable());
+  }
+
+  private EventDelivery(
+      JdbcTemplate jdbc,
+      TransactionTemplate tx,
+      Clock clock,
+      JsonMapper json,
+      boolean sharded,
+      ColdEventResolver cold) {
     this.jdbc = jdbc;
     this.tx = new TransactionTemplate(tx.getTransactionManager());
     this.tx.setIsolationLevel(
@@ -36,6 +60,16 @@ public class EventDelivery {
     this.tx.setTimeout(5);
     this.clock = clock;
     this.json = json;
+    this.sharded = sharded;
+    this.cold = cold;
+  }
+
+  public EventDelivery forShard(JdbcTemplate selected) {
+    var local =
+        new TransactionTemplate(
+            new org.springframework.jdbc.datasource.DataSourceTransactionManager(
+                selected.getDataSource()));
+    return new EventDelivery(selected, local, clock, json, true, cold);
   }
 
   public void deliver(String topic, int partition, long offset, String payload) {
@@ -50,6 +84,10 @@ public class EventDelivery {
     var originals =
         jdbc.queryForList(
             "SELECT payload FROM domain_events WHERE event_id=?", String.class, event.eventId());
+    if (originals.isEmpty() && cold != null) {
+      cold.verify(jdbc, event, payload);
+      return event;
+    }
     if (originals.size() != 1 || !event.equals(decode(originals.getFirst())))
       throw new InvalidEvent("Event differs from authoritative business fact");
     return event;
@@ -60,12 +98,32 @@ public class EventDelivery {
     var rows =
         jdbc.queryForList(
             "SELECT * FROM domain_events WHERE event_id=? FOR UPDATE", event.eventId());
-    if (rows.isEmpty()) throw new InvalidEvent("Unknown authoritative event");
+    if (rows.isEmpty()) {
+      if (cold == null) throw new InvalidEvent("Unknown authoritative event");
+      var archived = cold.verify(jdbc, event, payload);
+      var receipts =
+          jdbc.queryForList(
+              "SELECT payload_hash FROM event_receipts " + "WHERE consumer_name=? AND event_id=?",
+              CONSUMER,
+              event.eventId());
+      if (receipts.size() != 1
+          || !archived.payloadHash().equals(receipts.getFirst().get("payload_hash")))
+        throw new InvalidEvent("Cold event lacks an identical completed receipt");
+      return;
+    }
     var row = rows.getFirst();
     var stored = decode((String) row.get("payload"));
     if (!event.equals(stored))
       throw new InvalidEvent("Event identity or content differs from stored business fact");
     String hash = (String) row.get("payload_hash");
+    Integer bucket =
+        sharded && row.get("logical_bucket") != null
+            ? ((Number) row.get("logical_bucket")).intValue()
+            : null;
+    if (sharded
+        && EventJournal.taskable(stored.eventType())
+        && !Set.of("RECONCILE", "EXPORT").contains(stored.eventType())
+        && bucket == null) throw new InvalidEvent("Routed task has no authoritative bucket");
     var receipts =
         jdbc.queryForList(
             "SELECT payload_hash FROM event_receipts WHERE consumer_name=? AND event_id=?",
@@ -84,7 +142,7 @@ public class EventDelivery {
                       Long.class,
                       event.eventId()))
               > 0;
-      if (!exists)
+      if (!exists) {
         OutboxService.insertTask(
             jdbc,
             (String) row.get("id"),
@@ -94,6 +152,10 @@ public class EventDelivery {
             stored.merchantId(),
             Timestamp.from(clock.instant()),
             Timestamp.from(Instant.parse(stored.occurredAt())));
+        if (bucket != null)
+          jdbc.update(
+              "UPDATE outbox_tasks SET logical_bucket=? WHERE event_id=?", bucket, event.eventId());
+      }
     }
     jdbc.update(
         "INSERT INTO event_receipts(consumer_name,event_id,payload_hash,topic,partition_no,record_offset,received_at) VALUES (?,?,?,?,?,?,?)",

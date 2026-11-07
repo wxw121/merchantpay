@@ -15,6 +15,13 @@ public class OutboxService {
   private final Clock clock;
   private final boolean orderedIds;
   private final EventJournal journal;
+  private java.util.function.IntSupplier routeBucket;
+  private OutboxReconcileGate reconcileGate;
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setReconcileGate(OutboxReconcileGate gate) {
+    reconcileGate = gate;
+  }
 
   public OutboxService(JdbcTemplate jdbc, Clock clock) {
     this(jdbc, clock, false);
@@ -40,6 +47,7 @@ public class OutboxService {
   }
 
   public void enqueue(String eventId, String kind, String aggregateId, String merchantId) {
+    if (reconcileGate != null && "RECONCILE".equals(kind)) reconcileGate.requireReadable();
     if (!TransactionSynchronizationManager.isActualTransactionActive()) {
       throw new IllegalStateException("Outbox creation must share the business transaction");
     }
@@ -52,6 +60,29 @@ public class OutboxService {
       if (!journal.mode().equals("POLLING") || !EventJournal.taskable(kind)) return;
     }
     insertTask(jdbc, id, eventId, kind, aggregateId, merchantId, now);
+    if (routeBucket != null)
+      jdbc.update(
+          "UPDATE outbox_tasks SET logical_bucket=? WHERE id=?", routeBucket.getAsInt(), id);
+  }
+
+  public OutboxService forShard(JdbcTemplate selected) {
+    var copy =
+        new OutboxService(
+            selected, clock, orderedIds, journal == null ? null : journal.forShard(selected));
+    copy.reconcileGate = reconcileGate;
+    return copy;
+  }
+
+  public OutboxService forShard(JdbcTemplate selected, java.util.function.IntSupplier routeBucket) {
+    var copy =
+        new OutboxService(
+            selected,
+            clock,
+            orderedIds,
+            journal == null ? null : journal.forShard(selected, routeBucket));
+    copy.routeBucket = java.util.Objects.requireNonNull(routeBucket);
+    copy.reconcileGate = reconcileGate;
+    return copy;
   }
 
   /** State observations are replayable facts, never executable channel/notification tasks. */

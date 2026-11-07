@@ -59,7 +59,31 @@ const Balances = lazy(() =>
 const SecurityCenter = lazy(() =>
   import("./pages/V2").then((p) => ({ default: p.SecurityCenter })),
 );
+const Shards = lazy(() =>
+  import("./pages/Shards").then((page) => ({ default: page.Shards })),
+);
+const History = lazy(() =>
+  import("./pages/History").then((page) => ({ default: page.History })),
+);
+const Analytics = lazy(() =>
+  import("./pages/Analytics").then((page) => ({ default: page.Analytics })),
+);
 const navigation = [
+  {
+    path: "/analytics",
+    label: "交易分析",
+    icon: <DashboardOutlined aria-hidden="true" />,
+  },
+  {
+    path: "/history",
+    label: "历史数据",
+    icon: <BookOutlined aria-hidden="true" />,
+  },
+  {
+    path: "/shards",
+    label: "分片目录",
+    icon: <ScheduleOutlined aria-hidden="true" />,
+  },
   {
     path: "/operations",
     label: "运行与渠道",
@@ -268,18 +292,27 @@ export default function App() {
           </Link>
           <div className="sidebar-label">业务工作台</div>
           <nav aria-label="主导航">
-            {navigation.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                aria-label={item.label}
-                end={item.path === "/"}
-                onClick={() => setMobileMenu(false)}
-              >
-                <span aria-hidden="true">{item.icon}</span>
-                <span>{item.label}</span>
-              </NavLink>
-            ))}
+            {navigation
+              .filter(
+                (item) =>
+                  item.path !== "/shards" ||
+                  (!identity.merchantId &&
+                    identity.roles.some((role) =>
+                      ["ADMIN", "OPS"].includes(role),
+                    )),
+              )
+              .map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  aria-label={item.label}
+                  end={item.path === "/"}
+                  onClick={() => setMobileMenu(false)}
+                >
+                  <span aria-hidden="true">{item.icon}</span>
+                  <span>{item.label}</span>
+                </NavLink>
+              ))}
           </nav>
           <div className="sidebar-bottom">
             <Tag>V1 · 模拟渠道</Tag>
@@ -362,6 +395,9 @@ export default function App() {
                 <Route path="/read-model" element={<ReadModel />} />
                 <Route path="/balances" element={<Balances />} />
                 <Route path="/security" element={<SecurityCenter />} />
+                <Route path="/shards" element={<Shards />} />
+                <Route path="/history" element={<History />} />
+                <Route path="/analytics" element={<Analytics />} />
                 <Route path="/merchants" element={<Merchants />} />
                 <Route
                   path="*"

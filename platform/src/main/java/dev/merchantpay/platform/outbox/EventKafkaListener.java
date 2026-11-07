@@ -8,6 +8,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnProperty(name = "merchantpay.events-consumer-enabled", havingValue = "true")
+@ConditionalOnProperty(
+    name = "merchantpay.sharding.cdc-enabled",
+    havingValue = "false",
+    matchIfMissing = true)
 public class EventKafkaListener {
   private final EventDelivery delivery;
 

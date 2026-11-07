@@ -317,6 +317,7 @@ export function Records({
                 { value: "payments", label: "支付记录" },
                 { value: "refunds", label: "退款记录" },
                 { value: "journals", label: "账务凭证" },
+                { value: "history", label: "归档事实（按归档时间）" },
               ]}
             />
           </Form.Item>
@@ -327,7 +328,8 @@ export function Records({
             <Input type="date" />
           </Form.Item>
           <p className="secondary">
-            未填写时导出最近七天。单次历史范围最多 365 天，文件仅包含所选商户。
+            未填写时导出最近七天。单次历史范围最多 365
+            天，文件仅包含所选商户。归档事实仅在归档功能启用时可导出，按归档时间筛选，并标明归档版本。
           </p>
           <Button
             type="primary"

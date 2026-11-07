@@ -25,6 +25,36 @@ public class InboxService {
   private final Clock clock;
   private final String secret;
   private final boolean terminalFastPath;
+  private ChannelShardRouter shards;
+  private ChannelShardContext shard;
+
+  public void setShards(ChannelShardRouter value) {
+    shards = value;
+  }
+
+  public InboxService forShard(
+      JdbcTemplate selected,
+      OutboxService localOutbox,
+      ChannelGateway localGateway,
+      ChannelShardContext context) {
+    var copy =
+        new InboxService(
+            selected,
+            transactions,
+            localOutbox,
+            localGateway,
+            json,
+            clock,
+            secret,
+            terminalFastPath);
+    copy.shard = context;
+    return copy;
+  }
+
+  private void commit(Runnable action) {
+    if (shard == null) transactions.executeWithoutResult(tx -> action.run());
+    else shard.commit(action);
+  }
 
   public InboxService(
       JdbcTemplate jdbc,
@@ -74,8 +104,12 @@ public class InboxService {
         signedForm);
   }
 
-  private void storeVerified(
+  public void storeVerified(
       ChannelApi.Receipt receipt, String body, String fingerprint, String signedForm) {
+    if (shards != null) {
+      shards.storeVerified(receipt, body, fingerprint, signedForm);
+      return;
+    }
     String table = receipt.operation().equals("PAYMENT") ? "payments" : "refunds";
     var originals =
         jdbc.query(
@@ -95,8 +129,8 @@ public class InboxService {
     }
     var original = originals.getFirst();
     boolean alreadyProcessed = terminalFastPath && matchesSuccessfulOutcome(receipt, original);
-    transactions.executeWithoutResult(
-        tx -> {
+    commit(
+        () -> {
           String id = UUID.randomUUID().toString();
           var now = Timestamp.from(clock.instant());
           try {
@@ -150,9 +184,10 @@ public class InboxService {
     String raw = (String) rows.getFirst().get("raw_body");
     var receipt = json.readValue(raw, ChannelApi.Receipt.class);
     try {
-      transactions.executeWithoutResult(
-          tx -> {
-            gateway.apply(receipt);
+      commit(
+          () -> {
+            if (shard == null) gateway.apply(receipt);
+            else gateway.applyInCheckpoint(receipt);
             jdbc.update(
                 "UPDATE inbox_notifications SET status='PROCESSED',updated_at=? WHERE id=?",
                 Timestamp.from(clock.instant()),
@@ -162,8 +197,9 @@ public class InboxService {
       if (!conflict.code().equals("CHANNEL_EVIDENCE_CONFLICT")) {
         throw conflict;
       }
-      transactions.executeWithoutResult(
-          tx -> {
+      if (shard != null) gateway.retainRejected(receipt, conflict);
+      commit(
+          () -> {
             jdbc.update(
                 "UPDATE inbox_notifications SET status='CONFLICT',error_detail=?,updated_at=? WHERE id=?",
                 conflict.getMessage(),

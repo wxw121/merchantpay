@@ -38,6 +38,46 @@ public class ChannelGateway {
   private final boolean channelAttemptOrderedIds;
   private boolean lockedEvidence, writeOnly;
   private ChannelTransport transport;
+  private ChannelShardContext shard;
+  private ChannelReceiptClaims receipts;
+  private ChannelShardRouter shards;
+
+  public void setShards(ChannelShardRouter value) {
+    shards = value;
+  }
+
+  public ChannelGateway forShard(
+      JdbcTemplate selected,
+      PaymentService localPayments,
+      RefundService localRefunds,
+      ChannelResultBatcher batches,
+      ChannelShardContext context,
+      ChannelReceiptClaims directory) {
+    var tx =
+        new TransactionTemplate(
+            new org.springframework.jdbc.datasource.DataSourceTransactionManager(
+                selected.getDataSource()));
+    var copy =
+        new ChannelGateway(
+            api,
+            localPayments,
+            localRefunds,
+            selected,
+            json,
+            token,
+            clock,
+            tx,
+            batches,
+            metrics,
+            null,
+            channelAttemptOrderedIds);
+    copy.transport = transport == null ? null : transport.forShard(selected, context);
+    copy.lockedEvidence = lockedEvidence;
+    copy.writeOnly = writeOnly;
+    copy.shard = context;
+    copy.receipts = directory;
+    return copy;
+  }
 
   @org.springframework.beans.factory.annotation.Autowired
   public void setTransport(ChannelTransport transport) {
@@ -45,25 +85,36 @@ public class ChannelGateway {
   }
 
   private ChannelApi.Receipt pay(String channel, ChannelApi.Request request) {
+    beforeNetwork(channel);
     return transport == null
         ? api.pay(channel, token, request)
         : transport.pay(channel, token, request);
   }
 
   private ChannelApi.Receipt refund(String channel, ChannelApi.Request request) {
+    beforeNetwork(channel);
     return transport == null
         ? api.refund(channel, token, request)
         : transport.refund(channel, token, request);
   }
 
   private ChannelApi.Receipt query(String channel, String operation, String id) {
+    beforeNetwork(channel);
     return transport == null
         ? api.query(channel, operation, id, token)
         : transport.query(channel, operation, id, token);
   }
 
   private ChannelApi.Receipt close(String channel, String id) {
+    beforeNetwork(channel);
     return transport == null ? api.close(channel, id, token) : transport.close(channel, id, token);
+  }
+
+  private void beforeNetwork(String channel) {
+    if (shard == null) return;
+    if (AlipaySandbox.CHANNEL.equals(channel) && (transport == null || !transport.routedSandbox()))
+      throw new ApiException("SHARD_SANDBOX_NOT_READY", 503, "沙箱传输证据尚未接入目标分片");
+    shard.beforeNetwork();
   }
 
   @org.springframework.beans.factory.annotation.Autowired
@@ -304,6 +355,7 @@ public class ChannelGateway {
         resultBatches.execute(
             payment.id(),
             () -> {
+              if (shard != null) shard.assertLease();
               validate(observed, task.aggregateId(), operation, payment.channel());
               applyBusiness(observed);
               jdbc.update(
@@ -326,27 +378,42 @@ public class ChannelGateway {
         // acquiring the independent evidence transaction.
         if (receipt != null)
           retainConflict(receipt, task.aggregateId(), operation, payment.channel(), conflict);
-        jdbc.update(
-            "UPDATE channel_attempts SET status='CONFLICT',updated_at=? WHERE channel=? AND request_key=?",
-            Timestamp.from(clock.instant()),
-            payment.channel(),
-            attemptKey);
+        java.util.function.IntSupplier markConflict =
+            () ->
+                jdbc.update(
+                    "UPDATE channel_attempts SET status='CONFLICT',updated_at=? WHERE channel=? AND request_key=?",
+                    Timestamp.from(clock.instant()),
+                    payment.channel(),
+                    attemptKey);
+        if (shard == null) markConflict.getAsInt();
+        else shard.write(markConflict);
       }
       if (!(failure instanceof dev.merchantpay.platform.common.ApiException)
           && !(failure instanceof PendingOutcome)) {
-        if (isRefund) {
-          refunds.applyResult(
-              task.aggregateId(), new ChannelResult.Unknown(payment.channel(), "query required"));
-        } else {
-          payments.applyResult(
-              task.aggregateId(), new ChannelResult.Unknown(payment.channel(), "query required"));
-        }
+        Runnable unknown =
+            () -> {
+              if (isRefund) {
+                refunds.applyResult(
+                    task.aggregateId(),
+                    new ChannelResult.Unknown(payment.channel(), "query required"));
+              } else {
+                payments.applyResult(
+                    task.aggregateId(),
+                    new ChannelResult.Unknown(payment.channel(), "query required"));
+              }
+            };
+        if (shard == null) unknown.run();
+        else shard.commit(unknown);
       }
       throw failure;
     }
   }
 
   public void apply(ChannelApi.Receipt receipt) {
+    if (shards != null) {
+      shards.applyVerified(receipt);
+      return;
+    }
     apply(receipt, receipt.aggregateId(), receipt.operation(), receipt.channel());
   }
 
@@ -374,6 +441,7 @@ public class ChannelGateway {
   }
 
   private int writeEvidence(String key, java.util.function.IntSupplier action) {
+    if (shard != null) return shard.write(action);
     return evidenceWrites == null ? action.getAsInt() : evidenceWrites.execute(key, action);
   }
 
@@ -407,6 +475,16 @@ public class ChannelGateway {
   }
 
   private void applyBusiness(ChannelApi.Receipt receipt) {
+    if (receipts != null && "SUCCEEDED".equals(receipt.status())) {
+      verifyTerminalEvidence(receipt);
+      String table = "PAYMENT".equals(receipt.operation()) ? "payments" : "refunds";
+      String merchant =
+          jdbc.queryForObject(
+              "SELECT merchant_id FROM " + table + " WHERE id=?",
+              String.class,
+              receipt.aggregateId());
+      receipts.claim(receipt, merchant);
+    }
     var result = normalize(receipt);
     var evidence =
         new dev.merchantpay.platform.common.ReceiptEvidence(
@@ -442,8 +520,8 @@ public class ChannelGateway {
     String merchant =
         jdbc.queryForObject(
             "SELECT merchant_id FROM " + table + " WHERE id=?", String.class, expectedId);
-    evidenceTx.executeWithoutResult(
-        transaction ->
+    Runnable retain =
+        () ->
             jdbc.update(
                 "INSERT INTO evidence_conflicts(id,merchant_id,aggregate_id,channel,detail,raw_body,created_at) VALUES (?,?,?,?,?,?,?)",
                 UUID.randomUUID().toString(),
@@ -452,7 +530,20 @@ public class ChannelGateway {
                 expectedChannel,
                 conflict.getMessage(),
                 json.writeValueAsString(receipt),
-                Timestamp.from(clock.instant())));
+                Timestamp.from(clock.instant()));
+    if (shard == null) evidenceTx.executeWithoutResult(transaction -> retain.run());
+    else shard.commit(retain);
+  }
+
+  /** Caller owns the pinned inbox transaction and retains rejected evidence after its rollback. */
+  public void applyInCheckpoint(ChannelApi.Receipt receipt) {
+    validate(receipt, receipt.aggregateId(), receipt.operation(), receipt.channel());
+    applyBusiness(receipt);
+  }
+
+  public void retainRejected(ChannelApi.Receipt receipt, ApiException conflict) {
+    retainConflict(
+        receipt, receipt.aggregateId(), receipt.operation(), receipt.channel(), conflict);
   }
 
   private void verifyTerminalEvidence(ChannelApi.Receipt receipt) {

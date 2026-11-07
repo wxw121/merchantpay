@@ -77,6 +77,74 @@ public class TaskQueue {
     return claimBatch(limit, null);
   }
 
+  public TaskQueue forShard(JdbcTemplate selected) {
+    return new TaskQueue(
+        selected,
+        new TransactionTemplate(
+            new org.springframework.jdbc.datasource.DataSourceTransactionManager(
+                selected.getDataSource())),
+        clock,
+        bulkSql,
+        claimBulkSql);
+  }
+
+  /** Called inside a pinned route transaction; caller dispatches only after its commit. */
+  public List<Task> claimBucket(int bucket, long epoch, String lane, int limit) {
+    if (!java.util.Set.of("FAST", "INBOX", "NOTIFY").contains(lane)
+        || limit < 1
+        || limit > 64
+        || bucket < 0
+        || bucket > 15
+        || epoch < 1
+        || !org.springframework.transaction.support.TransactionSynchronizationManager
+            .isActualTransactionActive())
+      throw new IllegalArgumentException("A pinned FAST/INBOX/NOTIFY claim of 1..64 is required");
+    var now = Timestamp.from(clock.instant());
+    var claimed =
+        new ArrayList<>(
+            jdbc.query(
+                "SELECT * FROM outbox_tasks WHERE status='RUNNING' AND lease_until<? AND queue_class=? AND logical_bucket=? ORDER BY lease_until,id LIMIT ? FOR UPDATE SKIP LOCKED",
+                MAPPER,
+                now,
+                lane,
+                bucket,
+                limit));
+    if (claimed.size() < limit)
+      claimed.addAll(
+          jdbc.query(
+              "SELECT * FROM outbox_tasks WHERE status='PENDING' AND due_at<=? AND queue_class=? AND logical_bucket=? ORDER BY due_at,id LIMIT ? FOR UPDATE SKIP LOCKED",
+              MAPPER,
+              now,
+              lane,
+              bucket,
+              limit - claimed.size()));
+    for (var task : claimed)
+      jdbc.update(
+          "UPDATE outbox_tasks SET status='RUNNING',attempts=?,lease_token=?,lease_until=?,lease_epoch=?,updated_at=? WHERE id=?",
+          task.attempts(),
+          task.token(),
+          Timestamp.from(clock.instant().plusSeconds(60)),
+          epoch,
+          now,
+          task.id());
+    return List.copyOf(claimed);
+  }
+
+  public void assertPinned(Task task, int bucket, long epoch) {
+    assertTaskLease(task);
+    var rows =
+        jdbc.queryForList(
+            "SELECT id FROM outbox_tasks WHERE id=? AND logical_bucket=? AND lease_epoch=? AND kind=? AND aggregate_id=? AND merchant_id=?",
+            String.class,
+            task.id(),
+            bucket,
+            epoch,
+            task.kind(),
+            task.aggregateId(),
+            task.merchantId());
+    if (rows.size() != 1) throw new LeaseLost();
+  }
+
   public List<Task> claimBatch(int limit, boolean bulk) {
     return claimBatch(limit, bulk ? "BULK" : "FAST");
   }

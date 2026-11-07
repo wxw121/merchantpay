@@ -58,6 +58,8 @@ class V2EncodedPathSecurityTest {
     for (String path :
         List.of(
             "/api/console/finance/settlements/missing/execute",
+            "/api/console/shards/plans",
+            "/api/%63onsole/shards/plans",
             "/api/%63onsole/finance/settlements/missing/execute",
             "/%61pi/console/finance/settlements/missing/execute",
             "/app/api/%63%6Fnsole/finance/settlements/missing/execute")) {

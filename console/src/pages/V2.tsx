@@ -107,6 +107,7 @@ export function Operations() {
   const operator = platformOperator(session.roles, session.merchantId);
   const [tab, setTab] = useState("summary");
   const [recoveryStage, setRecoveryStage] = useState("ALL");
+  const [eventShard, setEventShard] = useState(0);
   const [editing, setEditing] = useState<Row | null>(null);
   const [routing, setRouting] = useState(false);
   const [action, setAction] = useState<{ path: string; title: string } | null>(
@@ -132,12 +133,26 @@ export function Operations() {
     queryFn: () => api<Row[]>("/api/console/channel-controls"),
     enabled: operator,
   });
+  const eventStatus = useQuery({
+    queryKey: ["v2", "event-status", eventShard],
+    queryFn: () =>
+      api<{
+        shardedCdcEnabled: boolean;
+        mode: string;
+        unreceived: number;
+        quarantined: number;
+      }>(
+        `/api/console/events/status?${queryString({ physicalShard: String(eventShard) })}`,
+      ),
+    enabled: operator && tab === "quarantine",
+    placeholderData: (previous) => previous,
+  });
   const list = useQuery({
-    queryKey: ["v2", "ops-list", tab, merchant, recoveryStage],
+    queryKey: ["v2", "ops-list", tab, merchant, recoveryStage, eventShard],
     queryFn: () =>
       api<Row[]>(
         tab === "quarantine"
-          ? "/api/console/events/quarantine"
+          ? `/api/console/events/quarantine?${queryString({ physicalShard: String(eventShard) })}`
           : tab === "dead-tasks"
             ? "/api/console/operations/dead-tasks"
             : `/api/console/operations/${tab}?${queryString({ merchantId: merchant, ...(tab === "unknown" ? { stage: recoveryStage } : {}) })}`,
@@ -169,6 +184,7 @@ export function Operations() {
         summary.error,
         channels.error,
         list.error,
+        eventStatus.error,
         routes.error,
         command.failure,
       ]
@@ -296,29 +312,59 @@ export function Operations() {
         />
       )}
       {tab === "quarantine" && (
-        <Rows
-          rows={list.data ?? []}
-          names={{
-            id: "隔离编号",
-            topic: "事件来源",
-            reason: "原因",
-            status: "状态",
-            createdAt: "发生时间",
-          }}
-          actions={(r) => (
-            <Button
-              disabled={command.busy || r.status === "REPLAYED"}
-              onClick={() =>
-                setAction({
-                  path: `/api/console/events/quarantine/${r.id}/replay`,
-                  title: "重放隔离事件",
-                })
-              }
-            >
-              核对后重放
-            </Button>
+        <>
+          {eventStatus.data?.shardedCdcEnabled && (
+            <Space style={{ marginBottom: 12 }}>
+              <span>事件来源分片</span>
+              <Select
+                aria-label="事件来源分片"
+                value={eventShard}
+                onChange={setEventShard}
+                options={[0, 1, 2, 3].map((value) => ({
+                  value,
+                  label: `物理 ${value}`,
+                }))}
+                style={{ width: 140 }}
+              />
+            </Space>
           )}
-        />
+          {eventStatus.data && !eventStatus.isPlaceholderData && (
+            <Descriptions size="small" column={3} style={{ marginBottom: 12 }}>
+              <Descriptions.Item label="事件模式">
+                {eventStatus.data.mode}
+              </Descriptions.Item>
+              <Descriptions.Item label="未接收事件">
+                {eventStatus.data.unreceived}
+              </Descriptions.Item>
+              <Descriptions.Item label="隔离事件">
+                {eventStatus.data.quarantined}
+              </Descriptions.Item>
+            </Descriptions>
+          )}
+          <Rows
+            rows={list.data ?? []}
+            names={{
+              id: "隔离编号",
+              topic: "事件来源",
+              reason: "原因",
+              status: "状态",
+              createdAt: "发生时间",
+            }}
+            actions={(r) => (
+              <Button
+                disabled={command.busy || r.status === "REPLAYED"}
+                onClick={() =>
+                  setAction({
+                    path: `/api/console/events/quarantine/${r.id}/replay?${queryString({ physicalShard: String(eventShard) })}`,
+                    title: "重放隔离事件",
+                  })
+                }
+              >
+                核对后重放
+              </Button>
+            )}
+          />
+        </>
       )}
       {tab === "channels" && (
         <>
@@ -507,7 +553,8 @@ interface ProjectionPage {
   until: string;
   observedAt: string;
 }
-interface ProjectionStatus {
+interface CoreProjectionStatus {
+  sharded?: false;
   enabled: boolean;
   control: {
     activeGeneration: string | null;
@@ -518,10 +565,22 @@ interface ProjectionStatus {
   quarantined: number;
   deadBatches: Row[];
 }
+interface ShardedProjectionStatus {
+  sharded: true;
+  globalReady: boolean;
+  operationsEnabled?: boolean;
+  servingGeneration?: string;
+  deep: boolean;
+  observedAt: string;
+  sources: Row[];
+}
+type ProjectionStatus = CoreProjectionStatus | ShardedProjectionStatus;
 export function ReadModel() {
   const { merchant, session } = useWorkspace();
   const operator = platformOperator(session.roles, session.merchantId);
   const [page, setPage] = useState<Record<string, string>>({});
+  const [projectionSource, setProjectionSource] = useState(0);
+  const [sourceErrorAfter, setSourceErrorAfter] = useState("");
   const [action, setAction] = useState<{
     path: string;
     title: string;
@@ -529,25 +588,71 @@ export function ReadModel() {
   } | null>(null);
   const command = useAction();
   useEffect(() => setPage({}), [merchant]);
-  const data = useQuery({
-    queryKey: ["v2", "projection-payments", merchant, page],
-    queryFn: () =>
-      api<ProjectionPage>(
-        `/api/console/read-model/payments?${queryString({ merchantId: merchant, ...page })}`,
-      ),
-    enabled: !!merchant,
-  });
   const status = useQuery({
     queryKey: ["v2", "projection-status"],
     queryFn: () => api<ProjectionStatus>("/api/console/read-model/status"),
     enabled: operator,
     refetchInterval: 30_000,
   });
+  const deep = useQuery({
+    queryKey: ["v3", "projection-deep"],
+    queryFn: () =>
+      api<ShardedProjectionStatus>("/api/console/read-model/status?deep=true"),
+    enabled: false,
+  });
+  const data = useQuery({
+    queryKey: [
+      "v2",
+      "projection-payments",
+      merchant,
+      page,
+      status.data?.sharded ? status.data.servingGeneration : null,
+    ],
+    queryFn: () =>
+      api<ProjectionPage>(
+        `/api/console/read-model/payments?${queryString({ merchantId: merchant, ...page })}`,
+      ),
+    enabled:
+      !!merchant &&
+      (!operator ||
+        (status.data
+          ? status.data.sharded
+            ? status.data.globalReady
+            : true
+          : false)),
+  });
   const errors = useQuery({
     queryKey: ["v2", "projection-errors"],
     queryFn: () => api<Row[]>("/api/console/read-model/errors"),
-    enabled: operator,
+    enabled: operator && status.data?.sharded !== true,
   });
+  const coreStatus = status.data && !status.data.sharded ? status.data : null;
+  const shardStatus = status.data?.sharded ? status.data : null;
+  const sourceErrors = useQuery({
+    queryKey: [
+      "v2",
+      "projection-source-errors",
+      projectionSource,
+      sourceErrorAfter,
+    ],
+    queryFn: () =>
+      api<Row[]>(
+        `/api/console/read-model/sources/${projectionSource}/errors?${queryString({ after: sourceErrorAfter })}`,
+      ),
+    enabled: operator && shardStatus?.operationsEnabled === true,
+  });
+  const sourceDead = useQuery({
+    queryKey: ["v2", "projection-source-dead", projectionSource],
+    queryFn: () =>
+      api<Row[]>(
+        `/api/console/read-model/sources/${projectionSource}/batches/dead`,
+      ),
+    enabled: operator && shardStatus?.operationsEnabled === true,
+  });
+  const inspected =
+    shardStatus && deep.data && deep.data.observedAt >= shardStatus.observedAt
+      ? deep.data
+      : null;
   return (
     <>
       <PageTitle
@@ -555,6 +660,7 @@ export function ReadModel() {
         description="这里的交易列表最终一致，可能延迟；正式调账与结算始终使用 MySQL 权威记录。"
       >
         <Button
+          disabled={!!shardStatus && !shardStatus.globalReady}
           onClick={() => {
             setPage({});
             void data.refetch();
@@ -566,12 +672,20 @@ export function ReadModel() {
       {!merchant && (
         <Alert type="info" title="请选择商户查询近七天记录（单次最多31天）" />
       )}
-      {[data.error, status.error, errors.error, command.failure]
+      {[
+        status.error,
+        deep.error,
+        command.failure,
+        sourceErrors.error,
+        sourceDead.error,
+        ...(shardStatus && !shardStatus.globalReady ? [] : [data.error]),
+        ...(shardStatus ? [] : [errors.error]),
+      ]
         .filter(Boolean)
         .map((e, i) => (
           <ErrorNotice key={i} error={e as Error} />
         ))}
-      {data.data && (
+      {data.data && (!shardStatus || shardStatus.globalReady) && (
         <>
           <Alert
             type="info"
@@ -604,14 +718,141 @@ export function ReadModel() {
           </Button>
         </>
       )}
-      {operator && status.data && (
+      {operator && shardStatus && (
+        <>
+          <Alert
+            type={shardStatus.globalReady ? "info" : "warning"}
+            title={
+              shardStatus.globalReady
+                ? `四库投影已核对服务代 ${shardStatus.servingGeneration}`
+                : "跨库查询投影尚未激活，交易请使用权威查询"
+            }
+            description="以下是四库分别读取的状态；分配序号不代表连续消费水位。缺失事件核对只在手动点击时执行。"
+          />
+          <Button loading={deep.isFetching} onClick={() => void deep.refetch()}>
+            核对四库缺失事件
+          </Button>
+          <p>来源观察时间：{dateTime(shardStatus.observedAt)}</p>
+          <Rows
+            rows={inspected?.sources ?? shardStatus.sources}
+            names={{
+              physicalShard: "物理来源",
+              mode: "事件模式",
+              cutoffSequence: "停写截止序号",
+              allocatedSequence: "当前分配序号",
+              activeGeneration: "服务代",
+              buildingGeneration: "构建代",
+              scanComplete: "扫描完成",
+              hasPendingBatch: "有待投递批次",
+              hasQuarantine: "有隔离事件",
+              ...(inspected
+                ? {
+                    firstUnprojectedSequence: "首个缺失事件序号",
+                    noMissingAtRead: "本次未发现缺失",
+                  }
+                : {}),
+            }}
+          />
+          <h2>按来源处理投影故障</h2>
+          <Select
+            aria-label="投影物理来源"
+            value={projectionSource}
+            onChange={(value) => {
+              setProjectionSource(value);
+              setSourceErrorAfter("");
+            }}
+            options={[0, 1, 2, 3].map((value) => ({
+              value,
+              label: `物理来源 ${value}`,
+            }))}
+          />
+          {!shardStatus.operationsEnabled && (
+            <Alert type="info" title="四库投影操作未启用或代提升尚未完成" />
+          )}
+          {shardStatus.operationsEnabled && (
+            <>
+              <h2>失败的查询投递</h2>
+              <Rows
+                rows={sourceDead.data ?? []}
+                names={{
+                  id: "投递编号",
+                  generation: "投影代",
+                  paymentId: "支付编号",
+                  attempts: "次数",
+                  lastError: "错误",
+                }}
+                actions={(row) => (
+                  <Button
+                    onClick={() =>
+                      setAction({
+                        path: `/api/console/read-model/sources/${projectionSource}/batches/${row.id}/retry`,
+                        title: `重试来源 ${projectionSource} 的失败投递`,
+                      })
+                    }
+                  >
+                    核对后重试
+                  </Button>
+                )}
+              />
+              <h2>投影事件隔离</h2>
+              <Rows
+                rows={sourceErrors.data ?? []}
+                names={{
+                  id: "隔离编号",
+                  topic: "来源主题",
+                  state: "状态",
+                  reason: "原因",
+                  createdAt: "发生时间",
+                }}
+                actions={(row) =>
+                  row.state === "QUARANTINED" ? (
+                    <Space>
+                      <Button
+                        onClick={() =>
+                          setAction({
+                            path: `/api/console/read-model/sources/${projectionSource}/errors/${row.id}/replay`,
+                            title: `重放来源 ${projectionSource} 的投影事件`,
+                          })
+                        }
+                      >
+                        重放
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          setAction({
+                            path: `/api/console/read-model/sources/${projectionSource}/errors/${row.id}/dismiss`,
+                            title: `忽略来源 ${projectionSource} 的隔离事件`,
+                          })
+                        }
+                      >
+                        审计后忽略
+                      </Button>
+                    </Space>
+                  ) : null
+                }
+              />
+              <Button
+                disabled={(sourceErrors.data?.length ?? 0) < 100}
+                onClick={() =>
+                  setSourceErrorAfter(
+                    String(sourceErrors.data?.at(-1)?.id ?? ""),
+                  )
+                }
+              >
+                下一页隔离事件
+              </Button>
+            </>
+          )}
+        </>
+      )}
+      {operator && coreStatus && (
         <>
           <h2>构建与投递</h2>
           <p>
-            待投递 {status.data.pending} · 待处理隔离 {status.data.quarantined}
+            待投递 {coreStatus.pending} · 待处理隔离 {coreStatus.quarantined}
           </p>
           <Button
-            disabled={!!status.data.control.buildingGeneration}
+            disabled={!!coreStatus.control.buildingGeneration}
             onClick={() =>
               setAction({
                 path: "/api/console/read-model/rebuild",
@@ -632,7 +873,7 @@ export function ReadModel() {
             恢复缺失来源事实
           </Button>
           <Rows
-            rows={status.data.generations}
+            rows={coreStatus.generations}
             names={{
               id: "投影代",
               state: "状态",
@@ -641,7 +882,7 @@ export function ReadModel() {
               activatedAt: "激活时间",
             }}
             actions={(r) =>
-              r.id === status.data!.control.buildingGeneration ? (
+              r.id === coreStatus.control.buildingGeneration ? (
                 <Button
                   onClick={() =>
                     setAction({
@@ -658,7 +899,7 @@ export function ReadModel() {
           />
           <h2>失败的查询投递</h2>
           <Rows
-            rows={status.data.deadBatches ?? []}
+            rows={coreStatus.deadBatches ?? []}
             names={{
               id: "投递编号",
               paymentId: "支付编号",
@@ -771,20 +1012,21 @@ export function ReadModel() {
 export function Balances() {
   const { merchant, session } = useWorkspace();
   const [open, setOpen] = useState(false);
+  const [sourceMode, setSourceMode] = useState<"core" | "sharded">("core");
   const command = useAction();
   const data = useQuery({
-    queryKey: ["v2", "balances", merchant],
+    queryKey: ["v2", "balances", merchant, sourceMode],
     queryFn: () =>
       api<Row[]>(
-        `/api/console/balances?${queryString({ merchantId: merchant })}`,
+        `${sourceMode === "sharded" ? "/api/console/finance/sharded/balances" : "/api/console/balances"}?${queryString({ merchantId: merchant })}`,
       ),
     enabled: !!merchant,
   });
   const holds = useQuery({
-    queryKey: ["v2", "holds", merchant],
+    queryKey: ["v2", "holds", merchant, sourceMode],
     queryFn: () =>
       api<Row[]>(
-        `/api/console/balances/holds?${queryString({ merchantId: merchant })}`,
+        `${sourceMode === "sharded" ? "/api/console/finance/sharded/balances/holds" : "/api/console/balances/holds"}?${queryString({ merchantId: merchant })}`,
       ),
     enabled: !!merchant,
   });
@@ -792,17 +1034,29 @@ export function Balances() {
     <>
       <PageTitle
         title="账务检查点"
-        description="扫描 MySQL 权威分录，保留来源哈希和账户余额；检查异常会冻结商户结算。"
+        description="扫描权威分录，保留来源哈希和账户余额；检查异常会冻结商户结算。四库检查须在外部停写排空后执行。"
       >
-        <Button
-          disabled={
-            !merchant ||
-            !session.roles.some((r) => ["FINANCE", "OPS"].includes(r))
-          }
-          onClick={() => setOpen(true)}
-        >
-          建立权威检查点
-        </Button>
+        <Space>
+          <Select
+            aria-label="余额检查来源"
+            value={sourceMode}
+            options={[
+              { value: "core", label: "单库" },
+              { value: "sharded", label: "四库" },
+            ]}
+            onChange={(value) => setSourceMode(value)}
+            style={{ width: 120 }}
+          />
+          <Button
+            disabled={
+              !merchant ||
+              !session.roles.some((r) => ["FINANCE", "OPS"].includes(r))
+            }
+            onClick={() => setOpen(true)}
+          >
+            建立权威检查点
+          </Button>
+        </Space>
       </PageTitle>
       {!merchant && <Alert type="info" title="请选择商户" />}
       {[data.error, holds.error, command.failure]
@@ -827,6 +1081,12 @@ export function Balances() {
           expandedRowRender: (r) => (
             <>
               <p>来源 SHA256：{field(r, "sourceHash")}</p>
+              {sourceMode === "sharded" && (
+                <>
+                  <p>路由 SHA256：{field(r, "sourceRoutesHash")}</p>
+                  <p>四库事件水位：{field(r, "sourceEventWatermarks")}</p>
+                </>
+              )}
               <Descriptions
                 column={1}
                 items={Object.entries(
@@ -856,7 +1116,9 @@ export function Balances() {
         ]}
       />
       <Modal
-        title="建立权威检查点"
+        title={
+          sourceMode === "sharded" ? "建立四库权威检查点" : "建立单库权威检查点"
+        }
         open={open}
         footer={null}
         onCancel={() => setOpen(false)}
@@ -864,15 +1126,27 @@ export function Balances() {
       >
         <Alert
           type="info"
-          title="扫描期间会占用商户结算锁；大商户请安排维护窗口。超过预算会保留现有冻结状态。"
+          title={
+            sourceMode === "sharded"
+              ? "须在外部实际停止四库业务写入、消费者和任务处理，并排空待办；保持停写直至提交。扫描期间会占用商户结算锁。"
+              : "扫描期间会占用商户结算锁；大商户请安排维护窗口。超过预算会保留现有冻结状态。"
+          }
         />
         <Form
           onFinish={async (v) => {
             if (
-              await command.run("/api/console/balances/checkpoints", {
-                merchantId: merchant,
-                reason: v.reason,
-              })
+              await command.run(
+                sourceMode === "sharded"
+                  ? "/api/console/finance/sharded/balances/checkpoints"
+                  : "/api/console/balances/checkpoints",
+                {
+                  merchantId: merchant,
+                  reason: v.reason,
+                  ...(sourceMode === "sharded"
+                    ? { writersStopped: v.writersStopped === true }
+                    : {}),
+                },
+              )
             )
               setOpen(false);
           }}
@@ -884,6 +1158,22 @@ export function Balances() {
           >
             <Input.TextArea />
           </Form.Item>
+          {sourceMode === "sharded" && (
+            <Form.Item
+              name="writersStopped"
+              valuePropName="checked"
+              rules={[
+                {
+                  validator: (_, value) =>
+                    value === true
+                      ? Promise.resolve()
+                      : Promise.reject(new Error("请先停止四库写入并完成排空")),
+                },
+              ]}
+            >
+              <Checkbox>我已停止四库写入及消费，并排空全部任务与事件</Checkbox>
+            </Form.Item>
+          )}
           <Button htmlType="submit" loading={command.busy}>
             提交检查
           </Button>

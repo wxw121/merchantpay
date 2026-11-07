@@ -24,28 +24,7 @@ public final class EventTransportMaintenance {
         if (!r.next() || !expected.equals(r.getString(1)))
           throw new IllegalStateException("Transport changed; expected mode differs");
       }
-      for (String sql :
-          new String[] {
-            "SELECT COUNT(*) FROM outbox_tasks WHERE status<>'DONE'",
-            "SELECT COUNT(*) FROM payments WHERE status NOT IN ('SUCCEEDED','FAILED','CLOSED')",
-            "SELECT COUNT(*) FROM refunds WHERE status NOT IN ('SUCCEEDED','FAILED')",
-            "SELECT COUNT(*) FROM inbox_notifications WHERE status='RECEIVED'"
-          }) {
-        if (scalar(c, sql) != 0)
-          throw new IllegalStateException(
-              "Business work is not drained; resume old mode workers before switching");
-      }
-      try (var s =
-          c.prepareStatement(
-              "SELECT d.event_type FROM domain_events d WHERE d.delivery_mode='CDC' AND NOT EXISTS (SELECT 1 FROM event_receipts r WHERE r.consumer_name=? AND r.event_id=d.event_id)")) {
-        s.setString(1, EventDelivery.CONSUMER);
-        try (var r = s.executeQuery()) {
-          while (r.next())
-            if (EventKinds.taskable(r.getString(1)))
-              throw new IllegalStateException(
-                  "Undelivered CDC business event; inspect lag/quarantine and drain first");
-        }
-      }
+      requireDrained(c);
       // This is an allocation watermark only. Stopped writers are the prerequisite, not MAX's
       // ordering.
       long cutoff = scalar(c, "SELECT COALESCE(MAX(sequence_no),0) FROM domain_events");
@@ -63,6 +42,32 @@ public final class EventTransportMaintenance {
       throw failure;
     } finally {
       c.setAutoCommit(true);
+    }
+  }
+
+  /** Shared stopped-writer drain gate; a sharded cutover applies it to every physical source. */
+  public static void requireDrained(Connection c) throws SQLException {
+    for (String sql :
+        new String[] {
+          "SELECT COUNT(*) FROM outbox_tasks WHERE status<>'DONE'",
+          "SELECT COUNT(*) FROM payments WHERE status NOT IN ('SUCCEEDED','FAILED','CLOSED')",
+          "SELECT COUNT(*) FROM refunds WHERE status NOT IN ('SUCCEEDED','FAILED')",
+          "SELECT COUNT(*) FROM inbox_notifications WHERE status='RECEIVED'"
+        }) {
+      if (scalar(c, sql) != 0)
+        throw new IllegalStateException(
+            "Business work is not drained; resume old mode workers before switching");
+    }
+    try (var s =
+        c.prepareStatement(
+            "SELECT d.event_type FROM domain_events d WHERE d.delivery_mode='CDC' AND NOT EXISTS (SELECT 1 FROM event_receipts r WHERE r.consumer_name=? AND r.event_id=d.event_id)")) {
+      s.setString(1, EventDelivery.CONSUMER);
+      try (var r = s.executeQuery()) {
+        while (r.next())
+          if (EventKinds.taskable(r.getString(1)))
+            throw new IllegalStateException(
+                "Undelivered CDC business event; inspect lag/quarantine and drain first");
+      }
     }
   }
 

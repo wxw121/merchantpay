@@ -118,6 +118,17 @@ public class MerchantService {
 
   public void audit(
       String merchant, String actor, String operation, String resource, String detail) {
+    audit(jdbc, clock, merchant, actor, operation, resource, detail);
+  }
+
+  public static void audit(
+      JdbcTemplate jdbc,
+      Clock clock,
+      String merchant,
+      String actor,
+      String operation,
+      String resource,
+      String detail) {
     String requestId = org.slf4j.MDC.get("requestId");
     if (requestId != null) {
       detail = java.util.Objects.toString(detail, "") + " [requestId=" + requestId + "]";

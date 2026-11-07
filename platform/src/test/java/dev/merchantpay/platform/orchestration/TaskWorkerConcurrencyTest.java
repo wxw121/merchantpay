@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import dev.merchantpay.platform.channel.ChannelGateway;
+import dev.merchantpay.platform.channel.ChannelTransport;
 import dev.merchantpay.platform.channel.InboxService;
 import dev.merchantpay.platform.outbox.TaskQueue;
 import dev.merchantpay.platform.reconciliation.ExportService;
@@ -249,6 +250,7 @@ class TaskWorkerConcurrencyTest {
             "merchantpay.tasks-fast-concurrency=96", "merchantpay.workers-enabled=true")
         .withBean(TaskQueue.class, () -> queue)
         .withBean(ChannelGateway.class, () -> gateway)
+        .withBean(ChannelTransport.class, () -> mock(ChannelTransport.class))
         .withBean(InboxService.class, () -> inbox)
         .withBean(NotificationService.class, () -> notifications)
         .withBean(JdbcTemplate.class, () -> mock(JdbcTemplate.class))

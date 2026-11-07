@@ -6,6 +6,7 @@ import dev.merchantpay.platform.outbox.OutboxService;
 import dev.merchantpay.platform.payment.PaymentService;
 import dev.merchantpay.platform.query.Queries;
 import dev.merchantpay.platform.refund.RefundService;
+import dev.merchantpay.platform.sharding.ShardCoreOnlyGuard;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.util.*;
@@ -30,6 +31,18 @@ public class ConsoleController {
   private final TransactionTemplate transactions;
   private final Clock clock;
   private final OutboxService outbox;
+  private dev.merchantpay.platform.sharding.ShardMoney shardMoney;
+  private ShardCoreOnlyGuard shardCoreOnlyGuard;
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardCoreOnlyGuard(ShardCoreOnlyGuard guard) {
+    shardCoreOnlyGuard = guard;
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardMoney(dev.merchantpay.platform.sharding.ShardMoney money) {
+    this.shardMoney = money;
+  }
 
   public ConsoleController(
       Access access,
@@ -150,6 +163,7 @@ public class ConsoleController {
     access.require("ADMIN", "MERCHANT");
     String merchant = access.merchant(merchantId, true);
     urls.validate(input.notificationUrl());
+    if (shardMoney != null) return shardMoney.create(merchant, input, access.caller().actor());
     return transactions.execute(
         tx -> {
           var result = payments.create(merchant, input);
@@ -170,6 +184,9 @@ public class ConsoleController {
       @RequestParam(required = false) String merchantId,
       @RequestBody RefundService.CreateRefund input) {
     access.require("ADMIN", "MERCHANT");
+    if (shardMoney != null)
+      return shardMoney.refund(
+          access.merchant(merchantId, false), id, input, access.caller().actor());
     String merchant = queries.paymentMerchant(id, access.merchant(merchantId, false));
     return transactions.execute(
         tx -> {
@@ -189,6 +206,8 @@ public class ConsoleController {
   PaymentService.PaymentView close(
       @PathVariable String id, @RequestParam(required = false) String merchantId) {
     access.require("ADMIN", "MERCHANT");
+    if (shardMoney != null)
+      return shardMoney.close(access.merchant(merchantId, false), id, access.caller().actor());
     String merchant = queries.paymentMerchant(id, access.merchant(merchantId, false));
     return transactions.execute(
         tx -> {
@@ -285,9 +304,11 @@ public class ConsoleController {
   @PostMapping("/tasks/{id}/replay")
   void replay(@PathVariable String id, @RequestParam(required = false) String merchantId) {
     access.require("ADMIN", "OPS", "MERCHANT");
+    if (shardCoreOnlyGuard != null) shardCoreOnlyGuard.requireCoreOnly();
     String scope = access.merchant(merchantId, false);
     transactions.executeWithoutResult(
         tx -> {
+          if (shardCoreOnlyGuard != null) shardCoreOnlyGuard.requireCoreOnly();
           var rows =
               scope == null
                   ? queries.rows("SELECT * FROM outbox_tasks WHERE id=? FOR UPDATE", id)

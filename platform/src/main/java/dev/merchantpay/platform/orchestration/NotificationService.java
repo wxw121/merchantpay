@@ -26,6 +26,8 @@ public class NotificationService {
   private final Clock clock;
   private final RestClient external, local;
   private final NotificationWrites writes;
+  private final java.util.function.Consumer<Runnable> shardWrite;
+  private final Runnable beforeNetwork;
 
   public NotificationService(
       PaymentService payments,
@@ -56,6 +58,8 @@ public class NotificationService {
     this.jdbc = jdbc;
     this.clock = clock;
     this.writes = writes;
+    this.shardWrite = null;
+    this.beforeNetwork = null;
     var settings =
         HttpClientSettings.defaults()
             .withTimeouts(Duration.ofSeconds(2), Duration.ofSeconds(5))
@@ -75,6 +79,40 @@ public class NotificationService {
                     settings.withInetAddressFilter(InetAddressFilter.externalAddresses())))
             .build();
     local = RestClient.builder().requestFactory(factories.build(settings)).build();
+  }
+
+  private NotificationService(
+      NotificationService original,
+      PaymentService payments,
+      RefundService refunds,
+      JdbcTemplate jdbc,
+      java.util.function.Consumer<Runnable> shardWrite,
+      Runnable beforeNetwork) {
+    this.payments = payments;
+    this.refunds = refunds;
+    this.merchants = original.merchants;
+    this.policy = original.policy;
+    this.json = original.json;
+    this.jdbc = jdbc;
+    this.clock = original.clock;
+    this.external = original.external;
+    this.local = original.local;
+    this.writes = null;
+    this.shardWrite = Objects.requireNonNull(shardWrite);
+    this.beforeNetwork = Objects.requireNonNull(beforeNetwork);
+  }
+
+  /**
+   * Keeps merchant keys in the control database while reading and recording delivery on the
+   * selected shard.
+   */
+  public NotificationService forShard(
+      PaymentService payments,
+      RefundService refunds,
+      JdbcTemplate jdbc,
+      java.util.function.Consumer<Runnable> shardWrite,
+      Runnable beforeNetwork) {
+    return new NotificationService(this, payments, refunds, jdbc, shardWrite, beforeNetwork);
   }
 
   public void deliver(TaskQueue.Task task) {
@@ -175,6 +213,7 @@ public class NotificationService {
                 url,
                 Timestamp.from(clock.instant())));
     try {
+      if (beforeNetwork != null) beforeNetwork.run();
       var response =
           (policy.isLocalDemo(url) ? local : external)
               .post()
@@ -211,7 +250,8 @@ public class NotificationService {
   }
 
   private void write(Runnable action) {
-    if (writes == null) action.run();
+    if (shardWrite != null) shardWrite.accept(action);
+    else if (writes == null) action.run();
     else writes.execute(action);
   }
 }

@@ -37,6 +37,18 @@ class PaymentAdmissionSlotsTest extends FinancialFixture {
         .withBean(TransactionTemplate.class, () -> tx)
         .withBean(LedgerService.class, () -> new LedgerService(jdbc))
         .withBean(OutboxService.class, () -> new OutboxService(jdbc, Clock.systemUTC()))
+        .withBean(
+            dev.merchantpay.platform.control.ChannelControl.class,
+            () -> {
+              var control =
+                  org.mockito.Mockito.mock(dev.merchantpay.platform.control.ChannelControl.class);
+              org.mockito.Mockito.when(
+                      control.route(
+                          org.mockito.ArgumentMatchers.anyString(),
+                          org.mockito.ArgumentMatchers.anyString()))
+                  .thenAnswer(call -> call.getArgument(1));
+              return control;
+            })
         .withBean(Clock.class, Clock::systemUTC)
         .withUserConfiguration(PaymentService.class)
         .run(context -> payments = context.getBean(PaymentService.class));

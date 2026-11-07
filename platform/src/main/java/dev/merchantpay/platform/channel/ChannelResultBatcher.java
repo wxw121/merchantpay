@@ -27,6 +27,7 @@ public final class ChannelResultBatcher implements AutoCloseable {
   private final Duration delay;
   private List<Pending> pending;
   private boolean closed;
+  private java.util.function.Consumer<Runnable> commit;
 
   public ChannelResultBatcher(
       PlatformTransactionManager transactionManager,
@@ -43,6 +44,14 @@ public final class ChannelResultBatcher implements AutoCloseable {
     this.metrics = Objects.requireNonNull(metrics, "metrics");
     this.maxBatch = maxBatch;
     this.delay = delay;
+    this.commit = action -> transactions.executeWithoutResult(ignored -> action.run());
+  }
+
+  public ChannelResultBatcher forShard(java.util.function.Consumer<Runnable> commit) {
+    var copy =
+        new ChannelResultBatcher(transactions.getTransactionManager(), metrics, maxBatch, delay);
+    copy.commit = Objects.requireNonNull(commit);
+    return copy;
   }
 
   public void execute(String lockKey, Runnable action) {
@@ -87,11 +96,11 @@ public final class ChannelResultBatcher implements AutoCloseable {
 
   private void executeGroup(List<Pending> group) {
     try {
-      transactions.executeWithoutResult(ignored -> group.forEach(item -> item.action().run()));
+      commit.accept(() -> group.forEach(item -> item.action().run()));
       metrics.summary("merchantpay.channel.result.batch.size").record(group.size());
       metrics.counter("merchantpay.channel.result.batches", "outcome", "committed").increment();
       group.forEach(item -> item.result().complete(null));
-    } catch (ApiException conflict) {
+    } catch (ApiException | dev.merchantpay.platform.outbox.TaskQueue.LeaseLost conflict) {
       if (group.size() == 1) {
         metrics.counter("merchantpay.channel.result.batches", "outcome", "failed").increment();
         fail(group, conflict);

@@ -104,6 +104,7 @@ public class PaymentService {
               rs.getTimestamp("created_at").toInstant(),
               rs.getTimestamp("updated_at").toInstant());
   private final JdbcTemplate jdbc;
+  private JdbcTemplate controlJdbc;
   private final TransactionTemplate transactions;
   private final LedgerService ledger;
   private final OutboxService outbox;
@@ -180,6 +181,7 @@ public class PaymentService {
       throw new IllegalArgumentException("Slot borrowing requires payment admission slots");
     }
     this.jdbc = jdbc;
+    this.controlJdbc = jdbc;
     this.transactions = transactions;
     this.ledger = ledger;
     this.outbox = outbox;
@@ -191,7 +193,32 @@ public class PaymentService {
 
   @jakarta.annotation.PostConstruct
   void initializeSlots() {
+    initializeAdmissionState();
+  }
+
+  public void initializeAdmissionState() {
     transactions.executeWithoutResult(ignored -> initializeAdmission());
+  }
+
+  public PaymentService forShard(
+      JdbcTemplate selected,
+      TransactionTemplate tx,
+      LedgerService localLedger,
+      OutboxService localOutbox) {
+    var local =
+        new PaymentService(
+            selected,
+            tx,
+            localLedger,
+            localOutbox,
+            clock,
+            maximumPerShard,
+            admissionSlots,
+            borrowSlots,
+            paymentOrderedIds);
+    local.controlJdbc = controlJdbc;
+    local.channelControl = channelControl;
+    return local;
   }
 
   private void initializeAdmission() {
@@ -279,7 +306,7 @@ public class PaymentService {
     return transactions.execute(
         status -> {
           var merchant =
-              jdbc.queryForList(
+              controlJdbc.queryForList(
                   "SELECT enabled, notification_url FROM merchants WHERE id=?", merchantId);
           if (merchant.isEmpty() || !Boolean.TRUE.equals(merchant.getFirst().get("enabled"))) {
             // Previously accepted business keys remain safely retryable after merchant disablement.
@@ -309,9 +336,8 @@ public class PaymentService {
                   ? input.channel()
                   : channelControl.route(merchantId, input.channel());
           int bucket =
-              Integer.parseInt(
-                      sha256(merchantId + "\0" + input.merchantOrderNo()).substring(0, 2), 16)
-                  & 15;
+              dev.merchantpay.platform.common.PaymentBuckets.forBusinessKey(
+                  merchantId, input.merchantOrderNo());
           Boolean atCapacity =
               borrowSlots
                   ? false
@@ -451,6 +477,10 @@ public class PaymentService {
   }
 
   public PaymentView get(String merchantId, String id) {
+    return get(jdbc, merchantId, id);
+  }
+
+  public static PaymentView get(JdbcTemplate jdbc, String merchantId, String id) {
     var rows =
         jdbc.query("SELECT * FROM payments WHERE id=? AND merchant_id=?", MAPPER, id, merchantId);
     if (rows.isEmpty()) {
@@ -520,8 +550,9 @@ public class PaymentService {
               var now = clock.instant();
               try {
                 jdbc.update(
-                    "UPDATE payments SET status='SUCCEEDED',channel_reference=?,updated_at=? WHERE id=?",
+                    "UPDATE payments SET status='SUCCEEDED',channel_reference=?,succeeded_at=COALESCE(succeeded_at,?),updated_at=? WHERE id=?",
                     success.reference(),
+                    Timestamp.from(now),
                     Timestamp.from(now),
                     id);
               } catch (DuplicateKeyException reusedReceipt) {

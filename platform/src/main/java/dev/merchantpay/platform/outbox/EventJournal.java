@@ -24,6 +24,7 @@ public class EventJournal implements InitializingBean {
   private final Clock clock;
   private final JsonMapper json;
   private final String configuredMode;
+  private java.util.function.IntSupplier routeBucket;
 
   public EventJournal(
       JdbcTemplate jdbc,
@@ -55,6 +56,16 @@ public class EventJournal implements InitializingBean {
 
   public String mode() {
     return configuredMode;
+  }
+
+  public EventJournal forShard(JdbcTemplate selected) {
+    return new EventJournal(selected, clock, json, configuredMode);
+  }
+
+  public EventJournal forShard(JdbcTemplate selected, java.util.function.IntSupplier routeBucket) {
+    var copy = forShard(selected);
+    copy.routeBucket = Objects.requireNonNull(routeBucket);
+    return copy;
   }
 
   public static boolean taskable(String kind) {
@@ -97,5 +108,10 @@ public class EventJournal implements InitializingBean {
         trace,
         payload,
         Signatures.sha256(payload));
+    if (routeBucket != null)
+      jdbc.update(
+          "UPDATE domain_events SET logical_bucket=? WHERE event_id=?",
+          routeBucket.getAsInt(),
+          eventId);
   }
 }

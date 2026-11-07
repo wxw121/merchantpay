@@ -4,6 +4,8 @@ import dev.merchantpay.platform.channel.*;
 import dev.merchantpay.platform.common.DatabaseRole;
 import dev.merchantpay.platform.outbox.TaskQueue;
 import dev.merchantpay.platform.reconciliation.*;
+import dev.merchantpay.platform.sharding.ShardCoreOnlyGuard;
+import dev.merchantpay.platform.sharding.ShardExportReadGate;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import java.sql.Timestamp;
@@ -37,6 +39,42 @@ public class TaskWorker implements AutoCloseable {
   private final boolean channelTaskPrefetch;
   private int firstLane;
   private boolean notificationTaskPrefetch;
+  private boolean shardChannels;
+  private ShardCoreOnlyGuard shardBulkGuard;
+  private ShardExportReadGate shardExportReadGate;
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardBulkGuard(ShardCoreOnlyGuard guard) {
+    shardBulkGuard = guard;
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardExportReadGate(ShardExportReadGate gate) {
+    shardExportReadGate = gate;
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public void setShardChannels(
+      @Value("${merchantpay.sharding.channel-workers-enabled:false}") boolean enabled) {
+    shardChannels = enabled;
+  }
+
+  public Semaphore sharedFastCapacity() {
+    return capacity;
+  }
+
+  public Semaphore channelLaneCapacity(String lane) {
+    return switch (lane) {
+      case "INBOX" -> laneCapacities[0];
+      case "FAST" -> laneCapacities[1];
+      case "NOTIFY" -> laneCapacities[2];
+      default -> throw new IllegalArgumentException("Not a channel lane");
+    };
+  }
+
+  public boolean wantsQueue(String lane) {
+    return workerQueues.contains(lane);
+  }
 
   @org.springframework.beans.factory.annotation.Autowired
   public void setNotificationTaskPrefetch(
@@ -149,10 +187,31 @@ public class TaskWorker implements AutoCloseable {
   }
 
   private boolean pollCapacity(Semaphore permits, String queueClass) {
+    if (shardChannels
+        && (queueClass.equals("FAST") || queueClass.equals("INBOX") || queueClass.equals("NOTIFY")))
+      return false;
     if (!workerQueues.contains(queueClass)) return false;
     long started = nanoTime.getAsLong();
     Long deadline = nextPoll.get(queueClass);
     if (deadline != null && started - deadline < 0) return false;
+    boolean shardedBulk = false;
+    if (queueClass.equals("BULK") && shardBulkGuard != null) {
+      try {
+        shardBulkGuard.requireCoreOnly();
+      } catch (RuntimeException unavailable) {
+        if (shardExportReadGate == null) {
+          nextPoll.put(queueClass, nanoTime.getAsLong() + TimeUnit.SECONDS.toNanos(1));
+          return false;
+        }
+        try {
+          shardExportReadGate.capture();
+          shardedBulk = true;
+        } catch (RuntimeException invalid) {
+          nextPoll.put(queueClass, nanoTime.getAsLong() + TimeUnit.SECONDS.toNanos(1));
+          return false;
+        }
+      }
+    }
     boolean fast = !queueClass.equals("BULK");
     int slots = Math.min(permits.availablePermits(), 64);
     if (fast) slots = Math.min(slots, capacity.availablePermits());
@@ -178,12 +237,14 @@ public class TaskWorker implements AutoCloseable {
       int empties = Math.min(4, emptyPolls.getOrDefault(queueClass, 0) + 1);
       emptyPolls.put(queueClass, empties);
       int delay =
-          switch (empties) {
-            case 1 -> 10;
-            case 2 -> 20;
-            case 3 -> 50;
-            default -> 100;
-          };
+          shardedBulk
+              ? 1000
+              : switch (empties) {
+                case 1 -> 10;
+                case 2 -> 20;
+                case 3 -> 50;
+                default -> 100;
+              };
       nextPoll.put(queueClass, nanoTime.getAsLong() + TimeUnit.MILLISECONDS.toNanos(delay));
     } else {
       emptyPolls.remove(queueClass);

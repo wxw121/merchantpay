@@ -16,7 +16,7 @@ import tools.jackson.databind.json.JsonMapper;
 public class ProjectionService {
   public static final String GROUP = "merchantpay-read-model-v2";
   static final String COLUMNS =
-      "id,merchant_id,merchant_order_no,amount_minor,fee_minor,currency,status,refunded_minor,reserved_minor,refunded_fee_minor,channel,channel_reference,notification_url,created_at,updated_at";
+      "id,merchant_id,merchant_order_no,amount_minor,fee_minor,currency,status,refunded_minor,reserved_minor,refunded_fee_minor,channel,channel_reference,notification_url,created_at,updated_at,succeeded_at";
   private final JdbcTemplate jdbc;
   private final TransactionTemplate tx;
   private final Clock clock;
@@ -83,24 +83,31 @@ public class ProjectionService {
   }
 
   public void consume(String topic, int partition, long offset, String payload) {
-    var event = events.verifyStored(payload);
     tx.executeWithoutResult(
         t -> {
+          var event = events.verifyStored(payload);
           jdbc.queryForList(
               "SELECT id FROM domain_events WHERE event_id=? FOR UPDATE", event.eventId());
+          events.verifyStored(payload);
           String hash = Signatures.sha256(payload);
           var previous =
               jdbc.queryForList(
                   "SELECT payload_hash FROM projection_receipts WHERE event_id=?",
                   String.class,
                   event.eventId());
-          if (!previous.isEmpty()) return;
+          if (!previous.isEmpty()) {
+            if (!hash.equals(previous.getFirst()))
+              throw new EventDelivery.InvalidEvent("Projection receipt content changed");
+            return;
+          }
+          var generations =
+              jdbc.queryForList(
+                  "SELECT id FROM projection_generations WHERE state IN ('BUILDING','SERVING') ORDER BY id",
+                  String.class);
+          if (generations.isEmpty())
+            throw new IllegalStateException("Projection has no building or serving generation");
           String root = root(event);
-          if (root != null)
-            for (String generation :
-                jdbc.queryForList(
-                    "SELECT id FROM projection_generations WHERE state IN ('BUILDING','SERVING') ORDER BY id",
-                    String.class)) capture(generation, root);
+          if (root != null) for (String generation : generations) capture(generation, root);
           jdbc.update(
               "INSERT INTO projection_receipts(event_id,payload_hash,topic,partition_no,record_offset,created_at) VALUES (?,?,?,?,?,?)",
               event.eventId(),
@@ -259,6 +266,12 @@ public class ProjectionService {
         row.put("status", snapshot.get("status").asString());
         row.put("amount_minor", snapshot.get("amountMinor").asString());
         row.put("refunded_minor", snapshot.get("refundedMinor").asString());
+        var succeededAt = snapshot.get("succeededAt");
+        row.put(
+            "succeeded_at",
+            succeededAt == null || succeededAt.isNull()
+                ? null
+                : succeededAt.asString().replace('T', ' ').replace("Z", ""));
         row.put("snapshot", delivery.snapshot());
         row.put("snapshot_hash", delivery.hash());
         rows.add(row);
@@ -358,6 +371,14 @@ public class ProjectionService {
   }
 
   public Map<String, Object> replay(String id, String reason, Actor actor) {
+    return replay(id, reason, actor, row -> {});
+  }
+
+  public Map<String, Object> replay(
+      String id,
+      String reason,
+      Actor actor,
+      java.util.function.Consumer<Map<String, Object>> validateLocked) {
     operator(actor);
     requireReason(reason);
     return tx.execute(
@@ -365,6 +386,7 @@ public class ProjectionService {
           var rows = jdbc.queryForList("SELECT * FROM projection_errors WHERE id=? FOR UPDATE", id);
           if (rows.isEmpty()) throw new ApiException("NOT_FOUND", 404, "投影隔离记录不存在");
           var row = rows.getFirst();
+          validateLocked.accept(row);
           if (!"REPLAYED".equals(row.get("state"))) {
             String payload = row.get("payload").toString();
             if (!Signatures.sha256(payload).equals(row.get("payload_hash")))
@@ -411,7 +433,24 @@ public class ProjectionService {
       String merchant, String after, String generation, String from, String until, Actor actor) {
     actor.require("ADMIN", "OPS", "FINANCE", "AUDITOR", "MERCHANT");
     String scope = actor.scope(merchant, true);
-    String current = active();
+    return paymentsScoped(scope, after, generation, from, until, active());
+  }
+
+  public Map<String, Object> paymentsAtGeneration(
+      String merchant,
+      String after,
+      String generation,
+      String from,
+      String until,
+      String approvedGeneration,
+      Actor actor) {
+    actor.require("ADMIN", "OPS", "FINANCE", "AUDITOR", "MERCHANT");
+    String scope = actor.scope(merchant, true);
+    return paymentsScoped(scope, after, generation, from, until, approvedGeneration);
+  }
+
+  private Map<String, Object> paymentsScoped(
+      String scope, String after, String generation, String from, String until, String current) {
     if (after != null && !after.isBlank() && !current.equals(generation))
       throw new ApiException("GENERATION_CHANGED", 409, "投影代已切换，请重新查询");
     Instant end, start;
@@ -463,10 +502,22 @@ public class ProjectionService {
   }
 
   public void dismiss(String id, String reason, Actor actor) {
+    dismiss(id, reason, actor, row -> {});
+  }
+
+  public void dismiss(
+      String id,
+      String reason,
+      Actor actor,
+      java.util.function.Consumer<Map<String, Object>> validateLocked) {
     operator(actor);
     requireReason(reason);
     tx.executeWithoutResult(
         t -> {
+          var rows = jdbc.queryForList("SELECT * FROM projection_errors WHERE id=? FOR UPDATE", id);
+          if (rows.size() != 1 || !"QUARANTINED".equals(rows.getFirst().get("state")))
+            throw new ApiException("NOT_DISMISSIBLE", 409, "隔离状态已变化");
+          validateLocked.accept(rows.getFirst());
           if (jdbc.update(
                   "UPDATE projection_errors SET state='DISMISSED',replayed_by=? WHERE id=? AND state='QUARANTINED'",
                   actor.id(),
@@ -479,7 +530,17 @@ public class ProjectionService {
   public Map<String, Object> payment(String id, String merchant, Actor actor) {
     actor.require("ADMIN", "OPS", "FINANCE", "AUDITOR", "MERCHANT");
     String scope = actor.scope(merchant, true);
-    String generation = active();
+    return paymentScoped(id, scope, active());
+  }
+
+  public Map<String, Object> paymentAtGeneration(
+      String id, String merchant, String approvedGeneration, Actor actor) {
+    actor.require("ADMIN", "OPS", "FINANCE", "AUDITOR", "MERCHANT");
+    String scope = actor.scope(merchant, true);
+    return paymentScoped(id, scope, approvedGeneration);
+  }
+
+  private Map<String, Object> paymentScoped(String id, String scope, String generation) {
     var rows =
         clickhouse.query(
             "SELECT snapshot FROM merchantpay.payment_projection FINAL WHERE generation={generation:String} AND merchant_id={merchant:String} AND payment_id={payment:String} LIMIT 1",

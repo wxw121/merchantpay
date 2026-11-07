@@ -57,6 +57,42 @@ spring:
             user-info-uri: ${OIDC_BASE_URL:http://127.0.0.1:8180}/realms/merchantpay/protocol/openid-connect/userinfo
             user-name-attribute: sub
 merchantpay:
+  analytics:
+    flink-enabled: ${FLINK_ANALYTICS_ENABLED:false}
+    publication-enabled: ${ANALYTICS_PUBLICATION_ENABLED:false}
+    release-key: ${ANALYTICS_RELEASE_KEY:}
+  history:
+    archive-enabled: ${HISTORY_ARCHIVE_ENABLED:false}
+    retire-enabled: ${HISTORY_EVENT_RETIRE_ENABLED:false}
+  sharding:
+    reverse-enabled: ${SHARD_REVERSE_ENABLED:false}
+    migration-quiesce-enabled: ${SHARD_MIGRATION_QUIESCE_ENABLED:false}
+    migration-copy-enabled: ${SHARD_MIGRATION_COPY_ENABLED:false}
+    migration-batch-enabled: ${SHARD_MIGRATION_BATCH_ENABLED:false}
+    migration-cutover-enabled: ${SHARD_MIGRATION_CUTOVER_ENABLED:false}
+    cdc-enabled: ${SHARD_CDC_ENABLED:false}
+    projection-enabled: ${SHARD_PROJECTION_ENABLED:false}
+    projection-consumer-enabled: ${SHARD_PROJECTION_CONSUMER_ENABLED:false}
+    projection-worker-enabled: ${SHARD_PROJECTION_WORKER_ENABLED:false}
+    enabled: ${SHARD_EXACT_READS_ENABLED:false}
+    money-writes-enabled: ${SHARD_MONEY_WRITES_ENABLED:false}
+    target-http-writes-enabled: ${SHARD_TARGET_HTTP_WRITES_ENABLED:false}
+    channel-workers-enabled: ${SHARD_CHANNEL_WORKERS_ENABLED:false}
+    receipt-connections: ${SHARD_RECEIPT_CONNECTIONS:2}
+    connections-per-shard: ${SHARD_CONNECTIONS_PER_SHARD:2}
+    targets:
+      1:
+        url: ${SHARD_1_DATABASE_URL:}
+        username: ${SHARD_1_DATABASE_USER:}
+        password: ${SHARD_1_DATABASE_PASSWORD:}
+      2:
+        url: ${SHARD_2_DATABASE_URL:}
+        username: ${SHARD_2_DATABASE_USER:}
+        password: ${SHARD_2_DATABASE_PASSWORD:}
+      3:
+        url: ${SHARD_3_DATABASE_URL:}
+        username: ${SHARD_3_DATABASE_USER:}
+        password: ${SHARD_3_DATABASE_PASSWORD:}
   v2-metrics-enabled: ${V2_METRICS_ENABLED:true}
   shared-sessions-enabled: ${SHARED_SESSIONS_ENABLED:false}
   console-high-risk-enabled: ${CONSOLE_HIGH_RISK_ENABLED:false}

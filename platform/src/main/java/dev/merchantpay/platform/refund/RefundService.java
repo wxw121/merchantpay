@@ -49,6 +49,7 @@ public class RefundService {
               rs.getTimestamp("created_at").toInstant(),
               rs.getTimestamp("updated_at").toInstant());
   private final JdbcTemplate jdbc;
+  private JdbcTemplate controlJdbc;
   private final TransactionTemplate transactions;
   private final PaymentService payments;
   private final LedgerService ledger;
@@ -63,6 +64,7 @@ public class RefundService {
       OutboxService outbox,
       Clock clock) {
     this.jdbc = jdbc;
+    this.controlJdbc = jdbc;
     this.transactions = transactions;
     this.payments = payments;
     this.ledger = ledger;
@@ -93,7 +95,7 @@ public class RefundService {
             return existing.getFirst();
           }
           var enabled =
-              jdbc.query(
+              controlJdbc.query(
                   "SELECT enabled FROM merchants WHERE id=?",
                   (rs, row) -> rs.getBoolean(1),
                   merchantId);
@@ -128,6 +130,17 @@ public class RefundService {
         });
   }
 
+  public RefundService forShard(
+      JdbcTemplate selected,
+      TransactionTemplate tx,
+      PaymentService localPayments,
+      LedgerService localLedger,
+      OutboxService localOutbox) {
+    var local = new RefundService(selected, tx, localPayments, localLedger, localOutbox, clock);
+    local.controlJdbc = controlJdbc;
+    return local;
+  }
+
   /** Internal bounded lookup; channel callers still verify each record's merchant. */
   public java.util.Map<String, RefundView> loadForChannelTasks(java.util.Collection<String> ids) {
     Objects.requireNonNull(ids);
@@ -155,6 +168,10 @@ public class RefundService {
   }
 
   public RefundView get(String merchantId, String id) {
+    return get(jdbc, merchantId, id);
+  }
+
+  public static RefundView get(JdbcTemplate jdbc, String merchantId, String id) {
     var rows =
         jdbc.query("SELECT * FROM refunds WHERE id=? AND merchant_id=?", MAPPER, id, merchantId);
     if (rows.isEmpty()) {

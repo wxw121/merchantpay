@@ -5,6 +5,7 @@ import dev.merchantpay.platform.finance.*;
 import dev.merchantpay.platform.ledger.LedgerService;
 import dev.merchantpay.platform.outbox.*;
 import java.time.Clock;
+import java.util.Locale;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.core.io.ClassPathResource;
@@ -21,7 +22,7 @@ abstract class FinanceFixture extends FinancialFixture {
   TransactionTemplate tx;
 
   @BeforeEach
-  void financeSchema() {
+  void financeSchema() throws Exception {
     for (String file :
         new String[] {
           "V4__reconciliation.sql",
@@ -29,6 +30,22 @@ abstract class FinanceFixture extends FinancialFixture {
           "V19__financial_workflows.sql"
         })
       ScriptUtils.executeSqlScript(schemaConnection, new ClassPathResource("db/migration/" + file));
+    // H2 cannot parse MySQL's combined DROP/ADD PRIMARY KEY in V32.
+    jdbc.execute(
+        "ALTER TABLE settlement_lines ADD COLUMN physical_shard TINYINT NOT NULL DEFAULT 0");
+    replacePrimaryKey("settlement_lines", "settlement_id,revision,physical_shard,entry_id");
+    jdbc.execute(
+        "ALTER TABLE settlement_reservations ADD COLUMN physical_shard TINYINT NOT NULL DEFAULT 0");
+    replacePrimaryKey("settlement_reservations", "physical_shard,entry_id");
+    jdbc.execute("ALTER TABLE finance_settlements ADD COLUMN source_routes_hash VARCHAR(64)");
+    jdbc.execute("ALTER TABLE finance_settlements ADD COLUMN source_event_watermarks VARCHAR(120)");
+    jdbc.execute(
+        "CREATE TABLE sharded_settlement_cursors (merchant_id VARCHAR(64) NOT NULL,"
+            + "physical_shard TINYINT NOT NULL,last_entry_id BIGINT NOT NULL DEFAULT 0,"
+            + "PRIMARY KEY(merchant_id,physical_shard))");
+    ScriptUtils.executeSqlScript(
+        schemaConnection,
+        new ClassPathResource("db/migration/V33__sharded_adjustment_intents.sql"));
     tx = new TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
     support = new FinanceSupport(jdbc, tx, Clock.systemUTC());
     var events =
@@ -38,6 +55,18 @@ abstract class FinanceFixture extends FinancialFixture {
             false,
             new EventJournal(jdbc, Clock.systemUTC(), JsonMapper.builder().build(), "POLLING"));
     adjustments = new AdjustmentService(support, new LedgerService(jdbc), events);
+  }
+
+  private void replacePrimaryKey(String table, String columns) throws Exception {
+    try (var keys =
+        schemaConnection.getMetaData().getPrimaryKeys(null, null, table.toUpperCase(Locale.ROOT))) {
+      if (!keys.next()) throw new IllegalStateException("Missing fixture primary key: " + table);
+      String name = keys.getString("PK_NAME");
+      if (name == null || !name.matches("[A-Za-z0-9_]+"))
+        throw new IllegalStateException("Invalid fixture primary key: " + table);
+      jdbc.execute("ALTER TABLE " + table + " DROP CONSTRAINT " + name);
+      jdbc.execute("ALTER TABLE " + table + " ADD PRIMARY KEY(" + columns + ")");
+    }
   }
 
   String issue(String paymentId) {

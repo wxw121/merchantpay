@@ -28,6 +28,10 @@ public class LedgerService {
 
   public record Entry(String account, String side, long amount) {}
 
+  public LedgerService forShard(JdbcTemplate selected) {
+    return new LedgerService(selected, orderedIds);
+  }
+
   public void postPayment(
       String paymentId, String merchantId, long amount, long fee, Instant time) {
     post(
