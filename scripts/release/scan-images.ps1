@@ -25,8 +25,10 @@ try {
         $taskBlocking=@($taskVulns | Where-Object {$_.Severity -in @('HIGH','CRITICAL')})
         $taskResults+=@{module=$taskImage.module;id=$taskImage.id;complete=($taskReport.SchemaVersion -gt 0 -and $taskReport.Results.Count -gt 0);findings=$taskVulns.Count;highOrCritical=$taskBlocking.Count;results=$taskReport.Results.Count;os=$taskReport.Metadata.OS;report=$taskOutput;sha256=(Get-FileHash -LiteralPath $taskOutput -Algorithm SHA256).Hash}
         Write-Output ('Scan result: '+$taskImage.module+' highOrCritical='+$taskBlocking.Count)
-        foreach($taskFinding in $taskBlocking) {
-            Write-Output ('Blocking finding: '+$taskImage.module+' '+$taskFinding.VulnerabilityID+' '+$taskFinding.PkgName+' '+$taskFinding.InstalledVersion+' -> '+$taskFinding.FixedVersion)
+        foreach($taskResult in $taskReport.Results) {
+            foreach($taskFinding in @($taskResult.Vulnerabilities | Where-Object {$_.Severity -in @('HIGH','CRITICAL')})) {
+                Write-Output ('Blocking finding: '+$taskImage.module+' '+$taskResult.Target+' '+$taskFinding.VulnerabilityID+' '+$taskFinding.PkgName+' '+$taskFinding.InstalledVersion+' -> '+$taskFinding.FixedVersion)
+            }
         }
     }
     $taskPassed=($taskResults.Count -eq $taskManifest.images.Count -and $taskResults.Count -gt 0 -and @($taskResults | Where-Object {$_.complete -ne $true -or $_.highOrCritical -gt 0}).Count -eq 0)
