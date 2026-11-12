@@ -160,7 +160,7 @@ it("submits the displayed cancellation version and leaves conflicts visible", as
     path: "/api/console/shards/plans/plan-one/cancel",
     body: { expectedVersion: 9 },
   });
-  expect(await screen.findByText("计划版本已变化")).toBeVisible();
+  await waitFor(() => expect(screen.getByText("计划版本已变化")).toBeVisible());
   expect(screen.getByRole("dialog")).toBeVisible();
 });
 
