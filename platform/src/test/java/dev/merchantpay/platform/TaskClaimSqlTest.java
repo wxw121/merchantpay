@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionSystemException;
@@ -173,6 +174,28 @@ class TaskClaimSqlTest extends FinancialFixture {
       assertThat(all.stream().map(TaskQueue.Task::id).distinct()).hasSize(32);
       assertThat(all.stream().map(TaskQueue.Task::token).distinct()).hasSize(32);
     }
+  }
+
+  @Test
+  void deadlockedBulkClaimRetriesAfterRollback() {
+    seed(2);
+    var attempts = new AtomicInteger();
+    var db =
+        new JdbcTemplate(jdbc.getDataSource()) {
+          @Override
+          public int update(String sql, Object... args) {
+            if (sql.startsWith("UPDATE outbox_tasks SET status='RUNNING'")
+                && attempts.getAndIncrement() == 0)
+              throw new CannotAcquireLockException("injected deadlock");
+            return super.update(sql, args);
+          }
+        };
+    assertThat(queue(db, clock, true).claimBatch(2)).hasSize(2);
+    assertThat(attempts.get()).isEqualTo(2);
+    assertThat(
+            jdbc.queryForObject(
+                "SELECT COUNT(*) FROM outbox_tasks WHERE attempts=1", Integer.class))
+        .isEqualTo(2);
   }
 
   @Test

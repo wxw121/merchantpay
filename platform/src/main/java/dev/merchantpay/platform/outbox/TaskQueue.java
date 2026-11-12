@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -163,6 +164,25 @@ public class TaskQueue {
       throw new IllegalStateException(
           "Claim tasks outside a business transaction so leases commit before dispatch");
     }
+    for (int attempt = 0; ; attempt++) {
+      try {
+        return claimOnce(limit, queueClass);
+      } catch (CannotAcquireLockException failure) {
+        // A deadlocked transaction has rolled back. Select and lease again in a new transaction.
+        if (attempt == 2
+            || org.springframework.transaction.support.TransactionSynchronizationManager
+                .isActualTransactionActive()) throw failure;
+        try {
+          Thread.sleep(5L << attempt);
+        } catch (InterruptedException interrupted) {
+          Thread.currentThread().interrupt();
+          throw new IllegalStateException("Interrupted while retrying task claim", interrupted);
+        }
+      }
+    }
+  }
+
+  private List<Task> claimOnce(int limit, String queueClass) {
     return transactions.execute(
         tx -> {
           var now = Timestamp.from(clock.instant());
