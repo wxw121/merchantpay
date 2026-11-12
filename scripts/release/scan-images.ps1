@@ -27,7 +27,8 @@ try {
         Write-Output ('Scan result: '+$taskImage.module+' highOrCritical='+$taskBlocking.Count)
         foreach($taskResult in $taskReport.Results) {
             foreach($taskFinding in @($taskResult.Vulnerabilities | Where-Object {$_.Severity -in @('HIGH','CRITICAL')})) {
-                Write-Output ('Blocking finding: '+$taskImage.module+' '+$taskResult.Target+' '+$taskFinding.VulnerabilityID+' '+$taskFinding.PkgName+' '+$taskFinding.InstalledVersion+' -> '+$taskFinding.FixedVersion)
+                $taskLocations=@($taskResult.Packages | Where-Object {$_.Name -eq $taskFinding.PkgName -and $_.Version -eq $taskFinding.InstalledVersion} | ForEach-Object FilePath | Sort-Object -Unique)
+                Write-Output ('Blocking finding: '+$taskImage.module+' '+$taskResult.Target+' '+$taskFinding.VulnerabilityID+' '+$taskFinding.PkgName+' '+$taskFinding.InstalledVersion+' -> '+$taskFinding.FixedVersion+' path='+$taskFinding.PkgPath+' files='+($taskLocations -join ','))
             }
         }
     }
