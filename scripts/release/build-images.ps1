@@ -14,7 +14,7 @@ try {
     $taskImages=@()
     foreach($taskModule in @('platform','simulator','console')) {
         $taskImage='merchantpay/'+$taskModule+':'+$Tag
-        & docker build --pull=false --network=none --label org.opencontainers.image.title=merchantpay --tag $taskImage $taskModule
+        & docker build --pull=false --network=default --label org.opencontainers.image.title=merchantpay --tag $taskImage $taskModule
         if($LASTEXITCODE -ne 0){throw ('Image build failed: '+$taskModule)}
         $taskInspect=(& docker image inspect $taskImage | ConvertFrom-Json)[0]
         if($LASTEXITCODE -ne 0 -or -not $taskInspect.Id){throw 'Image inspection failed.'}
