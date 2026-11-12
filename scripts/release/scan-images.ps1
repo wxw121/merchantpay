@@ -16,6 +16,7 @@ try {
         $taskExit=$LASTEXITCODE
         if($taskExit -ne 0 -or -not (Test-Path $taskOutput)) {
             $taskResults+=@{module=$taskImage.module;id=$taskImage.id;complete=$false;exitCode=$taskExit}
+            Write-Output ('Scan incomplete: '+$taskImage.module+' exit='+$taskExit)
             continue
         }
         $taskReport=Get-Content -LiteralPath $taskOutput -Raw | ConvertFrom-Json
@@ -23,6 +24,10 @@ try {
         $taskVulns=@($taskReport.Results | ForEach-Object Vulnerabilities | Where-Object { $null -ne $_ })
         $taskBlocking=@($taskVulns | Where-Object {$_.Severity -in @('HIGH','CRITICAL')})
         $taskResults+=@{module=$taskImage.module;id=$taskImage.id;complete=($taskReport.SchemaVersion -gt 0 -and $taskReport.Results.Count -gt 0);findings=$taskVulns.Count;highOrCritical=$taskBlocking.Count;results=$taskReport.Results.Count;os=$taskReport.Metadata.OS;report=$taskOutput;sha256=(Get-FileHash -LiteralPath $taskOutput -Algorithm SHA256).Hash}
+        Write-Output ('Scan result: '+$taskImage.module+' highOrCritical='+$taskBlocking.Count)
+        foreach($taskFinding in $taskBlocking) {
+            Write-Output ('Blocking finding: '+$taskImage.module+' '+$taskFinding.VulnerabilityID+' '+$taskFinding.PkgName+' '+$taskFinding.InstalledVersion+' -> '+$taskFinding.FixedVersion)
+        }
     }
     $taskPassed=($taskResults.Count -eq $taskManifest.images.Count -and $taskResults.Count -gt 0 -and @($taskResults | Where-Object {$_.complete -ne $true -or $_.highOrCritical -gt 0}).Count -eq 0)
     @{at=[DateTimeOffset]::UtcNow.ToString('o');scanner=((& trivy --version) -join "`n");images=$taskResults;imageVulnerabilityGatePassed=$taskPassed;jdkVendorReviewRequired=$true;hostWindowsOsCovered=$false} | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $taskFolder 'summary.json')
