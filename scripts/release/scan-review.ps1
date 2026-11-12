@@ -16,7 +16,9 @@ function Get-ScanReview {
     $blocking=@()
     foreach($result in $Report.Results) {
         foreach($finding in @($result.Vulnerabilities | Where-Object {$_.Severity -in @('HIGH','CRITICAL')})) {
-            $key=($Module,$finding.PkgPath,$finding.PkgName,$finding.InstalledVersion,$finding.VulnerabilityID) -join '|'
+            # Trivy uses PkgPath for nested JARs and Result.Target for compiled binaries.
+            $location=if($finding.PkgPath){$finding.PkgPath}else{$result.Target}
+            $key=($Module,$location,$finding.PkgName,$finding.InstalledVersion,$finding.VulnerabilityID) -join '|'
             if($rules.ContainsKey($key) -and $Now -lt $expires) {
                 [void]$seen.Add($key)
                 $reviewed+=,$finding

@@ -64,6 +64,22 @@
       "version": "2.22.2",
       "cves": ["CVE-2026-91776", "CVE-2026-91777"],
       "reason": "Parquet uses a fixed archive schema without attacker-provided polymorphic type IDs or object identities; the patched shaded release is not yet available."
+    },
+    {
+      "module": "prometheus",
+      "path": "bin/prometheus",
+      "package": "golang.org/x/net",
+      "version": "v0.61.0",
+      "cves": ["CVE-2026-78661"],
+      "reason": "The advisory affects x/net/html Parse functions. This opt-in service binds only to loopback and its configured scrape targets expose metrics, not HTML; no reachable call to the affected parser is known, but reachability is not formally proven. Upstream v3.16.0 still uses x/net v0.61.0."
+    },
+    {
+      "module": "prometheus",
+      "path": "bin/promtool",
+      "package": "golang.org/x/net",
+      "version": "v0.61.0",
+      "cves": ["CVE-2026-78661"],
+      "reason": "The advisory affects x/net/html Parse functions. The configured service runs prometheus, not promtool; no application route executes this binary. Upstream v3.16.0 still uses x/net v0.61.0."
     }
   ]
 }

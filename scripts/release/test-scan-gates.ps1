@@ -8,7 +8,7 @@ Write-Output 'Both verification entries gate application and infrastructure scan
 . (Join-Path $PSScriptRoot 'scan-review.ps1')
 $taskPolicy=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'scan-reviewed-exceptions.json') -Raw | ConvertFrom-Json
 $taskNow=[datetimeoffset]::Parse('2026-11-12T00:00:00Z')
-$taskFindings=@(foreach($taskRule in $taskPolicy.rules) {
+$taskFindings=@(foreach($taskRule in @($taskPolicy.rules | Where-Object module -eq 'platform')) {
     foreach($taskCve in $taskRule.cves) {
         [pscustomobject]@{Severity='HIGH';PkgPath=$taskRule.path;PkgName=$taskRule.package;InstalledVersion=$taskRule.version;VulnerabilityID=$taskCve}
     }
@@ -36,6 +36,16 @@ $taskReview=Get-ScanReview -Module platform -Report $taskReport -Policy $taskPol
 if($taskReview.blocking.Count -ne 16 -or $taskReview.stale.Count -ne 16){throw 'Expired review must block all findings.'}
 $taskReview=Get-ScanReview -Module mysql -Report $taskReport -Policy $taskPolicy -Now $taskNow
 if($taskReview.reviewed.Count -ne 0 -or $taskReview.blocking.Count -ne 16 -or $taskReview.stale.Count -ne 0){throw 'Review cannot spill into infrastructure images.'}
+$taskPrometheusResults=@(foreach($taskRule in @($taskPolicy.rules | Where-Object module -eq 'prometheus')) {
+    [pscustomobject]@{Target=$taskRule.path;Vulnerabilities=@([pscustomobject]@{Severity='HIGH';PkgPath='';PkgName=$taskRule.package;InstalledVersion=$taskRule.version;VulnerabilityID=$taskRule.cves[0]})}
+})
+if($taskPrometheusResults.Count -ne 2){throw 'Prometheus review must name both compiled binaries.'}
+$taskPrometheusReport=[pscustomobject]@{Results=$taskPrometheusResults}
+$taskReview=Get-ScanReview -Module prometheus -Report $taskPrometheusReport -Policy $taskPolicy -Now $taskNow
+if($taskReview.reviewed.Count -ne 2 -or $taskReview.blocking.Count -ne 0 -or $taskReview.stale.Count -ne 0){throw 'Exact Prometheus findings should match both rules.'}
+$taskPrometheusResults[1].Target='bin/unreviewed'
+$taskReview=Get-ScanReview -Module prometheus -Report $taskPrometheusReport -Policy $taskPolicy -Now $taskNow
+if($taskReview.reviewed.Count -ne 1 -or $taskReview.blocking.Count -ne 1 -or $taskReview.stale.Count -ne 1){throw 'Changed compiled binary must block.'}
 if(Test-ScanGate -Results @(@{complete=$false;unreviewedHighOrCritical=0;staleReviewRules=@()}) -ExpectedImages 1){throw 'Incomplete scan must fail the gate.'}
 if(Test-ScanGate -Results @(@{complete=$true;staleReviewRules=@()}) -ExpectedImages 1){throw 'Missing unreviewed count must fail the gate.'}
-Write-Output 'Exact reviewed findings, new findings, expiry, stale rules and incomplete scans are gated.'
+Write-Output 'Exact reviewed JAR and binary findings, new findings, expiry, stale rules and incomplete scans are gated.'
