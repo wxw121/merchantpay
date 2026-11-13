@@ -1,0 +1,72 @@
+name: V3 remote smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev/v3]
+    paths:
+      - .github/workflows/v3-remote-smoke.yml
+      - platform/src/test/java/dev/merchantpay/platform/MySqlFourPhysicalSourcesSmokeTest.java
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Record remote runner and scope
+        run: |
+          mkdir -p .work/v3-remote-smoke
+          {
+            echo "commit=$GITHUB_SHA"
+            echo "run=$GITHUB_RUN_ID"
+            echo "runner=$RUNNER_OS/$RUNNER_ARCH"
+            echo "cpu=$(nproc)"
+            echo "memory_kib=$(awk '/MemTotal:/ {print $2}' /proc/meminfo)"
+            echo "scope=four physical MySQL, Flyway V50, shard ownership, CDC/Kafka, S3, archive and analytics gates"
+            echo "excluded=Kubernetes deployment, Flink/ClickHouse execution, full cutover and reverse drills, load and 24-hour acceptance"
+          } > .work/v3-remote-smoke/scope.txt
+      - name: Build MySQL and object storage test images on remote runner
+        shell: pwsh
+        run: ./scripts/release/build-infrastructure.ps1
+      - name: Start remote object storage fixture
+        run: |
+          docker run -d --name merchantpay-v3-smoke-s3 -p 127.0.0.1:19000:9000 \
+            -e RUSTFS_ACCESS_KEY=integration-test \
+            -e RUSTFS_SECRET_KEY=integration-test-secret \
+            merchantpay/storage:v1-local /data
+          for n in $(seq 1 30); do
+            if curl -s -o /dev/null http://127.0.0.1:19000; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: Run R3 remote integration smoke
+        run: |
+          set -o pipefail
+          mvn -B -ntp -pl platform \
+            -Dtest=MySqlFourPhysicalSourcesSmokeTest,MySqlShardTransactionsTest,MySqlShardMoneyTest,MySqlCdcPipelineTest,S3StorageTest,HistoryArchiveServiceTest,HistoryEventRetirementTest,AnalyticsPublicationServiceTest \
+            -Dmerchantpay.test.s3-endpoint=http://127.0.0.1:19000 \
+            test 2>&1 | tee .work/v3-remote-smoke/maven.log
+      - name: Run R3 operational gate tests
+        run: |
+          set -o pipefail
+          python -m unittest discover -s scripts/v3 -p 'test_*.py' -v 2>&1 \
+            | tee .work/v3-remote-smoke/python.log
+      - name: Save remote smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v3-remote-smoke-${{ github.run_id }}
+          path: |
+            .work/v3-remote-smoke/
+            platform/target/surefire-reports/*.xml
+          if-no-files-found: error
+          retention-days: 7
