@@ -69,9 +69,7 @@ class MySqlFourPhysicalSourcesSmokeTest {
         int selected = physical;
         long epoch = physical == 0 ? 1 : 2;
         routes.write(
-            selected,
-            epoch,
-            sql -> sql.update("INSERT INTO tx_probe VALUES (1,?)", selected));
+            selected, epoch, sql -> sql.update("INSERT INTO tx_probe VALUES (1,?)", selected));
         Integer actual =
             routes.read(
                 selected,

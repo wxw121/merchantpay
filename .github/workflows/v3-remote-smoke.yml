@@ -22,10 +22,6 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
-      - name: Check Java formatting on remote runner
-        run: |
-          mvn -B -ntp -pl platform fmt:format
-          git diff --exit-code -- platform/src/main/java platform/src/test/java
       - name: Record remote runner and scope
         run: |
           mkdir -p .work/v3-remote-smoke
@@ -38,6 +34,10 @@ jobs:
             echo "scope=four physical MySQL, Flyway V50, shard ownership, CDC/Kafka, S3, archive and analytics gates"
             echo "excluded=Kubernetes deployment, Flink/ClickHouse execution, full cutover and reverse drills, load and 24-hour acceptance"
           } > .work/v3-remote-smoke/scope.txt
+      - name: Check Java formatting on remote runner
+        run: |
+          mvn -B -ntp -pl platform fmt:format
+          git diff --exit-code -- platform/src/main/java platform/src/test/java
       - name: Build MySQL and object storage test images on remote runner
         shell: pwsh
         run: ./scripts/release/build-infrastructure.ps1
