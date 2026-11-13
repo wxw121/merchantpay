@@ -72,13 +72,13 @@ class MySqlFourPhysicalSourcesSmokeTest {
             selected,
             epoch,
             sql -> sql.update("INSERT INTO tx_probe VALUES (1,?)", selected));
-        assertThat(
-                routes.read(
-                    selected,
-                    sql ->
-                        sql.queryForObject(
-                            "SELECT physical_shard FROM tx_probe WHERE id=1", Integer.class)))
-            .isEqualTo(selected);
+        Integer actual =
+            routes.read(
+                selected,
+                sql ->
+                    sql.queryForObject(
+                        "SELECT physical_shard FROM tx_probe WHERE id=1", Integer.class));
+        assertThat(actual).isEqualTo(selected);
         assertThat(
                 new JdbcTemplate(sources.get(selected))
                     .queryForObject("SELECT COUNT(*) FROM tx_probe", Long.class))
