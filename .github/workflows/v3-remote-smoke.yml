@@ -22,6 +22,10 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
+      - name: Check Java formatting on remote runner
+        run: |
+          mvn -B -ntp -pl platform fmt:format
+          git diff --exit-code -- platform/src/main/java platform/src/test/java
       - name: Record remote runner and scope
         run: |
           mkdir -p .work/v3-remote-smoke
