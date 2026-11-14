@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import dev.merchantpay.platform.channel.ChannelGateway;
+import dev.merchantpay.platform.channel.ChannelTransport;
 import dev.merchantpay.platform.channel.InboxService;
 import dev.merchantpay.platform.outbox.TaskQueue;
 import dev.merchantpay.platform.reconciliation.ExportService;
@@ -23,6 +24,7 @@ class TaskWorkerConcurrencyTest {
   @Test
   void emptyPollsDoNotResetFairnessWhileTheOnlyWorkerIsBlocked() throws Exception {
     var queue = mock(TaskQueue.class);
+    when(queue.notificationMayRun(any())).thenReturn(true);
     var gateway = mock(ChannelGateway.class);
     var inbox = mock(InboxService.class);
     var notifications = mock(NotificationService.class);
@@ -104,6 +106,7 @@ class TaskWorkerConcurrencyTest {
   @org.junit.jupiter.params.provider.ValueSource(ints = {1, 2})
   void smallGlobalBudgetsStillMakeProgressOnEveryContinuouslyBackloggedLane(int budget) {
     var queue = mock(TaskQueue.class);
+    when(queue.notificationMayRun(any())).thenReturn(true);
     var gateway = mock(ChannelGateway.class);
     var inbox = mock(InboxService.class);
     var notifications = mock(NotificationService.class);
@@ -169,6 +172,7 @@ class TaskWorkerConcurrencyTest {
   @Test
   void configuredBudgetUsesAllSlotsWithoutExceedingClaimBoundsOrLosingPermits() {
     var queue = mock(TaskQueue.class);
+    when(queue.notificationMayRun(any())).thenReturn(true);
     var gateway = mock(ChannelGateway.class);
     var inbox = mock(InboxService.class);
     var notifications = mock(NotificationService.class);
@@ -246,6 +250,7 @@ class TaskWorkerConcurrencyTest {
             "merchantpay.tasks-fast-concurrency=96", "merchantpay.workers-enabled=true")
         .withBean(TaskQueue.class, () -> queue)
         .withBean(ChannelGateway.class, () -> gateway)
+        .withBean(ChannelTransport.class, () -> mock(ChannelTransport.class))
         .withBean(InboxService.class, () -> inbox)
         .withBean(NotificationService.class, () -> notifications)
         .withBean(JdbcTemplate.class, () -> mock(JdbcTemplate.class))

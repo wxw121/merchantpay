@@ -57,12 +57,102 @@ spring:
             user-info-uri: ${OIDC_BASE_URL:http://127.0.0.1:8180}/realms/merchantpay/protocol/openid-connect/userinfo
             user-name-attribute: sub
 merchantpay:
+  analytics:
+    flink-enabled: ${FLINK_ANALYTICS_ENABLED:false}
+    publication-enabled: ${ANALYTICS_PUBLICATION_ENABLED:false}
+    release-key: ${ANALYTICS_RELEASE_KEY:}
+  history:
+    archive-enabled: ${HISTORY_ARCHIVE_ENABLED:false}
+    retire-enabled: ${HISTORY_EVENT_RETIRE_ENABLED:false}
+  sharding:
+    reverse-enabled: ${SHARD_REVERSE_ENABLED:false}
+    migration-quiesce-enabled: ${SHARD_MIGRATION_QUIESCE_ENABLED:false}
+    migration-copy-enabled: ${SHARD_MIGRATION_COPY_ENABLED:false}
+    migration-batch-enabled: ${SHARD_MIGRATION_BATCH_ENABLED:false}
+    migration-cutover-enabled: ${SHARD_MIGRATION_CUTOVER_ENABLED:false}
+    cdc-enabled: ${SHARD_CDC_ENABLED:false}
+    projection-enabled: ${SHARD_PROJECTION_ENABLED:false}
+    projection-consumer-enabled: ${SHARD_PROJECTION_CONSUMER_ENABLED:false}
+    projection-worker-enabled: ${SHARD_PROJECTION_WORKER_ENABLED:false}
+    enabled: ${SHARD_EXACT_READS_ENABLED:false}
+    money-writes-enabled: ${SHARD_MONEY_WRITES_ENABLED:false}
+    target-http-writes-enabled: ${SHARD_TARGET_HTTP_WRITES_ENABLED:false}
+    channel-workers-enabled: ${SHARD_CHANNEL_WORKERS_ENABLED:false}
+    receipt-connections: ${SHARD_RECEIPT_CONNECTIONS:2}
+    connections-per-shard: ${SHARD_CONNECTIONS_PER_SHARD:2}
+    targets:
+      1:
+        url: ${SHARD_1_DATABASE_URL:}
+        username: ${SHARD_1_DATABASE_USER:}
+        password: ${SHARD_1_DATABASE_PASSWORD:}
+      2:
+        url: ${SHARD_2_DATABASE_URL:}
+        username: ${SHARD_2_DATABASE_USER:}
+        password: ${SHARD_2_DATABASE_PASSWORD:}
+      3:
+        url: ${SHARD_3_DATABASE_URL:}
+        username: ${SHARD_3_DATABASE_USER:}
+        password: ${SHARD_3_DATABASE_PASSWORD:}
+  v2-metrics-enabled: ${V2_METRICS_ENABLED:true}
+  shared-sessions-enabled: ${SHARED_SESSIONS_ENABLED:false}
+  console-high-risk-enabled: ${CONSOLE_HIGH_RISK_ENABLED:false}
+  console-mfa-required: ${CONSOLE_MFA_REQUIRED:false}
+  event-transport: ${EVENT_TRANSPORT:POLLING}
+  channel-controls-enabled: ${CHANNEL_CONTROLS_ENABLED:false}
+  redis-admission-enabled: ${REDIS_ADMISSION_ENABLED:false}
+  redis-uri: ${REDIS_URI:}
+  read-model-enabled: ${READ_MODEL_ENABLED:false}
+  read-model-consumer-enabled: ${READ_MODEL_CONSUMER_ENABLED:false}
+  read-model-worker-enabled: ${READ_MODEL_WORKER_ENABLED:false}
+  projection-batch-size: ${PROJECTION_BATCH_SIZE:128}
+  projection-concurrency: ${PROJECTION_CONCURRENCY:2}
+  projection-poll-delay: ${PROJECTION_POLL_DELAY:50}
+  clickhouse-url: ${CLICKHOUSE_URL:http://127.0.0.1:18123/}
+  clickhouse-user: ${CLICKHOUSE_USER:merchantpay}
+  clickhouse-password: ${CLICKHOUSE_PASSWORD:}
+  maximum-api-instances: ${MAXIMUM_API_INSTANCES:2}
+  alipay:
+    enabled: ${ALIPAY_SANDBOX_ENABLED:false}
+    gateway: ${ALIPAY_SANDBOX_GATEWAY:https://openapi.alipaydev.com/gateway.do}
+    app-id: ${ALIPAY_APP_ID:}
+    private-key: ${ALIPAY_PRIVATE_KEY:}
+    public-key: ${ALIPAY_PUBLIC_KEY:}
+    seller-id: ${ALIPAY_SELLER_ID:}
+    notify-url: ${ALIPAY_NOTIFY_URL:}
+  result-write-only-enabled: ${RESULT_WRITE_ONLY_ENABLED:false}
+  locked-evidence-enabled: ${LOCKED_EVIDENCE_ENABLED:false}
+  notification-task-prefetch: ${NOTIFICATION_TASK_PREFETCH:false}
+  worker-queues: ${WORKER_QUEUES:ALL}
+  events-consumer-enabled: ${EVENT_CONSUMER_ENABLED:false}
+  events-topic: ${EVENTS_TOPIC:outbox.event.merchantpay}
   api-max-inflight: ${API_MAX_INFLIGHT:16}
+  api-quota-dedicated-executor: ${API_QUOTA_DEDICATED_EXECUTOR:false}
+  api-nonce-coalesced: ${API_NONCE_COALESCED:false}
+  api-admission-write-bias: ${API_ADMISSION_WRITE_BIAS:false}
+  api-admission-borrow: ${API_ADMISSION_BORROW:false}
   payment-max-inflight-per-shard: ${PAYMENT_MAX_INFLIGHT_PER_SHARD:16}
+  payment-admission-slots: ${PAYMENT_ADMISSION_SLOTS:false}
+  payment-admission-slot-borrow: ${PAYMENT_ADMISSION_SLOT_BORROW:false}
+  outbox-ordered-ids: ${OUTBOX_ORDERED_IDS:false}
+  ledger-ordered-ids: ${LEDGER_ORDERED_IDS:false}
+  inbox-terminal-fast-path: ${INBOX_TERMINAL_FAST_PATH:false}
+  notification-write-batch-size: ${NOTIFICATION_WRITE_BATCH_SIZE:1}
+  notification-write-batch-delay: ${NOTIFICATION_WRITE_BATCH_DELAY:0ms}
+  channel-result-batch-size: ${CHANNEL_RESULT_BATCH_SIZE:1}
+  channel-result-batch-delay: ${CHANNEL_RESULT_BATCH_DELAY:0ms}
+  payment-ordered-ids: ${PAYMENT_ORDERED_IDS:false}
+  channel-attempt-ordered-ids: ${CHANNEL_ATTEMPT_ORDERED_IDS:false}
+  channel-task-prefetch: ${CHANNEL_TASK_PREFETCH:false}
+  channel-receipt-bulk-sql: ${CHANNEL_RECEIPT_BULK_SQL:false}
+  channel-evidence-batch-size: ${CHANNEL_EVIDENCE_BATCH_SIZE:1}
+  channel-evidence-batch-delay: ${CHANNEL_EVIDENCE_BATCH_DELAY:0ms}
   database-isolation-enabled: ${DATABASE_ISOLATION_ENABLED:false}
   database-api-connections: ${DATABASE_API_CONNECTIONS:12}
   channel-http-connections-per-route: ${CHANNEL_HTTP_CONNECTIONS_PER_ROUTE:64}
   tasks-fast-concurrency: ${FAST_WORKER_CONCURRENCY:30}
+  task-completion-bulk-sql: ${TASK_COMPLETION_BULK_SQL:false}
+  task-claim-bulk-sql: ${TASK_CLAIM_BULK_SQL:false}
+  tasks-archive-enabled: ${TASK_ARCHIVE_ENABLED:true}
   console-url: ${CONSOLE_URL:http://127.0.0.1:5173}
   metrics-password: ${METRICS_PASSWORD}
   master-key: ${MASTER_KEY}

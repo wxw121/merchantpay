@@ -112,7 +112,7 @@ $env:LOAD_NOTIFICATION_URL='http://simulator:9091/merchant-webhook'
 
 默认备份面向独立容器项目，要求任务/渠道排空，短暂停止该项目应用、模拟器、Keycloak及可选本地S3。`-Source native`改为核验并停止本项目记录的三个原生进程及原生Keycloak，打包原生目录；停服前后均确认没有S3业务引用，避免漏备共享对象。MySQL使用single-transaction逻辑备份，平台证据、H2、身份及精确密钥版本一并打包。`finally`恢复原运行服务和原生运行模式，并等待身份及HTTP健康；失败使命令报错，备份文件生成与源服务恢复分开记录在`backup-<Id>.json`和`backup-<Id>-source.json`。备份ID不可复用，重复ID拒绝且原文件摘要不变。文件清单逐项保存SHA-256。
 
-`.data/backups/<Id>.dpapi`使用Windows CurrentUser DPAPI加密。默认container来源最多256MiB**压缩归档**，恢复加密输入上限257MiB；显式native来源最多1GiB压缩归档，恢复输入上限1025MiB，且必须与归档来源匹配。这些是加密缓冲区限制，不是原始文件总和或总进程内存上限。原生历史集实测明文2033487314字节、压缩557470054字节。依赖创建备份的Windows用户/主机，跨主机密钥托管、D1备份容量和RPO/RTO未认证。`.data/restores/<Id>` **是解密后的敏感恢复副本**，包含运行密钥和业务数据，只用于本机隔离验证，不能作为去密钥证据分享。
+`.data/backups/<Id>.dpapi`使用Windows CurrentUser DPAPI加密。container与native来源均最多1GiB**压缩归档**，恢复加密输入上限1025MiB，且必须与归档来源匹配；容器历史数据增长后，原256MiB上限已经不足。这些是加密缓冲区限制，不是原始文件总和或总进程内存上限。原生历史集实测明文2033487314字节、压缩557470054字节。依赖创建备份的Windows用户/主机，跨主机密钥托管、D1备份容量和RPO/RTO未认证。`.data/restores/<Id>` **是解密后的敏感恢复副本**，包含运行密钥和业务数据，只用于本机隔离验证，不能作为去密钥证据分享。
 
 恢复使用独立 `13309/18181/19003` 端口，校验归档、逐条渠道事实、商户密钥解密、凭证平衡/退款累计/任务、引用本地账单 SHA/导出 ZIP、身份签名公钥，以及 S3 探针对象实际字节。恢复先启用归档S3，再严格按数据库中的local/S3指针读取原对象；已有S3业务引用的账单SHA及ZIP已实际验证。`scripts/release/test-restored-objects.ps1 -Id <已恢复ID>` 在已有非空S3恢复集上验证禁用S3必须失败，不修改资金行。测试结束停止恢复容器，保留副本供检查，不替换源部署。
 

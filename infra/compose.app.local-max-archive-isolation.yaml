@@ -1,0 +1,13 @@
+# Local benchmark candidate; append after compose.app.local-max-admission.yaml.
+# Pauses DONE-task archival only; live workers, replay protection, and all data remain.
+# Normal starts retain archival. Resume it before prolonged service to bound hot-table growth.
+services:
+  mysql:
+    cpus: 2
+  platform:
+    image: merchantpay/platform:local-archive-isolation
+    cpus: 1
+    environment:
+      JAVA_TOOL_OPTIONS: -Xmx1280m -XX:ActiveProcessorCount=1 -Djdk.virtualThreadScheduler.parallelism=1
+      LEDGER_ORDERED_IDS: "false"
+      TASK_ARCHIVE_ENABLED: "false"

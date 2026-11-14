@@ -2,6 +2,8 @@
 param([string]$Manifest='.work/release/images.json')
 $ErrorActionPreference='Stop'
 $taskRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+. (Join-Path $PSScriptRoot 'scan-review.ps1')
+$taskPolicy=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'scan-reviewed-exceptions.json') -Raw | ConvertFrom-Json
 Push-Location $taskRoot
 try {
     $taskManifest=Get-Content -LiteralPath $Manifest -Raw | ConvertFrom-Json
@@ -16,15 +18,25 @@ try {
         $taskExit=$LASTEXITCODE
         if($taskExit -ne 0 -or -not (Test-Path $taskOutput)) {
             $taskResults+=@{module=$taskImage.module;id=$taskImage.id;complete=$false;exitCode=$taskExit}
+            Write-Output ('Scan incomplete: '+$taskImage.module+' exit='+$taskExit)
             continue
         }
         $taskReport=Get-Content -LiteralPath $taskOutput -Raw | ConvertFrom-Json
-        $taskPackages=@($taskReport.Results | Where-Object { $_.Packages -or $_.Vulnerabilities })
         $taskVulns=@($taskReport.Results | ForEach-Object Vulnerabilities | Where-Object { $null -ne $_ })
         $taskBlocking=@($taskVulns | Where-Object {$_.Severity -in @('HIGH','CRITICAL')})
-        $taskResults+=@{module=$taskImage.module;id=$taskImage.id;complete=($taskReport.SchemaVersion -gt 0 -and $taskReport.Results.Count -gt 0);findings=$taskVulns.Count;highOrCritical=$taskBlocking.Count;results=$taskReport.Results.Count;os=$taskReport.Metadata.OS;report=$taskOutput;sha256=(Get-FileHash -LiteralPath $taskOutput -Algorithm SHA256).Hash}
+        $taskReview=Get-ScanReview -Module $taskImage.module -Report $taskReport -Policy $taskPolicy
+        $taskResults+=@{module=$taskImage.module;id=$taskImage.id;complete=($taskReport.SchemaVersion -gt 0 -and $taskReport.Results.Count -gt 0);findings=$taskVulns.Count;highOrCritical=$taskBlocking.Count;reviewedHighOrCritical=$taskReview.reviewed.Count;unreviewedHighOrCritical=$taskReview.blocking.Count;staleReviewRules=@($taskReview.stale);reviewExpiresAt=$taskReview.expiresAt;results=$taskReport.Results.Count;os=$taskReport.Metadata.OS;report=$taskOutput;sha256=(Get-FileHash -LiteralPath $taskOutput -Algorithm SHA256).Hash}
+        Write-Output ('Scan result: '+$taskImage.module+' highOrCritical='+$taskBlocking.Count+' reviewed='+$taskReview.reviewed.Count+' blocking='+$taskReview.blocking.Count+' staleRules='+@($taskReview.stale).Count)
+        foreach($taskResult in $taskReport.Results) {
+            foreach($taskFinding in @($taskResult.Vulnerabilities | Where-Object {$_.Severity -in @('HIGH','CRITICAL')})) {
+                $taskLocations=@($taskResult.Packages | Where-Object {$_.Name -eq $taskFinding.PkgName -and $_.Version -eq $taskFinding.InstalledVersion} | ForEach-Object FilePath | Sort-Object -Unique)
+                $taskDisposition=if(@($taskReview.reviewed | Where-Object {$_ -eq $taskFinding}).Count -gt 0){'Reviewed'}else{'Blocking'}
+                Write-Output ($taskDisposition+' finding: '+$taskImage.module+' '+$taskResult.Target+' '+$taskFinding.VulnerabilityID+' '+$taskFinding.PkgName+' '+$taskFinding.InstalledVersion+' -> '+$taskFinding.FixedVersion+' path='+$taskFinding.PkgPath+' files='+($taskLocations -join ','))
+            }
+        }
+        foreach($taskStale in @($taskReview.stale)){Write-Output ('Stale or expired review rule: '+$taskStale)}
     }
-    $taskPassed=($taskResults.Count -eq $taskManifest.images.Count -and $taskResults.Count -gt 0 -and @($taskResults | Where-Object {$_.complete -ne $true -or $_.highOrCritical -gt 0}).Count -eq 0)
+    $taskPassed=Test-ScanGate -Results $taskResults -ExpectedImages $taskManifest.images.Count
     @{at=[DateTimeOffset]::UtcNow.ToString('o');scanner=((& trivy --version) -join "`n");images=$taskResults;imageVulnerabilityGatePassed=$taskPassed;jdkVendorReviewRequired=$true;hostWindowsOsCovered=$false} | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $taskFolder 'summary.json')
     Write-Output ('Security reports: '+$taskFolder)
     if(-not $taskPassed){throw 'Image vulnerability gate did not pass. Missing scans are not clean scans.'}

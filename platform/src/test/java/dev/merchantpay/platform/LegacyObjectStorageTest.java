@@ -2,7 +2,7 @@ package dev.merchantpay.platform;
 
 import static org.assertj.core.api.Assertions.*;
 
-import dev.merchantpay.platform.reconciliation.ObjectStorage;
+import dev.merchantpay.platform.storage.ObjectStorage;
 import java.nio.file.*;
 import java.util.List;
 import org.junit.jupiter.api.Test;

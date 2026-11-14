@@ -1,0 +1,45 @@
+groups:
+  - name: merchantpay-v2
+    rules:
+      - alert: MerchantPayUnknownOverTwoMinutes
+        expr: merchantpay_unknown_oldest_seconds >= 120
+        labels: {severity: warning}
+        annotations: {summary: "未知交易超过两分钟，请在原渠道查证；禁止因超时释放退款预占"}
+      - alert: MerchantPayUnknownManualAttention
+        expr: merchantpay_unknown_manual > 0
+        labels: {severity: critical}
+        annotations: {summary: "未知交易超过三十分钟，进入人工关注队列"}
+      - alert: MerchantPayUnknownLongTerm
+        expr: merchantpay_unknown_long_term > 0
+        labels: {severity: warning}
+        annotations: {summary: "未知交易超过二十四小时，原持久任务继续长期查证"}
+      - alert: MerchantPayProjectionLag
+        expr: merchantpay_projection_oldest_seconds > 120
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: "查询投影延迟超过两分钟；正式账务仍查MySQL"}
+      - alert: MerchantPayProjectionDead
+        expr: merchantpay_projection_dead > 0
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: "查询投递进入死信，核对来源后重试"}
+      - alert: MerchantPayEventQuarantine
+        expr: merchantpay_events_quarantined > 0
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: "事件存在隔离记录"}
+      - alert: MerchantPayFinanceHold
+        expr: merchantpay_finance_holds > 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: "权威账务检查冻结了商户结算"}
+      - alert: MerchantPayChannelOpen
+        expr: merchantpay_channels_open > 0
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: "渠道熔断；未知交易应在原渠道查询"}
+      - alert: MerchantPayV2MetricsStale
+        expr: merchantpay_v2_metrics_staleness_seconds > 120
+        for: 1m
+        labels: {severity: warning}
+        annotations: {summary: "V2指标采集水位超过两分钟未更新"}

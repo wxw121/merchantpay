@@ -14,7 +14,7 @@ class LocalDiagnosis {
   static Map<String,Object> ioSnapshot(Connection connection) throws SQLException {
     var snapshot = new LinkedHashMap<String,Object>();
     snapshot.put("startedAt", Instant.now());
-    snapshot.put("config",query(connection,"SELECT @@server_uuid serverUuid,@@innodb_flush_log_at_trx_commit flushOnCommit,@@sync_binlog syncBinlog,@@log_bin logBin,@@innodb_buffer_pool_size bufferPoolBytes,@@performance_schema performanceSchema,@@binlog_group_commit_sync_delay binlogSyncDelayMicros,@@binlog_group_commit_sync_no_delay_count binlogNoDelayCount,@@innodb_log_writer_threads logWriterThreads").getFirst());
+    snapshot.put("config",query(connection,"SELECT @@server_uuid serverUuid,@@innodb_flush_log_at_trx_commit flushOnCommit,@@sync_binlog syncBinlog,@@log_bin logBin,@@innodb_buffer_pool_size bufferPoolBytes,@@innodb_redo_log_capacity redoCapacityBytes,@@performance_schema performanceSchema,@@binlog_group_commit_sync_delay binlogSyncDelayMicros,@@binlog_group_commit_sync_no_delay_count binlogNoDelayCount,@@innodb_log_writer_threads logWriterThreads").getFirst());
     var status = new LinkedHashMap<String,Object>();
     for (var row : query(connection,"SELECT VARIABLE_NAME,VARIABLE_VALUE FROM performance_schema.global_status WHERE VARIABLE_NAME IN ('Uptime','Innodb_buffer_pool_pages_total','Innodb_buffer_pool_pages_free','Innodb_buffer_pool_pages_dirty','"+String.join("','",IO_COUNTERS)+"') ORDER BY VARIABLE_NAME")) status.put(row.get("VARIABLE_NAME").toString(),row.get("VARIABLE_VALUE"));
     snapshot.put("status",status);
@@ -102,12 +102,13 @@ class LocalDiagnosis {
     var directory = Path.of(".work","performance"); Files.createDirectories(directory);
     String run = "diagnosis-"+Instant.now().getEpochSecond()+"-"+UUID.randomUUID().toString().substring(0,8);
     var http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
+    var metricsUrl = URI.create(System.getenv().getOrDefault("DIAG_METRICS_URL", "http://127.0.0.1:8080/actuator/prometheus"));
     String authorization = "Basic "+Base64.getEncoder().encodeToString(("metrics:"+LocalLoad.required("METRICS_PASSWORD")).getBytes(StandardCharsets.UTF_8));
     try (var connection=DriverManager.getConnection(System.getenv().getOrDefault("DATABASE_URL","jdbc:mysql://127.0.0.1:3307/merchantpay?connectionTimeZone=UTC"),properties);
          var writer=Files.newBufferedWriter(directory.resolve(run+".jsonl"))) {
       connection.setReadOnly(true); connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
       boolean admissionAvailable = ((Number)query(connection,"SELECT COUNT(*) tablesPresent FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='payment_admission'").getFirst().get("tablesPresent")).intValue() == 1;
-      Files.writeString(directory.resolve(run+".config.json"),listJson(query(connection,"SELECT @@innodb_flush_log_at_trx_commit flushOnCommit,@@sync_binlog syncBinlog,@@innodb_buffer_pool_size bufferPoolBytes,@@max_connections maxConnections,@@performance_schema performanceSchema")));
+      Files.writeString(directory.resolve(run+".config.json"),listJson(query(connection,"SELECT @@innodb_flush_log_at_trx_commit flushOnCommit,@@sync_binlog syncBinlog,@@innodb_buffer_pool_size bufferPoolBytes,@@innodb_redo_log_capacity redoCapacityBytes,@@max_connections maxConnections,@@performance_schema performanceSchema")));
       String digestSql="SELECT DIGEST,DIGEST_TEXT,COUNT_STAR,SUM_TIMER_WAIT,SUM_LOCK_TIME,SUM_ROWS_EXAMINED,SUM_ROWS_SENT,SUM_NO_INDEX_USED,SUM_ERRORS FROM performance_schema.events_statements_summary_by_digest WHERE SCHEMA_NAME='merchantpay' AND DIGEST IS NOT NULL";
       Files.writeString(directory.resolve(run+".digests-before.json"),listJson(query(connection,digestSql)));
       var ioBefore=ioSnapshot(connection);
@@ -116,11 +117,11 @@ class LocalDiagnosis {
       while (System.nanoTime()<deadline) {
         var sample=new LinkedHashMap<String,Object>(); sample.put("at",Instant.now()); sample.put("elapsedSeconds",(System.nanoTime()-started)/1_000_000_000d);
         try {
-          var response=http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:8080/actuator/prometheus")).timeout(Duration.ofSeconds(3)).header("Authorization",authorization).GET().build(),HttpResponse.BodyHandlers.ofString());
+          var response=http.send(HttpRequest.newBuilder(metricsUrl).timeout(Duration.ofSeconds(3)).header("Authorization",authorization).GET().build(),HttpResponse.BodyHandlers.ofString());
           sample.put("metricsStatus",response.statusCode());
           // Keep only numeric business/runtime metrics, never request headers or credential values.
-          if(response.statusCode()==200) sample.put("metrics",response.body().lines().filter(line -> !line.startsWith("#") && line.matches("^(hikaricp_|merchantpay_|process_cpu_|system_cpu_|jvm_gc_pause_|http_server_requests_|jvm_threads_).*" )).collect(java.util.stream.Collectors.joining("\n")));
-          sample.put("mysqlStatus",query(connection,"SELECT VARIABLE_NAME,VARIABLE_VALUE FROM performance_schema.global_status WHERE VARIABLE_NAME IN ('Threads_running','Threads_connected','Innodb_buffer_pool_reads','Innodb_buffer_pool_read_requests','Innodb_log_waits','Innodb_os_log_written','Innodb_data_fsyncs','Innodb_row_lock_waits','Innodb_row_lock_time','Innodb_rows_read','Innodb_rows_inserted','Innodb_rows_updated')"));
+          if(response.statusCode()==200) sample.put("metrics",response.body().lines().filter(line -> !line.startsWith("#") && line.matches("^(hikaricp_|merchantpay_|http_client_requests_|process_cpu_|system_cpu_|jvm_gc_pause_|http_server_requests_|jvm_threads_).*" )).collect(java.util.stream.Collectors.joining("\n")));
+          sample.put("mysqlStatus",query(connection,"SELECT VARIABLE_NAME,VARIABLE_VALUE FROM performance_schema.global_status WHERE VARIABLE_NAME IN ('Threads_running','Threads_connected','Innodb_buffer_pool_reads','Innodb_buffer_pool_read_requests','Innodb_buffer_pool_pages_dirty','Innodb_buffer_pool_pages_free','Innodb_redo_log_current_lsn','Innodb_redo_log_checkpoint_lsn','Innodb_redo_log_logical_size','Innodb_log_waits','Innodb_os_log_written','Innodb_data_fsyncs','Innodb_row_lock_waits','Innodb_row_lock_time','Innodb_rows_read','Innodb_rows_inserted','Innodb_rows_updated')"));
           sample.put("lockWaits",query(connection,"SELECT COUNT(*) waiting FROM performance_schema.data_lock_waits").getFirst().get("waiting"));
           sample.put("lockWaitIndexes",query(connection,"SELECT l.OBJECT_NAME,l.INDEX_NAME,l.LOCK_MODE,COUNT(*) waiting FROM performance_schema.data_lock_waits w JOIN performance_schema.data_locks l ON l.ENGINE_LOCK_ID=w.REQUESTING_ENGINE_LOCK_ID GROUP BY l.OBJECT_NAME,l.INDEX_NAME,l.LOCK_MODE"));
           sample.put("sessions",query(connection,"SELECT COMMAND,STATE,COUNT(*) sessions FROM information_schema.PROCESSLIST WHERE DB='merchantpay' GROUP BY COMMAND,STATE"));

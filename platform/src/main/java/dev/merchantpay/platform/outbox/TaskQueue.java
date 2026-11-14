@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -26,13 +27,36 @@ public class TaskQueue {
   private final TransactionTemplate transactions;
   private final TransactionTemplate completionTransactions;
   private final Clock clock;
+  private final boolean bulkSql;
+  private final boolean claimBulkSql;
 
   public TaskQueue(JdbcTemplate jdbc, TransactionTemplate transactions, Clock clock) {
+    this(jdbc, transactions, clock, false);
+  }
+
+  public TaskQueue(
+      JdbcTemplate jdbc, TransactionTemplate transactions, Clock clock, boolean bulkSql) {
+    this(jdbc, transactions, clock, bulkSql, false);
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public TaskQueue(
+      JdbcTemplate jdbc,
+      TransactionTemplate transactions,
+      Clock clock,
+      @org.springframework.beans.factory.annotation.Value(
+              "${merchantpay.task-completion-bulk-sql:false}")
+          boolean bulkSql,
+      @org.springframework.beans.factory.annotation.Value(
+              "${merchantpay.task-claim-bulk-sql:false}")
+          boolean claimBulkSql) {
     this.jdbc = jdbc;
     this.transactions = transactions;
     this.completionTransactions = new TransactionTemplate(transactions.getTransactionManager());
     this.completionTransactions.setTimeout(3);
     this.clock = clock;
+    this.bulkSql = bulkSql;
+    this.claimBulkSql = claimBulkSql;
   }
 
   public Optional<Task> claim() {
@@ -54,6 +78,74 @@ public class TaskQueue {
     return claimBatch(limit, null);
   }
 
+  public TaskQueue forShard(JdbcTemplate selected) {
+    return new TaskQueue(
+        selected,
+        new TransactionTemplate(
+            new org.springframework.jdbc.datasource.DataSourceTransactionManager(
+                selected.getDataSource())),
+        clock,
+        bulkSql,
+        claimBulkSql);
+  }
+
+  /** Called inside a pinned route transaction; caller dispatches only after its commit. */
+  public List<Task> claimBucket(int bucket, long epoch, String lane, int limit) {
+    if (!java.util.Set.of("FAST", "INBOX", "NOTIFY").contains(lane)
+        || limit < 1
+        || limit > 64
+        || bucket < 0
+        || bucket > 15
+        || epoch < 1
+        || !org.springframework.transaction.support.TransactionSynchronizationManager
+            .isActualTransactionActive())
+      throw new IllegalArgumentException("A pinned FAST/INBOX/NOTIFY claim of 1..64 is required");
+    var now = Timestamp.from(clock.instant());
+    var claimed =
+        new ArrayList<>(
+            jdbc.query(
+                "SELECT * FROM outbox_tasks WHERE status='RUNNING' AND lease_until<? AND queue_class=? AND logical_bucket=? ORDER BY lease_until,id LIMIT ? FOR UPDATE SKIP LOCKED",
+                MAPPER,
+                now,
+                lane,
+                bucket,
+                limit));
+    if (claimed.size() < limit)
+      claimed.addAll(
+          jdbc.query(
+              "SELECT * FROM outbox_tasks WHERE status='PENDING' AND due_at<=? AND queue_class=? AND logical_bucket=? ORDER BY due_at,id LIMIT ? FOR UPDATE SKIP LOCKED",
+              MAPPER,
+              now,
+              lane,
+              bucket,
+              limit - claimed.size()));
+    for (var task : claimed)
+      jdbc.update(
+          "UPDATE outbox_tasks SET status='RUNNING',attempts=?,lease_token=?,lease_until=?,lease_epoch=?,updated_at=? WHERE id=?",
+          task.attempts(),
+          task.token(),
+          Timestamp.from(clock.instant().plusSeconds(60)),
+          epoch,
+          now,
+          task.id());
+    return List.copyOf(claimed);
+  }
+
+  public void assertPinned(Task task, int bucket, long epoch) {
+    assertTaskLease(task);
+    var rows =
+        jdbc.queryForList(
+            "SELECT id FROM outbox_tasks WHERE id=? AND logical_bucket=? AND lease_epoch=? AND kind=? AND aggregate_id=? AND merchant_id=?",
+            String.class,
+            task.id(),
+            bucket,
+            epoch,
+            task.kind(),
+            task.aggregateId(),
+            task.merchantId());
+    if (rows.size() != 1) throw new LeaseLost();
+  }
+
   public List<Task> claimBatch(int limit, boolean bulk) {
     return claimBatch(limit, bulk ? "BULK" : "FAST");
   }
@@ -66,6 +158,31 @@ public class TaskQueue {
         && !java.util.Set.of("FAST", "BULK", "INBOX", "NOTIFY").contains(queueClass)) {
       throw new IllegalArgumentException("Unknown task queue class");
     }
+    if (claimBulkSql
+        && org.springframework.transaction.support.TransactionSynchronizationManager
+            .isActualTransactionActive()) {
+      throw new IllegalStateException(
+          "Claim tasks outside a business transaction so leases commit before dispatch");
+    }
+    for (int attempt = 0; ; attempt++) {
+      try {
+        return claimOnce(limit, queueClass);
+      } catch (CannotAcquireLockException failure) {
+        // A deadlocked transaction has rolled back. Select and lease again in a new transaction.
+        if (attempt == 2
+            || org.springframework.transaction.support.TransactionSynchronizationManager
+                .isActualTransactionActive()) throw failure;
+        try {
+          Thread.sleep(5L << attempt);
+        } catch (InterruptedException interrupted) {
+          Thread.currentThread().interrupt();
+          throw new IllegalStateException("Interrupted while retrying task claim", interrupted);
+        }
+      }
+    }
+  }
+
+  private List<Task> claimOnce(int limit, String queueClass) {
     return transactions.execute(
         tx -> {
           var now = Timestamp.from(clock.instant());
@@ -93,20 +210,48 @@ public class TaskQueue {
           }
           if (!tasks.isEmpty()) {
             var lease = Timestamp.from(clock.instant().plusSeconds(60));
-            jdbc.batchUpdate(
-                "UPDATE outbox_tasks SET status='RUNNING',attempts=?,lease_token=?,lease_until=?,updated_at=? WHERE id=?",
-                tasks,
-                tasks.size(),
-                (statement, task) -> {
-                  statement.setInt(1, task.attempts());
-                  statement.setString(2, task.token());
-                  statement.setTimestamp(3, lease);
-                  statement.setTimestamp(4, now);
-                  statement.setString(5, task.id());
-                });
+            if (claimBulkSql && tasks.size() > 1) {
+              claimBulk(tasks, lease, now);
+            } else {
+              jdbc.batchUpdate(
+                  "UPDATE outbox_tasks SET status='RUNNING',attempts=?,lease_token=?,lease_until=?,updated_at=? WHERE id=?",
+                  tasks,
+                  tasks.size(),
+                  (statement, task) -> {
+                    statement.setInt(1, task.attempts());
+                    statement.setString(2, task.token());
+                    statement.setTimestamp(3, lease);
+                    statement.setTimestamp(4, now);
+                    statement.setString(5, task.id());
+                  });
+            }
           }
           return List.copyOf(tasks);
         });
+  }
+
+  private void claimBulk(List<Task> tasks, Timestamp lease, Timestamp now) {
+    // The preceding SKIP LOCKED selects already own every affected row until commit.
+    // CASE preserves independently generated tokens; no worker sees this list before commit.
+    var ordered = tasks.stream().sorted(java.util.Comparator.comparing(Task::id)).toList();
+    var bindings = new ArrayList<Object>(ordered.size() * 3 + 2);
+    for (var task : ordered) {
+      bindings.add(task.id());
+      bindings.add(task.token());
+    }
+    bindings.add(lease);
+    bindings.add(now);
+    for (var task : ordered) bindings.add(task.id());
+    int changed =
+        jdbc.update(
+            "UPDATE outbox_tasks SET status='RUNNING',attempts=attempts+1,lease_token=CASE id "
+                + String.join(" ", java.util.Collections.nCopies(ordered.size(), "WHEN ? THEN ?"))
+                + " END,lease_until=?,updated_at=? WHERE id IN ("
+                + String.join(",", java.util.Collections.nCopies(ordered.size(), "?"))
+                + ")",
+            bindings.toArray());
+    if (changed != ordered.size())
+      throw new IllegalStateException("Task claim affected row count does not match locked rows");
   }
 
   public boolean complete(Task task) {
@@ -128,6 +273,7 @@ public class TaskQueue {
         .isActualTransactionActive()) {
       throw new IllegalStateException("Acknowledge tasks after the business transaction commits");
     }
+    if (bulkSql && batch.size() > 1) return completeBulk(batch);
     return completionTransactions.execute(
         tx -> {
           var results = new ArrayList<Boolean>(java.util.Collections.nCopies(batch.size(), false));
@@ -138,6 +284,61 @@ public class TaskQueue {
                   .sorted(java.util.Comparator.comparing(index -> batch.get(index).id()))
                   .toList();
           for (int index : indices) results.set(index, complete(batch.get(index)));
+          return List.copyOf(results);
+        });
+  }
+
+  private record Owner(String id, String status, String token) {}
+
+  private List<Boolean> completeBulk(List<Task> batch) {
+    return completionTransactions.execute(
+        tx -> {
+          var ids = batch.stream().map(Task::id).distinct().sorted().toList();
+          var owners = new java.util.HashMap<String, String>();
+          // PK-only predicates keep the locking read bounded to this group's rows. Locks survive
+          // until commit, preventing reclaim between ownership checks and the shared UPDATE.
+          var rows =
+              jdbc.query(
+                  "SELECT id,status,lease_token FROM outbox_tasks WHERE id IN ("
+                      + String.join(",", java.util.Collections.nCopies(ids.size(), "?"))
+                      + ") ORDER BY id FOR UPDATE",
+                  (rs, index) ->
+                      new Owner(
+                          rs.getString("id"), rs.getString("status"), rs.getString("lease_token")),
+                  ids.toArray());
+          for (var row : rows)
+            if (row.status().equals("RUNNING") && row.token() != null)
+              owners.put(row.id(), row.token());
+          var results = new ArrayList<Boolean>(java.util.Collections.nCopies(batch.size(), false));
+          var accepted = new ArrayList<Task>();
+          for (int index = 0; index < batch.size(); index++) {
+            var task = batch.get(index);
+            var owner = owners.get(task.id());
+            if (owner != null && owner.equals(task.token())) {
+              results.set(index, true);
+              accepted.add(task);
+              owners.remove(task.id()); // The same lease can win only its first input occurrence.
+            }
+          }
+          if (!accepted.isEmpty()) {
+            var bindings = new ArrayList<Object>();
+            bindings.add(Timestamp.from(clock.instant()));
+            for (var task : accepted) {
+              bindings.add(task.id());
+              bindings.add(task.token());
+            }
+            int changed =
+                jdbc.update(
+                    "UPDATE outbox_tasks SET status='DONE',lease_token=NULL,lease_until=NULL,last_error=NULL,updated_at=? WHERE status='RUNNING' AND ("
+                        + String.join(
+                            " OR ",
+                            java.util.Collections.nCopies(
+                                accepted.size(), "(id=? AND lease_token=?)"))
+                        + ")",
+                    bindings.toArray());
+            if (changed != accepted.size())
+              throw new IllegalStateException("Task completion ownership changed while locked");
+          }
           return List.copyOf(results);
         });
   }
@@ -216,21 +417,113 @@ public class TaskQueue {
         == 1;
   }
 
+  /** Move only completed, settled deliveries; both copies change in one bounded transaction. */
+  public int archiveDone(int limit) {
+    if (limit < 1 || limit > 500)
+      throw new IllegalArgumentException("Archive batch must contain 1..500 tasks");
+    return transactions.execute(
+        tx -> {
+          var ids =
+              jdbc.queryForList(
+                  "SELECT id FROM outbox_tasks WHERE status='DONE' AND updated_at<? ORDER BY updated_at,id LIMIT ? FOR UPDATE SKIP LOCKED",
+                  String.class,
+                  Timestamp.from(clock.instant().minusSeconds(86400)),
+                  limit);
+          if (ids.isEmpty()) return 0;
+          String placeholders = String.join(",", java.util.Collections.nCopies(ids.size(), "?"));
+          jdbc.update(
+              "INSERT INTO outbox_task_history SELECT * FROM outbox_tasks WHERE id IN ("
+                  + placeholders
+                  + ")",
+              ids.toArray());
+          int removed =
+              jdbc.update(
+                  "DELETE FROM outbox_tasks WHERE id IN (" + placeholders + ")", ids.toArray());
+          if (removed != ids.size()) throw new IllegalStateException("Archive task set changed");
+          return removed;
+        });
+  }
+
   public void retry(Task task, RuntimeException failure) {
     String reason = failure.getMessage();
     String safe = reason == null ? "unknown" : reason.substring(0, Math.min(1000, reason.length()));
     boolean conflict =
         failure instanceof dev.merchantpay.platform.common.ApiException error
             && error.code().equals("CHANNEL_EVIDENCE_CONFLICT");
-    // Money outcomes remain UNKNOWN when delivery exhausts; only this delivery enters DEAD.
-    jdbc.update(
-        "UPDATE outbox_tasks SET status=?,due_at=?,lease_token=NULL,lease_until=NULL,last_error=?,updated_at=? WHERE id=? AND status='RUNNING' AND lease_token=?",
-        conflict || task.attempts() >= 12 ? "DEAD" : "PENDING",
-        Timestamp.from(
-            clock.instant().plusSeconds(Math.min(3600, 1L << Math.min(task.attempts(), 11)))),
-        safe,
-        Timestamp.from(clock.instant()),
-        task.id(),
-        task.token());
+    transactions.executeWithoutResult(
+        tx -> {
+          var now = clock.instant();
+          var windows =
+              jdbc.queryForList(
+                  "SELECT retry_started_at FROM outbox_tasks WHERE id=? AND status='RUNNING' AND lease_token=? AND lease_until>? FOR UPDATE",
+                  Timestamp.class,
+                  task.id(),
+                  task.token(),
+                  Timestamp.from(now));
+          if (windows.isEmpty()) return;
+          boolean channel = TaskRecovery.channel(task.kind());
+          boolean notification = TaskRecovery.notification(task.kind());
+          var deadline = windows.getFirst().toInstant().plus(TaskRecovery.NOTIFICATION_WINDOW);
+          String stage = "STANDARD";
+          if (channel) {
+            String table = task.kind().equals("CHANNEL_REFUND") ? "refunds" : "payments";
+            var unknown =
+                jdbc.queryForList(
+                    "SELECT unknown_since FROM "
+                        + table
+                        + " WHERE id=? AND merchant_id=? AND status IN ('UNKNOWN','CLOSE_PENDING')",
+                    Timestamp.class,
+                    task.aggregateId(),
+                    task.merchantId());
+            if (!unknown.isEmpty() && unknown.getFirst() != null)
+              stage = TaskRecovery.stage(unknown.getFirst().toInstant(), now);
+          }
+          boolean dead =
+              conflict
+                  || (notification ? !now.isBefore(deadline) : !channel && task.attempts() >= 12);
+          var due =
+              now.plus(
+                  channel || notification
+                      ? TaskRecovery.queryDelay(task.attempts())
+                      : java.time.Duration.ofSeconds(
+                          Math.min(3600, 1L << Math.min(task.attempts(), 11))));
+          if (notification && due.isAfter(deadline)) due = deadline;
+          // Exhaustion changes only delivery state. Unknown money and refund reservations survive.
+          jdbc.update(
+              "UPDATE outbox_tasks SET status=?,due_at=?,recovery_stage=?,lease_token=NULL,lease_until=NULL,last_error=?,updated_at=? WHERE id=? AND status='RUNNING' AND lease_token=?",
+              dead ? "DEAD" : "PENDING",
+              Timestamp.from(due),
+              stage,
+              safe,
+              Timestamp.from(now),
+              task.id(),
+              task.token());
+        });
+  }
+
+  /** Check immediately before a notification send, including after a long outage or reclaim. */
+  public boolean notificationMayRun(Task task) {
+    if (!TaskRecovery.notification(task.kind()))
+      throw new IllegalArgumentException("Not a notification task");
+    return transactions.execute(
+        tx -> {
+          var now = clock.instant();
+          var windows =
+              jdbc.queryForList(
+                  "SELECT retry_started_at FROM outbox_tasks WHERE id=? AND status='RUNNING' AND lease_token=? AND lease_until>? FOR UPDATE",
+                  Timestamp.class,
+                  task.id(),
+                  task.token(),
+                  Timestamp.from(now));
+          if (windows.isEmpty()) return false;
+          if (now.isBefore(windows.getFirst().toInstant().plus(TaskRecovery.NOTIFICATION_WINDOW)))
+            return true;
+          jdbc.update(
+              "UPDATE outbox_tasks SET status='DEAD',lease_token=NULL,lease_until=NULL,last_error='Notification automatic retry window expired',updated_at=? WHERE id=? AND status='RUNNING' AND lease_token=?",
+              Timestamp.from(now),
+              task.id(),
+              task.token());
+          return false;
+        });
   }
 }

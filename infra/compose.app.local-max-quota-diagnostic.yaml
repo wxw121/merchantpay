@@ -1,0 +1,12 @@
+# Experimental local profile: append after compose.app.local-max-admission.yaml.
+# Same 1-CPU platform / 2-CPU MySQL budget as the diagnostic control.
+# Requires the separately built diagnostic image; default start scripts do not use this file.
+services:
+  mysql:
+    cpus: 2
+  platform:
+    image: merchantpay/platform:local-quota-diagnostic
+    cpus: 1
+    environment:
+      JAVA_TOOL_OPTIONS: -Xmx1280m -XX:ActiveProcessorCount=1 -Djdk.virtualThreadScheduler.parallelism=2
+      LEDGER_ORDERED_IDS: "false"

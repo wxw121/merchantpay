@@ -181,7 +181,7 @@ class AcceptanceLoad {
         var batch=indices.subList(offset,Math.min(indices.size(),offset+500));
         String root=kind.equals("refund")?"refunds":"payments",business=kind.equals("refund")?"merchant_refund_no":"merchant_order_no",event=kind.equals("refund")?"refund-success:":"payment-success:";
         String sql="SELECT p.merchant_id,p."+business+",p.status,(p.status='SUCCEEDED' AND "+POSTED+") FROM "+root+" p LEFT JOIN ledger_journals j ON j.event_id=CONCAT('"+event+"',p.id) LEFT JOIN outbox_tasks o ON o.event_id=CONCAT('"+event+"',p.id) WHERE (p.merchant_id,p."+business+") IN ("+String.join(",",Collections.nCopies(batch.size(),"(?,?)"))+")";
-        try(var statement=connection.prepareStatement(sql)) {
+        try(var statement=connection.prepareStatement(LocalLoad.taskFactsSql(connection,sql))) {
           statement.setQueryTimeout(30); int parameter=1;
           for(int index:batch) { statement.setString(parameter++,kind.equals("refund")?refunds.get(index).owner().merchant():orderedOwners.get(index%orderedOwners.size()).merchant()); statement.setString(parameter++,run+"-"+index); }
           try(var rows=statement.executeQuery()) {
@@ -220,7 +220,7 @@ class AcceptanceLoad {
     result.put("retryReasons",Arrays.stream(m.requests).filter(r->r.response==503).collect(java.util.stream.Collectors.groupingBy(r->Objects.toString(r.retryReason,"UNCLASSIFIED"),TreeMap::new,java.util.stream.Collectors.counting())));
     return result;
   }
-  long scalar(Connection connection,String sql) throws Exception {try(var s=connection.createStatement();var r=s.executeQuery(sql)){r.next();return r.getLong(1);}}
+  long scalar(Connection connection,String sql) throws Exception {try(var s=connection.createStatement();var r=s.executeQuery(LocalLoad.taskFactsSql(connection,sql))){r.next();return r.getLong(1);}}
   Map<String,Object> manifest() throws Exception {
     try(var connection=database()) {
       connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);connection.setAutoCommit(false);

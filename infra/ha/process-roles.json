@@ -1,0 +1,13 @@
+{
+  "status": "CONFIGURED_NOT_ACCEPTED",
+  "runtime": {"JAVA_TOOL_OPTIONS":"-Xmx384m -XX:ActiveProcessorCount=1 -XX:TieredStopAtLevel=1"},
+  "requiredSharedServices": ["mysql-router-primary-6446", "oidc-postgresql-backed", "redis", "s3-object-storage", "kafka-3-brokers-rf3-min-isr2", "clickhouse"],
+  "processes": [
+    {"name":"api1","port":8080,"environment":{"WORKERS_ENABLED":"false","EVENT_CONSUMER_ENABLED":"false","DATABASE_POOL_SIZE":"16"}},
+    {"name":"api2","port":8080,"environment":{"WORKERS_ENABLED":"false","EVENT_CONSUMER_ENABLED":"false","DATABASE_POOL_SIZE":"16"}},
+    {"name":"fast-worker","environment":{"WORKERS_ENABLED":"true","WORKER_QUEUES":"INBOX,FAST","EVENT_CONSUMER_ENABLED":"true","DATABASE_POOL_SIZE":"20"}},
+    {"name":"notify-worker","environment":{"WORKERS_ENABLED":"true","WORKER_QUEUES":"NOTIFY","DATABASE_POOL_SIZE":"8"}},
+    {"name":"bulk-worker","environment":{"WORKERS_ENABLED":"true","WORKER_QUEUES":"BULK","DATABASE_POOL_SIZE":"6"}},
+    {"name":"projection-worker","environment":{"WORKERS_ENABLED":"false","READ_MODEL_CONSUMER_ENABLED":"true","READ_MODEL_WORKER_ENABLED":"true","DATABASE_POOL_SIZE":"6"}}
+  ]
+}

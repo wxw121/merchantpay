@@ -17,6 +17,18 @@ public class OpenApiController {
   private final MerchantService merchants;
   private final NotificationPolicy urls;
   private final TransactionTemplate transactions;
+  private dev.merchantpay.platform.sharding.ShardReads shardReads;
+  private dev.merchantpay.platform.sharding.ShardMoney shardMoney;
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardMoney(dev.merchantpay.platform.sharding.ShardMoney money) {
+    this.shardMoney = money;
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardReads(dev.merchantpay.platform.sharding.ShardReads reader) {
+    this.shardReads = reader;
+  }
 
   public OpenApiController(
       Access access,
@@ -39,6 +51,7 @@ public class OpenApiController {
     access.require("MERCHANT");
     urls.validate(input.notificationUrl());
     String merchant = access.merchant(null, true);
+    if (shardMoney != null) return shardMoney.create(merchant, input, access.caller().actor());
     return transactions.execute(
         tx -> {
           var result = payments.create(merchant, input);
@@ -54,13 +67,15 @@ public class OpenApiController {
 
   @GetMapping("/payments/{id}")
   PaymentService.PaymentView payment(@PathVariable String id) {
-    return payments.get(access.merchant(null, true), id);
+    String merchant = access.merchant(null, true);
+    return shardReads == null ? payments.get(merchant, id) : shardReads.payment(merchant, id);
   }
 
   @PostMapping("/payments/{id}/close")
   @ResponseStatus(HttpStatus.ACCEPTED)
   PaymentService.PaymentView close(@PathVariable String id) {
     String merchant = access.merchant(null, true);
+    if (shardMoney != null) return shardMoney.close(merchant, id, access.caller().actor());
     return transactions.execute(
         tx -> {
           var result = payments.requestClose(merchant, id);
@@ -75,6 +90,7 @@ public class OpenApiController {
   RefundService.RefundView refund(
       @PathVariable String id, @RequestBody RefundService.CreateRefund input) {
     String merchant = access.merchant(null, true);
+    if (shardMoney != null) return shardMoney.refund(merchant, id, input, access.caller().actor());
     return transactions.execute(
         tx -> {
           var result = refunds.create(merchant, id, input);
@@ -90,6 +106,7 @@ public class OpenApiController {
 
   @GetMapping("/refunds/{id}")
   RefundService.RefundView refund(@PathVariable String id) {
-    return refunds.get(access.merchant(null, true), id);
+    String merchant = access.merchant(null, true);
+    return shardReads == null ? refunds.get(merchant, id) : shardReads.refund(merchant, id);
   }
 }

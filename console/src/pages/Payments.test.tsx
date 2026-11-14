@@ -216,7 +216,9 @@ function setupCashier(initialMerchant: string) {
     if (options?.method === "POST") {
       submissions.push({ path, body: JSON.parse(String(options.body)) });
       body = payment;
-    } else if (url.pathname === "/api/console/merchants") body = merchants;
+    } else if (url.pathname === "/api/console/available-channels")
+      body = { routingEnabled: false, channels: ["MOCK_A", "MOCK_B"] };
+    else if (url.pathname === "/api/console/merchants") body = merchants;
     else if (url.pathname.startsWith("/api/console/merchants/"))
       body = merchants.find((merchant) => url.pathname.endsWith(merchant.id));
     else
@@ -284,7 +286,7 @@ it.each([
     fireEvent.change(screen.getByLabelText("支付金额 / CNY 元"), {
       target: { value: "12.34" },
     });
-    fireEvent.mouseDown(screen.getByRole("combobox", { name: "模拟渠道" }));
+    fireEvent.mouseDown(screen.getByRole("combobox", { name: "支付渠道" }));
     fireEvent.click(await screen.findByText("模拟渠道 B"));
     fireEvent.mouseDown(screen.getByRole("combobox", { name: "模拟场景" }));
     fireEvent.click(await screen.findByText("持续处理中，可请求关闭"));

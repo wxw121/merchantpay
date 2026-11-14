@@ -22,7 +22,9 @@ class RecoveryCheck {
       long journals=number(db,"SELECT COUNT(*) FROM ledger_journals WHERE payment_id=?",id);
       long entries=number(db,"SELECT COUNT(*) FROM ledger_entries WHERE payment_id=?",id);
       long balance=number(db,"SELECT COALESCE(SUM(CASE WHEN side='DEBIT' THEN amount_minor ELSE -amount_minor END),0) FROM ledger_entries WHERE payment_id=?",id);
-      long events=number(db,"SELECT COUNT(*) FROM outbox_tasks WHERE aggregate_id=? AND kind='PAYMENT_SUCCEEDED'",id);
+      boolean archived;
+      try(var s=db.createStatement();var r=s.executeQuery("SELECT COUNT(*) FROM information_schema.views WHERE table_schema=DATABASE() AND table_name='outbox_task_records'")){r.next();archived=r.getLong(1)==1;}
+      long events=number(db,"SELECT COUNT(*) FROM "+(archived?"outbox_task_records":"outbox_tasks")+" WHERE aggregate_id=? AND kind='PAYMENT_SUCCEEDED'",id);
       long attempts=number(db,"SELECT COUNT(*) FROM channel_attempts WHERE payment_id=?",id);
       boolean correct=success==1 && journals==1 && entries==3 && balance==0 && events==1 && attempts==1;
       String report="{\"scenario\":\"application-restart-after-durable-acceptance\",\"paymentId\":\""+id+"\",\"generatedAt\":\""+Instant.now()+"\",\"success\":"+success+",\"journals\":"+journals+",\"entries\":"+entries+",\"ledgerDifferenceMinor\":\""+balance+"\",\"successEvents\":"+events+",\"channelAttempts\":"+attempts+",\"correctnessPassed\":"+correct+"}";

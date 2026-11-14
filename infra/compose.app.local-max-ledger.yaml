@@ -1,0 +1,7 @@
+# Candidate only; append after compose.app.local-max-admission.yaml.
+# Requires a newly built ledger candidate image. No data migration or rekeying.
+services:
+  platform:
+    image: merchantpay/platform:local-max-ledger-candidate
+    environment:
+      LEDGER_ORDERED_IDS: "true"

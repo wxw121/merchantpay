@@ -1,4 +1,4 @@
-package dev.merchantpay.platform.reconciliation;
+package dev.merchantpay.platform.storage;
 
 import java.io.*;
 import java.net.URI;
@@ -75,7 +75,7 @@ public class ObjectStorage implements AutoCloseable {
   private static String validate(String pointer) {
     String key = pointer.startsWith("s3:") ? pointer.substring(3) : pointer;
     if (!key.matches(
-        "bills/[a-f0-9]{64}(-[a-f0-9-]{36})?\\.csv|exports/[a-f0-9-]{36}-[a-f0-9-]{36}\\.zip")) {
+        "bills/[a-f0-9]{64}(-[a-f0-9-]{36})?\\.csv|exports/[a-f0-9-]{36}-[a-f0-9-]{36}\\.zip|history/[a-f0-9]{64}-[a-f0-9-]{36}\\.parquet")) {
       throw new IllegalStateException("Invalid stored object key");
     }
     return key;
@@ -102,7 +102,12 @@ public class ObjectStorage implements AutoCloseable {
                   .bucket(bucket)
                   .key(key)
                   .ifNoneMatch("*")
-                  .contentType(key.endsWith(".zip") ? "application/zip" : "text/csv;charset=UTF-8"),
+                  .contentType(
+                      key.endsWith(".zip")
+                          ? "application/zip"
+                          : key.endsWith(".parquet")
+                              ? "application/vnd.apache.parquet"
+                              : "text/csv;charset=UTF-8"),
           RequestBody.fromFile(source));
       return "s3:" + key;
     } catch (SdkException failure) {

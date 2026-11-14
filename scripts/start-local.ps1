@@ -1,6 +1,14 @@
 [CmdletBinding()]
-param([switch]$SkipBuild,[switch]$Performance)
+param([switch]$SkipBuild,[switch]$Performance,[switch]$Docker,[switch]$CheckOnly,[string]$EnvironmentFile)
 $ErrorActionPreference = 'Stop'
+if (-not $Docker) {
+    if ($Performance) { throw 'The legacy performance profile requires explicit -Docker. Native startup uses bounded resources.' }
+    $taskNativeArguments=@{SkipBuild=$SkipBuild;CheckOnly=$CheckOnly}
+    if ($EnvironmentFile) { $taskNativeArguments.EnvironmentFile=$EnvironmentFile }
+    & (Join-Path $PSScriptRoot 'start-native.ps1') @taskNativeArguments
+    return
+}
+if ($CheckOnly -or $EnvironmentFile) { throw '-CheckOnly and -EnvironmentFile belong to the native launcher. Remove -Docker.' }
 $taskRoot = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'LocalPerformance.ps1')
 $taskMode=if($Performance){'performance'}else{'normal'}
@@ -18,7 +26,7 @@ Assert-LocalProfileChange $taskMode $taskCurrentMode $taskRunning
 if($Performance) { Assert-PerformanceCpu ([Environment]::ProcessorCount) ((Get-Process -Id $PID).ProcessorAffinity.ToInt64()) }
 New-Item -ItemType Directory -Path (Join-Path $taskRoot '.work') -Force | Out-Null
 & (Join-Path $PSScriptRoot 'init-local.ps1')
-. (Join-Path $PSScriptRoot 'Import-LocalEnvironment.ps1')
+. (Join-Path $PSScriptRoot 'Import-LocalEnvironment.ps1') -EnvironmentFile '.env'
 $taskDocker = (Get-Command docker.exe).Source
 Push-Location $taskRoot
 try {

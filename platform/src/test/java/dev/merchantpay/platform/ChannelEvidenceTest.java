@@ -37,11 +37,188 @@ class ChannelEvidenceTest extends FinancialFixture {
             gateway,
             json,
             Clock.systemUTC(),
-            "test");
+            "test",
+            false);
   }
 
   ChannelGateway gateway(ChannelApi api) {
-    return new ChannelGateway(api, payments, refunds, jdbc, json, "test", Clock.systemUTC(), tx);
+    return new ChannelGateway(
+        api,
+        payments,
+        refunds,
+        jdbc,
+        json,
+        "test",
+        Clock.systemUTC(),
+        tx,
+        new ChannelResultBatcher(
+            tx.getTransactionManager(),
+            new io.micrometer.core.instrument.simple.SimpleMeterRegistry(),
+            1,
+            Duration.ZERO),
+        new io.micrometer.core.instrument.simple.SimpleMeterRegistry());
+  }
+
+  InboxService fastInbox() {
+    return new InboxService(
+        jdbc,
+        tx,
+        new OutboxService(jdbc, Clock.systemUTC()),
+        gateway,
+        json,
+        Clock.systemUTC(),
+        "test",
+        true);
+  }
+
+  void receive(InboxService service, ChannelApi.Receipt receipt) {
+    String raw = json.writeValueAsString(receipt);
+    String time = Long.toString(Instant.now().getEpochSecond());
+    service.receive(time, Signatures.hmac("test", time + "\n" + raw), raw);
+  }
+
+  @Test
+  void matchingSuccessfulPaymentCallbackKeepsEvidenceWithoutCreatingASecondTask() {
+    var payment = paid("fast-payment", "10000");
+    var fastInbox = fastInbox();
+    var receipt =
+        new ChannelApi.Receipt(
+            payment.id(),
+            "PAYMENT",
+            "MOCK_A",
+            "SUCCEEDED",
+            payment.channelReference(),
+            "10000",
+            "CNY",
+            "60");
+    String raw = json.writeValueAsString(receipt);
+    String time = Long.toString(Instant.now().getEpochSecond());
+    long tasks = count("outbox_tasks"),
+        events = count("outbox_events"),
+        journals = count("ledger_journals");
+
+    fastInbox.receive(time, Signatures.hmac("test", time + "\n" + raw), raw);
+
+    assertThat(jdbc.queryForObject("SELECT status FROM inbox_notifications", String.class))
+        .isEqualTo("PROCESSED");
+    assertThat(jdbc.queryForObject("SELECT raw_body FROM inbox_notifications", String.class))
+        .isEqualTo(raw);
+    assertThat(count("outbox_tasks")).isEqualTo(tasks);
+    assertThat(count("outbox_events")).isEqualTo(events);
+    assertThat(count("ledger_journals")).isEqualTo(journals);
+    fastInbox.receive(time, Signatures.hmac("test", time + "\n" + raw), raw);
+    assertThat(count("inbox_notifications")).isEqualTo(1);
+    assertThat(count("outbox_tasks")).isEqualTo(tasks);
+  }
+
+  @Test
+  void matchingSuccessfulRefundCallbackKeepsEvidenceWithoutCreatingASecondTask() {
+    var payment = paid("fast-refund", "10000");
+    var refund =
+        refunds.create(
+            "merchant-a", payment.id(), new RefundService.CreateRefund("fast-refund", "1000"));
+    refunds.applyResult(
+        refund.id(), new ChannelResult.Success("MOCK_A", "fast-refund-reference", 1000, "CNY"));
+    long tasks = count("outbox_tasks"), journals = count("ledger_journals");
+    var receipt =
+        new ChannelApi.Receipt(
+            refund.id(),
+            "REFUND",
+            "MOCK_A",
+            "SUCCEEDED",
+            "fast-refund-reference",
+            "1000",
+            "CNY",
+            "0");
+
+    receive(fastInbox(), receipt);
+
+    assertThat(jdbc.queryForObject("SELECT status FROM inbox_notifications", String.class))
+        .isEqualTo("PROCESSED");
+    assertThat(jdbc.queryForObject("SELECT raw_body FROM inbox_notifications", String.class))
+        .isEqualTo(json.writeValueAsString(receipt));
+    assertThat(count("outbox_tasks")).isEqualTo(tasks);
+    assertThat(count("ledger_journals")).isEqualTo(journals);
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.CsvSource({
+    "different,10000,CNY",
+    "same,9999,CNY",
+    "same,10000,USD"
+  })
+  void conflictingSuccessfulCallbackStillUsesWorkerAndRetainsEvidence(
+      String reference, String amount, String currency) {
+    var payment = paid("fast-conflict", "10000");
+    var fastInbox = fastInbox();
+    var receipt =
+        new ChannelApi.Receipt(
+            payment.id(),
+            "PAYMENT",
+            "MOCK_A",
+            "SUCCEEDED",
+            reference.equals("same") ? payment.channelReference() : reference,
+            amount,
+            currency,
+            "60");
+    long tasks = count("outbox_tasks"), journals = count("ledger_journals");
+
+    receive(fastInbox, receipt);
+
+    String id = jdbc.queryForObject("SELECT id FROM inbox_notifications", String.class);
+    assertThat(jdbc.queryForObject("SELECT status FROM inbox_notifications", String.class))
+        .isEqualTo("RECEIVED");
+    assertThat(count("outbox_tasks")).isEqualTo(tasks + 1);
+    fastInbox.process(id);
+    assertThat(jdbc.queryForObject("SELECT status FROM inbox_notifications", String.class))
+        .isEqualTo("CONFLICT");
+    assertThat(jdbc.queryForObject("SELECT raw_body FROM evidence_conflicts", String.class))
+        .isEqualTo(json.writeValueAsString(receipt));
+    assertThat(count("ledger_journals")).isEqualTo(journals);
+  }
+
+  @Test
+  void callbackBeforeSuccessfulOutcomeKeepsRecoverableWorkerPath() {
+    var payment = createPayment("fast-race", "10000");
+    var fastInbox = fastInbox();
+    var receipt =
+        new ChannelApi.Receipt(
+            payment.id(), "PAYMENT", "MOCK_A", "SUCCEEDED", "fast-race-ref", "10000", "CNY", "60");
+    long tasks = count("outbox_tasks");
+
+    receive(fastInbox, receipt);
+
+    String id = jdbc.queryForObject("SELECT id FROM inbox_notifications", String.class);
+    assertThat(jdbc.queryForObject("SELECT status FROM inbox_notifications", String.class))
+        .isEqualTo("RECEIVED");
+    assertThat(count("outbox_tasks")).isEqualTo(tasks + 1);
+    gateway.apply(receipt);
+    fastInbox.process(id);
+    assertThat(jdbc.queryForObject("SELECT status FROM inbox_notifications", String.class))
+        .isEqualTo("PROCESSED");
+    assertThat(count("ledger_journals")).isEqualTo(1);
+  }
+
+  @Test
+  void disabledFastPathStillQueuesMatchingSuccessfulCallback() {
+    var payment = paid("fast-disabled", "10000");
+    long tasks = count("outbox_tasks");
+
+    receive(
+        inbox,
+        new ChannelApi.Receipt(
+            payment.id(),
+            "PAYMENT",
+            "MOCK_A",
+            "SUCCEEDED",
+            payment.channelReference(),
+            "10000",
+            "CNY",
+            "60"));
+
+    assertThat(jdbc.queryForObject("SELECT status FROM inbox_notifications", String.class))
+        .isEqualTo("RECEIVED");
+    assertThat(count("outbox_tasks")).isEqualTo(tasks + 1);
   }
 
   @Test
@@ -70,7 +247,13 @@ class ChannelEvidenceTest extends FinancialFixture {
             json,
             "test",
             Clock.systemUTC(),
-            new TransactionTemplate(manager));
+            new TransactionTemplate(manager),
+            new ChannelResultBatcher(
+                manager,
+                new io.micrometer.core.instrument.simple.SimpleMeterRegistry(),
+                1,
+                Duration.ZERO),
+            new io.micrometer.core.instrument.simple.SimpleMeterRegistry());
     var task =
         new TaskQueue.Task(
             "conflict-task",

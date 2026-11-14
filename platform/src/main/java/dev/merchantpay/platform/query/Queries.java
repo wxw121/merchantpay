@@ -41,7 +41,7 @@ public class Queries {
           Map.entry(
               "tasks",
               new Table(
-                  "outbox_tasks",
+                  "outbox_task_records",
                   "id,event_id,kind,aggregate_id,merchant_id,status,attempts,due_at,lease_until,last_error,created_at,updated_at")),
           Map.entry(
               "audit",
@@ -261,6 +261,10 @@ public class Queries {
   }
 
   public String paymentMerchant(String id, String scope) {
+    return paymentMerchant(jdbc, id, scope);
+  }
+
+  public static String paymentMerchant(JdbcTemplate jdbc, String id, String scope) {
     var rows =
         scope == null
             ? jdbc.queryForList("SELECT merchant_id FROM payments WHERE id=?", String.class, id)

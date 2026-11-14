@@ -1,0 +1,10 @@
+{
+ "status":"NOT_RUN","r2Certified":false,
+ "targets":{"completedPaymentTps":2000,"paymentSustainSeconds":1800,"queryQps":8000,"queryKind":"INDEPENDENT_EXACT_ID","payments":10000000,"ledgerEntries":50000000,"businessEventDetails":100000000,"billRows":1000000,"billMaximumSeconds":900,"continuousHours":12},
+ "workload":"Run bounded native windows with unique run IDs; measure completed authoritative money, not just HTTP acceptance. Twelve consecutive one-hour windows require continuous service/resource monitoring and no restart between windows.",
+ "faults":["kill-api-after-acceptance","kill-channel-worker-after-remote-acceptance","expired-lease-reclaim","notify-worker-restart","kafka-consumer-restart","connect-restart","redis-unavailable","clickhouse-write-and-ack-failure","projection-duplicate-out-of-order-and-rebuild","single-primary-failover","router-loss","unknown-refund-recovery"],
+ "requiredEvidence":["source-and-build-hashes","runtime-C1-and-resource-manifest","raw-latency-and-generator-unsent","scope-money-and-refund-fee-conservation","ledger-journal-witness","channel-source-and-notification-dedup","pending-and-quarantine-drained","projection-source-hash-reconciliation","GTID-before-after-RTO-RPO","million-row-bill-complete-count-and-duration","hundred-million-business-events-count-and-source-hash","thirty-minute-completed-payment-throughput","disk-reserve-and-restore-verification","12-hour-error-backlog-and-memory-trends","official-sandbox-redacted-contract-report","real-OTP-and-cross-instance-session-revocation","current-build-V1-V2-regression"],
+ "checks":{"performance":"NOT_RUN","dataScale":"NOT_RUN","resilience":"NOT_RUN","officialSandbox":"NOT_RUN_REQUIRES_CREDENTIALS","security":"NOT_RUN","currentBuildRegression":"NOT_RUN","shortKeyEvaluation":"NOT_RUN","nativeStartup":"NOT_RUN_CODE_ONLY"},
+ "shortKeyDecision":"EVALUATION_ONLY_NO_PRODUCTION_MIGRATION",
+ "nativeCrashRootCause":"UNRESOLVED_C2_WORKAROUND_IS_NOT_A_FIX"
+}

@@ -1,0 +1,7 @@
+# Candidate only; append after admission, archive isolation and quota executor overlays.
+# Nonce registration and quota reservation share one commit; failed transactions reject callers.
+services:
+  platform:
+    image: merchantpay/platform:local-request-gate
+    environment:
+      API_NONCE_COALESCED: "true"

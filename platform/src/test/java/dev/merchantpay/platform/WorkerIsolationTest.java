@@ -75,8 +75,12 @@ class WorkerIsolationTest extends FinancialFixture {
               outbox.enqueue("new-payment", "CHANNEL_PAYMENT", "new-payment", "merchant-a");
               outbox.enqueue("new-inbox", "PROCESS_INBOX", "inbox-1", "merchant-a");
             });
-        poll.invoke(worker);
-        assertThat(progressed.await(3, TimeUnit.SECONDS))
+        long until = System.nanoTime() + TimeUnit.SECONDS.toNanos(3);
+        while (progressed.getCount() > 0 && System.nanoTime() < until) {
+          poll.invoke(worker);
+          Thread.sleep(10);
+        }
+        assertThat(progressed.getCount() == 0)
             .as("channel and inbox progress while webhook requests remain blocked")
             .isTrue();
         verify(notifications, times(5)).deliver(any());

@@ -77,6 +77,14 @@ class LoadMeasurementsTest {
     String url = System.getenv().getOrDefault("DATABASE_URL", "jdbc:mysql://127.0.0.1:3307/merchantpay?connectionTimeZone=UTC");
     try (var writer = java.sql.DriverManager.getConnection(url, System.getenv().getOrDefault("DATABASE_USER", "merchantpay"), LocalLoad.required("DATABASE_PASSWORD"));
          var reader = java.sql.DriverManager.getConnection(url, System.getenv().getOrDefault("DATABASE_USER", "merchantpay"), LocalLoad.required("DATABASE_PASSWORD"))) {
+      var onlineSql = LocalLoad.taskFactsSql(reader, LocalLoad.OBSERVATION_SQL);
+      var historyAvailable = LocalLoad.taskFactsSql(reader, "SELECT id FROM outbox_tasks").contains("outbox_task_records");
+      check(onlineSql.contains(historyAvailable ? "outbox_events" : "outbox_tasks"),
+          "Online completion evidence must use the durable registry when history is split");
+      var acceptanceSql = LocalLoad.taskFactsSql(reader,
+          "SELECT p.id,o.id FROM payments p LEFT JOIN outbox_tasks o ON o.event_id=CONCAT('payment-success:',p.id)");
+      check(acceptanceSql.contains(historyAvailable ? "outbox_events" : "outbox_tasks"),
+          "Acceptance completion evidence must use the durable registry when history is split");
       reader.setTransactionIsolation(java.sql.Connection.TRANSACTION_READ_COMMITTED);
       reader.setReadOnly(true);
       var ddl = writer.createStatement();

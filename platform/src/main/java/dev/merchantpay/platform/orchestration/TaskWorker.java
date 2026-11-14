@@ -4,6 +4,8 @@ import dev.merchantpay.platform.channel.*;
 import dev.merchantpay.platform.common.DatabaseRole;
 import dev.merchantpay.platform.outbox.TaskQueue;
 import dev.merchantpay.platform.reconciliation.*;
+import dev.merchantpay.platform.sharding.ShardCoreOnlyGuard;
+import dev.merchantpay.platform.sharding.ShardExportReadGate;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import java.sql.Timestamp;
@@ -34,11 +36,76 @@ public class TaskWorker implements AutoCloseable {
   private static final String[] FAST_LANES = {"INBOX", "FAST", "NOTIFY"};
   private final Semaphore[] laneCapacities;
   private final boolean rotateLanes;
+  private final boolean channelTaskPrefetch;
   private int firstLane;
+  private boolean notificationTaskPrefetch;
+  private boolean shardChannels;
+  private ShardCoreOnlyGuard shardBulkGuard;
+  private ShardExportReadGate shardExportReadGate;
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardBulkGuard(ShardCoreOnlyGuard guard) {
+    shardBulkGuard = guard;
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardExportReadGate(ShardExportReadGate gate) {
+    shardExportReadGate = gate;
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public void setShardChannels(
+      @Value("${merchantpay.sharding.channel-workers-enabled:false}") boolean enabled) {
+    shardChannels = enabled;
+  }
+
+  public Semaphore sharedFastCapacity() {
+    return capacity;
+  }
+
+  public Semaphore channelLaneCapacity(String lane) {
+    return switch (lane) {
+      case "INBOX" -> laneCapacities[0];
+      case "FAST" -> laneCapacities[1];
+      case "NOTIFY" -> laneCapacities[2];
+      default -> throw new IllegalArgumentException("Not a channel lane");
+    };
+  }
+
+  public boolean wantsQueue(String lane) {
+    return workerQueues.contains(lane);
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public void setNotificationTaskPrefetch(
+      @Value("${merchantpay.notification-task-prefetch:false}") boolean enabled) {
+    notificationTaskPrefetch = enabled;
+  }
+
   private final Semaphore bulkCapacity = new Semaphore(2);
   private final ScheduledExecutorService heartbeats = Executors.newScheduledThreadPool(2);
   private final ReconciliationService reconciliation;
   private final ExportService exports;
+  private final java.util.Map<String, Integer> emptyPolls = new java.util.HashMap<>();
+  private final java.util.Map<String, Long> nextPoll = new java.util.HashMap<>();
+  private java.util.Set<String> workerQueues = java.util.Set.of("INBOX", "FAST", "NOTIFY", "BULK");
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public void setWorkerQueues(@Value("${merchantpay.worker-queues:ALL}") String queues) {
+    var selected =
+        new java.util.HashSet<>(
+            java.util.List.of(queues.toUpperCase(java.util.Locale.ROOT).split(",")));
+    if (selected.equals(java.util.Set.of("ALL")))
+      selected = new java.util.HashSet<>(java.util.Set.of("INBOX", "FAST", "NOTIFY", "BULK"));
+    if (selected.isEmpty()
+        || !java.util.Set.of("INBOX", "FAST", "NOTIFY", "BULK").containsAll(selected))
+      throw new IllegalArgumentException(
+          "Worker queues must be ALL or a comma-separated subset of INBOX,FAST,NOTIFY,BULK");
+    workerQueues = java.util.Set.copyOf(selected);
+  }
+
+  // Monotonic deadlines are unaffected by wall-clock corrections used for financial timestamps.
+  java.util.function.LongSupplier nanoTime = System::nanoTime;
 
   public TaskWorker(
       TaskQueue queue,
@@ -51,6 +118,34 @@ public class TaskWorker implements AutoCloseable {
       ReconciliationService reconciliation,
       ExportService exports,
       @Value("${merchantpay.tasks-fast-concurrency:30}") int fastConcurrency) {
+    this(
+        queue,
+        gateway,
+        inbox,
+        notifications,
+        jdbc,
+        clock,
+        metrics,
+        reconciliation,
+        exports,
+        fastConcurrency,
+        false);
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public TaskWorker(
+      TaskQueue queue,
+      ChannelGateway gateway,
+      InboxService inbox,
+      NotificationService notifications,
+      JdbcTemplate jdbc,
+      Clock clock,
+      MeterRegistry metrics,
+      ReconciliationService reconciliation,
+      ExportService exports,
+      @Value("${merchantpay.tasks-fast-concurrency:30}") int fastConcurrency,
+      @Value("${merchantpay.channel-task-prefetch:false}") boolean prefetch) {
+    this.channelTaskPrefetch = prefetch;
     if (fastConcurrency < 1 || fastConcurrency > 256) {
       throw new IllegalArgumentException("Fast task concurrency must be between 1 and 256");
     }
@@ -92,6 +187,31 @@ public class TaskWorker implements AutoCloseable {
   }
 
   private boolean pollCapacity(Semaphore permits, String queueClass) {
+    if (shardChannels
+        && (queueClass.equals("FAST") || queueClass.equals("INBOX") || queueClass.equals("NOTIFY")))
+      return false;
+    if (!workerQueues.contains(queueClass)) return false;
+    long started = nanoTime.getAsLong();
+    Long deadline = nextPoll.get(queueClass);
+    if (deadline != null && started - deadline < 0) return false;
+    boolean shardedBulk = false;
+    if (queueClass.equals("BULK") && shardBulkGuard != null) {
+      try {
+        shardBulkGuard.requireCoreOnly();
+      } catch (RuntimeException unavailable) {
+        if (shardExportReadGate == null) {
+          nextPoll.put(queueClass, nanoTime.getAsLong() + TimeUnit.SECONDS.toNanos(1));
+          return false;
+        }
+        try {
+          shardExportReadGate.capture();
+          shardedBulk = true;
+        } catch (RuntimeException invalid) {
+          nextPoll.put(queueClass, nanoTime.getAsLong() + TimeUnit.SECONDS.toNanos(1));
+          return false;
+        }
+      }
+    }
     boolean fast = !queueClass.equals("BULK");
     int slots = Math.min(permits.availablePermits(), 64);
     if (fast) slots = Math.min(slots, capacity.availablePermits());
@@ -110,76 +230,156 @@ public class TaskWorker implements AutoCloseable {
       permits.release(slots);
       if (fast) capacity.release(slots);
       metrics.counter("merchantpay.tasks.claim.errors").increment();
+      nextPoll.put(queueClass, nanoTime.getAsLong() + TimeUnit.MILLISECONDS.toNanos(100));
       return false;
+    }
+    if (claimed.isEmpty()) {
+      int empties = Math.min(4, emptyPolls.getOrDefault(queueClass, 0) + 1);
+      emptyPolls.put(queueClass, empties);
+      int delay =
+          shardedBulk
+              ? 1000
+              : switch (empties) {
+                case 1 -> 10;
+                case 2 -> 20;
+                case 3 -> 50;
+                default -> 100;
+              };
+      nextPoll.put(queueClass, nanoTime.getAsLong() + TimeUnit.MILLISECONDS.toNanos(delay));
+    } else {
+      emptyPolls.remove(queueClass);
+      nextPoll.remove(queueClass);
     }
     permits.release(slots - claimed.size());
     if (fast) capacity.release(slots - claimed.size());
+    java.util.Map<String, ChannelGateway.TaskInput> inputs = java.util.Map.of();
+    if (channelTaskPrefetch && queueClass.equals("FAST") && claimed.size() > 1) {
+      try {
+        inputs = gateway.prefetch(claimed);
+      } catch (RuntimeException unavailable) {
+        metrics.counter("merchantpay.channel.prefetch.failures").increment();
+      }
+    }
+    java.util.Map<String, NotificationService.TaskInput> notificationInputs = java.util.Map.of();
+    if (notificationTaskPrefetch && queueClass.equals("NOTIFY") && claimed.size() > 1) {
+      try {
+        notificationInputs = notifications.prefetch(claimed);
+      } catch (RuntimeException unavailable) {
+        metrics.counter("merchantpay.notification.prefetch.failures").increment();
+      }
+    }
     for (var task : claimed) {
-      executor.submit(
-          () ->
-              DatabaseRole.worker(
-                  () -> {
-                    var heartbeat =
-                        heartbeats.scheduleAtFixedRate(
-                            () -> DatabaseRole.worker(() -> queue.renew(task)),
-                            15,
-                            15,
-                            TimeUnit.SECONDS);
-                    var sample = Timer.start(metrics);
-                    String outcome = "failed";
-                    try {
-                      switch (task.kind()) {
-                        case "CHANNEL_PAYMENT", "CHANNEL_REFUND", "CHANNEL_CLOSE" ->
-                            gateway.execute(task);
-                        case "PROCESS_INBOX" -> inbox.process(task.aggregateId());
-                        case "PAYMENT_SUCCEEDED",
-                            "PAYMENT_FAILED",
-                            "PAYMENT_CLOSED",
-                            "REFUND_SUCCEEDED",
-                            "REFUND_FAILED" ->
-                            notifications.deliver(task);
-                        case "RECONCILE" -> reconciliation.process(task.aggregateId(), task);
-                        case "EXPORT" -> exports.process(task.aggregateId(), task);
-                        default ->
-                            throw new IllegalArgumentException(
-                                "Unsupported task type: " + task.kind());
+      var input = inputs.get(task.id());
+      var notificationInput = notificationInputs.get(task.id());
+      try {
+        executor.submit(
+            () ->
+                DatabaseRole.worker(
+                    () -> {
+                      ScheduledFuture<?> heartbeat = null;
+                      var sample = Timer.start(metrics);
+                      String outcome = "failed";
+                      try {
+                        heartbeat =
+                            heartbeats.scheduleAtFixedRate(
+                                () -> DatabaseRole.worker(() -> queue.renew(task)),
+                                15,
+                                15,
+                                TimeUnit.SECONDS);
+                        switch (task.kind()) {
+                          case "CHANNEL_PAYMENT", "CHANNEL_REFUND", "CHANNEL_CLOSE" -> {
+                            if (input == null) gateway.execute(task);
+                            else gateway.execute(task, input);
+                          }
+                          case "PROCESS_INBOX" -> inbox.process(task.aggregateId());
+                          case "PAYMENT_SUCCEEDED",
+                              "PAYMENT_FAILED",
+                              "PAYMENT_CLOSED",
+                              "REFUND_SUCCEEDED",
+                              "REFUND_FAILED" -> {
+                            if (!queue.notificationMayRun(task)) {
+                              outcome = "expired_or_lease_lost";
+                              return;
+                            }
+                            if (notificationInput == null) notifications.deliver(task);
+                            else notifications.deliver(task, notificationInput);
+                          }
+                          case "RECONCILE" -> reconciliation.process(task.aggregateId(), task);
+                          case "EXPORT" -> exports.process(task.aggregateId(), task);
+                          default ->
+                              throw new IllegalArgumentException(
+                                  "Unsupported task type: " + task.kind());
+                        }
+                        outcome = completions.complete(task) ? "completed" : "lease_lost";
+                        if (outcome.equals("completed"))
+                          metrics
+                              .counter("merchantpay.tasks.completed", "kind", task.kind())
+                              .increment();
+                      } catch (RuntimeException failure) {
+                        retry(task, failure);
+                        outcome = "retried";
+                      } finally {
+                        if (heartbeat != null) heartbeat.cancel(false);
+                        permits.release();
+                        if (fast) capacity.release();
+                        sample.stop(
+                            metrics.timer(
+                                "merchantpay.tasks.execution",
+                                "kind",
+                                task.kind(),
+                                "outcome",
+                                outcome));
                       }
-                      outcome = completions.complete(task) ? "completed" : "lease_lost";
-                      if (outcome.equals("completed"))
-                        metrics
-                            .counter("merchantpay.tasks.completed", "kind", task.kind())
-                            .increment();
-                    } catch (RuntimeException failure) {
-                      queue.retry(task, failure);
-                      outcome = "retried";
-                      metrics.counter("merchantpay.tasks.retried", "kind", task.kind()).increment();
-                    } finally {
-                      sample.stop(
-                          metrics.timer(
-                              "merchantpay.tasks.execution",
-                              "kind",
-                              task.kind(),
-                              "outcome",
-                              outcome));
-                      heartbeat.cancel(false);
-                      permits.release();
-                      if (fast) capacity.release();
-                    }
-                  }));
+                    }));
+      } catch (RejectedExecutionException unavailable) {
+        permits.release();
+        if (fast) capacity.release();
+        retry(task, unavailable);
+      }
     }
     return !claimed.isEmpty();
   }
 
-  @Scheduled(fixedDelay = 60000)
+  private void retry(TaskQueue.Task task, RuntimeException failure) {
+    try {
+      queue.retry(task, failure);
+      metrics.counter("merchantpay.tasks.retried", "kind", task.kind()).increment();
+    } catch (RuntimeException unavailable) {
+      // Keep the durable lease for expiry/reclaim if retry persistence is unavailable.
+      metrics.counter("merchantpay.tasks.retry.errors").increment();
+    }
+  }
+
+  @Scheduled(fixedDelay = 250)
   void expireSecurityWindows() {
     DatabaseRole.worker(
         () -> {
-          jdbc.update(
-              "DELETE FROM signature_nonces WHERE expires_at<?", Timestamp.from(clock.instant()));
-          jdbc.update(
-              "DELETE FROM api_rate_limits WHERE window_second<?",
+          clean(
+              "DELETE FROM signature_nonces WHERE expires_at<? ORDER BY expires_at LIMIT 500",
+              Timestamp.from(clock.instant()));
+          clean(
+              "DELETE FROM api_rate_limits WHERE window_second<? ORDER BY window_second LIMIT 500",
               clock.instant().minusSeconds(600).getEpochSecond());
         });
+  }
+
+  private void clean(String sql, Object cutoff) {
+    long started = nanoTime.getAsLong();
+    for (int batch = 0; batch < 4; batch++) {
+      // Budget limits starting another transaction; an in-flight database call can exceed it.
+      if (batch > 0 && nanoTime.getAsLong() - started >= TimeUnit.MILLISECONDS.toNanos(50)) break;
+      int deleted =
+          java.util.Objects.requireNonNull(
+              jdbc.execute(
+                  sql,
+                  (org.springframework.jdbc.core.PreparedStatementCallback<Integer>)
+                      statement -> {
+                        statement.setQueryTimeout(1);
+                        statement.setObject(1, cutoff);
+                        return statement.executeUpdate();
+                      }));
+      if (deleted < 500) break;
+    }
   }
 
   @Override

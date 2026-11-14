@@ -1,0 +1,235 @@
+# Replace each image with the approved digest and create merchantpay-v3-runtime
+# before applying. The runtime Secret supplies database URLs, credentials,
+# OIDC, Kafka, Redis, ClickHouse and S3 settings; no secret value belongs here.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: merchantpay-v3
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: merchantpay-v3-flags
+  namespace: merchantpay-v3
+data:
+  BIND_ADDRESS: "0.0.0.0"
+  SPRING_FLYWAY_ENABLED: "false"
+  SERVER_FORWARD_HEADERS_STRATEGY: framework
+  SERVER_SERVLET_SESSION_COOKIE_SECURE: "true"
+  OBJECT_STORAGE_TYPE: s3
+  SHARED_SESSIONS_ENABLED: "true"
+  CONSOLE_HIGH_RISK_ENABLED: "true"
+  CONSOLE_MFA_REQUIRED: "true"
+  CHANNEL_CONTROLS_ENABLED: "true"
+  REDIS_ADMISSION_ENABLED: "true"
+  EVENT_TRANSPORT: POLLING
+  MAXIMUM_API_INSTANCES: "2"
+  SHARD_EXACT_READS_ENABLED: "false"
+  SHARD_MONEY_WRITES_ENABLED: "false"
+  SHARD_TARGET_HTTP_WRITES_ENABLED: "false"
+  SHARD_CHANNEL_WORKERS_ENABLED: "false"
+  SHARD_CDC_ENABLED: "false"
+  SHARD_PROJECTION_ENABLED: "false"
+  SHARD_PROJECTION_CONSUMER_ENABLED: "false"
+  SHARD_PROJECTION_WORKER_ENABLED: "false"
+  SHARD_MIGRATION_QUIESCE_ENABLED: "false"
+  SHARD_MIGRATION_COPY_ENABLED: "false"
+  SHARD_MIGRATION_BATCH_ENABLED: "false"
+  SHARD_MIGRATION_CUTOVER_ENABLED: "false"
+  SHARD_REVERSE_ENABLED: "false"
+  HISTORY_ARCHIVE_ENABLED: "false"
+  HISTORY_EVENT_RETIRE_ENABLED: "false"
+  FLINK_ANALYTICS_ENABLED: "false"
+  ANALYTICS_PUBLICATION_ENABLED: "false"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: merchantpay-api
+  namespace: merchantpay-v3
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels: {app: merchantpay-api}
+  template:
+    metadata:
+      labels: {app: merchantpay-api}
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 90
+      containers:
+        - name: platform
+          image: registry.example.invalid/merchantpay/platform:v3-REPLACE
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: merchantpay-v3-flags}
+            - secretRef: {name: merchantpay-v3-runtime}
+          env:
+            - {name: WORKERS_ENABLED, value: "false"}
+            - {name: EVENT_CONSUMER_ENABLED, value: "false"}
+            - {name: READ_MODEL_CONSUMER_ENABLED, value: "false"}
+            - {name: READ_MODEL_WORKER_ENABLED, value: "false"}
+            - {name: DATABASE_POOL_SIZE, value: "16"}
+          startupProbe:
+            httpGet: {path: /actuator/health/liveness, port: http}
+            periodSeconds: 5
+            failureThreshold: 36
+          readinessProbe:
+            httpGet: {path: /actuator/health/readiness, port: http}
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet: {path: /actuator/health/liveness, port: http}
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests: {cpu: "500m", memory: "768Mi"}
+            limits: {cpu: "2", memory: "1536Mi"}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: merchantpay-api
+  namespace: merchantpay-v3
+spec:
+  selector: {app: merchantpay-api}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: merchantpay-api
+  namespace: merchantpay-v3
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: merchantpay-api}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: merchantpay-channel-worker
+  namespace: merchantpay-v3
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: merchantpay-channel-worker}
+  template:
+    metadata:
+      labels: {app: merchantpay-channel-worker}
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: platform
+          image: registry.example.invalid/merchantpay/platform:v3-REPLACE
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: merchantpay-v3-flags}
+            - secretRef: {name: merchantpay-v3-runtime}
+          env:
+            - {name: WORKERS_ENABLED, value: "true"}
+            - {name: WORKER_QUEUES, value: "INBOX,FAST,NOTIFY"}
+            - {name: EVENT_CONSUMER_ENABLED, value: "false"}
+            - {name: DATABASE_POOL_SIZE, value: "20"}
+          readinessProbe:
+            httpGet: {path: /actuator/health/readiness, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /actuator/health/liveness, port: http}
+            periodSeconds: 15
+          resources:
+            requests: {cpu: "500m", memory: "768Mi"}
+            limits: {cpu: "2", memory: "1536Mi"}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: merchantpay-bulk-worker
+  namespace: merchantpay-v3
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: merchantpay-bulk-worker}
+  template:
+    metadata:
+      labels: {app: merchantpay-bulk-worker}
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: platform
+          image: registry.example.invalid/merchantpay/platform:v3-REPLACE
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: merchantpay-v3-flags}
+            - secretRef: {name: merchantpay-v3-runtime}
+          env:
+            - {name: WORKERS_ENABLED, value: "true"}
+            - {name: WORKER_QUEUES, value: BULK}
+            - {name: EVENT_CONSUMER_ENABLED, value: "false"}
+            - {name: DATABASE_POOL_SIZE, value: "8"}
+          readinessProbe:
+            httpGet: {path: /actuator/health/readiness, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /actuator/health/liveness, port: http}
+            periodSeconds: 15
+          resources:
+            requests: {cpu: "250m", memory: "768Mi"}
+            limits: {cpu: "2", memory: "1536Mi"}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: merchantpay-projection-worker
+  namespace: merchantpay-v3
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: merchantpay-projection-worker}
+  template:
+    metadata:
+      labels: {app: merchantpay-projection-worker}
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: platform
+          image: registry.example.invalid/merchantpay/platform:v3-REPLACE
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: merchantpay-v3-flags}
+            - secretRef: {name: merchantpay-v3-runtime}
+          env:
+            - {name: WORKERS_ENABLED, value: "false"}
+            - {name: EVENT_CONSUMER_ENABLED, value: "false"}
+            - {name: READ_MODEL_CONSUMER_ENABLED, value: "false"}
+            - {name: READ_MODEL_WORKER_ENABLED, value: "false"}
+            - {name: DATABASE_POOL_SIZE, value: "8"}
+          readinessProbe:
+            httpGet: {path: /actuator/health/readiness, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /actuator/health/liveness, port: http}
+            periodSeconds: 15
+          resources:
+            requests: {cpu: "250m", memory: "768Mi"}
+            limits: {cpu: "2", memory: "1536Mi"}

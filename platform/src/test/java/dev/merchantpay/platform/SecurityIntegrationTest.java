@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
       "merchantpay.channel-token=test",
       "merchantpay.callback-secret=test",
       "merchantpay.workers-enabled=false",
+      "merchantpay.api-nonce-coalesced=true",
       "merchantpay.metrics-password=test-metrics-password",
       "spring.security.oauth2.client.registration.keycloak.client-secret=test"
     })

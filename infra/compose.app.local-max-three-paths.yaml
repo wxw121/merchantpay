@@ -1,0 +1,9 @@
+# Explicit local candidate; append after local-max-api-borrow. Defaults stay unchanged.
+services:
+  platform:
+    image: merchantpay/platform:local-three-paths
+    environment:
+      CHANNEL_RECEIPT_BULK_SQL: "true"
+      CHANNEL_TASK_PREFETCH: "true"
+      PAYMENT_ORDERED_IDS: "true"
+      CHANNEL_ATTEMPT_ORDERED_IDS: "true"

@@ -20,6 +20,7 @@ import {
   Timeline,
   Skeleton,
   Result,
+  QRCode,
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -51,6 +52,14 @@ function PaymentForm({ onCreated }: { onCreated: (payment: Payment) => void }) {
   const { merchant } = useWorkspace();
   const { message } = App.useApp();
   const [form] = Form.useForm<PaymentInput>();
+  const channel = Form.useWatch("channel", form);
+  const available = useQuery({
+    queryKey: ["available-channels"],
+    queryFn: () =>
+      api<{ routingEnabled: boolean; channels: string[] }>(
+        "/api/console/available-channels",
+      ),
+  });
   const [submitting, setSubmitting] = useState(false);
   useEffect(() => {
     form.setFieldValue("merchantId", merchant || undefined);
@@ -71,7 +80,9 @@ function PaymentForm({ onCreated }: { onCreated: (payment: Payment) => void }) {
           const result = await post<Payment>(
             `/api/console/payments?${queryString({ merchantId: values.merchantId })}`,
             {
-              merchantOrderNo: values.scenario + values.merchantOrderNo,
+              merchantOrderNo:
+                (values.channel.startsWith("MOCK_") ? values.scenario : "") +
+                values.merchantOrderNo,
               amountMinor: parseYuan(values.amount),
               currency: "CNY",
               channel: values.channel,
@@ -131,15 +142,29 @@ function PaymentForm({ onCreated }: { onCreated: (payment: Payment) => void }) {
           autoComplete="off"
         />
       </Form.Item>
-      <Form.Item label="模拟渠道" name="channel">
+      <Form.Item
+        label="支付渠道"
+        name="channel"
+        extra="支付宝使用独立沙箱，需要已配置的沙箱账号；未知结果不会换渠道。"
+      >
         <Select
           options={[
             { value: "MOCK_A", label: "模拟渠道 A" },
             { value: "MOCK_B", label: "模拟渠道 B" },
+            ...(available.data?.routingEnabled
+              ? [{ value: "AUTO", label: "按商户路由选择" }]
+              : []),
+            ...(available.data?.channels.includes("ALIPAY_SANDBOX")
+              ? [{ value: "ALIPAY_SANDBOX", label: "支付宝 · 沙箱" }]
+              : []),
           ]}
         />
       </Form.Item>
-      <Form.Item label="模拟场景" name="scenario">
+      <Form.Item
+        label="模拟场景"
+        name="scenario"
+        hidden={!channel?.startsWith("MOCK_")}
+      >
         <Select
           options={[
             { value: "", label: "正常成功" },
@@ -424,7 +449,7 @@ function PaymentDetailContent() {
     })),
     ...journals.map((row) => ({
       time: field(row, "createdAt"),
-      title: `凭证已过账 · ${field(row, "sourceType") === "PAYMENT" ? "支付" : "退款"}`,
+      title: `凭证已过账 · ${{ PAYMENT: "支付", REFUND: "退款", ADJUSTMENT: "财务调账" }[field(row, "sourceType")] ?? field(row, "sourceType")}`,
       content: field(row, "eventId"),
     })),
     ...tasks
@@ -486,6 +511,9 @@ function PaymentDetailContent() {
           title="结果未知，仍在查证"
           description={`最近业务更新时间：${dateTime(payment.updatedAt)}。请保留原业务号，不要通过新订单重复付款。查单任务到达重试上限后，可在任务页查看原因并重放。`}
         />
+      )}
+      {payment.channel === "ALIPAY_SANDBOX" && (
+        <SandboxCheckout payment={payment} />
       )}
       <section className="detail-summary">
         <div className="payment-amount">
@@ -844,8 +872,8 @@ export function Cashier() {
   return (
     <div className="cashier">
       <PageTitle
-        title="模拟收银台"
-        description="CNY · 独立模拟渠道，不产生真实扣款。"
+        title="测试收银台"
+        description="CNY · 选择模拟渠道或已配置的支付宝沙箱。沙箱测试需使用沙箱客户端和账号。"
       />
       {!current ? (
         <PaymentForm onCreated={setPayment} />
@@ -866,6 +894,9 @@ export function Cashier() {
             <Money value={current.amountMinor} />
             <small>元</small>
           </div>
+          {current.channel === "ALIPAY_SANDBOX" && (
+            <SandboxCheckout payment={current} />
+          )}
           <Space>
             <Link to={`/payments/${current.id}`}>
               <Button>查看交易详情</Button>
@@ -876,5 +907,33 @@ export function Cashier() {
         </>
       )}
     </div>
+  );
+}
+function SandboxCheckout({ payment }: { payment: Payment }) {
+  const terminal = ["SUCCEEDED", "FAILED", "CLOSED"].includes(payment.status);
+  const checkout = useQuery({
+    queryKey: ["sandbox-checkout", payment.id],
+    queryFn: () =>
+      api<{ qrCode: string; environment: string }>(
+        `/api/console/payments/${payment.id}/checkout?${queryString({ merchantId: payment.merchantId })}`,
+      ),
+    enabled: !terminal,
+    refetchInterval: terminal ? false : 2000,
+  });
+  return (
+    <section className="data-panel">
+      <Alert
+        type="info"
+        title="支付宝沙箱支付"
+        description="使用支付宝沙箱客户端扫描二维码。正式账务以服务端验签和原业务查单结果为准；外部沙箱联调尚未验收。"
+      />
+      {checkout.error && <ErrorNotice error={checkout.error} />}{" "}
+      {!terminal &&
+        (checkout.data?.qrCode ? (
+          <QRCode value={checkout.data.qrCode} size={220} />
+        ) : (
+          <p>等待沙箱预下单生成二维码，请保留本业务号。</p>
+        ))}
+    </section>
   );
 }

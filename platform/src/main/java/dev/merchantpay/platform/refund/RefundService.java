@@ -49,6 +49,7 @@ public class RefundService {
               rs.getTimestamp("created_at").toInstant(),
               rs.getTimestamp("updated_at").toInstant());
   private final JdbcTemplate jdbc;
+  private JdbcTemplate controlJdbc;
   private final TransactionTemplate transactions;
   private final PaymentService payments;
   private final LedgerService ledger;
@@ -63,6 +64,7 @@ public class RefundService {
       OutboxService outbox,
       Clock clock) {
     this.jdbc = jdbc;
+    this.controlJdbc = jdbc;
     this.transactions = transactions;
     this.payments = payments;
     this.ledger = ledger;
@@ -93,7 +95,7 @@ public class RefundService {
             return existing.getFirst();
           }
           var enabled =
-              jdbc.query(
+              controlJdbc.query(
                   "SELECT enabled FROM merchants WHERE id=?",
                   (rs, row) -> rs.getBoolean(1),
                   merchantId);
@@ -128,7 +130,48 @@ public class RefundService {
         });
   }
 
+  public RefundService forShard(
+      JdbcTemplate selected,
+      TransactionTemplate tx,
+      PaymentService localPayments,
+      LedgerService localLedger,
+      OutboxService localOutbox) {
+    var local = new RefundService(selected, tx, localPayments, localLedger, localOutbox, clock);
+    local.controlJdbc = controlJdbc;
+    return local;
+  }
+
+  /** Internal bounded lookup; channel callers still verify each record's merchant. */
+  public java.util.Map<String, RefundView> loadForChannelTasks(java.util.Collection<String> ids) {
+    Objects.requireNonNull(ids);
+    if (ids.size() > 64) throw new IllegalArgumentException("Channel input batch exceeds64");
+    if (ids.isEmpty()) return java.util.Map.of();
+    var unique = new java.util.LinkedHashSet<>(ids);
+    if (unique.contains(null)) throw new IllegalArgumentException("Channel input ID required");
+    String sql =
+        "SELECT * FROM refunds WHERE id IN ("
+            + String.join(",", java.util.Collections.nCopies(unique.size(), "?"))
+            + ")";
+    var rows =
+        jdbc.query(
+            connection -> {
+              var statement = connection.prepareStatement(sql);
+              statement.setQueryTimeout(1);
+              int index = 1;
+              for (String id : unique) statement.setString(index++, id);
+              return statement;
+            },
+            MAPPER);
+    var result = new java.util.HashMap<String, RefundView>();
+    for (var row : rows) result.put(row.id(), row);
+    return java.util.Map.copyOf(result);
+  }
+
   public RefundView get(String merchantId, String id) {
+    return get(jdbc, merchantId, id);
+  }
+
+  public static RefundView get(JdbcTemplate jdbc, String merchantId, String id) {
     var rows =
         jdbc.query("SELECT * FROM refunds WHERE id=? AND merchant_id=?", MAPPER, id, merchantId);
     if (rows.isEmpty()) {
@@ -138,6 +181,23 @@ public class RefundService {
   }
 
   public RefundView applyResult(String id, ChannelResult result) {
+    return applyResult(id, result, true, null);
+  }
+
+  public void applyResultWithoutView(String id, ChannelResult result) {
+    applyResult(id, result, false, null);
+  }
+
+  public void applyObservation(
+      String id, ChannelResult result, dev.merchantpay.platform.common.ReceiptEvidence evidence) {
+    applyResult(id, result, false, Objects.requireNonNull(evidence));
+  }
+
+  private RefundView applyResult(
+      String id,
+      ChannelResult result,
+      boolean resultView,
+      dev.merchantpay.platform.common.ReceiptEvidence evidence) {
     return transactions.execute(
         transaction -> {
           var initial = jdbc.query("SELECT * FROM refunds WHERE id=?", MAPPER, id);
@@ -153,6 +213,7 @@ public class RefundService {
             throw conflict();
           }
           long amount = Long.parseLong(refund.amountMinor());
+          if (evidence != null) evidence.verify(amount, refund.channel(), false);
           switch (result) {
             case ChannelResult.Success success -> {
               if (success.amountMinor() != amount
@@ -214,11 +275,14 @@ public class RefundService {
               }
             }
             case ChannelResult.Unknown ignored -> {
-              if (!terminal(refund.status())) {
+              if (!terminal(refund.status()) && !refund.status().equals("UNKNOWN")) {
                 jdbc.update(
-                    "UPDATE refunds SET status='UNKNOWN',updated_at=? WHERE id=?",
+                    "UPDATE refunds SET status='UNKNOWN',unknown_since=COALESCE(unknown_since,?),updated_at=? WHERE id=?",
+                    Timestamp.from(clock.instant()),
                     Timestamp.from(clock.instant()),
                     id);
+                outbox.fact(
+                    "refund-unknown:" + id, "REFUND_STATE_CHANGED", id, refund.merchantId());
               }
             }
             case ChannelResult.Pending ignored -> {}
@@ -226,7 +290,7 @@ public class RefundService {
               throw conflict();
             }
           }
-          return get(refund.merchantId(), id);
+          return resultView ? get(refund.merchantId(), id) : null;
         });
   }
 

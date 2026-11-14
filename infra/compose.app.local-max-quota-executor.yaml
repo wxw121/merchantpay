@@ -1,0 +1,7 @@
+# Candidate only. Append after admission and archive-isolation overlays.
+# The runner explicitly selects false/true/false on one image; not in default start scripts.
+services:
+  platform:
+    image: merchantpay/platform:local-quota-executor
+    environment:
+      API_QUOTA_DEDICATED_EXECUTOR: "false"
