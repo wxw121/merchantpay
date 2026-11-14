@@ -1,7 +1,15 @@
+import contextlib
+import io
+import json
+import sys
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
-from release_boundary import NEW_CONTRACT_FLAGS, check
+import legacy_rollback
 from legacy_rollback import commands, deployment_stopped
+from release_boundary import NEW_CONTRACT_FLAGS, check
 
 
 def snapshot():
@@ -82,6 +90,38 @@ class ReleaseBoundaryTest(unittest.TestCase):
                                              "status": {"replicas": 1}}))
         self.assertFalse(deployment_stopped({"spec": {"replicas": 1},
                                              "status": {"replicas": 0}}))
+
+    def test_rollback_cli_dry_run_outputs_all_actions_without_invoking_kubectl(self):
+        with patch.object(legacy_rollback.subprocess, "run") as run:
+            result, output = self.run_rollback(snapshot())
+            run.assert_not_called()
+        self.assertEqual(result, 0)
+        self.assertEqual(len(output.splitlines()), 8)
+        self.assertIn("DRY_RUN: kubectl -n merchantpay-v3 set image deployment/merchantpay-api", output)
+
+    def test_rollback_cli_rejects_a_live_flag_before_inspecting_deployments(self):
+        with patch.object(legacy_rollback.subprocess, "run") as run:
+            run.return_value.stdout = json.dumps({"data": {
+                **{name: "false" for name in NEW_CONTRACT_FLAGS},
+                NEW_CONTRACT_FLAGS[0]: "true",
+            }})
+            with self.assertRaisesRegex(ValueError, "flags are not all disabled"):
+                self.run_rollback(snapshot(), execute=True)
+            self.assertEqual(run.call_count, 1)
+            self.assertIn("configmap", run.call_args.args[0])
+
+    @staticmethod
+    def run_rollback(evidence, *, execute=False):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "boundary.json"
+            path.write_text(json.dumps(evidence), encoding="utf-8")
+            digest = "registry.example/merchantpay/platform@sha256:" + "a" * 64
+            argv = ["legacy_rollback", "--evidence", str(path), "--old-image", digest]
+            if execute:
+                argv.append("--execute")
+            output = io.StringIO()
+            with patch.object(sys, "argv", argv), contextlib.redirect_stdout(output):
+                return legacy_rollback.main(), output.getvalue()
 
 
 if __name__ == "__main__":

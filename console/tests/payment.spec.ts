@@ -168,7 +168,7 @@ test.describe
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/cashier");
     await expect(
-      page.getByRole("heading", { name: "模拟收银台", exact: true }),
+      page.getByRole("heading", { name: "测试收银台", exact: true }),
     ).toBeVisible();
     expect(
       await page

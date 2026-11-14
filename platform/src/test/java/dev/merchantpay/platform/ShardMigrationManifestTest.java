@@ -10,6 +10,8 @@ import java.time.*;
 import java.util.*;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -18,8 +20,9 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.transaction.support.TransactionTemplate;
 
 class ShardMigrationManifestTest {
-  @Test
-  void paidSettlementReservationMovesWithRouteAndRepeatedRequestIsIdempotent() throws Exception {
+  @ParameterizedTest
+  @ValueSource(booleans = {false, true})
+  void paidSettlementReservationMovesWithRouteAndCanReturnToCore(boolean batched) throws Exception {
     var sources = new HashMap<Integer, DataSource>();
     for (int physical = 0; physical < 4; physical++) {
       var source =
@@ -30,10 +33,12 @@ class ShardMigrationManifestTest {
       sources.put(physical, source);
       ShardMigrationPreflightTest.schema(new JdbcTemplate(source), physical);
     }
-    var core = new JdbcTemplate(sources.get(0));
-    core.execute(
-        "CREATE TABLE v3_shard_migrations(id VARCHAR(36) PRIMARY KEY,bucket INT,open_bucket INT,source_shard INT,target_shard INT,source_epoch BIGINT,version BIGINT,state VARCHAR(16),updated_at TIMESTAMP)");
-    try (var connection = sources.get(0).getConnection()) {
+    // H2 may reference the schema setup session when evaluating string IN constraints.
+    try (var coreSchema = sources.get(0).getConnection();
+        var targetSchema = sources.get(1).getConnection()) {
+      var core = new JdbcTemplate(sources.get(0));
+      core.execute(
+          "CREATE TABLE v3_shard_migrations(id VARCHAR(36) PRIMARY KEY,bucket INT,open_bucket INT,source_shard INT,target_shard INT,source_epoch BIGINT,version BIGINT,state VARCHAR(16),updated_at TIMESTAMP)");
       for (String file :
           List.of(
               "V34__shard_quiescence.sql",
@@ -41,134 +46,238 @@ class ShardMigrationManifestTest {
               "V36__shard_copy_runs.sql",
               "V37__shard_copy_discard.sql",
               "V46__shard_finance_handoff_hops.sql"))
-        ScriptUtils.executeSqlScript(connection, new ClassPathResource("db/migration/" + file));
+        ScriptUtils.executeSqlScript(coreSchema, new ClassPathResource("db/migration/" + file));
       core.update(
           "INSERT INTO v3_shard_migrations VALUES('plan',4,4,0,1,1,1,'PLANNED',CURRENT_TIMESTAMP)");
       core.update("UPDATE v3_bucket_fences SET access_state='FENCED' WHERE bucket=4");
       core.update(
           "INSERT INTO v3_shard_isolations(plan_id,bucket,source_epoch,plan_version,state,isolated_by,isolation_reason,created_at,updated_at) VALUES('plan',4,1,1,'QUIESCED','ops','stop',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)");
+      core.execute(
+          "CREATE TABLE v3_shard_cutovers(plan_id VARCHAR(36) PRIMARY KEY,bucket INT,source_epoch BIGINT,target_epoch BIGINT,target_shard INT,plan_version BIGINT,manifest_hash VARCHAR(64),state VARCHAR(16),initiated_by VARCHAR(160),reason VARCHAR(1000),created_at TIMESTAMP,updated_at TIMESTAMP,activated_at TIMESTAMP,CONSTRAINT ck_v3_cutover_target CHECK(target_shard BETWEEN 1 AND 3))");
+      ScriptUtils.executeSqlScript(
+          coreSchema, new ClassPathResource("db/migration/V47__reverse_shard_runs.sql"));
+      var batchMigration = new ClassPathResource("db/migration/V44__shard_copy_batches.sql");
+      ScriptUtils.executeSqlScript(coreSchema, batchMigration);
+      ScriptUtils.executeSqlScript(targetSchema, batchMigration);
+      String payment = "p4_00000000-0000-0000-0000-000000000004";
+      core.update("INSERT INTO payments VALUES(?,'SUCCEEDED',4)", payment);
+      core.update("INSERT INTO ledger_journals VALUES('journal',?)", payment);
+      core.update(
+          "INSERT INTO ledger_entries VALUES(1,'journal',?,'merchant','MERCHANT_PAYABLE')",
+          payment);
+      core.update("INSERT INTO finance_settlements VALUES('settlement','merchant','MOCK_PAID',1)");
+      core.update("INSERT INTO settlement_lines VALUES(?,'settlement',1,0,1)", payment);
+      core.update("INSERT INTO settlement_reservations VALUES('settlement',1,0,1)");
+      String priorPayment = "p5_00000000-0000-0000-0000-000000000005";
+      core.update("UPDATE v3_shard_routes SET physical_shard=1,epoch=2 WHERE bucket=5");
+      core.update("UPDATE v3_bucket_fences SET access_state='FENCED' WHERE bucket=5");
+      core.update(
+          "INSERT INTO v3_shard_cutovers(plan_id,bucket,source_epoch,target_epoch,target_shard,plan_version,manifest_hash,state,initiated_by,reason,created_at,updated_at,activated_at) VALUES('prior-plan',5,1,2,1,1,'prior','ACTIVE','ops','prior',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)");
+      var target = new JdbcTemplate(sources.get(1));
+      target.update("INSERT INTO v3_bucket_fences VALUES(5,2,'ACTIVE')");
+      target.update("INSERT INTO payments VALUES(?,'SUCCEEDED',5)", priorPayment);
+      target.update("INSERT INTO ledger_journals VALUES('prior-journal',?)", priorPayment);
+      target.update(
+          "INSERT INTO ledger_entries VALUES(1,'prior-journal',?,'other','MERCHANT_PAYABLE')",
+          priorPayment);
+      var operator = new Actor("ops", null, Set.of("OPS"));
+      var catalog = mock(ShardCatalog.class);
+      when(catalog.detail("plan", operator))
+          .thenAnswer(
+              ignored -> {
+                var row =
+                    core.queryForMap(
+                        "SELECT state,version FROM v3_shard_migrations WHERE id='plan'");
+                return new ShardCatalog.Plan(
+                    "plan",
+                    "request",
+                    4,
+                    0,
+                    1,
+                    1,
+                    ((Number) row.get("version")).longValue(),
+                    row.get("state").toString(),
+                    "ops",
+                    "move",
+                    null,
+                    null,
+                    Instant.EPOCH,
+                    Instant.EPOCH);
+              });
+      var gate = new ShardExportReadGate(sources);
+      var tx = new TransactionTemplate(new DataSourceTransactionManager(sources.get(0)));
+      var preflight = new ShardMigrationPreflight(catalog, gate, core);
+      var manifests =
+          new ShardMigrationManifest(catalog, preflight, gate, core, tx, Clock.systemUTC());
+      var copies =
+          new ShardMigrationCopy(catalog, manifests, preflight, gate, core, tx, Clock.systemUTC());
+      var readiness = new ShardMigrationReadiness(catalog, manifests, gate, core, tx);
+      var cutover =
+          new ShardMigrationCutover(
+              catalog, readiness, manifests, gate, core, tx, Clock.systemUTC());
+      manifests.capture("plan", 1, "source witness", true, operator);
+      if (batched) {
+        var batches =
+            new ShardMigrationBatchCopy(
+                catalog, manifests, preflight, gate, core, tx, Clock.systemUTC());
+        assertThatThrownBy(() -> batches.next("plan", 1, "offline copy", false, operator))
+            .isInstanceOf(ApiException.class);
+        var status = batches.next("plan", 1, "offline copy", true, operator);
+        assertThat(status.state()).isEqualTo("COPYING");
+        assertThat(status.totalCopied()).isEqualTo(1);
+        assertThatThrownBy(() -> batches.next("plan", 1, "different reason", true, operator))
+            .isInstanceOf(ApiException.class);
+        for (int step = 0; step < 25 && !"VERIFIED".equals(status.state()); step++)
+          status = batches.next("plan", 1, "offline copy", true, operator);
+        assertThat(status.state()).isEqualTo("VERIFIED");
+        assertThat(status.totalCopied()).isEqualTo(3);
+        assertThat(batches.next("plan", 1, "offline copy", true, operator)).isEqualTo(status);
+      } else {
+        copies.copy("plan", 1, "offline copy", true, operator);
+      }
+      long movedEntry =
+          target.queryForObject(
+              "SELECT target_id FROM v3_shard_copy_id_map WHERE plan_id='plan' AND entity_name='ledger_entries' AND source_id=1",
+              Long.class);
+      assertThat(movedEntry).isNotEqualTo(1);
+      core.update("DELETE FROM settlement_reservations WHERE entry_id=1");
+      assertThat(readiness.inspect("plan", 1, true, operator).blockers())
+          .contains("FINANCE_UNRESERVEDCOMPLETEDLINES");
+      core.update("INSERT INTO settlement_reservations VALUES('settlement',1,0,1)");
+      assertThat(readiness.inspect("plan", 1, true, operator).checksPassed()).isTrue();
+      core.update(
+          "INSERT INTO v3_shard_cutovers(plan_id,bucket,source_epoch,target_epoch,target_shard,plan_version,manifest_hash,state,initiated_by,reason,created_at,updated_at) VALUES('plan',4,1,2,1,1,?,'PREPARING','ops','activate',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)",
+          manifests.read("plan", operator).hash());
+      assertThatThrownBy(() -> copies.discard("plan", 1, "discard", true, operator))
+          .hasMessageContaining("切流已开始");
+      core.update("DELETE FROM v3_shard_cutovers WHERE plan_id='plan'");
+      assertThatThrownBy(() -> cutover.execute("plan", 1, "activate", false, operator))
+          .isInstanceOf(ApiException.class);
+      var active = cutover.execute("plan", 1, "activate", true, operator);
+      assertThat(active.state()).isEqualTo("ACTIVE");
+      assertThat(cutover.execute("plan", 1, "activate", true, operator)).isEqualTo(active);
+      assertThat(
+              core.queryForMap(
+                  "SELECT state,version,open_bucket FROM v3_shard_migrations WHERE id='plan'"))
+          .containsEntry("state", "MOVED")
+          .containsEntry("version", 2L)
+          .containsEntry("open_bucket", null);
+      assertThat(
+              core.queryForObject(
+                  "SELECT physical_shard FROM v3_shard_routes WHERE bucket=4", Integer.class))
+          .isEqualTo(1);
+      assertThat(
+              core.queryForMap(
+                  "SELECT physical_shard,entry_id FROM settlement_reservations WHERE settlement_id='settlement'"))
+          .containsEntry("physical_shard", 1)
+          .containsEntry("entry_id", movedEntry);
+      assertThat(
+              core.queryForObject(
+                  "SELECT target_entry_id FROM v3_shard_finance_handoffs WHERE source_shard=0 AND source_entry_id=1",
+                  Long.class))
+          .isEqualTo(movedEntry);
+      assertThat(
+              core.queryForObject(
+                  "SELECT physical_shard FROM settlement_lines WHERE settlement_id='settlement'",
+                  Integer.class))
+          .isZero();
+      assertThat(cutover.financeHandoff("plan", operator))
+          .satisfies(
+              report -> {
+                assertThat(report.routeCompleted()).isTrue();
+                assertThat(report.sourcePayableEntries()).isEqualTo(1);
+                assertThat(report.mappedEntries()).isEqualTo(1);
+                assertThat(report.mappedReservations()).isEqualTo(1);
+                assertThat(report.sourceReservations()).isZero();
+              });
+      assertThat(
+              core.queryForObject(
+                  "SELECT access_state FROM v3_bucket_fences WHERE bucket=4", String.class))
+          .isEqualTo("FENCED");
+      assertThat(
+              new JdbcTemplate(sources.get(1))
+                  .queryForObject(
+                      "SELECT access_state FROM v3_bucket_fences WHERE bucket=4", String.class))
+          .isEqualTo("ACTIVE");
+
+      core.update(
+          "INSERT INTO v3_shard_migrations VALUES('return',4,4,1,0,2,1,'PLANNED',CURRENT_TIMESTAMP)");
+      when(catalog.detail("return", operator))
+          .thenAnswer(
+              ignored -> {
+                var row =
+                    core.queryForMap(
+                        "SELECT state,version FROM v3_shard_migrations WHERE id='return'");
+                return new ShardCatalog.Plan(
+                    "return",
+                    "reverse-request",
+                    4,
+                    1,
+                    0,
+                    2,
+                    ((Number) row.get("version")).longValue(),
+                    row.get("state").toString(),
+                    "ops",
+                    "return",
+                    null,
+                    null,
+                    Instant.EPOCH,
+                    Instant.EPOCH);
+              });
+      var reverse = new ShardReverseMigration(catalog, gate, core, tx, Clock.systemUTC());
+      assertThat(reverse.status("return", operator).state()).isEqualTo("NOT_STARTED");
+      assertThatThrownBy(() -> reverse.next("return", 1, "return", false, operator))
+          .isInstanceOf(ApiException.class);
+      assertThat(reverse.next("return", 1, "return", true, operator).state()).isEqualTo("PREPARED");
+      assertThatThrownBy(() -> reverse.next("return", 1, "different reason", true, operator))
+          .isInstanceOf(ApiException.class);
+      target.update("INSERT INTO refunds VALUES('r4_before_fence',?,'SUCCEEDED')", payment);
+      assertThat(reverse.next("return", 1, "return", true, operator).state())
+          .isEqualTo("SOURCE_FENCED");
+      target.update("INSERT INTO refunds VALUES('r4_after_move',?,'SUCCEEDED')", payment);
+      var beforeRefunds = reverse.status("return", operator);
+      for (int step = 0;
+          step < 10
+              && !("COPYING".equals(beforeRefunds.state())
+                  && "payments".equals(beforeRefunds.table()));
+          step++) beforeRefunds = reverse.next("return", 1, "return", true, operator);
+      assertThat(beforeRefunds.state()).isEqualTo("COPYING");
+      assertThat(beforeRefunds.table()).isEqualTo("payments");
+      assertThatThrownBy(() -> reverse.next("return", 1, "return", true, operator))
+          .isInstanceOf(ApiException.class)
+          .hasMessageContaining("来源页");
+      target.update("DELETE FROM refunds WHERE id='r4_after_move'");
+      var reversed = reverse.status("return", operator);
+      for (int step = 0; step < 35 && !"ACTIVE".equals(reversed.state()); step++)
+        reversed = reverse.next("return", 1, "return", true, operator);
+      assertThat(reversed.state()).isEqualTo("ACTIVE");
+      assertThat(reverse.next("return", 1, "return", true, operator)).isEqualTo(reversed);
+      assertThat(gate.capture().routes().get(4)).isEqualTo(new ShardExportReadGate.Route(4, 0, 3));
+      assertThat(
+              core.queryForList("SELECT id FROM refunds WHERE payment_id=?", String.class, payment))
+          .containsExactly("r4_before_fence");
+      assertThat(
+              target.queryForObject(
+                  "SELECT access_state FROM v3_bucket_fences WHERE bucket=4", String.class))
+          .isEqualTo("FENCED");
+      assertThat(
+              target.queryForObject("SELECT id FROM payments WHERE logical_shard=5", String.class))
+          .isEqualTo(priorPayment);
+      long returnedEntry =
+          core.queryForObject(
+              "SELECT id FROM ledger_entries WHERE payment_id=?", Long.class, payment);
+      assertThat(
+              core.queryForMap(
+                  "SELECT physical_shard,entry_id FROM settlement_reservations WHERE settlement_id='settlement'"))
+          .containsEntry("physical_shard", 0)
+          .containsEntry("entry_id", returnedEntry);
+      assertThat(
+              core.queryForObject(
+                  "SELECT COUNT(*) FROM v3_shard_finance_handoff_hops WHERE payment_id=?",
+                  Long.class,
+                  payment))
+          .isEqualTo(2L);
     }
-    core.execute(
-        "CREATE TABLE v3_shard_cutovers(plan_id VARCHAR(36) PRIMARY KEY,bucket INT,source_epoch BIGINT,target_epoch BIGINT,target_shard INT,plan_version BIGINT,manifest_hash VARCHAR(64),state VARCHAR(16),initiated_by VARCHAR(160),reason VARCHAR(1000),created_at TIMESTAMP,updated_at TIMESTAMP,activated_at TIMESTAMP)");
-    String payment = "p4_00000000-0000-0000-0000-000000000004";
-    core.update("INSERT INTO payments VALUES(?,'SUCCEEDED',4)", payment);
-    core.update("INSERT INTO ledger_journals VALUES('journal',?)", payment);
-    core.update(
-        "INSERT INTO ledger_entries VALUES(1,'journal',?,'merchant','MERCHANT_PAYABLE')", payment);
-    core.update("INSERT INTO finance_settlements VALUES('settlement','merchant','MOCK_PAID',1)");
-    core.update("INSERT INTO settlement_lines VALUES(?,'settlement',1,0,1)", payment);
-    core.update("INSERT INTO settlement_reservations VALUES('settlement',1,0,1)");
-    String priorPayment = "p5_00000000-0000-0000-0000-000000000005";
-    core.update("UPDATE v3_shard_routes SET physical_shard=1,epoch=2 WHERE bucket=5");
-    core.update("UPDATE v3_bucket_fences SET access_state='FENCED' WHERE bucket=5");
-    core.update(
-        "INSERT INTO v3_shard_cutovers(plan_id,bucket,source_epoch,target_epoch,target_shard,plan_version,manifest_hash,state,initiated_by,reason,created_at,updated_at,activated_at) VALUES('prior-plan',5,1,2,1,1,'prior','ACTIVE','ops','prior',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)");
-    var target = new JdbcTemplate(sources.get(1));
-    target.update("INSERT INTO v3_bucket_fences VALUES(5,2,'ACTIVE')");
-    target.update("INSERT INTO payments VALUES(?,'SUCCEEDED',5)", priorPayment);
-    target.update("INSERT INTO ledger_journals VALUES('prior-journal',?)", priorPayment);
-    target.update(
-        "INSERT INTO ledger_entries VALUES(1,'prior-journal',?,'other','MERCHANT_PAYABLE')",
-        priorPayment);
-    var operator = new Actor("ops", null, Set.of("OPS"));
-    var catalog = mock(ShardCatalog.class);
-    when(catalog.detail("plan", operator))
-        .thenAnswer(
-            ignored -> {
-              var row =
-                  core.queryForMap("SELECT state,version FROM v3_shard_migrations WHERE id='plan'");
-              return new ShardCatalog.Plan(
-                  "plan",
-                  "request",
-                  4,
-                  0,
-                  1,
-                  1,
-                  ((Number) row.get("version")).longValue(),
-                  row.get("state").toString(),
-                  "ops",
-                  "move",
-                  null,
-                  null,
-                  Instant.EPOCH,
-                  Instant.EPOCH);
-            });
-    var gate = new ShardExportReadGate(sources);
-    var tx = new TransactionTemplate(new DataSourceTransactionManager(sources.get(0)));
-    var preflight = new ShardMigrationPreflight(catalog, gate, core);
-    var manifests =
-        new ShardMigrationManifest(catalog, preflight, gate, core, tx, Clock.systemUTC());
-    var copies =
-        new ShardMigrationCopy(catalog, manifests, preflight, gate, core, tx, Clock.systemUTC());
-    var readiness = new ShardMigrationReadiness(catalog, manifests, gate, core, tx);
-    var cutover =
-        new ShardMigrationCutover(catalog, readiness, manifests, gate, core, tx, Clock.systemUTC());
-    manifests.capture("plan", 1, "source witness", true, operator);
-    copies.copy("plan", 1, "offline copy", true, operator);
-    long movedEntry =
-        target.queryForObject(
-            "SELECT target_id FROM v3_shard_copy_id_map WHERE plan_id='plan' AND entity_name='ledger_entries' AND source_id=1",
-            Long.class);
-    assertThat(movedEntry).isNotEqualTo(1);
-    core.update("DELETE FROM settlement_reservations WHERE entry_id=1");
-    assertThat(readiness.inspect("plan", 1, true, operator).blockers())
-        .contains("FINANCE_UNRESERVEDCOMPLETEDLINES");
-    core.update("INSERT INTO settlement_reservations VALUES('settlement',1,0,1)");
-    assertThat(readiness.inspect("plan", 1, true, operator).checksPassed()).isTrue();
-    core.update(
-        "INSERT INTO v3_shard_cutovers(plan_id,bucket,source_epoch,target_epoch,target_shard,plan_version,manifest_hash,state,initiated_by,reason,created_at,updated_at) VALUES('plan',4,1,2,1,1,?,'PREPARING','ops','activate',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)",
-        manifests.read("plan", operator).hash());
-    assertThatThrownBy(() -> copies.discard("plan", 1, "discard", true, operator))
-        .hasMessageContaining("切流已开始");
-    core.update("DELETE FROM v3_shard_cutovers WHERE plan_id='plan'");
-    assertThatThrownBy(() -> cutover.execute("plan", 1, "activate", false, operator))
-        .isInstanceOf(ApiException.class);
-    var active = cutover.execute("plan", 1, "activate", true, operator);
-    assertThat(active.state()).isEqualTo("ACTIVE");
-    assertThat(cutover.execute("plan", 1, "activate", true, operator)).isEqualTo(active);
-    assertThat(
-            core.queryForMap(
-                "SELECT state,version,open_bucket FROM v3_shard_migrations WHERE id='plan'"))
-        .containsEntry("state", "MOVED")
-        .containsEntry("version", 2L)
-        .containsEntry("open_bucket", null);
-    assertThat(
-            core.queryForObject(
-                "SELECT physical_shard FROM v3_shard_routes WHERE bucket=4", Integer.class))
-        .isEqualTo(1);
-    assertThat(
-            core.queryForMap(
-                "SELECT physical_shard,entry_id FROM settlement_reservations WHERE settlement_id='settlement'"))
-        .containsEntry("physical_shard", 1)
-        .containsEntry("entry_id", movedEntry);
-    assertThat(
-            core.queryForObject(
-                "SELECT target_entry_id FROM v3_shard_finance_handoffs WHERE source_shard=0 AND source_entry_id=1",
-                Long.class))
-        .isEqualTo(movedEntry);
-    assertThat(
-            core.queryForObject(
-                "SELECT physical_shard FROM settlement_lines WHERE settlement_id='settlement'",
-                Integer.class))
-        .isZero();
-    assertThat(cutover.financeHandoff("plan", operator))
-        .satisfies(
-            report -> {
-              assertThat(report.routeCompleted()).isTrue();
-              assertThat(report.sourcePayableEntries()).isEqualTo(1);
-              assertThat(report.mappedEntries()).isEqualTo(1);
-              assertThat(report.mappedReservations()).isEqualTo(1);
-              assertThat(report.sourceReservations()).isZero();
-            });
-    assertThat(
-            core.queryForObject(
-                "SELECT access_state FROM v3_bucket_fences WHERE bucket=4", String.class))
-        .isEqualTo("FENCED");
-    assertThat(
-            new JdbcTemplate(sources.get(1))
-                .queryForObject(
-                    "SELECT access_state FROM v3_bucket_fences WHERE bucket=4", String.class))
-        .isEqualTo("ACTIVE");
   }
 
   @Test

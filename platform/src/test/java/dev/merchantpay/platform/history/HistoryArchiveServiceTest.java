@@ -2,22 +2,29 @@ package dev.merchantpay.platform.history;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import dev.merchantpay.platform.common.Actor;
+import dev.merchantpay.platform.common.ApiException;
 import dev.merchantpay.platform.common.PaymentBuckets;
 import dev.merchantpay.platform.common.Signatures;
 import dev.merchantpay.platform.query.Queries;
 import dev.merchantpay.platform.sharding.ShardExportReadGate;
 import dev.merchantpay.platform.storage.ObjectStorage;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -27,6 +34,93 @@ import tools.jackson.databind.json.JsonMapper;
 
 class HistoryArchiveServiceTest {
   @TempDir Path directory;
+
+  @Test
+  void publishesOnlyDrainedHistoricalFactsAndRejectsTamperedObjects() throws Exception {
+    var gate = mock(ShardExportReadGate.class);
+    var source =
+        new DriverManagerDataSource(
+            "jdbc:h2:mem:history_writer_" + UUID.randomUUID() + ";MODE=MySQL;DB_CLOSE_DELAY=-1",
+            "sa",
+            "");
+    var jdbc = new JdbcTemplate(source);
+    var routes =
+        new ShardExportReadGate.Snapshot(
+            IntStream.range(0, 16)
+                .mapToObj(bucket -> new ShardExportReadGate.Route(bucket, 0, 1))
+                .toList(),
+            Map.of());
+    when(gate.capture()).thenReturn(routes);
+    when(gate.source(0)).thenReturn(source);
+    for (String sql :
+        List.of(
+            "CREATE TABLE v3_shard_identity(id INT PRIMARY KEY,physical_shard INT)",
+            "CREATE TABLE v3_bucket_fences(bucket INT PRIMARY KEY,route_epoch BIGINT,access_state VARCHAR(16))",
+            "CREATE TABLE payments(id VARCHAR(64) PRIMARY KEY,merchant_id VARCHAR(64),status VARCHAR(16),updated_at TIMESTAMP)",
+            "CREATE TABLE refunds(id VARCHAR(64),payment_id VARCHAR(64),merchant_id VARCHAR(64),status VARCHAR(16),updated_at TIMESTAMP)",
+            "CREATE TABLE ledger_journals(id VARCHAR(64),payment_id VARCHAR(64),merchant_id VARCHAR(64),created_at TIMESTAMP)",
+            "CREATE TABLE ledger_entries(id BIGINT,journal_id VARCHAR(64),payment_id VARCHAR(64),merchant_id VARCHAR(64))",
+            "CREATE TABLE inbox_notifications(id VARCHAR(64),aggregate_id VARCHAR(64),status VARCHAR(16))",
+            "CREATE TABLE outbox_tasks(status VARCHAR(16))",
+            "CREATE TABLE domain_events(id VARCHAR(64),event_id VARCHAR(160),event_type VARCHAR(64),delivery_mode VARCHAR(16),merchant_id VARCHAR(64),logical_bucket INT,payload VARCHAR(1000),payload_hash VARCHAR(64),aggregateid VARCHAR(64),sequence_no BIGINT,occurred_at TIMESTAMP)",
+            "CREATE TABLE event_receipts(event_id VARCHAR(160),consumer_name VARCHAR(160))",
+            "CREATE TABLE v3_history_archives(id VARCHAR(36) PRIMARY KEY,merchant_id VARCHAR(64),payment_id VARCHAR(64),logical_bucket INT,physical_shard INT,route_epoch BIGINT,source_hash VARCHAR(64),object_hash VARCHAR(64),object_key VARCHAR(180),fact_count BIGINT,object_bytes BIGINT,archived_by VARCHAR(160),reason VARCHAR(1000),created_at TIMESTAMP,UNIQUE(payment_id,source_hash))",
+            "CREATE TABLE v3_history_event_locators(event_id VARCHAR(160) PRIMARY KEY,merchant_id VARCHAR(64),payment_id VARCHAR(64),logical_bucket INT,archive_id VARCHAR(36),payload_hash VARCHAR(64),event_payload_hash VARCHAR(64),event_row_id VARCHAR(64),state VARCHAR(12) DEFAULT 'WARM_COPY',created_at TIMESTAMP)",
+            "CREATE TABLE audit_records(id VARCHAR(36),merchant_id VARCHAR(64),actor VARCHAR(160),operation VARCHAR(64),resource_id VARCHAR(160),detail VARCHAR(1000),created_at TIMESTAMP)"))
+      jdbc.execute(sql);
+    jdbc.update("INSERT INTO v3_shard_identity VALUES(1,0)");
+    jdbc.update("INSERT INTO v3_bucket_fences VALUES(4,1,'ACTIVE')");
+    String payment = "p4_00000000-0000-0000-0000-000000000000";
+    var now = Instant.parse("2026-11-14T00:00:00Z");
+    var old = Timestamp.from(now.minus(Duration.ofDays(31)));
+    jdbc.update(
+        "INSERT INTO payments VALUES(?,'merchant','SUCCEEDED',?)", payment, Timestamp.from(now));
+    var storage = new ObjectStorage(directory.toString());
+    var clock = Clock.fixed(now, ZoneOffset.UTC);
+    var service =
+        new HistoryArchiveService(
+            gate,
+            storage,
+            JsonMapper.builder().build(),
+            new Queries(jdbc, clock, "cursor-key"),
+            clock);
+    var operator = new Actor("ops", null, Set.of("OPS"));
+
+    assertThatThrownBy(() -> service.archive("merchant", payment, "before stop", false, operator))
+        .hasMessageContaining("须停写");
+    assertThatThrownBy(() -> service.archive("merchant", payment, "too recent", true, operator))
+        .hasMessageContaining("超过30天");
+    jdbc.update("UPDATE payments SET updated_at=? WHERE id=?", old, payment);
+    jdbc.update("INSERT INTO outbox_tasks VALUES('READY')");
+    assertThatThrownBy(() -> service.archive("merchant", payment, "queued", true, operator))
+        .hasMessageContaining("尚未排空");
+    jdbc.update("DELETE FROM outbox_tasks");
+    assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM v3_history_archives", Long.class))
+        .isZero();
+    jdbc.update("INSERT INTO refunds VALUES('refund',?,'merchant','SUCCEEDED',?)", payment, old);
+    jdbc.update("INSERT INTO ledger_journals VALUES('journal',?,'merchant',?)", payment, old);
+    jdbc.update("INSERT INTO ledger_entries VALUES(1,'journal',?,'merchant')", payment);
+    jdbc.update(
+        "INSERT INTO domain_events VALUES('row','event','PAYMENT_SUCCEEDED','POLLING','merchant',4,?,?,?,1,?)",
+        "{}",
+        Signatures.sha256("{}"),
+        payment,
+        old);
+
+    var archive = service.archive("merchant", payment, "verify snapshot", true, operator);
+
+    assertThat(archive.factCount()).isEqualTo(5);
+    assertThat(service.archive("merchant", payment, "retry", true, operator)).isEqualTo(archive);
+    assertThat(service.read("merchant", payment, operator).facts())
+        .extracting(HistoryParquetCodec.Fact::kind)
+        .containsExactly("PAYMENT", "REFUND", "JOURNAL", "ENTRY", "EVENT");
+    assertThat(service.readEvent("merchant", payment, "event", operator).factId())
+        .isEqualTo("event");
+    assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM audit_records", Long.class)).isEqualTo(1);
+    Files.writeString(storage.localPath(archive.objectKey()), "tampered");
+    assertThatThrownBy(() -> service.read("merchant", payment, operator))
+        .isInstanceOf(ApiException.class);
+  }
 
   @Test
   void copiedArchiveRemainsReadableAfterBucketMoves() throws Exception {
