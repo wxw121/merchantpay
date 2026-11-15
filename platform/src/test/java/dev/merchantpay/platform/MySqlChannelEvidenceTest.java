@@ -28,9 +28,10 @@ class MySqlChannelEvidenceTest extends ChannelEvidenceTest {
     var source =
         new DriverManagerDataSource(MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
     var sql = new JdbcTemplate(source);
+    sql.execute("DROP VIEW IF EXISTS outbox_task_records");
     for (var table :
         sql.queryForList(
-            "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE()",
+            "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_type='BASE TABLE'",
             String.class)) {
       if (!table.matches("[a-z_]+")) throw new IllegalStateException("Unexpected test table");
       sql.execute("DROP TABLE " + table);

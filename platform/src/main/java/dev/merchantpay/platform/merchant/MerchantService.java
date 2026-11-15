@@ -100,20 +100,35 @@ public class MerchantService {
   }
 
   public Key notificationKey(String merchant) {
-    var ids =
-        jdbc.queryForList(
-            "SELECT id FROM merchant_keys WHERE merchant_id=? AND enabled=TRUE AND (expires_at IS NULL OR expires_at>?) ORDER BY created_at DESC LIMIT 1",
-            String.class,
+    var keys =
+        jdbc.query(
+            "SELECT id,merchant_id,secret_cipher FROM merchant_keys WHERE merchant_id=? AND enabled=TRUE AND (expires_at IS NULL OR expires_at>?) ORDER BY created_at DESC,id DESC LIMIT 1",
+            (rs, row) ->
+                new Key(
+                    rs.getString("id"),
+                    rs.getString("merchant_id"),
+                    vault.decrypt(rs.getString("secret_cipher"))),
             merchant,
             Timestamp.from(clock.instant()));
-    if (ids.isEmpty()) {
+    if (keys.isEmpty()) {
       throw new ApiException("NO_NOTIFICATION_KEY", 409, "商户没有可用通知密钥");
     }
-    return key(ids.getFirst());
+    return keys.getFirst();
   }
 
   public void audit(
       String merchant, String actor, String operation, String resource, String detail) {
+    audit(jdbc, clock, merchant, actor, operation, resource, detail);
+  }
+
+  public static void audit(
+      JdbcTemplate jdbc,
+      Clock clock,
+      String merchant,
+      String actor,
+      String operation,
+      String resource,
+      String detail) {
     String requestId = org.slf4j.MDC.get("requestId");
     if (requestId != null) {
       detail = java.util.Objects.toString(detail, "") + " [requestId=" + requestId + "]";

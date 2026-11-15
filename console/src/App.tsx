@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { App as AntApp, Button, Result, Skeleton, Tag } from "antd";
@@ -14,7 +14,7 @@ import {
   LogoutOutlined,
   MenuOutlined,
 } from "@ant-design/icons";
-import { api, ApiError, setCsrf } from "./lib/api";
+import { api, ApiError, setCsrf, setActionConfirmation } from "./lib/api";
 import type { Session } from "./lib/api";
 import { MerchantSelect } from "./merchant-select";
 import { Workspace } from "./context";
@@ -41,10 +41,74 @@ const Reconciliation = lazy(() =>
 const Records = lazy(() =>
   import("./pages/Records").then((page) => ({ default: page.Records })),
 );
+const Finance = lazy(() =>
+  import("./pages/Finance").then((page) => ({ default: page.Finance })),
+);
 const Merchants = lazy(() =>
   import("./pages/Merchants").then((page) => ({ default: page.Merchants })),
 );
+const Operations = lazy(() =>
+  import("./pages/V2").then((p) => ({ default: p.Operations })),
+);
+const ReadModel = lazy(() =>
+  import("./pages/V2").then((p) => ({ default: p.ReadModel })),
+);
+const Balances = lazy(() =>
+  import("./pages/V2").then((p) => ({ default: p.Balances })),
+);
+const SecurityCenter = lazy(() =>
+  import("./pages/V2").then((p) => ({ default: p.SecurityCenter })),
+);
+const Shards = lazy(() =>
+  import("./pages/Shards").then((page) => ({ default: page.Shards })),
+);
+const History = lazy(() =>
+  import("./pages/History").then((page) => ({ default: page.History })),
+);
+const Analytics = lazy(() =>
+  import("./pages/Analytics").then((page) => ({ default: page.Analytics })),
+);
 const navigation = [
+  {
+    path: "/analytics",
+    label: "交易分析",
+    icon: <DashboardOutlined aria-hidden="true" />,
+  },
+  {
+    path: "/history",
+    label: "历史数据",
+    icon: <BookOutlined aria-hidden="true" />,
+  },
+  {
+    path: "/shards",
+    label: "分片目录",
+    icon: <ScheduleOutlined aria-hidden="true" />,
+  },
+  {
+    path: "/operations",
+    label: "运行与渠道",
+    icon: <ScheduleOutlined aria-hidden="true" />,
+  },
+  {
+    path: "/read-model",
+    label: "独立查询投影",
+    icon: <BookOutlined aria-hidden="true" />,
+  },
+  {
+    path: "/balances",
+    label: "账务检查点",
+    icon: <BookOutlined aria-hidden="true" />,
+  },
+  {
+    path: "/security",
+    label: "安全中心",
+    icon: <AuditOutlined aria-hidden="true" />,
+  },
+  {
+    path: "/finance",
+    label: "调账与结算",
+    icon: <BookOutlined aria-hidden="true" />,
+  },
   {
     path: "/",
     label: "业务概览",
@@ -98,7 +162,53 @@ export default function App() {
   });
   const [selected, setSelected] = useState("");
   const [mobileMenu, setMobileMenu] = useState(false);
-  const { message } = AntApp.useApp();
+  const { message, modal } = AntApp.useApp();
+  useEffect(() => {
+    setActionConfirmation(
+      (action) =>
+        new Promise<boolean>((resolve) => {
+          let text = action.body;
+          try {
+            text = JSON.stringify(JSON.parse(action.body), null, 2);
+          } catch {
+            /* Empty request. */
+          }
+          modal.confirm({
+            title: "确认本次操作",
+            content: (
+              <>
+                <p>
+                  {action.method} {action.path}
+                </p>
+                <pre
+                  style={{
+                    maxHeight: 260,
+                    overflow: "auto",
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  {text || "无请求正文"}
+                </pre>
+                <p>
+                  确认有效至{" "}
+                  {new Date(action.expiresAt).toLocaleTimeString("zh-CN")}
+                  。页面内容变化后请取消并重新核对。
+                </p>
+              </>
+            ),
+            okText: "确认执行",
+            cancelText: "取消",
+            onOk: () => {
+              resolve(true);
+            },
+            onCancel: () => {
+              resolve(false);
+            },
+          });
+        }),
+    );
+    return () => setActionConfirmation(null);
+  }, [modal]);
   const location = useLocation();
   if (session.isPending)
     return (
@@ -114,7 +224,7 @@ export default function App() {
         </div>
         <div className="login-grid">
           <div>
-            <Tag>V1 · 模拟渠道</Tag>
+            <Tag>V2 · 支付与账务工作台</Tag>
             <h1>
               每笔交易，
               <br />
@@ -182,18 +292,27 @@ export default function App() {
           </Link>
           <div className="sidebar-label">业务工作台</div>
           <nav aria-label="主导航">
-            {navigation.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                aria-label={item.label}
-                end={item.path === "/"}
-                onClick={() => setMobileMenu(false)}
-              >
-                <span aria-hidden="true">{item.icon}</span>
-                <span>{item.label}</span>
-              </NavLink>
-            ))}
+            {navigation
+              .filter(
+                (item) =>
+                  item.path !== "/shards" ||
+                  (!identity.merchantId &&
+                    identity.roles.some((role) =>
+                      ["ADMIN", "OPS"].includes(role),
+                    )),
+              )
+              .map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  aria-label={item.label}
+                  end={item.path === "/"}
+                  onClick={() => setMobileMenu(false)}
+                >
+                  <span aria-hidden="true">{item.icon}</span>
+                  <span>{item.label}</span>
+                </NavLink>
+              ))}
           </nav>
           <div className="sidebar-bottom">
             <Tag>V1 · 模拟渠道</Tag>
@@ -271,6 +390,14 @@ export default function App() {
                 />
                 <Route path="/audit" element={<Records resource="audit" />} />
                 <Route path="/reconciliation" element={<Reconciliation />} />
+                <Route path="/finance" element={<Finance />} />
+                <Route path="/operations" element={<Operations />} />
+                <Route path="/read-model" element={<ReadModel />} />
+                <Route path="/balances" element={<Balances />} />
+                <Route path="/security" element={<SecurityCenter />} />
+                <Route path="/shards" element={<Shards />} />
+                <Route path="/history" element={<History />} />
+                <Route path="/analytics" element={<Analytics />} />
                 <Route path="/merchants" element={<Merchants />} />
                 <Route
                   path="*"
@@ -287,7 +414,7 @@ export default function App() {
           </main>
           <footer className="app-footer">
             <span>商户支付与对账平台</span>
-            <span>渠道数据：模拟 · CNY</span>
+            <span>渠道环境以交易记录为准 · CNY</span>
           </footer>
         </div>
       </div>

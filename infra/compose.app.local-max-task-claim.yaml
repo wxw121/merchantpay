@@ -1,0 +1,6 @@
+# Candidate only; append after shared request gate and bulk completion overlays.
+services:
+  platform:
+    image: merchantpay/platform:local-task-claim
+    environment:
+      TASK_CLAIM_BULK_SQL: "true"

@@ -70,13 +70,28 @@ export function Records({
           {
             title: "事件来源",
             dataIndex: "sourceType",
-            render: (value) => (value === "PAYMENT" ? "支付成功" : "退款成功"),
+            render: (value: string) =>
+              ({
+                PAYMENT: "支付成功",
+                REFUND: "退款成功",
+                ADJUSTMENT: "财务调账",
+                SETTLEMENT: "模拟结算",
+              })[value] ?? value,
           },
           {
             title: "关联支付",
             dataIndex: "paymentId",
             width: 280,
-            render: (id: string) => <Link to={`/payments/${id}`}>{id}</Link>,
+            render: (id: string | null, row: Row) =>
+              id ? (
+                <Link to={`/payments/${encodeURIComponent(id)}`}>{id}</Link>
+              ) : (
+                <Link
+                  to={`/finance?tab=settlements&id=${encodeURIComponent(field(row, "sourceId"))}`}
+                >
+                  查看模拟结算
+                </Link>
+              ),
           },
           { title: "商户", dataIndex: "merchantId" },
           { title: "币种", dataIndex: "currency" },
@@ -302,6 +317,7 @@ export function Records({
                 { value: "payments", label: "支付记录" },
                 { value: "refunds", label: "退款记录" },
                 { value: "journals", label: "账务凭证" },
+                { value: "history", label: "归档事实（按归档时间）" },
               ]}
             />
           </Form.Item>
@@ -312,7 +328,8 @@ export function Records({
             <Input type="date" />
           </Form.Item>
           <p className="secondary">
-            未填写时导出最近七天。单次历史范围最多 365 天，文件仅包含所选商户。
+            未填写时导出最近七天。单次历史范围最多 365
+            天，文件仅包含所选商户。归档事实仅在归档功能启用时可导出，按归档时间筛选，并标明归档版本。
           </p>
           <Button
             type="primary"

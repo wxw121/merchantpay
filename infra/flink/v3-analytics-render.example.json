@@ -1,0 +1,13 @@
+{
+  "database": "merchantpay",
+  "generation": "replace-generation",
+  "kafkaBootstrap": "kafka.example.invalid:9093",
+  "checkpointUri": "s3://merchantpay-flink/checkpoints/replace-generation",
+  "savepointUri": "s3://merchantpay-flink/savepoints/replace-generation",
+  "sources": [
+    {"host": "mysql0.example.invalid", "port": 3306, "user": "cdc_analytics", "serverId": 7201, "passwordEnv": "CDC_S0_PASSWORD"},
+    {"host": "mysql1.example.invalid", "port": 3306, "user": "cdc_analytics", "serverId": 7202, "passwordEnv": "CDC_S1_PASSWORD"},
+    {"host": "mysql2.example.invalid", "port": 3306, "user": "cdc_analytics", "serverId": 7203, "passwordEnv": "CDC_S2_PASSWORD"},
+    {"host": "mysql3.example.invalid", "port": 3306, "user": "cdc_analytics", "serverId": 7204, "passwordEnv": "CDC_S3_PASSWORD"}
+  ]
+}

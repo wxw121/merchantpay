@@ -6,6 +6,7 @@ import dev.merchantpay.platform.outbox.OutboxService;
 import dev.merchantpay.platform.payment.PaymentService;
 import dev.merchantpay.platform.query.Queries;
 import dev.merchantpay.platform.refund.RefundService;
+import dev.merchantpay.platform.sharding.ShardCoreOnlyGuard;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.util.*;
@@ -29,6 +30,19 @@ public class ConsoleController {
   private final JdbcTemplate jdbc;
   private final TransactionTemplate transactions;
   private final Clock clock;
+  private final OutboxService outbox;
+  private dev.merchantpay.platform.sharding.ShardMoney shardMoney;
+  private ShardCoreOnlyGuard shardCoreOnlyGuard;
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardCoreOnlyGuard(ShardCoreOnlyGuard guard) {
+    shardCoreOnlyGuard = guard;
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired(required = false)
+  public void setShardMoney(dev.merchantpay.platform.sharding.ShardMoney money) {
+    this.shardMoney = money;
+  }
 
   public ConsoleController(
       Access access,
@@ -39,7 +53,8 @@ public class ConsoleController {
       NotificationPolicy urls,
       JdbcTemplate jdbc,
       TransactionTemplate transactions,
-      Clock clock) {
+      Clock clock,
+      OutboxService outbox) {
     this.access = access;
     this.queries = queries;
     this.payments = payments;
@@ -49,6 +64,7 @@ public class ConsoleController {
     this.jdbc = jdbc;
     this.transactions = transactions;
     this.clock = clock;
+    this.outbox = outbox;
   }
 
   @GetMapping("/session")
@@ -147,6 +163,7 @@ public class ConsoleController {
     access.require("ADMIN", "MERCHANT");
     String merchant = access.merchant(merchantId, true);
     urls.validate(input.notificationUrl());
+    if (shardMoney != null) return shardMoney.create(merchant, input, access.caller().actor());
     return transactions.execute(
         tx -> {
           var result = payments.create(merchant, input);
@@ -167,6 +184,9 @@ public class ConsoleController {
       @RequestParam(required = false) String merchantId,
       @RequestBody RefundService.CreateRefund input) {
     access.require("ADMIN", "MERCHANT");
+    if (shardMoney != null)
+      return shardMoney.refund(
+          access.merchant(merchantId, false), id, input, access.caller().actor());
     String merchant = queries.paymentMerchant(id, access.merchant(merchantId, false));
     return transactions.execute(
         tx -> {
@@ -186,6 +206,8 @@ public class ConsoleController {
   PaymentService.PaymentView close(
       @PathVariable String id, @RequestParam(required = false) String merchantId) {
     access.require("ADMIN", "MERCHANT");
+    if (shardMoney != null)
+      return shardMoney.close(access.merchant(merchantId, false), id, access.caller().actor());
     String merchant = queries.paymentMerchant(id, access.merchant(merchantId, false));
     return transactions.execute(
         tx -> {
@@ -218,8 +240,7 @@ public class ConsoleController {
     String merchant = queries.paymentMerchant(id, access.merchant(merchantId, false));
     transactions.executeWithoutResult(
         tx -> {
-          new OutboxService(jdbc, clock)
-              .enqueue("manual-query:" + UUID.randomUUID(), "CHANNEL_PAYMENT", id, merchant);
+          outbox.enqueue("manual-query:" + UUID.randomUUID(), "CHANNEL_PAYMENT", id, merchant);
           merchants.audit(
               merchant,
               access.caller().actor(),
@@ -283,9 +304,11 @@ public class ConsoleController {
   @PostMapping("/tasks/{id}/replay")
   void replay(@PathVariable String id, @RequestParam(required = false) String merchantId) {
     access.require("ADMIN", "OPS", "MERCHANT");
+    if (shardCoreOnlyGuard != null) shardCoreOnlyGuard.requireCoreOnly();
     String scope = access.merchant(merchantId, false);
     transactions.executeWithoutResult(
         tx -> {
+          if (shardCoreOnlyGuard != null) shardCoreOnlyGuard.requireCoreOnly();
           var rows =
               scope == null
                   ? queries.rows("SELECT * FROM outbox_tasks WHERE id=? FOR UPDATE", id)
@@ -294,7 +317,17 @@ public class ConsoleController {
                       id,
                       scope);
           if (rows.isEmpty()) {
-            throw new ApiException("TASK_NOT_FOUND", 404, "任务不存在");
+            rows =
+                scope == null
+                    ? queries.rows("SELECT * FROM outbox_task_history WHERE id=? FOR UPDATE", id)
+                    : queries.rows(
+                        "SELECT * FROM outbox_task_history WHERE id=? AND merchant_id=? FOR UPDATE",
+                        id,
+                        scope);
+            if (rows.isEmpty()) throw new ApiException("TASK_NOT_FOUND", 404, "任务不存在");
+            jdbc.update(
+                "INSERT INTO outbox_tasks SELECT * FROM outbox_task_history WHERE id=?", id);
+            jdbc.update("DELETE FROM outbox_task_history WHERE id=?", id);
           }
           var task = rows.getFirst();
           if (access.caller().roles().contains("MERCHANT")
@@ -311,7 +344,8 @@ public class ConsoleController {
             throw new ApiException("TASK_BUSY", 409, "仅已结束或死信任务可以人工重放");
           }
           jdbc.update(
-              "UPDATE outbox_tasks SET status='PENDING',attempts=0,due_at=?,last_error=NULL,updated_at=? WHERE id=?",
+              "UPDATE outbox_tasks SET status='PENDING',attempts=0,due_at=?,retry_started_at=?,recovery_stage='STANDARD',lease_token=NULL,lease_until=NULL,last_error=NULL,updated_at=? WHERE id=?",
+              Timestamp.from(clock.instant()),
               Timestamp.from(clock.instant()),
               Timestamp.from(clock.instant()),
               id);

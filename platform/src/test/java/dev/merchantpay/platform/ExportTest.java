@@ -64,12 +64,24 @@ class ExportTest extends FinancialFixture {
 
   @Test
   void backgroundExportContainsOnlyItsTenantAndCannotBeDownloadedByAnother() throws Exception {
-    paid("export-a", "10000");
+    var payment = paid("export-a", "10000");
+    var createdAt =
+        jdbc.queryForObject(
+                "SELECT created_at FROM payments WHERE id=?",
+                java.sql.Timestamp.class,
+                payment.id())
+            .toInstant();
     payments.create(
         "merchant-b",
         new dev.merchantpay.platform.payment.PaymentService.CreatePayment(
             "export-b", "20000", "CNY", "MOCK_B", null));
-    String id = exports.create("merchant-a", "owner-a", "payments", null, null);
+    String id =
+        exports.create(
+            "merchant-a",
+            "owner-a",
+            "payments",
+            createdAt.minusSeconds(1).toString(),
+            createdAt.plusSeconds(1).toString());
     var task = queue.claimBatch(1, true).getFirst();
     exports.process(id, task);
     try (var zip = new ZipFile(exports.file(id, "merchant-a", "owner-a").toFile())) {
@@ -209,7 +221,7 @@ class ExportTest extends FinancialFixture {
     String id = exports.create("merchant-a", "owner-a", "payments", null, null);
     jdbc.update(
         "UPDATE outbox_tasks SET due_at=? WHERE aggregate_id=?",
-        java.sql.Timestamp.from(java.time.Instant.EPOCH),
+        java.sql.Timestamp.from(java.time.Instant.parse("2000-01-01T00:00:00Z")),
         id);
     var tx = new TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
     var queue = new dev.merchantpay.platform.outbox.TaskQueue(jdbc, tx, exportClock);
@@ -251,7 +263,7 @@ class ExportTest extends FinancialFixture {
             createdAt.plusSeconds(1).toString());
     jdbc.update(
         "UPDATE outbox_tasks SET due_at=? WHERE aggregate_id=?",
-        java.sql.Timestamp.from(java.time.Instant.EPOCH),
+        java.sql.Timestamp.from(java.time.Instant.parse("2000-01-01T00:00:00Z")),
         id);
     var old = queue.claimBatch(1, true).getFirst();
     var tx = new TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
@@ -276,7 +288,7 @@ class ExportTest extends FinancialFixture {
                       .enqueue("retry:" + id, "EXPORT", id, "merchant-a"));
           jdbc.update(
               "UPDATE outbox_tasks SET due_at=? WHERE event_id=?",
-              java.sql.Timestamp.from(java.time.Instant.EPOCH),
+              java.sql.Timestamp.from(java.time.Instant.parse("2000-01-01T00:00:00Z")),
               "retry:" + id);
         } else {
           jdbc.update(

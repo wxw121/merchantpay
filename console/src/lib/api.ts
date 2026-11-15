@@ -56,6 +56,20 @@ export class ApiError extends Error {
   }
 }
 let csrf: Pick<Session, "csrfToken" | "csrfHeader"> | null = null;
+export interface ActionConfirmation {
+  method: string;
+  path: string;
+  body: string;
+  bodyHash: string;
+  expiresAt: string;
+}
+let confirmAction: ((action: ActionConfirmation) => Promise<boolean>) | null =
+  null;
+export function setActionConfirmation(
+  handler: ((action: ActionConfirmation) => Promise<boolean>) | null,
+) {
+  confirmAction = handler;
+}
 export function setCsrf(session: Session) {
   csrf = session;
 }
@@ -78,6 +92,32 @@ export async function api<T>(
       code: "NETWORK_ERROR",
       message: `请求失败（${response.status}）`,
     }))) as { code: string; message: string };
+    if (
+      error.code === "CONFIRMATION_REQUIRED" &&
+      confirmAction &&
+      typeof options.body !== "object" &&
+      !headers.has("X-Action-Confirmation")
+    ) {
+      const body = typeof options.body === "string" ? options.body : "";
+      const method = options.method ?? "POST";
+      const challenge = await post<{
+        token: string;
+        bodyHash: string;
+        expiresAt: string;
+      }>("/api/console/security/confirmations", { method, path, body });
+      if (
+        !(await confirmAction({
+          method,
+          path,
+          body,
+          bodyHash: challenge.bodyHash,
+          expiresAt: challenge.expiresAt,
+        }))
+      )
+        throw new ApiError("ACTION_CANCELLED", "操作已取消", 409);
+      headers.set("X-Action-Confirmation", challenge.token);
+      return api<T>(path, { ...options, headers });
+    }
     throw new ApiError(error.code, error.message, response.status);
   }
   const text = await response.text();

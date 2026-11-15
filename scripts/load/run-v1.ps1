@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([ValidateSet('Smoke','Manifest','Truth','Dataset','C1','C2','C3','Soak')][string]$Protocol='Smoke',[switch]$Scaled,[ValidateRange(1,14400)][int]$Seconds=15,[ValidateRange(0,10000)][int]$PayRate=5,[ValidateRange(0,10000)][int]$RefundRate=1,[ValidateRange(0,10000)][int]$QueryRate=10,[ValidateRange(1,1000000)][int]$Payments=1000,[ValidatePattern('^[a-zA-Z0-9-]{1,40}$')][string]$DatasetId='v1-dataset',[ValidatePattern('^[a-zA-Z0-9-]{1,60}$')][string]$RunId,[string]$CredentialsFile='.data/platform/local-api-credentials.json',[string]$BaseUrl='http://127.0.0.1:8080',[string]$SimulatorUrl='http://127.0.0.1:9091',[string]$DatabaseUrl)
+param([ValidateSet('Smoke','Manifest','Truth','Dataset','C1','C2','C3','Soak')][string]$Protocol='Smoke',[switch]$Scaled,[ValidateRange(1,14400)][int]$Seconds=15,[ValidateRange(0,10000)][int]$PayRate=5,[ValidateRange(0,10000)][int]$RefundRate=1,[ValidateRange(0,10000)][int]$QueryRate=10,[ValidateRange(1,1000000)][int]$Payments=1000,[ValidatePattern('^[a-zA-Z0-9-]{1,40}$')][string]$DatasetId='v1-dataset',[ValidatePattern('^[a-zA-Z0-9-]{1,60}$')][string]$RunId,[string]$CredentialsFile='.data/platform/local-api-credentials.json',[string]$BaseUrl='http://127.0.0.1:8080',[string]$SimulatorUrl='http://127.0.0.1:9091',[string]$DatabaseUrl,[string]$NotificationUrl)
 $ErrorActionPreference='Stop'
 $taskRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 Push-Location $taskRoot
@@ -8,6 +8,8 @@ try {
     $taskLock=[IO.File]::Open((Join-Path $taskRoot '.work/performance-baseline.lock'),[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None)
     . scripts/Import-LocalEnvironment.ps1
     if($DatabaseUrl){$env:DATABASE_URL=$DatabaseUrl}
+    if($NotificationUrl){$env:LOAD_NOTIFICATION_URL=$NotificationUrl}
+    elseif($BaseUrl -ne 'http://127.0.0.1:8080' -and $Protocol -notin @('Manifest','Truth') -and ($PayRate -gt 0 -or (-not $Scaled -and $Protocol -ne 'Smoke')) -and -not $env:LOAD_NOTIFICATION_URL){throw 'Payment load against a non-default platform URL requires -NotificationUrl or LOAD_NOTIFICATION_URL matching that deployment'}
     . scripts/load/V1Acceptance.ps1
     $env:LOAD_SCALED=([bool]($Scaled -or $Protocol -eq 'Smoke')).ToString().ToLowerInvariant()
     $taskKeys=Get-Content -LiteralPath $CredentialsFile -Raw | ConvertFrom-Json

@@ -1,0 +1,62 @@
+# Copy to .env.native (git-ignored). Keep existing merchant keys when reusing a database.
+# Native Windows MySQL and Keycloak must already be running; this project never starts them.
+DATABASE_URL=jdbc:mysql://127.0.0.1:3306/merchantpay?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&connectTimeout=3000&socketTimeout=30000&rewriteBatchedStatements=true
+DATABASE_USER=merchantpay
+DATABASE_PASSWORD=REPLACE_WITH_EXISTING_DATABASE_PASSWORD
+OIDC_BASE_URL=http://127.0.0.1:8180
+OIDC_CLIENT_SECRET=REPLACE_WITH_EXISTING_CLIENT_SECRET
+MASTER_KEY=REPLACE_WITH_EXISTING_BASE64_AES_KEY
+CHANNEL_TOKEN=REPLACE_WITH_EXISTING_CHANNEL_TOKEN
+CALLBACK_SECRET=REPLACE_WITH_EXISTING_CALLBACK_SECRET
+METRICS_PASSWORD=REPLACE_WITH_EXISTING_METRICS_PASSWORD
+LOCAL_WEBHOOK=http://127.0.0.1:9091/merchant-webhook
+CONSOLE_URL=http://127.0.0.1:5173
+# Optional V2 dependencies may run on a separate native Linux host. See native-local.md.
+# EVENT_TRANSPORT remains POLLING unless a deliberate CDC cutover has been performed.
+EVENT_TRANSPORT=POLLING
+EVENT_CONSUMER_ENABLED=false
+READ_MODEL_ENABLED=false
+READ_MODEL_CONSUMER_ENABLED=false
+READ_MODEL_WORKER_ENABLED=false
+REDIS_ADMISSION_ENABLED=false
+ALIPAY_SANDBOX_ENABLED=false
+# V3 exact reads only. This never activates sharded writes or migrates existing buckets.
+# Leave disabled until target schemas, identities and ownership are independently verified.
+SHARD_EXACT_READS_ENABLED=false
+SHARD_MIGRATION_QUIESCE_ENABLED=false
+SHARD_MIGRATION_COPY_ENABLED=false
+SHARD_MIGRATION_BATCH_ENABLED=false
+SHARD_MIGRATION_CUTOVER_ENABLED=false
+SHARD_REVERSE_ENABLED=false
+# Immutable Parquet history copies; does not retire hot authority.
+HISTORY_ARCHIVE_ENABLED=false
+HISTORY_EVENT_RETIRE_ENABLED=false
+FLINK_ANALYTICS_ENABLED=false
+ANALYTICS_PUBLICATION_ENABLED=false
+# Supply the same 32+ byte secret only in the independent publisher and runtime.
+ANALYTICS_RELEASE_KEY=
+# V3 target HTTP writes need an independently verified completed cutover and delivery path.
+SHARD_MONEY_WRITES_ENABLED=false
+SHARD_TARGET_HTTP_WRITES_ENABLED=false
+# FAST/INBOX/NOTIFY; requires money writes + exact-read dependencies.
+# Drain/stop old workers before switching; BULK remains on physical 0.
+SHARD_CHANNEL_WORKERS_ENABLED=false
+# Optional source-local CDC task routing. Requires EVENT_TRANSPORT=CDC, EVENT_CONSUMER_ENABLED=true,
+# four distinct connector topics, and core-only read-model consumer/worker disabled.
+SHARD_CDC_ENABLED=false
+# Source-local projection ingestion and delivery; global serving remains disabled.
+SHARD_PROJECTION_ENABLED=false
+SHARD_PROJECTION_CONSUMER_ENABLED=false
+SHARD_PROJECTION_WORKER_ENABLED=false
+# Reserved from the existing core/worker pool; leaves >=3 connections in that pool.
+SHARD_RECEIPT_CONNECTIONS=2
+SHARD_CONNECTIONS_PER_SHARD=2
+SHARD_1_DATABASE_URL=
+SHARD_1_DATABASE_USER=
+SHARD_1_DATABASE_PASSWORD=
+SHARD_2_DATABASE_URL=
+SHARD_2_DATABASE_USER=
+SHARD_2_DATABASE_PASSWORD=
+SHARD_3_DATABASE_URL=
+SHARD_3_DATABASE_USER=
+SHARD_3_DATABASE_PASSWORD=

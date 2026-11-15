@@ -4,7 +4,8 @@ function Assert-NativeBackupLocalObjects([string]$Project) {
 }
 
 function Start-BackupNativeSource([string]$Root,[string]$NativeMode) {
-    $taskArguments=@{SkipBuild=$true}
+    # This legacy backup flow already operates Docker MySQL/Keycloak containers.
+    $taskArguments=@{SkipBuild=$true;Docker=$true}
     if($NativeMode -eq 'performance'){$taskArguments.Performance=$true}
     # Invoke the PowerShell script in-process: a nested native pwsh pipeline can retain daemon handles after its launcher exits.
     & (Join-Path $Root 'scripts/start-local.ps1') @taskArguments *> (Join-Path $Root '.work/native-backup-resume.log')

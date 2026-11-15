@@ -4,7 +4,8 @@ $ErrorActionPreference='Stop'
 if(-not $IsWindows){throw 'DPAPI checks require the Windows account used for local backups'}
 . (Join-Path $PSScriptRoot 'BackupBudget.ps1')
 if(-not (Test-LocalBackupArchiveBudget 1GB 64MB)){throw 'DPAPI memory budget must count the compressed buffer rather than all source files'}
-if(Test-LocalBackupArchiveBudget 1GB 257MB){throw 'An archive beyond the DPAPI buffer budget must fail'}
+if(-not (Test-LocalBackupArchiveBudget 2GB 512MB 'container')){throw 'The grown container data set requires a bounded 1GiB compressed budget'}
+if(Test-LocalBackupArchiveBudget 2GB 1025MB 'container'){throw 'Container archives beyond 1GiB must still fail closed'}
 if(-not (Test-LocalBackupArchiveBudget 2GB 640MB 'native')){throw 'Measured native historical sets require a bounded 1GiB compressed budget'}
 if(Test-LocalBackupArchiveBudget 2GB 1025MB 'native'){throw 'Native archives beyond 1GiB must still fail closed'}
 $taskPlain=[Security.Cryptography.RandomNumberGenerator]::GetBytes(1024)

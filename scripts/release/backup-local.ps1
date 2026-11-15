@@ -40,7 +40,7 @@ try {
         if($LASTEXITCODE -ne 0 -or $taskOwned -ne $taskProject){throw 'Backup container does not belong to the explicit source project'}
     }
     foreach($taskLine in [IO.File]::ReadAllLines((Join-Path $taskRoot '.env'))){if($taskLine -match '^([A-Z_]+)='){$taskSaved[$Matches[1]]=[Environment]::GetEnvironmentVariable($Matches[1],'Process')}}
-    . scripts/Import-LocalEnvironment.ps1
+    . scripts/Import-LocalEnvironment.ps1 -EnvironmentFile '.env'
     foreach($taskChannel in @('MOCK_A','MOCK_B')) {
         $taskHealth=Invoke-RestMethod ($taskSimulator+'/channels/'+$taskChannel+'/health') -Headers @{'X-Channel-Token'=$env:CHANNEL_TOKEN} -TimeoutSec 5
         if($taskHealth.pendingCallbacks -ne 0 -or $taskHealth.pendingPayments -ne 0){throw 'Drain simulator work before taking the stopped consistency point'}
@@ -102,7 +102,7 @@ try {
     Compress-Archive -Path (Join-Path $taskFolder '*') -DestinationPath $taskZip
     try {
         $taskArchiveBytes=(Get-Item -LiteralPath $taskZip).Length
-        if(-not (Test-LocalBackupArchiveBudget $taskTotal $taskArchiveBytes $Source)){throw 'Compressed archive exceeds the bounded DPAPI budget (container 256MiB, native 1GiB); source services will resume'}
+        if(-not (Test-LocalBackupArchiveBudget $taskTotal $taskArchiveBytes $Source)){throw 'Compressed archive exceeds the bounded 1GiB DPAPI budget; source services will resume'}
         $taskProtected=[Security.Cryptography.ProtectedData]::Protect([IO.File]::ReadAllBytes($taskZip),$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
         $taskPending=Join-Path $taskBase ($Id+'.dpapi.pending')
         $taskStream=[IO.File]::Open($taskPending,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)

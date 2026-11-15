@@ -1,0 +1,328 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1920 1080" role="img" aria-labelledby="title desc">
+<title id="title">MerchantPay system architecture</title>
+<desc id="desc">MerchantPay dev/v3 reference architecture based on the Kubernetes workload template. The default payment path uses a signed HTTP API and MySQL durable tasks. Optional four-source, outbox CDC, projection and Flink analytics paths are shown separately. The optional V2 single-primary HA profile is a separate deployment profile.</desc>
+<metadata>MerchantPay dev/v3. Repository evidence: infra/k8s/v3/workloads.yaml; infra/ha/application-v2-ha.yaml; infra/ha/mysql-common.cnf; platform PaymentService, OutboxService, TaskWorker, ChannelGateway, InboxService and NotificationService; docs/api/sharding-api.md; docs/releases/v3-analytics.md.</metadata>
+<defs>
+<style>
+text {font-family: "Segoe UI", Arial, sans-serif; fill:#17314a}
+.title{font-size:48px;font-weight:700;letter-spacing:-1px}
+.subtitle{font-size:19px;fill:#475e75}
+.band-name{font-size:16px;font-weight:700;letter-spacing:.15px}
+.panel-title{font-size:23px;font-weight:700}
+.panel-sub{font-size:14px;fill:#475e75}
+.section{font-size:18px;font-weight:700}
+.card-title{font-size:17px;font-weight:700}
+.card-head{font-size:21px;font-weight:700}
+.body{font-size:15px;fill:#405771}
+.small{font-size:13px;fill:#4b6178}
+.micro-title{font-size:14px;font-weight:700}
+.micro-sub{font-size:12.5px;fill:#4b6178}
+.edge{font-size:13px;font-weight:700;fill:#354f6b}
+.tag{font-size:12px;font-weight:700;letter-spacing:.25px}
+.number{fill:#fff;font-size:12px;font-weight:700}
+.foot{font-size:13px;fill:#4b6178}
+.wire{fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round}
+.blue{stroke:#376d9e}.teal{stroke:#387b78}.amber{stroke:#a46a37}.slate{stroke:#687d92}.plum{stroke:#796297}
+.glyph{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#376d9e"/></marker>
+<marker id="arr-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#387b78"/></marker>
+<marker id="arr-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#a46a37"/></marker>
+<marker id="arr-slate" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#687d92"/></marker>
+<marker id="arr-plum" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#796297"/></marker>
+<symbol id="i-code" viewBox="0 0 24 24"><path class="glyph" d="m8 6-6 6 6 6m8-12 6 6-6 6m-2-14-4 16"/></symbol>
+<symbol id="i-screen" viewBox="0 0 24 24"><path class="glyph" d="M3 4h18v13H3zM8 21h8m-4-4v4M3 7h18"/><circle cx="5.5" cy="5.5" r=".6" fill="currentColor"/></symbol>
+<symbol id="i-card" viewBox="0 0 24 24"><rect class="glyph" x="2.5" y="5" width="19" height="14" rx="2.2"/><path class="glyph" d="M3 10h18M6 15h4m3 0h3"/></symbol>
+<symbol id="i-hook" viewBox="0 0 24 24"><path class="glyph" d="m7.5 16 4-9m2.5 0 4 9M9 18h6"/><circle class="glyph" cx="12" cy="5" r="2.5"/><circle class="glyph" cx="6" cy="18" r="2.5"/><circle class="glyph" cx="18" cy="18" r="2.5"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path class="glyph" d="m12 2 9 5v10l-9 5-9-5V7zm0 10v10M3 7l9 5 9-5M7 5l9 5"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><circle class="glyph" cx="8" cy="8" r="4.5"/><path class="glyph" d="m11 11 8.5 8.5m-4.5-4.5 2.4-2.4m.6 5.4 2.4-2.4"/></symbol>
+<symbol id="i-stack" viewBox="0 0 24 24"><path class="glyph" d="M2 7 12 3l10 4-10 4zm0 5 10 4 10-4M2 17l10 4 10-4"/></symbol>
+<symbol id="i-db" viewBox="0 0 24 24"><ellipse class="glyph" cx="12" cy="5.2" rx="7.7" ry="3"/><path class="glyph" d="M4.3 5.2v13.3c0 1.7 3.5 3 7.7 3s7.7-1.3 7.7-3V5.2m-15.4 6.3c0 1.7 3.5 3 7.7 3s7.7-1.3 7.7-3"/></symbol>
+<symbol id="i-bucket" viewBox="0 0 24 24"><ellipse class="glyph" cx="12" cy="5.6" rx="8.5" ry="2.6"/><path class="glyph" d="m3.5 5.6 2.6 13c.4 1.4 2.9 2.3 5.9 2.3s5.5-.9 5.9-2.3l2.6-13m-7.3 7.3-2.7 2.7m0-2.7 2.7 2.7"/></symbol>
+<symbol id="i-kube" viewBox="0 0 24 24"><path class="glyph" d="m12 2.7 7.4 3.5 1.9 8.1-5.2 6.5H7.9l-5.2-6.5 1.9-8.1z"/><circle class="glyph" cx="12" cy="12" r="3.7"/><path class="glyph" d="M12 5v3m0 8v3m-7-7h3m8 0h3m-12-5 2 2m6 6 2 2m0-10-2 2m-6 6-2 2"/></symbol>
+<symbol id="i-fan" viewBox="0 0 24 24"><circle class="glyph" cx="12" cy="12" r="2"/><circle class="glyph" cx="18.5" cy="4.5" r="2"/><circle class="glyph" cx="18.5" cy="19.5" r="2"/><circle class="glyph" cx="4" cy="12" r="2"/><path class="glyph" d="m13.5 10.5 3.5-4.5m-3.5 7.5 3.5 4.5M6 12h4"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path class="glyph" d="m14 2-9 12h6l-1 8 9-12h-6z"/></symbol>
+<symbol id="i-branch" viewBox="0 0 24 24"><path class="glyph" d="M12 7v6m-7 3v-3h14v3"/><rect class="glyph" x="9" y="2" width="6" height="5" rx="1"/><rect class="glyph" x="2" y="16" width="6" height="5" rx="1"/><rect class="glyph" x="16" y="16" width="6" height="5" rx="1"/></symbol>
+<symbol id="i-rows" viewBox="0 0 24 24"><rect class="glyph" x="3" y="4" width="18" height="16" rx="2"/><path class="glyph" d="M3 9h18M3 14h18M9 9v11"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path class="glyph" d="M5 2.5h9l5 5v14H5zm9 0v6h5M8 13h8m-8 4h5"/></symbol>
+</defs>
+<rect x="0" y="0" width="1920" height="1080" rx="0" fill="#fdfefe" stroke="none" stroke-width="1"/>
+<rect x="38" y="31" width="6" height="77" rx="3" fill="#3e79a4" stroke="none" stroke-width="1"/>
+<text x="58" y="73" class="title" text-anchor="start">MerchantPay</text>
+<text x="59" y="103" class="subtitle" text-anchor="start">Payment, reconciliation &amp; ledger architecture</text>
+<rect x="1532" y="42" width="226" height="23" rx="11" fill="#e6f0f9" stroke="none" stroke-width="1"/>
+<text x="1645.0" y="57.5" class="tag" text-anchor="middle" fill="#2b5379">V3 KUBERNETES TEMPLATE</text>
+<rect x="1771" y="42" width="109" height="23" rx="11" fill="#e8edf3" stroke="none" stroke-width="1"/>
+<text x="1825.5" y="57.5" class="tag" text-anchor="middle" fill="#485d72">DEV/V3</text>
+<text x="1880" y="99" class="small" text-anchor="end">Repository design · deployment acceptance pending</text>
+<rect x="38" y="146" width="1206" height="94" rx="12" fill="#f2f7ff" stroke="#dae3ec" stroke-width="1"/>
+<rect x="38" y="160" width="4" height="66" rx="2" fill="#5a83b2" stroke="none" stroke-width="1"/>
+<use href="#i-card" xlink:href="#i-card" x="57" y="165" width="19" height="19" color="#5a83b2"/>
+<text x="84" y="180" class="band-name" text-anchor="start" fill="#294256">Business</text>
+<rect x="38" y="254" width="1206" height="239" rx="12" fill="#eef8f7" stroke="#dae3ec" stroke-width="1"/>
+<rect x="38" y="268" width="4" height="211" rx="2" fill="#4b8b85" stroke="none" stroke-width="1"/>
+<use href="#i-box" xlink:href="#i-box" x="57" y="273" width="19" height="19" color="#4b8b85"/>
+<text x="84" y="288" class="band-name" text-anchor="start" fill="#294256">Application</text>
+<rect x="38" y="508" width="1206" height="150" rx="12" fill="#fff7ed" stroke="#dae3ec" stroke-width="1"/>
+<rect x="38" y="522" width="4" height="122" rx="2" fill="#b47a45" stroke="none" stroke-width="1"/>
+<use href="#i-stack" xlink:href="#i-stack" x="57" y="527" width="19" height="19" color="#b47a45"/>
+<text x="84" y="542" class="band-name" text-anchor="start" fill="#294256">Middleware</text>
+<rect x="38" y="673" width="1206" height="213" rx="12" fill="#f5f1fb" stroke="#dae3ec" stroke-width="1"/>
+<rect x="38" y="687" width="4" height="185" rx="2" fill="#826aa7" stroke="none" stroke-width="1"/>
+<use href="#i-db" xlink:href="#i-db" x="57" y="692" width="19" height="19" color="#826aa7"/>
+<text x="84" y="707" class="band-name" text-anchor="start" fill="#294256">Data</text>
+<rect x="38" y="901" width="1206" height="94" rx="12" fill="#f0f4f8" stroke="#dae3ec" stroke-width="1"/>
+<rect x="38" y="915" width="4" height="66" rx="2" fill="#657f9a" stroke="none" stroke-width="1"/>
+<use href="#i-kube" xlink:href="#i-kube" x="57" y="920" width="19" height="19" color="#657f9a"/>
+<text x="84" y="935" class="band-name" text-anchor="start" fill="#294256">Infrastructure</text>
+<text x="57" y="191" class="small" text-anchor="start">Actors &amp; channels</text>
+<text x="57" y="300" class="small" text-anchor="start">Spring Boot roles</text>
+<text x="57" y="553" class="small" text-anchor="start">Identity &amp; admission</text>
+<text x="57" y="718" class="small" text-anchor="start">Financial authority</text>
+<text x="57" y="947" class="small" text-anchor="start">Kubernetes</text>
+<rect x="1265" y="146" width="617" height="740" rx="12" fill="#f7faff" stroke="#d4e0ee" stroke-width="1"/>
+<rect x="1284" y="223" width="579" height="164" rx="10" fill="#f4f1fa" stroke="#ded7ed" stroke-width="1"/>
+<rect x="1284" y="401" width="579" height="220" rx="10" fill="#fff8f0" stroke="#eadccd" stroke-width="1"/>
+<rect x="1284" y="635" width="579" height="232" rx="10" fill="#f1f8fa" stroke="#d4e5eb" stroke-width="1"/>
+<rect x="1265" y="901" width="617" height="94" rx="12" fill="#f4f6fa" stroke="#d9e1ea" stroke-width="1"/>
+<path d="M 444 222 V 314" class="wire blue" marker-end="url(#arr-blue)"/>
+<path d="M 562 222 V 314" class="wire slate" marker-end="url(#arr-slate)"/>
+<path d="M 766 210 H 727 V 284 H 603 V 314" class="wire amber" stroke-dasharray="6 5" marker-end="url(#arr-amber)"/>
+<path d="M 859 314 V 222" class="wire teal" marker-end="url(#arr-teal)"/>
+<path d="M 942 314 V 270 H 1103 V 222" class="wire amber" stroke-dasharray="6 5" marker-end="url(#arr-amber)"/>
+<path d="M 312 462 V 725" class="wire blue" marker-end="url(#arr-blue)"/>
+<path d="M 510 462 V 549" class="wire slate" marker-end="url(#arr-slate)"/>
+<path d="M 582 462 V 515 H 665 V 549" class="wire slate" marker-end="url(#arr-slate)"/>
+<path d="M 787 725 V 462" class="wire amber" stroke-dasharray="6 5" marker-end="url(#arr-amber)"/>
+<path d="M 918 462 V 725" class="wire blue" marker-end="url(#arr-blue)"/>
+<path d="M 954 725 V 672 H 1057 V 462" class="wire amber" stroke-dasharray="6 5" marker-end="url(#arr-amber)"/>
+<path d="M 1148 462 V 725" class="wire slate" marker-end="url(#arr-slate)"/>
+<path d="M 512 954 H 584" class="wire slate" marker-end="url(#arr-slate)"/>
+<rect x="232" y="168" width="235" height="54" rx="10" fill="#fff" stroke="#ccdce9" stroke-width="1"/>
+<rect x="243" y="179" width="33" height="33" rx="7" fill="#eff5fa" stroke="none" stroke-width="1"/>
+<use href="#i-code" xlink:href="#i-code" x="248" y="184" width="23" height="23" color="#346a92"/>
+<text x="286" y="192" class="card-title" text-anchor="start">Merchant Integration</text>
+<text x="286" y="210" class="small" text-anchor="start">Node.js SDK · HMAC</text>
+<rect x="484" y="168" width="234" height="54" rx="10" fill="#fff" stroke="#ccdce9" stroke-width="1"/>
+<rect x="495" y="179" width="33" height="33" rx="7" fill="#eff5fa" stroke="none" stroke-width="1"/>
+<use href="#i-screen" xlink:href="#i-screen" x="500" y="184" width="23" height="23" color="#346a92"/>
+<text x="538" y="192" class="card-title" text-anchor="start">React Console</text>
+<text x="538" y="210" class="small" text-anchor="start">Merchant, Finance &amp; Ops</text>
+<rect x="766" y="168" width="205" height="54" rx="10" fill="#fff" stroke="#ccdce9" stroke-width="1"/>
+<rect x="777" y="179" width="33" height="33" rx="7" fill="#eff5fa" stroke="none" stroke-width="1"/>
+<use href="#i-card" xlink:href="#i-card" x="782" y="184" width="23" height="23" color="#346a92"/>
+<text x="820" y="192" class="card-title" text-anchor="start">Payment Channels</text>
+<text x="820" y="210" class="small" text-anchor="start">Mock / Alipay Sandbox</text>
+<rect x="988" y="168" width="233" height="54" rx="10" fill="#fff" stroke="#ccdce9" stroke-width="1"/>
+<rect x="999" y="179" width="33" height="33" rx="7" fill="#eff5fa" stroke="none" stroke-width="1"/>
+<use href="#i-hook" xlink:href="#i-hook" x="1004" y="184" width="23" height="23" color="#346a92"/>
+<text x="1042" y="192" class="card-title" text-anchor="start">Merchant Webhook</text>
+<text x="1042" y="210" class="small" text-anchor="start">Merchant-hosted · optional</text>
+<circle cx="248" cy="260" r="10.5" fill="#245c91"/>
+<text x="248" y="264" class="number" text-anchor="middle">1</text>
+<text x="264" y="264" class="edge" text-anchor="start">HTTP(S) · signed POST</text>
+<text x="239" y="285" class="micro-sub" text-anchor="start">/api/v1/payments  →  202 Accepted</text>
+<text x="577" y="253" class="edge" text-anchor="start">HTTP(S) · session</text>
+<text x="620" y="275" class="edge" text-anchor="start">Signed callback</text>
+<circle cx="885" cy="245" r="10.5" fill="#2d716c"/>
+<text x="885" y="249" class="number" text-anchor="middle">4</text>
+<text x="901" y="249" class="edge" text-anchor="start">HTTP(S)</text>
+<text x="901" y="266" class="micro-sub" text-anchor="start">Submit / query</text>
+<circle cx="1002" cy="246" r="10.5" fill="#916134"/>
+<text x="1002" y="250" class="number" text-anchor="middle">6</text>
+<text x="1018" y="250" class="edge" text-anchor="start">HTTPS notify</text>
+<rect x="232" y="314" width="388" height="148" rx="11" fill="#fff" stroke="#c6dcd9" stroke-width="1"/>
+<use href="#i-code" xlink:href="#i-code" x="247" y="328" width="28" height="28" color="#377c76"/>
+<text x="286" y="347" class="card-head" text-anchor="start">Platform API</text>
+<text x="286" y="369" class="small" text-anchor="start">Spring Boot · Java 25</text>
+<path d="M 247 385 H 605" fill="none" stroke="#deebe9" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="763" y="314" width="208" height="148" rx="11" fill="#fff" stroke="#c6dcd9" stroke-width="1"/>
+<use href="#i-bolt" xlink:href="#i-bolt" x="778" y="328" width="28" height="28" color="#377c76"/>
+<text x="817" y="347" class="card-title" text-anchor="start">Channel Worker</text>
+<text x="817" y="369" class="small" text-anchor="start">Spring Boot role</text>
+<path d="M 778 385 H 956" fill="none" stroke="#deebe9" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="988" y="314" width="233" height="148" rx="11" fill="#fff" stroke="#c6dcd9" stroke-width="1"/>
+<use href="#i-file" xlink:href="#i-file" x="1003" y="328" width="28" height="28" color="#377c76"/>
+<text x="1042" y="347" class="card-head" text-anchor="start">Bulk Worker</text>
+<text x="1042" y="369" class="small" text-anchor="start">Spring Boot role</text>
+<path d="M 1003 385 H 1206" fill="none" stroke="#deebe9" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="249" y="407" class="body" text-anchor="start">Payment &amp; Refund · Ledger · Finance</text>
+<text x="249" y="429" class="body" text-anchor="start">Reconciliation · Callback intake · Queries</text>
+<text x="249" y="450" class="small" text-anchor="start">HMAC + durable nonce/quota · OIDC session</text>
+<rect x="782" y="397" width="169" height="23" rx="11" fill="#dff1ef" stroke="none" stroke-width="1"/>
+<text x="866.5" y="412.5" class="tag" text-anchor="middle" fill="#1c625f">INBOX · FAST · NOTIFY</text>
+<text x="782" y="440" class="small" text-anchor="start">Lease · execute · retry</text>
+<rect x="1007" y="397" width="60" height="23" rx="11" fill="#dff1ef" stroke="none" stroke-width="1"/>
+<text x="1037.0" y="412.5" class="tag" text-anchor="middle" fill="#1c625f">BULK</text>
+<text x="1007" y="440" class="small" text-anchor="start">Reconciliation &amp; exports</text>
+<rect x="449" y="549" width="137" height="61" rx="10" fill="#fff" stroke="#ccdce9" stroke-width="1"/>
+<rect x="460" y="560" width="33" height="33" rx="7" fill="#eff5fa" stroke="none" stroke-width="1"/>
+<use href="#i-key" xlink:href="#i-key" x="465" y="565" width="23" height="23" color="#346a92"/>
+<text x="503" y="573" class="card-title" text-anchor="start">Keycloak</text>
+<text x="503" y="591" class="small" text-anchor="start">OIDC provider</text>
+<rect x="605" y="549" width="144" height="61" rx="10" fill="#fff" stroke="#ccdce9" stroke-width="1"/>
+<rect x="616" y="560" width="33" height="33" rx="7" fill="#eff5fa" stroke="none" stroke-width="1"/>
+<use href="#i-stack" xlink:href="#i-stack" x="621" y="565" width="23" height="23" color="#a15b47"/>
+<text x="659" y="573" class="card-title" text-anchor="start">Redis</text>
+<text x="659" y="591" class="small" text-anchor="start">API admission</text>
+<text x="524" y="520" class="edge" text-anchor="start">OIDC</text>
+<text x="678" y="534" class="edge" text-anchor="start">RESP</text>
+<circle cx="336" cy="580" r="10.5" fill="#245c91"/>
+<text x="336" y="584" class="number" text-anchor="middle">2</text>
+<text x="352" y="584" class="edge" text-anchor="start">SQL · accept</text>
+<text x="352" y="601" class="micro-sub" text-anchor="start">Payment + task</text>
+<circle cx="808" cy="580" r="10.5" fill="#916134"/>
+<text x="808" y="584" class="number" text-anchor="middle">3</text>
+<text x="824" y="584" class="edge" text-anchor="start">SQL · poll</text>
+<text x="824" y="601" class="micro-sub" text-anchor="start">Claim lease</text>
+<circle cx="939" cy="611" r="10.5" fill="#245c91"/>
+<text x="939" y="615" class="number" text-anchor="middle">5</text>
+<text x="955" y="615" class="edge" text-anchor="start">SQL · finalize</text>
+<text x="955" y="632" class="micro-sub" text-anchor="start">Ledger commit</text>
+<text x="1070" y="557" class="edge" text-anchor="start">SQL · poll</text>
+<text x="1160" y="557" class="edge" text-anchor="start">S3 API</text>
+<rect x="232" y="725" width="742" height="140" rx="10" fill="#fff" stroke="#d8cdea" stroke-width="1"/>
+<use href="#i-db" xlink:href="#i-db" x="249" y="738" width="28" height="28" color="#725a97"/>
+<text x="287" y="757" class="card-head" text-anchor="start">MySQL 8.4 · Core 0</text>
+<rect x="704" y="739" width="249" height="23" rx="11" fill="#ece6f8" stroke="none" stroke-width="1"/>
+<text x="828.5" y="754.5" class="tag" text-anchor="middle" fill="#644e87">DEFAULT: ALL 16 LOGICAL BUCKETS</text>
+<rect x="250" y="779" width="222" height="50" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-db" xlink:href="#i-db" x="260" y="794.0" width="20" height="20" color="#725a97"/>
+<text x="287" y="797" class="micro-title" text-anchor="start">Transaction tables</text>
+<text x="287" y="814" class="micro-sub" text-anchor="start">Payments · refunds · ledger</text>
+<rect x="487" y="779" width="218" height="50" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-stack" xlink:href="#i-stack" x="497" y="794.0" width="20" height="20" color="#725a97"/>
+<text x="524" y="797" class="micro-title" text-anchor="start">Reliable execution</text>
+<text x="524" y="814" class="micro-sub" text-anchor="start">Outbox / tasks · inbox · receipts</text>
+<rect x="721" y="779" width="235" height="50" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-key" xlink:href="#i-key" x="731" y="794.0" width="20" height="20" color="#725a97"/>
+<text x="758" y="797" class="micro-title" text-anchor="start">Control &amp; access</text>
+<text x="758" y="814" class="micro-sub" text-anchor="start">Route directory · audit · sessions</text>
+<text x="250" y="851" class="small" text-anchor="start">Raw receipt first. Success commits state, balanced ledger and outgoing event together.</text>
+<rect x="995" y="725" width="226" height="140" rx="10" fill="#fff" stroke="#d8cdea" stroke-width="1"/>
+<use href="#i-bucket" xlink:href="#i-bucket" x="1010" y="739" width="27" height="27" color="#725a97"/>
+<text x="1047" y="757" class="card-title" text-anchor="start">S3 Object Storage</text>
+<text x="1010" y="791" class="body" text-anchor="start">Channel bills · export ZIPs</text>
+<text x="1010" y="815" class="small" text-anchor="start">Parquet history when enabled</text>
+<text x="1010" y="839" class="small" text-anchor="start">Runtime-configured endpoint</text>
+<rect x="232" y="920" width="280" height="63" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-kube" xlink:href="#i-kube" x="242" y="941.5" width="20" height="20" color="#527da8"/>
+<text x="269" y="938" class="micro-title" text-anchor="start">Kubernetes Service · DNS</text>
+<text x="269" y="955" class="micro-sub" text-anchor="start">merchantpay-api · ClusterIP :8080</text>
+<text x="548" y="942" class="micro-sub" text-anchor="middle">HTTP · LB</text>
+<rect x="584" y="920" width="204" height="63" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-box" xlink:href="#i-box" x="594" y="941.5" width="20" height="20" color="#527da8"/>
+<text x="621" y="938" class="micro-title" text-anchor="start">API Deployment</text>
+<text x="621" y="955" class="micro-sub" text-anchor="start">2 Pods · label selector</text>
+<rect x="805" y="920" width="416" height="63" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-box" xlink:href="#i-box" x="815" y="941.5" width="20" height="20" color="#527da8"/>
+<text x="842" y="938" class="micro-title" text-anchor="start">Worker Deployments</text>
+<text x="842" y="955" class="micro-sub" text-anchor="start">Channel ×1 · Bulk ×1 · Projection ×1 (inactive by default)</text>
+<text x="1285" y="180" class="panel-title" text-anchor="start">V3 extensions</text>
+<rect x="1743" y="159" width="119" height="23" rx="11" fill="#e8edf3" stroke="none" stroke-width="1"/>
+<text x="1802.5" y="174.5" class="tag" text-anchor="middle" fill="#485d72">DEFAULT OFF</text>
+<text x="1285" y="206" class="panel-sub" text-anchor="start">Activation requires the corresponding flags and deployment gates.</text>
+<text x="1301" y="251" class="section" text-anchor="start">Four-source MySQL routing</text>
+<rect x="1300" y="261" width="547" height="45" rx="7" fill="#fff" stroke="#dcd0ec" stroke-width="1"/>
+<use href="#i-branch" xlink:href="#i-branch" x="1310" y="273.5" width="20" height="20" color="#796297"/>
+<text x="1337" y="279" class="micro-title" text-anchor="start">ShardTransactions</text>
+<text x="1337" y="296" class="micro-sub" text-anchor="start">Core 0 directory · 16 logical buckets · route epoch &amp; ACTIVE fence</text>
+<path d="M 1574 306 V 316 M 1364 316 H 1783" fill="none" stroke="#927fac" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 1364 316 V 334" class="wire plum" marker-end="url(#arr-plum)"/>
+<path d="M 1504 316 V 334" class="wire plum" marker-end="url(#arr-plum)"/>
+<path d="M 1643 316 V 334" class="wire plum" marker-end="url(#arr-plum)"/>
+<path d="M 1783 316 V 334" class="wire plum" marker-end="url(#arr-plum)"/>
+<rect x="1300" y="334" width="128" height="36" rx="7" fill="#fff" stroke="#dcd0ec" stroke-width="1"/>
+<use href="#i-db" xlink:href="#i-db" x="1310" y="342.0" width="20" height="20" color="#796297"/>
+<text x="1337" y="357.0" class="micro-title" text-anchor="start">Core 0</text>
+<rect x="1440" y="334" width="128" height="36" rx="7" fill="#fff" stroke="#dcd0ec" stroke-width="1"/>
+<use href="#i-db" xlink:href="#i-db" x="1450" y="342.0" width="20" height="20" color="#796297"/>
+<text x="1477" y="357.0" class="micro-title" text-anchor="start">Target 1</text>
+<rect x="1579" y="334" width="128" height="36" rx="7" fill="#fff" stroke="#dcd0ec" stroke-width="1"/>
+<use href="#i-db" xlink:href="#i-db" x="1589" y="342.0" width="20" height="20" color="#796297"/>
+<text x="1616" y="357.0" class="micro-title" text-anchor="start">Target 2</text>
+<rect x="1719" y="334" width="128" height="36" rx="7" fill="#fff" stroke="#dcd0ec" stroke-width="1"/>
+<use href="#i-db" xlink:href="#i-db" x="1729" y="342.0" width="20" height="20" color="#796297"/>
+<text x="1756" y="357.0" class="micro-title" text-anchor="start">Target 3</text>
+<text x="1301" y="382" class="micro-sub" text-anchor="start">SQL to the selected owner. Each physical database has its own transactions.</text>
+<text x="1300" y="429" class="section" text-anchor="start">Outbox CDC &amp; payment projection</text>
+<text x="1300" y="450" class="panel-sub" text-anchor="start">Alternative event transport · the emitted topic identifies its source</text>
+<path d="M 1461 493 H 1490" class="wire amber" stroke-dasharray="6 5" marker-end="url(#arr-amber)"/>
+<path d="M 1635 493 H 1664" class="wire amber" stroke-dasharray="6 5" marker-end="url(#arr-amber)"/>
+<path d="M 1757 514 V 532 H 1420" fill="none" stroke="#b09473" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 1420 532 V 550" class="wire amber" stroke-dasharray="6 5" marker-end="url(#arr-amber)"/>
+<path d="M 1757 532 V 550" class="wire amber" stroke-dasharray="6 5" marker-end="url(#arr-amber)"/>
+<rect x="1300" y="472" width="161" height="42" rx="7" fill="#fff" stroke="#eadaca" stroke-width="1"/>
+<use href="#i-db" xlink:href="#i-db" x="1310" y="483.0" width="20" height="20" color="#796297"/>
+<text x="1337" y="498.0" class="micro-title" text-anchor="start">MySQL outbox</text>
+<rect x="1490" y="472" width="145" height="42" rx="7" fill="#fff" stroke="#eadaca" stroke-width="1"/>
+<use href="#i-branch" xlink:href="#i-branch" x="1500" y="483.0" width="20" height="20" color="#9e6539"/>
+<text x="1527" y="498.0" class="micro-title" text-anchor="start">Debezium</text>
+<rect x="1664" y="472" width="184" height="42" rx="7" fill="#fff" stroke="#eadaca" stroke-width="1"/>
+<use href="#i-fan" xlink:href="#i-fan" x="1674" y="483.0" width="20" height="20" color="#9e6539"/>
+<text x="1701" y="498.0" class="micro-title" text-anchor="start">Kafka topics</text>
+<text x="1475" y="479" class="micro-sub" text-anchor="middle">CDC</text>
+<text x="1649" y="479" class="micro-sub" text-anchor="middle">MQ</text>
+<rect x="1300" y="550" width="267" height="54" rx="7" fill="#fff" stroke="#eadaca" stroke-width="1"/>
+<use href="#i-bolt" xlink:href="#i-bolt" x="1310" y="567.0" width="20" height="20" color="#9e6539"/>
+<text x="1337" y="568" class="micro-title" text-anchor="start">Channel consumer</text>
+<text x="1337" y="585" class="micro-sub" text-anchor="start">SQL · source-local tasks &amp; receipts</text>
+<rect x="1583" y="550" width="265" height="54" rx="7" fill="#fff" stroke="#eadaca" stroke-width="1"/>
+<use href="#i-rows" xlink:href="#i-rows" x="1593" y="567.0" width="20" height="20" color="#9e6539"/>
+<text x="1620" y="568" class="micro-title" text-anchor="start">Projection consumer / worker</text>
+<text x="1620" y="585" class="micro-sub" text-anchor="start">MySQL batches → ClickHouse (HTTP)</text>
+<text x="1300" y="664" class="section" text-anchor="start">Flink stream analytics</text>
+<text x="1300" y="688" class="panel-sub" text-anchor="start">Separate CDC connectors for payments ×4 and the Core 0 route table</text>
+<path d="M 1462 730 H 1492" class="wire teal" stroke-dasharray="6 5" marker-end="url(#arr-teal)"/>
+<path d="M 1648 730 H 1678" class="wire teal" stroke-dasharray="6 5" marker-end="url(#arr-teal)"/>
+<path d="M 1759 750 V 796" class="wire teal" stroke-dasharray="6 5" marker-end="url(#arr-teal)"/>
+<path d="M 1678 816 H 1648" class="wire teal" stroke-dasharray="6 5" marker-end="url(#arr-teal)"/>
+<rect x="1300" y="709" width="162" height="41" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-branch" xlink:href="#i-branch" x="1310" y="719.5" width="20" height="20" color="#387b78"/>
+<text x="1337" y="734.5" class="micro-title" text-anchor="start">Debezium ×4</text>
+<rect x="1492" y="709" width="156" height="41" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-fan" xlink:href="#i-fan" x="1502" y="719.5" width="20" height="20" color="#387b78"/>
+<text x="1529" y="734.5" class="micro-title" text-anchor="start">Kafka input</text>
+<rect x="1678" y="709" width="170" height="41" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-bolt" xlink:href="#i-bolt" x="1688" y="719.5" width="20" height="20" color="#387b78"/>
+<text x="1715" y="734.5" class="micro-title" text-anchor="start">Flink SQL</text>
+<rect x="1678" y="796" width="170" height="41" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-fan" xlink:href="#i-fan" x="1688" y="806.5" width="20" height="20" color="#387b78"/>
+<text x="1715" y="821.5" class="micro-title" text-anchor="start">Kafka upserts</text>
+<rect x="1492" y="796" width="156" height="41" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-code" xlink:href="#i-code" x="1502" y="806.5" width="20" height="20" color="#387b78"/>
+<text x="1529" y="821.5" class="micro-title" text-anchor="start">Python bridge</text>
+<path d="M 1492 816 H 1462" class="wire teal" marker-end="url(#arr-teal)"/>
+<rect x="1300" y="796" width="162" height="41" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-rows" xlink:href="#i-rows" x="1310" y="806.5" width="20" height="20" color="#387b78"/>
+<text x="1337" y="821.5" class="micro-title" text-anchor="start">ClickHouse</text>
+<text x="1477" y="715" class="micro-sub" text-anchor="middle">CDC</text>
+<text x="1663" y="715" class="micro-sub" text-anchor="middle">MQ</text>
+<text x="1771" y="777" class="micro-sub" text-anchor="start">MQ · upsert topic</text>
+<text x="1663" y="787" class="micro-sub" text-anchor="middle">MQ</text>
+<text x="1477" y="787" class="micro-sub" text-anchor="middle">HTTP(S)</text>
+<text x="1300" y="856" class="micro-sub" text-anchor="start">Aggregates feed preliminary reconciliation. MySQL is the ledger authority.</text>
+<text x="1285" y="926" class="section" text-anchor="start">V2 HA profile</text>
+<text x="1862" y="926" class="micro-sub" text-anchor="end">Separate deployment configuration</text>
+<path d="M 1417 962 H 1471" class="wire slate" marker-end="url(#arr-slate)"/>
+<path d="M 1603 962 H 1730" class="wire plum" stroke-dasharray="6 5" marker-end="url(#arr-plum)"/>
+<rect x="1285" y="943" width="132" height="39" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<text x="1296" y="967.5" class="micro-title" text-anchor="start">MySQL Router</text>
+<rect x="1471" y="943" width="132" height="39" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-db" xlink:href="#i-db" x="1481" y="952.5" width="20" height="20" color="#796297"/>
+<text x="1508" y="967.5" class="micro-title" text-anchor="start">1 Primary</text>
+<rect x="1730" y="943" width="132" height="39" rx="7" fill="#fff" stroke="#d7dfea" stroke-width="1"/>
+<use href="#i-db" xlink:href="#i-db" x="1740" y="952.5" width="20" height="20" color="#796297"/>
+<text x="1767" y="967.5" class="micro-title" text-anchor="start">2 Secondaries</text>
+<text x="1444" y="951" class="micro-sub" text-anchor="middle">SQL</text>
+<text x="1666" y="951" class="micro-sub" text-anchor="middle">Group Replication</text>
+<path d="M 38 1018 H 1882" fill="none" stroke="#dbe4ee" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 42 1042 H 77" class="wire blue" marker-end="url(#arr-blue)"/>
+<text x="88" y="1047" class="foot" text-anchor="start">Synchronous call</text>
+<path d="M 231 1042 H 266" class="wire amber" stroke-dasharray="6 5" marker-end="url(#arr-amber)"/>
+<text x="277" y="1047" class="foot" text-anchor="start">Asynchronous delivery / polling</text>
+<circle cx="542" cy="1042" r="10.5" fill="#245c91"/>
+<text x="542" y="1046" class="number" text-anchor="middle">1</text>
+<text x="559" y="1047" class="foot" text-anchor="start">Payment lifecycle</text>
+<text x="1882" y="1047" class="foot" text-anchor="end">Workloads manifest · payment/outbox implementation · V3 release contracts</text>
+</svg>

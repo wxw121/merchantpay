@@ -1,0 +1,46 @@
+# Explicit deployment profile; secrets/hosts/certificates come from deployment configuration.
+server:
+  address: 0.0.0.0
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      cookie:
+        secure: true
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_ROUTER_HOST}:6446/merchantpay?sslMode=VERIFY_IDENTITY&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&connectTimeout=3000&socketTimeout=620000&autoReconnect=false&rewriteBatchedStatements=true&cachePrepStmts=true&prepStmtCacheSize=256&useLocalSessionState=true
+    hikari:
+      maximum-pool-size: ${DATABASE_POOL_SIZE:16}
+      minimum-idle: 2
+      max-lifetime: 600000
+  flyway:
+    # Run migrations once in the release job before opening writer traffic.
+    enabled: ${MIGRATIONS_ENABLED:false}
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS}
+    properties:
+      security.protocol: SSL
+      ssl.truststore.location: ${KAFKA_TRUSTSTORE}
+      ssl.truststore.password: ${KAFKA_TRUSTSTORE_PASSWORD}
+merchantpay:
+  storage:
+    type: s3
+    s3:
+      endpoint: ${S3_ENDPOINT}
+      bucket: ${S3_BUCKET}
+  v2-metrics-enabled: true
+  shared-sessions-enabled: true
+  console-high-risk-enabled: true
+  console-mfa-required: true
+  channel-controls-enabled: true
+  redis-admission-enabled: true
+  maximum-api-instances: 2
+  # Credentials, master key, issuer and shared object storage identical across API/worker nodes.
+  workers-enabled: ${WORKERS_ENABLED:false}
+  events-consumer-enabled: ${EVENT_CONSUMER_ENABLED:false}
+  read-model-enabled: ${READ_MODEL_ENABLED:true}
+  read-model-consumer-enabled: ${READ_MODEL_CONSUMER_ENABLED:false}
+  read-model-worker-enabled: ${READ_MODEL_WORKER_ENABLED:false}
+  projection-batch-size: ${PROJECTION_BATCH_SIZE:128}
+  projection-concurrency: ${PROJECTION_CONCURRENCY:4}
+  projection-poll-delay: ${PROJECTION_POLL_DELAY:50}

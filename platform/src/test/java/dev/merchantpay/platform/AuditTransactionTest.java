@@ -91,7 +91,7 @@ class AuditTransactionTest extends FinancialFixture {
     mvc =
         MockMvcBuilders.standaloneSetup(
                 new ConsoleController(
-                    access, queries, payments, refunds, merchants, urls, jdbc, tx, clock),
+                    access, queries, payments, refunds, merchants, urls, jdbc, tx, clock, outbox),
                 new OpenApiController(access, payments, refunds, merchants, urls, tx),
                 new ReconciliationController(
                     access, reconciliation, exports, queries, reader, merchants, outbox, jdbc, tx))

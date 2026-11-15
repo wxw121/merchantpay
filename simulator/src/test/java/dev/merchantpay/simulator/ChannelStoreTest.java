@@ -1,10 +1,16 @@
 package dev.merchantpay.simulator;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.nio.file.Path;
+import java.time.Instant;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -146,5 +152,118 @@ class ChannelStoreTest {
         .extracting(ChannelStore.Receipt::aggregateId)
         .containsExactlyInAnyOrder("midnight-p", "midnight-r");
     assertThat(store.bill("MOCK_A", "merchant-a", until, until.plusSeconds(86400))).isEmpty();
+  }
+
+  @Test
+  void lostResponseCanOnlyBeConsumedOnceAcrossReopening() {
+    var input = request("p1", "lost:order", "100");
+    var store = open();
+    assertThat(store.consumeLostResponse("MOCK_A", "PAYMENT", "p1")).isFalse();
+    var receipt = store.pay("MOCK_A", input);
+    assertThat(store.consumeLostResponse("MOCK_A", "PAYMENT", "p1")).isTrue();
+
+    var restored = open();
+    assertThat(restored.consumeLostResponse("MOCK_A", "PAYMENT", "p1")).isFalse();
+    assertThat(restored.pay("MOCK_A", input)).isEqualTo(receipt);
+  }
+
+  @Test
+  void rejectedRefundsDoNotConsumeTheAvailableRefundBalance() {
+    var store = open();
+    store.pay("MOCK_A", request("paid", "order-1", "100"));
+    store.pay("MOCK_A", request("pending", "pending:order-2", "100"));
+    var created = Instant.parse("2026-10-18T00:00:00Z");
+    var missingPayment =
+        new ChannelStore.Request("r1", "missing", "merchant-a", "refund-1", "100", "CNY", created);
+    var wrongMerchant =
+        new ChannelStore.Request("r2", "paid", "merchant-b", "refund-2", "100", "CNY", created);
+    var pendingPayment =
+        new ChannelStore.Request("r3", "pending", "merchant-a", "refund-3", "100", "CNY", created);
+    var declined =
+        new ChannelStore.Request(
+            "r4", "paid", "merchant-a", "fail:refund-4", "100", "CNY", created);
+
+    for (var refund : java.util.List.of(missingPayment, wrongMerchant, pendingPayment, declined)) {
+      assertThat(store.refund("MOCK_A", refund))
+          .satisfies(
+              receipt -> {
+                assertThat(receipt.status()).isEqualTo("FAILED");
+                assertThat(receipt.feeMinor()).isEqualTo("0");
+              });
+    }
+    var valid =
+        new ChannelStore.Request("r5", "paid", "merchant-a", "refund-5", "100", "CNY", created);
+    assertThat(store.refund("MOCK_A", valid).status()).isEqualTo("SUCCEEDED");
+  }
+
+  @ParameterizedTest(name = "invalid channel request: {0}")
+  @MethodSource("invalidRequests")
+  void rejectsInvalidPaymentRequestsBeforeTheDatabase(
+      String reason, String channel, ChannelStore.Request request) {
+    var jdbc = mock(JdbcTemplate.class);
+    var transactions = mock(TransactionTemplate.class);
+    var store = new ChannelStore(jdbc, transactions);
+
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> store.pay(channel, request))
+        .withMessage("Invalid mock channel request");
+    verifyNoInteractions(jdbc, transactions);
+  }
+
+  static Stream<Arguments> invalidRequests() {
+    var created = Instant.parse("2026-10-18T00:00:00Z");
+    return Stream.of(
+        Arguments.of(
+            "unknown channel",
+            "OTHER",
+            new ChannelStore.Request("p1", "p1", "m1", "order", "100", "CNY", created)),
+        Arguments.of("missing request", "MOCK_A", null),
+        invalid(
+            "foreign currency",
+            new ChannelStore.Request("p1", "p1", "m1", "order", "100", "USD", created)),
+        invalid(
+            "missing amount",
+            new ChannelStore.Request("p1", "p1", "m1", "order", null, "CNY", created)),
+        invalid(
+            "nonpositive amount",
+            new ChannelStore.Request("p1", "p1", "m1", "order", "0", "CNY", created)),
+        invalid(
+            "amount above the maximum",
+            new ChannelStore.Request("p1", "p1", "m1", "order", "1000000001", "CNY", created)),
+        invalid(
+            "missing aggregate id",
+            new ChannelStore.Request(null, "p1", "m1", "order", "100", "CNY", created)),
+        invalid(
+            "aggregate id above the maximum length",
+            new ChannelStore.Request("p".repeat(65), "p1", "m1", "order", "100", "CNY", created)),
+        invalid(
+            "missing merchant id",
+            new ChannelStore.Request("p1", "p1", null, "order", "100", "CNY", created)),
+        invalid(
+            "missing business number",
+            new ChannelStore.Request("p1", "p1", "m1", null, "100", "CNY", created)),
+        invalid(
+            "missing business date",
+            new ChannelStore.Request("p1", "p1", "m1", "order", "100", "CNY", null)));
+  }
+
+  private static Arguments invalid(String reason, ChannelStore.Request request) {
+    return Arguments.of(reason, "MOCK_A", request);
+  }
+
+  @Test
+  void rejectsUnknownHealthChannelAndInvalidEvidenceBoundsBeforeTheDatabase() {
+    var jdbc = mock(JdbcTemplate.class);
+    var store = new ChannelStore(jdbc, mock(TransactionTemplate.class), "standard-v1", 37);
+
+    assertThat(store.profile().descriptor()).isEqualTo("standard-v1\t37");
+    assertThatIllegalArgumentException().isThrownBy(() -> store.health("OTHER", null));
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> store.evidence("OTHER", "PAYMENT", "run", "", 10));
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> store.evidence("MOCK_A", "OTHER", "run", "", 10));
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> store.evidence("MOCK_A", "PAYMENT", "run", "", 0));
+    verifyNoInteractions(jdbc);
   }
 }

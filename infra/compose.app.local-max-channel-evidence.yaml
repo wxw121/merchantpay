@@ -1,0 +1,7 @@
+# Explicit candidate: append after slot borrowing; evidence is durable before subsequent work.
+services:
+  platform:
+    image: merchantpay/platform:local-channel-evidence
+    environment:
+      CHANNEL_EVIDENCE_BATCH_SIZE: "64"
+      CHANNEL_EVIDENCE_BATCH_DELAY: "10ms"

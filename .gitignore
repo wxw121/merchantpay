@@ -11,6 +11,8 @@ console/dist/
 console/playwright-report/
 console/test-results/
 *.log
+**/__pycache__/
+*.pyc
 .idea/
 .vscode/
 

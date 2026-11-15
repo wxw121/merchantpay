@@ -23,6 +23,8 @@ public class ReconciliationController {
 
   record ExportRequest(String merchantId, String resource, String from, String until) {}
 
+  record SealRequest(boolean writersStopped, String channelSha256, String reason) {}
+
   private final Access access;
   private final ReconciliationService reconciliation;
   private final ExportService exports;
@@ -87,6 +89,54 @@ public class ReconciliationController {
     return Map.of("id", id);
   }
 
+  @PostMapping(
+      value = "/reconciliation/segments/upload",
+      consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @ResponseStatus(HttpStatus.ACCEPTED)
+  Map<String, String> uploadSegment(
+      @RequestParam(required = false) String merchantId,
+      @RequestParam String channel,
+      @RequestParam LocalDate day,
+      @RequestParam int version,
+      @RequestParam int segmentIndex,
+      @RequestParam int segmentCount,
+      @RequestParam long segmentRows,
+      @RequestParam long segmentAmountMinor,
+      @RequestParam long totalRows,
+      @RequestParam long totalAmountMinor,
+      @RequestParam String manifestSha256,
+      @RequestParam String segmentSha256,
+      @RequestPart MultipartFile file)
+      throws IOException {
+    access.require("ADMIN", "FINANCE", "MERCHANT");
+    String merchant = access.merchant(merchantId, true);
+    try (var input = file.getInputStream()) {
+      String id =
+          reconciliation.submitSegment(
+              merchant,
+              channel,
+              day,
+              version,
+              segmentIndex,
+              segmentCount,
+              segmentRows,
+              segmentAmountMinor,
+              totalRows,
+              totalAmountMinor,
+              manifestSha256,
+              segmentSha256,
+              input,
+              batchId ->
+                  merchants.audit(
+                      merchant,
+                      access.caller().actor(),
+                      "BILL_SEGMENT_UPLOAD",
+                      batchId,
+                      "segment=" + segmentIndex + "; SHA-256=" + segmentSha256));
+      return Map.of("id", id);
+    }
+  }
+
   @PostMapping("/reconciliation/pull")
   @ResponseStatus(HttpStatus.ACCEPTED)
   Map<String, String> pull(@RequestBody PullBill input) throws IOException {
@@ -134,7 +184,7 @@ public class ReconciliationController {
     var batch = batch(id);
     var issues = List.<Map<String, Object>>of();
     String next = null;
-    if (batch.get("status").equals("COMPLETE")) {
+    if (Set.of("COMPLETE", "PRELIMINARY").contains(batch.get("status"))) {
       String after =
           cursor == null
               ? ""
@@ -156,6 +206,12 @@ public class ReconciliationController {
     }
     var result = new LinkedHashMap<String, Object>();
     result.put("batch", batch);
+    if ("SEGMENTED".equals(batch.get("billFormat")))
+      result.put(
+          "segments",
+          queries.rows(
+              "SELECT segment_index,sha256,expected_count,expected_amount_minor FROM recon_segments WHERE batch_id=? ORDER BY segment_index",
+              id));
     result.put("issues", issues);
     result.put("nextCursor", next);
     return result;
@@ -188,6 +244,32 @@ public class ReconciliationController {
         });
   }
 
+  @PostMapping("/batches/{id}/seal")
+  Map<String, String> seal(@PathVariable String id, @RequestBody SealRequest input)
+      throws IOException {
+    access.require("ADMIN", "OPS");
+    if (access.caller().merchantId() != null && !access.caller().merchantId().isBlank())
+      throw new ApiException("FORBIDDEN", 403, "仅平台运维可执行正式封版");
+    var current = batch(id);
+    reconciliation.seal(
+        id,
+        input.channelSha256(),
+        input.writersStopped(),
+        input.reason(),
+        access.caller().actor(),
+        merchant ->
+            merchants.audit(
+                merchant,
+                access.caller().actor(),
+                "BILL_SEAL",
+                id,
+                "Independent channel SHA-256="
+                    + input.channelSha256()
+                    + "; reason="
+                    + input.reason().trim()));
+    return Map.of("id", (String) current.get("id"), "status", "COMPLETE");
+  }
+
   @GetMapping("/batches/{id}/original")
   ResponseEntity<InputStreamResource> original(@PathVariable String id) throws IOException {
     var batch = batch(id);
@@ -202,6 +284,27 @@ public class ReconciliationController {
     return ResponseEntity.ok()
         .contentType(MediaType.parseMediaType("text/csv;charset=UTF-8"))
         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"bill-" + id + ".csv\"")
+        .body(resource);
+  }
+
+  @GetMapping("/batches/{id}/segments/{index}/original")
+  ResponseEntity<InputStreamResource> segmentOriginal(
+      @PathVariable String id, @PathVariable int index) throws IOException {
+    var batch = batch(id);
+    String merchant = (String) batch.get("merchantId");
+    var resource = reconciliation.downloadSegment(id, merchant, index);
+    try {
+      merchants.audit(
+          merchant, access.caller().actor(), "BILL_SEGMENT_DOWNLOAD", id, "segment=" + index);
+    } catch (RuntimeException failure) {
+      resource.getInputStream().close();
+      throw failure;
+    }
+    return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType("text/csv;charset=UTF-8"))
+        .header(
+            HttpHeaders.CONTENT_DISPOSITION,
+            "attachment; filename=\"bill-" + id + "-segment-" + index + ".csv\"")
         .body(resource);
   }
 

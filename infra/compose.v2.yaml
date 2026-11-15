@@ -1,0 +1,105 @@
+# Overlay compose.yaml + compose.app.yaml using a separate -p merchantpay-container-v2 project.
+# Development topology only. Aggregate CPU caps: 14; volumes survive normal down/restart.
+services:
+  keycloak:
+    volumes: !override
+      - ../.data/v2/keycloak:/opt/keycloak/data/import:ro
+      - keycloak-data:/opt/keycloak/data/h2
+  mysql:
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_bin", "--max-connections=200", "--server-id=184001", "--log-bin=mysql-bin", "--binlog-format=ROW", "--binlog-row-image=FULL", "--binlog-expire-logs-seconds=604800"]
+  platform:
+    image: merchantpay/platform:${APP_IMAGE_TAG:-v2-local}
+    environment:
+      EVENT_TRANSPORT: ${EVENT_TRANSPORT:-POLLING}
+      EVENT_CONSUMER_ENABLED: "true"
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      WORKER_QUEUES: INBOX,FAST
+      DATABASE_POOL_SIZE: "24"
+    depends_on:
+      kafka:
+        condition: service_healthy
+  notification-worker:
+    image: merchantpay/platform:${APP_IMAGE_TAG:-v2-local}
+    extends:
+      file: compose.app.yaml
+      service: platform
+    ports: !override []
+    environment:
+      EVENT_TRANSPORT: ${EVENT_TRANSPORT:-POLLING}
+      EVENT_CONSUMER_ENABLED: "false"
+      WORKER_QUEUES: NOTIFY
+      DATABASE_POOL_SIZE: "8"
+      JAVA_TOOL_OPTIONS: -Xmx512m -XX:ActiveProcessorCount=1
+    mem_limit: 768m
+    cpus: 1
+  bulk-worker:
+    image: merchantpay/platform:${APP_IMAGE_TAG:-v2-local}
+    extends:
+      file: compose.app.yaml
+      service: platform
+    ports: !override []
+    environment:
+      EVENT_TRANSPORT: ${EVENT_TRANSPORT:-POLLING}
+      EVENT_CONSUMER_ENABLED: "false"
+      WORKER_QUEUES: BULK
+      DATABASE_POOL_SIZE: "6"
+      JAVA_TOOL_OPTIONS: -Xmx512m -XX:ActiveProcessorCount=1
+    mem_limit: 768m
+    cpus: 1
+  simulator:
+    image: merchantpay/simulator:${APP_IMAGE_TAG:-v2-local}
+  console:
+    image: merchantpay/console:${APP_IMAGE_TAG:-v2-local}
+  kafka:
+    image: apache/kafka:4.3.2@sha256:852a0d49fc4e656b022e7f23785411802c9a088c78a7c5e39f33969de9c227a7
+    ports: ["127.0.0.1:19092:19092"]
+    environment:
+      CLUSTER_ID: NkY5MjU4NkQwMkY5QTI3MQ
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: INTERNAL://:9092,EXTERNAL://:19092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://127.0.0.1:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_HEAP_OPTS: -Xms256m -Xmx512m -XX:ActiveProcessorCount=1
+    volumes: ["kafka-data:/var/lib/kafka/data"]
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      timeout: 8s
+      retries: 20
+    cpus: 1
+    mem_limit: 768m
+  connect:
+    image: quay.io/debezium/connect:3.7.0.Final@sha256:7c99dcb9a4f6e6da8d05d0080d4d8096fc682ae127eba036fce6dd93f8348cdb
+    ports: ["127.0.0.1:18083:8083"]
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: merchantpay-v2-connect
+      CONFIG_STORAGE_TOPIC: merchantpay-v2-connect-config
+      OFFSET_STORAGE_TOPIC: merchantpay-v2-connect-offset
+      STATUS_STORAGE_TOPIC: merchantpay-v2-connect-status
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_CONFIG_PROVIDERS: env
+      CONNECT_CONFIG_PROVIDERS_ENV_CLASS: org.apache.kafka.common.config.provider.EnvVarConfigProvider
+      V2_CDC_USER: merchantpay_cdc
+      V2_CDC_PASSWORD: ${V2_CDC_PASSWORD:?Run scripts/v2/Initialize.ps1}
+      HEAP_OPTS: -Xms256m -Xmx768m -XX:ActiveProcessorCount=2
+    depends_on:
+      kafka:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    cpus: 2
+    mem_limit: 1g
+volumes:
+  kafka-data:

@@ -74,10 +74,24 @@ class FinancialCoreTest extends FinancialFixture {
   @Test
   void oneSuccessFactPostsOnlyOneBalancedJournalDespiteDifferentDeliveryIds() {
     var payment = createPayment("repeat", "10000");
+    java.sql.Timestamp firstSuccess = null;
     for (int i = 0; i < 100; i++) {
       payments.applyResult(
           payment.id(), new ChannelResult.Success("MOCK_A", "receipt-1", 10000, "CNY"));
+      if (i == 0)
+        firstSuccess =
+            jdbc.queryForObject(
+                "SELECT succeeded_at FROM payments WHERE id=?",
+                java.sql.Timestamp.class,
+                payment.id());
     }
+    assertThat(firstSuccess).isNotNull();
+    assertThat(
+            jdbc.queryForObject(
+                "SELECT succeeded_at FROM payments WHERE id=?",
+                java.sql.Timestamp.class,
+                payment.id()))
+        .isEqualTo(firstSuccess);
     assertThat(payments.get("merchant-a", payment.id()).status()).isEqualTo("SUCCEEDED");
     assertThat(count("ledger_journals")).isEqualTo(1);
     assertThat(count("ledger_entries")).isEqualTo(3);

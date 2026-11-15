@@ -174,6 +174,58 @@ class PaymentBackpressureTest extends FinancialFixture {
   }
 
   @Test
+  void fullBucketRejectsNewOrderBeforeInsertingPaymentRow() {
+    var orders = sameBucket(17);
+    for (int i = 0; i < 16; i++) createPayment(orders.get(i), "10000");
+    var insertAttempts = new java.util.concurrent.atomic.AtomicInteger();
+    var observed =
+        new org.springframework.jdbc.core.JdbcTemplate(jdbc.getDataSource()) {
+          @Override
+          public int update(String sql, Object... args) {
+            if (sql.startsWith("INSERT INTO payments(")) insertAttempts.incrementAndGet();
+            return super.update(sql, args);
+          }
+        };
+    var tx =
+        new org.springframework.transaction.support.TransactionTemplate(
+            new org.springframework.jdbc.datasource.DataSourceTransactionManager(
+                jdbc.getDataSource()));
+    tx.setIsolationLevel(
+        org.springframework.transaction.TransactionDefinition.ISOLATION_READ_COMMITTED);
+    var service =
+        new PaymentService(
+            observed,
+            tx,
+            new dev.merchantpay.platform.ledger.LedgerService(observed),
+            new dev.merchantpay.platform.outbox.OutboxService(
+                observed, java.time.Clock.systemUTC()),
+            java.time.Clock.systemUTC(),
+            16);
+
+    assertThatThrownBy(
+            () ->
+                service.create(
+                    "merchant-a",
+                    new PaymentService.CreatePayment(
+                        orders.get(16), "10000", "CNY", "MOCK_A", null)))
+        .isInstanceOfSatisfying(
+            ApiException.class,
+            error ->
+                assertThat(error.retryReason())
+                    .isEqualTo(ApiException.RetryReason.PAYMENT_CAPACITY));
+    assertThat(insertAttempts.get()).isZero();
+    assertThat(
+            service
+                .create(
+                    "merchant-a",
+                    new PaymentService.CreatePayment(
+                        orders.getFirst(), "10000", "CNY", "MOCK_A", null))
+                .id())
+        .isNotBlank();
+    assertThat(insertAttempts.get()).isZero();
+  }
+
+  @Test
   void capacityChangesRollBackWithCreationAndPostingAndReleaseExactlyOnce() {
     var payment = createPayment("rollback-capacity", "10000");
     jdbc.execute(

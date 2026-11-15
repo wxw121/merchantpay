@@ -36,7 +36,7 @@ class RestoredSetCheck {
       if(badJournals+badRefunds+missingJournals+unfinished!=0)throw new IllegalStateException("Restored ledger, refund or task invariants failed");
       int bills=0,exports=0,s3Bills=0,s3Exports=0;
       boolean hasS3="true".equals(System.getenv("RESTORE_HAS_S3"));
-      try(var storage=new dev.merchantpay.platform.reconciliation.ObjectStorage(folder.resolve("platform").toString(),hasS3?"s3":"local",hasS3?System.getenv("S3_ENDPOINT"):"",hasS3?System.getenv("S3_BUCKET"):"","us-east-1",true)) {
+      try(var storage=new dev.merchantpay.platform.storage.ObjectStorage(folder.resolve("platform").toString(),hasS3?"s3":"local",hasS3?System.getenv("S3_ENDPOINT"):"",hasS3?System.getenv("S3_BUCKET"):"","us-east-1",true)) {
         for(var row:jdbc.queryForList("SELECT storage_key,sha256 FROM recon_batches")) {
           var billHash=MessageDigest.getInstance("SHA-256");
           try(var stream=storage.open((String)row.get("storage_key"))) {byte[] buffer=new byte[65536];int n;while((n=stream.read(buffer))!=-1)billHash.update(buffer,0,n);}

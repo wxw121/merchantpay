@@ -24,7 +24,7 @@ try {
     if($taskExisting -and -not $Resume){throw 'This restore already owns containers; inspect its retained evidence or explicitly resume'}
     if(-not $Resume) {
     $taskBundle=Join-Path $taskRoot ('.data/backups/'+$Id+'.dpapi')
-    $taskInputLimit=if($Source -eq 'native'){1025MB}else{257MB}
+    $taskInputLimit=1025MB
     if((Get-Item -LiteralPath $taskBundle).Length -gt $taskInputLimit){throw 'Encrypted bundle exceeds the explicitly selected DPAPI source budget'}
     $taskPlain=[Security.Cryptography.ProtectedData]::Unprotect([IO.File]::ReadAllBytes($taskBundle),$null,[Security.Cryptography.DataProtectionScope]::CurrentUser)
     New-Item -ItemType Directory $taskFolder -Force | Out-Null;$taskCreated=$true

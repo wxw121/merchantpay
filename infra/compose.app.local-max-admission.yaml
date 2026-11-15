@@ -1,0 +1,11 @@
+# Candidate only; requires a newly built image with API_ADMISSION_WRITE_BIAS support.
+# Append after compose.app.local-max.yaml. Not enabled by the LocalMax start scripts.
+services:
+  platform:
+    image: merchantpay/platform:local-max-admission-candidate
+    environment:
+      PAYMENT_ADMISSION_SLOTS: "true"
+      OUTBOX_ORDERED_IDS: "true"
+      PAYMENT_MAX_INFLIGHT_PER_SHARD: "32"
+      API_MAX_INFLIGHT: "128"
+      API_ADMISSION_WRITE_BIAS: "true"

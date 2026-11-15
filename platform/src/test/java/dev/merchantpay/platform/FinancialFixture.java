@@ -35,6 +35,12 @@ abstract class FinancialFixture {
         schemaConnection, new ClassPathResource("db/migration/V7__isolated_task_queues.sql"));
     ScriptUtils.executeSqlScript(
         schemaConnection, new ClassPathResource("db/migration/V12__payment_backpressure.sql"));
+    ScriptUtils.executeSqlScript(
+        schemaConnection, new ClassPathResource("db/migration/V14__completed_task_history.sql"));
+    ScriptUtils.executeSqlScript(
+        schemaConnection, new ClassPathResource("db/migration/V23__recovery_windows.sql"));
+    ScriptUtils.executeSqlScript(
+        schemaConnection, new ClassPathResource("db/migration/V50__payment_success_time.sql"));
     jdbc = new JdbcTemplate(source);
     jdbc.update(
         "INSERT INTO merchants(id, name, enabled, notification_url) VALUES ('merchant-a','演示商户 A',true,null)");

@@ -2,6 +2,12 @@
 
 ## 服务与配置
 
+V1任务性能升级使用Flyway V14/V15。先停所有旧版平台写入和worker，在同一停止点制作并验证备份，再启动新版；禁止与旧版混跑。V14把现有 `outbox_tasks` 的全部eventId回填到永久唯一表 `outbox_events`；完成超过24小时的DONE任务以后按最多500条一个事务迁入 `outbox_task_history`。审计、控制台分页和历史核验读取 `outbox_task_records`（热/冷合并视图），当前租约领取只查热表；DEAD及未完成任务留在热表，人工重放历史DONE任务会在同一个事务内移回热表。V15给配额清理增加按时间索引。过期nonce/配额每轮每表最多4批、每批500条，清理和归档均每250毫秒安排下一轮（数据库调用本身耗时另计），在目标流量下还需监控实际积压。迁移时若DDL中断，停止写入并从迁移前备份恢复；不可仅删除Flyway失败记录后继续。回滚到旧版前也必须停止全部新写入，按ID分批把历史表完整搬回热表、核对总记录和eventId，再运行旧版；旧版不能直接读取已归档的事件。备份必须包括历史表、永久登记和视图。
+
+若回退到旧版后又产生了任务，再次升级前必须停止所有旧版写入者。在新版本代码目录编译 `scripts/mvn.ps1 -MavenArguments @('-o','-pl','platform','compile')`，将 `DATABASE_URL`、`DATABASE_USER`、`DATABASE_PASSWORD` 设置为待升级数据库的连接信息，运行 `scripts/release/reconcile-outbox-events.ps1 -WritersStopped`。该程序按500条分页补齐旧版写入的永久事件登记，先检查ID/eventId冲突，结束时核对热/历史任务与登记表的一一对应；失败时保持写入者关闭并调查数据，不得直接启动新版。核验成功后方可启动新版。此步骤可重复执行，但必须在无写入者状态下执行。
+
+签名入口总在途数保持 `API_MAX_INFLIGHT`；当上限至少8时，支付/退款/查询分别有1/8、1/8、1/4保留名额，其余共享。支付流量独占时可用名额比原版少，属于公平性取舍；不能据此声称数据库总容量上升。任务空领取最多退避100ms；nonce和配额每表每轮最多4批×500行，每分钟执行一次；通知HTTP每客户端/route上限16连接。
+
 常驻原生环境为Windows Java/Node加Docker MySQL、Keycloak。另已实装独立merchantpay-container-v1应用编排，使用15173/18080/19091/13307/18180端口及独立卷；构建、OIDC、标准负载、扫描和恢复命令见 [本地交付操作](local-delivery.md)。二者均为本机演示，不能据此认定生产编排或R1验收通过。
 
 `scripts/init-local.ps1` 仅在缺失时生成 `.env`，再渲染 `.data/keycloak/realm.json`、`.data/prometheus/prometheus.yml`。本地演示工作台管理员默认使用 `admin/admin`；其他密码、`MASTER_KEY`、API secret 和模拟器 token 都不应入库。首次创建 MySQL 卷之后，修改 `.env` 中 DB 密码不会自动修改库内用户。Keycloak realm 导入也不会自动覆盖既有 realm 的用户、密码或客户端。
@@ -102,4 +108,4 @@ MySQL 使用 `mysqldump --single-transaction --no-tablespaces`，通过受控环
 
 已通过 Testcontainers 的真实 MySQL `mysqldump → 清除独立测试库表 → mysql 恢复 → 重复成功回调` 测试：恢复后退款累计不丢失且凭证 / 分录不重复。该证据是小数据恢复验证；没有声称完整 D1 灾备、跨地域 RPO / RTO 或密钥轮换灾备达标。
 
-新增scripts/release/backup-local.ps1和restore-local.ps1面向独立容器项目，停写一致点包含MySQL、平台文件、模拟器/Keycloak H2、准确密钥版本及可选本地S3卷；ID不可覆盖，归档用Windows当前用户DPAPI加密。恢复使用独立端口/副本，结束后停止恢复容器；解密后的.data/restores为敏感数据。256MiB上限、本机用户绑定、local对象限定和实际覆盖见 [完整操作与限制](local-delivery.md#成套备份及隔离恢复)。原生历史库和完整D1尚未通过此套恢复认证。
+新增scripts/release/backup-local.ps1和restore-local.ps1面向独立容器项目，停写一致点包含MySQL、平台文件、模拟器/Keycloak H2、准确密钥版本及可选本地S3卷；ID不可覆盖，归档用Windows当前用户DPAPI加密。恢复使用独立端口/副本，结束后停止恢复容器；解密后的.data/restores为敏感数据。1GiB压缩归档上限、本机用户绑定、local对象限定和实际覆盖见 [完整操作与限制](local-delivery.md#成套备份及隔离恢复)。原生历史库和完整D1尚未通过此套恢复认证。

@@ -1,0 +1,27 @@
+{
+  "browserFlow": "v2-step-up",
+  "attributes": {"acr.loa.map":"{\"1\":1,\"2\":2}"},
+  "authenticationFlows": [
+    {"alias":"v2-step-up","providerId":"basic-flow","topLevel":true,"builtIn":false,"authenticationExecutions":[
+      {"authenticator":"auth-cookie","requirement":"ALTERNATIVE","priority":10,"authenticatorFlow":false},
+      {"flowAlias":"v2-forms","requirement":"ALTERNATIVE","priority":20,"authenticatorFlow":true}
+    ]},
+    {"alias":"v2-forms","providerId":"basic-flow","topLevel":false,"builtIn":false,"authenticationExecutions":[
+      {"flowAlias":"v2-password","requirement":"CONDITIONAL","priority":10,"authenticatorFlow":true},
+      {"flowAlias":"v2-otp","requirement":"CONDITIONAL","priority":20,"authenticatorFlow":true}
+    ]},
+    {"alias":"v2-password","providerId":"basic-flow","topLevel":false,"builtIn":false,"authenticationExecutions":[
+      {"authenticator":"conditional-level-of-authentication","authenticatorConfig":"v2-level-one","requirement":"REQUIRED","priority":10,"authenticatorFlow":false},
+      {"authenticator":"auth-username-password-form","requirement":"REQUIRED","priority":20,"authenticatorFlow":false}
+    ]},
+    {"alias":"v2-otp","providerId":"basic-flow","topLevel":false,"builtIn":false,"authenticationExecutions":[
+      {"authenticator":"conditional-level-of-authentication","authenticatorConfig":"v2-level-two","requirement":"REQUIRED","priority":10,"authenticatorFlow":false},
+      {"authenticator":"auth-otp-form","requirement":"REQUIRED","priority":20,"authenticatorFlow":false}
+    ]}
+  ],
+  "authenticatorConfig": [
+    {"alias":"v2-level-one","config":{"loa-condition-level":"1","loa-max-age":"1800"}},
+    {"alias":"v2-level-two","config":{"loa-condition-level":"2","loa-max-age":"0"}}
+  ],
+  "requiredActions": [{"alias":"CONFIGURE_TOTP","name":"Configure OTP","providerId":"CONFIGURE_TOTP","enabled":true,"defaultAction":false,"priority":10}]
+}

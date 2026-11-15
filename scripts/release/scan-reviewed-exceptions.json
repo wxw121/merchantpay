@@ -1,0 +1,85 @@
+{
+  "expiresAt": "2027-02-12T00:00:00Z",
+  "rules": [
+    {
+      "module": "platform",
+      "path": "app/app.jar/BOOT-INF/lib/hadoop-client-runtime-3.4.3.jar",
+      "package": "com.fasterxml.jackson.core:jackson-core",
+      "version": "2.12.7",
+      "cves": ["CVE-2025-52999", "CVE-2026-68494", "CVE-2026-89425"],
+      "reason": "Hadoop's shaded JSON parser is reached only through local Parquet configuration; archive input is checked against the manifest SHA-256 before decoding."
+    },
+    {
+      "module": "platform",
+      "path": "app/app.jar/BOOT-INF/lib/hadoop-client-runtime-3.4.3.jar",
+      "package": "com.fasterxml.jackson.core:jackson-databind",
+      "version": "2.12.7.1",
+      "cves": ["CVE-2026-54512", "CVE-2026-54513", "CVE-2026-91776", "CVE-2026-91777"],
+      "reason": "Hadoop's shaded mapper has no application route for untrusted JSON or polymorphic types; only fixed local Parquet configuration is used."
+    },
+    {
+      "module": "platform",
+      "path": "app/app.jar/BOOT-INF/lib/hadoop-client-runtime-3.4.3.jar",
+      "package": "com.google.guava:guava",
+      "version": "33.4.8-jre",
+      "cves": ["CVE-2026-102554"],
+      "reason": "The advisory requires Java native deserialization of attacker-controlled Guava collections; the archive path does not deserialize Java objects."
+    },
+    {
+      "module": "platform",
+      "path": "app/app.jar/BOOT-INF/lib/hadoop-client-runtime-3.4.3.jar",
+      "package": "org.eclipse.jetty:jetty-http",
+      "version": "9.4.57.v20241219",
+      "cves": ["CVE-2026-2332"],
+      "reason": "The application serves HTTP with Spring Boot Tomcat; it never starts the shaded Hadoop Jetty server."
+    },
+    {
+      "module": "platform",
+      "path": "app/app.jar/BOOT-INF/lib/hadoop-client-runtime-3.4.3.jar",
+      "package": "org.jline:jline-builtins",
+      "version": "3.9.0",
+      "cves": ["CVE-2026-77422"],
+      "reason": "The application does not expose an interactive JLine terminal or execute terminal builtins."
+    },
+    {
+      "module": "platform",
+      "path": "app/app.jar/BOOT-INF/lib/hadoop-client-runtime-3.4.3.jar",
+      "package": "org.jline:jline-remote-telnet",
+      "version": "3.9.0",
+      "cves": ["CVE-2026-56740", "CVE-2026-56741"],
+      "reason": "The application never starts a Telnet listener; the shaded JLine server has no inbound route."
+    },
+    {
+      "module": "platform",
+      "path": "app/app.jar/BOOT-INF/lib/parquet-jackson-1.18.1.jar",
+      "package": "com.fasterxml.jackson.core:jackson-core",
+      "version": "2.22.2",
+      "cves": ["CVE-2026-89407", "CVE-2026-89425"],
+      "reason": "Parquet reads only a fixed schema and SHA-256-verified archive objects; the patched shaded Parquet release is not yet available."
+    },
+    {
+      "module": "platform",
+      "path": "app/app.jar/BOOT-INF/lib/parquet-jackson-1.18.1.jar",
+      "package": "com.fasterxml.jackson.core:jackson-databind",
+      "version": "2.22.2",
+      "cves": ["CVE-2026-91776", "CVE-2026-91777"],
+      "reason": "Parquet uses a fixed archive schema without attacker-provided polymorphic type IDs or object identities; the patched shaded release is not yet available."
+    },
+    {
+      "module": "prometheus",
+      "path": "bin/prometheus",
+      "package": "golang.org/x/net",
+      "version": "v0.61.0",
+      "cves": ["CVE-2026-78661"],
+      "reason": "The advisory affects x/net/html Parse functions. This opt-in service binds only to loopback and its configured scrape targets expose metrics, not HTML; no reachable call to the affected parser is known, but reachability is not formally proven. Upstream v3.16.0 still uses x/net v0.61.0."
+    },
+    {
+      "module": "prometheus",
+      "path": "bin/promtool",
+      "package": "golang.org/x/net",
+      "version": "v0.61.0",
+      "cves": ["CVE-2026-78661"],
+      "reason": "The advisory affects x/net/html Parse functions. The configured service runs prometheus, not promtool; no application route executes this binary. Upstream v3.16.0 still uses x/net v0.61.0."
+    }
+  ]
+}

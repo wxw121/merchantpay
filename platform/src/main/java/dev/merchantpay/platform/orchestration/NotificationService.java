@@ -25,6 +25,9 @@ public class NotificationService {
   private final JdbcTemplate jdbc;
   private final Clock clock;
   private final RestClient external, local;
+  private final NotificationWrites writes;
+  private final java.util.function.Consumer<Runnable> shardWrite;
+  private final Runnable beforeNetwork;
 
   public NotificationService(
       PaymentService payments,
@@ -34,6 +37,19 @@ public class NotificationService {
       JsonMapper json,
       JdbcTemplate jdbc,
       Clock clock) {
+    this(payments, refunds, merchants, policy, json, jdbc, clock, null);
+  }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public NotificationService(
+      PaymentService payments,
+      RefundService refunds,
+      MerchantService merchants,
+      NotificationPolicy policy,
+      JsonMapper json,
+      JdbcTemplate jdbc,
+      Clock clock,
+      NotificationWrites writes) {
     this.payments = payments;
     this.refunds = refunds;
     this.merchants = merchants;
@@ -41,27 +57,132 @@ public class NotificationService {
     this.json = json;
     this.jdbc = jdbc;
     this.clock = clock;
+    this.writes = writes;
+    this.shardWrite = null;
+    this.beforeNetwork = null;
     var settings =
         HttpClientSettings.defaults()
             .withTimeouts(Duration.ofSeconds(2), Duration.ofSeconds(5))
             .withRedirects(HttpRedirects.DONT_FOLLOW);
+    var factories =
+        ClientHttpRequestFactoryBuilder.httpComponents()
+            .withConnectionManagerCustomizer(
+                manager -> manager.setMaxConnPerRoute(16).setMaxConnTotal(16))
+            .withDefaultRequestConfigCustomizer(
+                config ->
+                    config.setConnectionRequestTimeout(
+                        org.apache.hc.core5.util.Timeout.ofSeconds(2)));
     external =
         RestClient.builder()
             .requestFactory(
-                ClientHttpRequestFactoryBuilder.httpComponents()
-                    .build(settings.withInetAddressFilter(InetAddressFilter.externalAddresses())))
+                factories.build(
+                    settings.withInetAddressFilter(InetAddressFilter.externalAddresses())))
             .build();
-    local =
-        RestClient.builder()
-            .requestFactory(ClientHttpRequestFactoryBuilder.httpComponents().build(settings))
-            .build();
+    local = RestClient.builder().requestFactory(factories.build(settings)).build();
+  }
+
+  private NotificationService(
+      NotificationService original,
+      PaymentService payments,
+      RefundService refunds,
+      JdbcTemplate jdbc,
+      java.util.function.Consumer<Runnable> shardWrite,
+      Runnable beforeNetwork) {
+    this.payments = payments;
+    this.refunds = refunds;
+    this.merchants = original.merchants;
+    this.policy = original.policy;
+    this.json = original.json;
+    this.jdbc = jdbc;
+    this.clock = original.clock;
+    this.external = original.external;
+    this.local = original.local;
+    this.writes = null;
+    this.shardWrite = Objects.requireNonNull(shardWrite);
+    this.beforeNetwork = Objects.requireNonNull(beforeNetwork);
+  }
+
+  /**
+   * Keeps merchant keys in the control database while reading and recording delivery on the
+   * selected shard.
+   */
+  public NotificationService forShard(
+      PaymentService payments,
+      RefundService refunds,
+      JdbcTemplate jdbc,
+      java.util.function.Consumer<Runnable> shardWrite,
+      Runnable beforeNetwork) {
+    return new NotificationService(this, payments, refunds, jdbc, shardWrite, beforeNetwork);
   }
 
   public void deliver(TaskQueue.Task task) {
+    deliver(task, null);
+  }
+
+  public record TaskInput(
+      TaskQueue.Task task, PaymentService.PaymentView payment, RefundService.RefundView refund) {}
+
+  public Map<String, TaskInput> prefetch(List<TaskQueue.Task> tasks) {
+    if (tasks.size() > 64) throw new IllegalArgumentException("Notification batch exceeds64");
+    var refundIds = new LinkedHashSet<String>();
+    var paymentIds = new LinkedHashSet<String>();
+    var taskIds = new HashSet<String>();
+    for (var task : tasks) {
+      if (!taskIds.add(task.id())
+          || !Set.of(
+                  "PAYMENT_SUCCEEDED",
+                  "PAYMENT_FAILED",
+                  "PAYMENT_CLOSED",
+                  "REFUND_SUCCEEDED",
+                  "REFUND_FAILED")
+              .contains(task.kind()))
+        throw new IllegalArgumentException("Invalid notification batch");
+      if (task.kind().startsWith("REFUND_")) refundIds.add(task.aggregateId());
+      else paymentIds.add(task.aggregateId());
+    }
+    var refundRows = refunds.loadForChannelTasks(refundIds);
+    for (var refund : refundRows.values()) paymentIds.add(refund.paymentId());
+    var paymentRows = payments.loadForChannelTasks(paymentIds);
+    var inputs = new HashMap<String, TaskInput>();
+    for (var task : tasks) {
+      var refund = task.kind().startsWith("REFUND_") ? refundRows.get(task.aggregateId()) : null;
+      var payment = paymentRows.get(refund == null ? task.aggregateId() : refund.paymentId());
+      if (payment == null || task.kind().startsWith("REFUND_") && refund == null) continue;
+      var input = new TaskInput(task, payment, refund);
+      verify(task, input);
+      inputs.put(task.id(), input);
+    }
+    return Map.copyOf(inputs);
+  }
+
+  private static void verify(TaskQueue.Task task, TaskInput input) {
+    var p = input.payment();
+    var r = input.refund();
+    boolean refund = task.kind().startsWith("REFUND_");
+    if (!task.equals(input.task())
+        || p == null
+        || !task.merchantId().equals(p.merchantId())
+        || refund
+            && (r == null
+                || !task.aggregateId().equals(r.id())
+                || !r.paymentId().equals(p.id())
+                || !r.merchantId().equals(task.merchantId())
+                || !r.channel().equals(p.channel()))
+        || !refund && (r != null || !task.aggregateId().equals(p.id())))
+      throw new IllegalArgumentException("Notification snapshot does not belong to claimed task");
+  }
+
+  public void deliver(TaskQueue.Task task, TaskInput input) {
+    if (input != null) verify(task, input);
     boolean isRefund = task.kind().startsWith("REFUND_");
-    var refund = isRefund ? refunds.get(task.merchantId(), task.aggregateId()) : null;
+    var refund =
+        input != null
+            ? input.refund()
+            : (isRefund ? refunds.get(task.merchantId(), task.aggregateId()) : null);
     var payment =
-        payments.get(task.merchantId(), isRefund ? refund.paymentId() : task.aggregateId());
+        input != null
+            ? input.payment()
+            : payments.get(task.merchantId(), isRefund ? refund.paymentId() : task.aggregateId());
     String url = policy.validate(payment.notificationUrl());
     if (url == null) {
       return;
@@ -81,15 +202,18 @@ public class NotificationService {
     String timestamp = Long.toString(clock.instant().getEpochSecond()),
         nonce = UUID.randomUUID().toString();
     String id = UUID.randomUUID().toString();
-    jdbc.update(
-        "INSERT INTO notification_deliveries(id,task_id,event_id,merchant_id,url,status,created_at) VALUES (?,?,?,?,?,'SENDING',?)",
-        id,
-        task.id(),
-        task.eventId(),
-        task.merchantId(),
-        url,
-        Timestamp.from(clock.instant()));
+    write(
+        () ->
+            jdbc.update(
+                "INSERT INTO notification_deliveries(id,task_id,event_id,merchant_id,url,status,created_at) VALUES (?,?,?,?,?,'SENDING',?)",
+                id,
+                task.id(),
+                task.eventId(),
+                task.merchantId(),
+                url,
+                Timestamp.from(clock.instant())));
     try {
+      if (beforeNetwork != null) beforeNetwork.run();
       var response =
           (policy.isLocalDemo(url) ? local : external)
               .post()
@@ -108,16 +232,26 @@ public class NotificationService {
       if (status / 100 != 2) {
         throw new IllegalStateException("Webhook HTTP " + status);
       }
-      jdbc.update(
-          "UPDATE notification_deliveries SET status='DELIVERED',http_status=? WHERE id=?",
-          status,
-          id);
+      write(
+          () ->
+              jdbc.update(
+                  "UPDATE notification_deliveries SET status='DELIVERED',http_status=? WHERE id=?",
+                  status,
+                  id));
     } catch (RuntimeException failure) {
-      jdbc.update(
-          "UPDATE notification_deliveries SET status='FAILED',error_detail=? WHERE id=?",
-          failure.getClass().getSimpleName(),
-          id);
+      write(
+          () ->
+              jdbc.update(
+                  "UPDATE notification_deliveries SET status='FAILED',error_detail=? WHERE id=?",
+                  failure.getClass().getSimpleName(),
+                  id));
       throw new IllegalStateException("Merchant webhook delivery failed", failure);
     }
+  }
+
+  private void write(Runnable action) {
+    if (shardWrite != null) shardWrite.accept(action);
+    else if (writes == null) action.run();
+    else writes.execute(action);
   }
 }

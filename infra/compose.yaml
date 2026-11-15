@@ -37,13 +37,14 @@ services:
     entrypoint: ["/usr/bin/chown", "1000:0", "/opt/keycloak/data/h2"]
     volumes: ["keycloak-data:/opt/keycloak/data/h2"]
   prometheus:
-    image: quay.io/prometheus/prometheus:v3.13.5@sha256:aafa9d694e6a883c02db516d9f6e5b84e14195f49a2a6456a4cca815edda72b9
+    image: quay.io/prometheus/prometheus:v3.16.0@sha256:9332054523223e2ddc18d8101799d54a4a8d823b030c53216f063a6c117773cd
     profiles: [observability]
     ports: ["127.0.0.1:9090:9090"]
     command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus", "--storage.tsdb.retention.time=24h"]
     volumes:
       - ../.data/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - ./prometheus/v2-alerts.yml:/etc/prometheus/v2-alerts.yml:ro
       - prometheus-data:/prometheus
 volumes:
   mysql-data:

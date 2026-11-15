@@ -17,6 +17,44 @@ const refund = { id: 'r_test', paymentId: payment.id, merchantId: payment.mercha
   channel: 'MOCK_A', channelReference: null, createdAt: payment.createdAt, updatedAt: payment.updatedAt };
 const createBody = { merchantOrderNo: '订单-1', amountMinor: '1000000000', currency: 'CNY', channel: 'MOCK_A' } as const;
 
+
+test('validates credentials, timeout bounds and signed body size before HTTP', async () => {
+  const baseUrl = 'https://merchant.example/api/v1';
+  assert.throws(() => client('relative/path'), /absolute HTTPS URL/);
+  assert.throws(() => new MerchantClient({ baseUrl, keyId: '', secret }), /keyId and secret/);
+  assert.throws(() => new MerchantClient({ baseUrl, keyId: 'key', secret: '' }), /keyId and secret/);
+  for (const timeoutMs of [0, 0.5, 2_147_483_648]) {
+    assert.throws(() => client(baseUrl, timeoutMs), /timeoutMs is out of range/);
+  }
+  await assert.rejects(client(baseUrl).getPayment(''), /nonempty id/);
+  await assert.rejects(client(baseUrl).getPayment('a'.repeat(65)), /nonempty id/);
+  await assert.rejects(client(baseUrl).createPayment({
+    ...createBody, merchantOrderNo: '款'.repeat(22_000),
+  }), /64 KiB/);
+  const invalidSerialization = { ...createBody, toJSON() { return undefined; } };
+  await assert.rejects(client(baseUrl).createPayment(invalidSerialization), /Expected a JSON object/);
+});
+
+test('caller cancellation preserves the original write key and never retries', async () => {
+  const controller = new AbortController();
+  let requests = 0;
+  const api = await server((_req, _res) => {
+    requests++;
+    controller.abort();
+  });
+  try {
+    await assert.rejects(client(api.baseUrl).createPayment(createBody, { signal: controller.signal }),
+      (error: unknown) => {
+        assert.ok(error instanceof MerchantApiError);
+        assert.equal(error.code, 'NETWORK_ERROR');
+        assert.equal(error.reconciliationRequired, true);
+        assert.equal(error.recovery.businessKey, createBody.merchantOrderNo);
+        return true;
+      });
+    assert.equal(requests, 1);
+  } finally { await api.close(); }
+});
+
 async function server(handler: (req: IncomingMessage, res: ServerResponse, body: string) => void | Promise<void>) {
   const app = createServer(async (req, res) => {
     const chunks: Buffer[] = [];

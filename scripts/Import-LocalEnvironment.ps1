@@ -1,6 +1,7 @@
+param([string]$EnvironmentFile)
 $taskEnvironmentRoot = Split-Path -Parent $PSScriptRoot
-$taskEnvironmentPath = Join-Path $taskEnvironmentRoot '.env'
-if (-not (Test-Path -LiteralPath $taskEnvironmentPath)) { throw 'Run scripts/init-local.ps1 first.' }
+. (Join-Path $PSScriptRoot 'LocalEnvironment.ps1')
+$taskEnvironmentPath=Resolve-LocalEnvironmentPath -Root $taskEnvironmentRoot -EnvironmentFile $EnvironmentFile
 foreach ($taskEnvironmentLine in [IO.File]::ReadAllLines($taskEnvironmentPath)) {
-    if ($taskEnvironmentLine -match '^([A-Z_]+)=(.*)$') { [Environment]::SetEnvironmentVariable($Matches[1],$Matches[2],'Process') }
+    if ($taskEnvironmentLine -match '^([A-Z][A-Z0-9_]*)=(.*)$') { [Environment]::SetEnvironmentVariable($Matches[1],$Matches[2],'Process') }
 }

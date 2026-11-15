@@ -1,0 +1,6 @@
+# Candidate only; append after the shared request gate overlay.
+services:
+  platform:
+    image: merchantpay/platform:local-task-completion
+    environment:
+      TASK_COMPLETION_BULK_SQL: "true"

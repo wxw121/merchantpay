@@ -14,6 +14,9 @@ import tools.jackson.databind.json.JsonMapper;
 
 @Service
 public class InboxService {
+  private record Original(
+      String merchantId, String status, String amountMinor, String channelReference) {}
+
   private final JdbcTemplate jdbc;
   private final TransactionTemplate transactions;
   private final OutboxService outbox;
@@ -21,6 +24,37 @@ public class InboxService {
   private final JsonMapper json;
   private final Clock clock;
   private final String secret;
+  private final boolean terminalFastPath;
+  private ChannelShardRouter shards;
+  private ChannelShardContext shard;
+
+  public void setShards(ChannelShardRouter value) {
+    shards = value;
+  }
+
+  public InboxService forShard(
+      JdbcTemplate selected,
+      OutboxService localOutbox,
+      ChannelGateway localGateway,
+      ChannelShardContext context) {
+    var copy =
+        new InboxService(
+            selected,
+            transactions,
+            localOutbox,
+            localGateway,
+            json,
+            clock,
+            secret,
+            terminalFastPath);
+    copy.shard = context;
+    return copy;
+  }
+
+  private void commit(Runnable action) {
+    if (shard == null) transactions.executeWithoutResult(tx -> action.run());
+    else shard.commit(action);
+  }
 
   public InboxService(
       JdbcTemplate jdbc,
@@ -29,7 +63,8 @@ public class InboxService {
       ChannelGateway gateway,
       JsonMapper json,
       Clock clock,
-      @Value("${merchantpay.callback-secret}") String secret) {
+      @Value("${merchantpay.callback-secret}") String secret,
+      @Value("${merchantpay.inbox-terminal-fast-path:false}") boolean terminalFastPath) {
     this.jdbc = jdbc;
     this.transactions = transactions;
     this.outbox = outbox;
@@ -37,6 +72,7 @@ public class InboxService {
     this.json = json;
     this.clock = clock;
     this.secret = secret;
+    this.terminalFastPath = terminalFastPath;
   }
 
   public void receive(String timestamp, String signature, String body) {
@@ -54,37 +90,88 @@ public class InboxService {
         || !("PAYMENT".equals(receipt.operation()) || "REFUND".equals(receipt.operation()))) {
       throw new ApiException("INVALID_CHANNEL_RECEIPT", 400, "渠道通知关联字段无效");
     }
+    storeVerified(receipt, body, Signatures.sha256(body), null);
+  }
+
+  /** Only the official sandbox adapter may call this after RSA2/app/seller/amount validation. */
+  public void receiveVerifiedAlipay(ChannelApi.Receipt receipt, String signedForm) {
+    if (!AlipaySandbox.CHANNEL.equals(receipt.channel()) || !"PAYMENT".equals(receipt.operation()))
+      throw new ApiException("INVALID_CHANNEL_RECEIPT", 400, "沙箱通知来源无效");
+    storeVerified(
+        receipt,
+        json.writeValueAsString(receipt),
+        Signatures.sha256("ALIPAY:" + signedForm),
+        signedForm);
+  }
+
+  public void storeVerified(
+      ChannelApi.Receipt receipt, String body, String fingerprint, String signedForm) {
+    if (shards != null) {
+      shards.storeVerified(receipt, body, fingerprint, signedForm);
+      return;
+    }
     String table = receipt.operation().equals("PAYMENT") ? "payments" : "refunds";
-    var merchants =
-        jdbc.queryForList(
-            "SELECT merchant_id FROM " + table + " WHERE id=? AND channel=?",
-            String.class,
+    var originals =
+        jdbc.query(
+            "SELECT merchant_id,status,amount_minor,channel_reference FROM "
+                + table
+                + " WHERE id=? AND channel=?",
+            (rs, row) ->
+                new Original(
+                    rs.getString("merchant_id"),
+                    rs.getString("status"),
+                    rs.getString("amount_minor"),
+                    rs.getString("channel_reference")),
             receipt.aggregateId(),
             receipt.channel());
-    if (merchants.isEmpty()) {
+    if (originals.isEmpty()) {
       throw new ApiException("UNKNOWN_CHANNEL_RECEIPT", 409, "渠道通知未匹配原业务");
     }
-    transactions.executeWithoutResult(
-        tx -> {
-          String fingerprint = dev.merchantpay.platform.common.Signatures.sha256(body),
-              id = UUID.randomUUID().toString();
+    var original = originals.getFirst();
+    boolean alreadyProcessed = terminalFastPath && matchesSuccessfulOutcome(receipt, original);
+    commit(
+        () -> {
+          String id = UUID.randomUUID().toString();
           var now = Timestamp.from(clock.instant());
           try {
             jdbc.update(
-                "INSERT INTO inbox_notifications(id,channel,fingerprint,aggregate_id,operation,raw_body,status,created_at,updated_at) VALUES (?,?,?,?,?,?,'RECEIVED',?,?)",
+                "INSERT INTO inbox_notifications(id,channel,fingerprint,aggregate_id,operation,raw_body,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?)",
                 id,
                 receipt.channel(),
                 fingerprint,
                 receipt.aggregateId(),
                 receipt.operation(),
                 body,
+                alreadyProcessed ? "PROCESSED" : "RECEIVED",
                 now,
                 now);
           } catch (DuplicateKeyException duplicate) {
             return;
           }
-          outbox.enqueue("inbox:" + id, "PROCESS_INBOX", id, merchants.getFirst());
+          if (signedForm != null)
+            jdbc.update(
+                "INSERT INTO alipay_evidence(id,aggregate_id,operation,body,sha256,created_at) VALUES (?,?,?,?,?,?)",
+                UUID.randomUUID().toString(),
+                receipt.aggregateId(),
+                "CALLBACK",
+                signedForm,
+                Signatures.sha256(signedForm),
+                now);
+          if (!alreadyProcessed) {
+            outbox.enqueue("inbox:" + id, "PROCESS_INBOX", id, original.merchantId());
+          }
         });
+  }
+
+  private static boolean matchesSuccessfulOutcome(ChannelApi.Receipt receipt, Original original) {
+    return "SUCCEEDED".equals(receipt.status())
+        && "SUCCEEDED".equals(original.status())
+        && "CNY".equals(receipt.currency())
+        && original.amountMinor().equals(receipt.amountMinor())
+        && receipt.reference() != null
+        && !receipt.reference().isBlank()
+        && receipt.reference().length() <= 128
+        && receipt.reference().equals(original.channelReference());
   }
 
   public void process(String id) {
@@ -97,9 +184,10 @@ public class InboxService {
     String raw = (String) rows.getFirst().get("raw_body");
     var receipt = json.readValue(raw, ChannelApi.Receipt.class);
     try {
-      transactions.executeWithoutResult(
-          tx -> {
-            gateway.apply(receipt);
+      commit(
+          () -> {
+            if (shard == null) gateway.apply(receipt);
+            else gateway.applyInCheckpoint(receipt);
             jdbc.update(
                 "UPDATE inbox_notifications SET status='PROCESSED',updated_at=? WHERE id=?",
                 Timestamp.from(clock.instant()),
@@ -109,8 +197,9 @@ public class InboxService {
       if (!conflict.code().equals("CHANNEL_EVIDENCE_CONFLICT")) {
         throw conflict;
       }
-      transactions.executeWithoutResult(
-          tx -> {
+      if (shard != null) gateway.retainRejected(receipt, conflict);
+      commit(
+          () -> {
             jdbc.update(
                 "UPDATE inbox_notifications SET status='CONFLICT',error_detail=?,updated_at=? WHERE id=?",
                 conflict.getMessage(),

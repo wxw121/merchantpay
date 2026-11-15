@@ -7,10 +7,17 @@ import dev.merchantpay.platform.channel.*;
 import dev.merchantpay.platform.outbox.TaskQueue;
 import dev.merchantpay.platform.refund.RefundService;
 import java.time.Clock;
+import java.time.Duration;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionTemplate;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -21,6 +28,7 @@ class ChannelSubmissionTest extends FinancialFixture {
   @BeforeEach
   void gateway() {
     api = mock(ChannelApi.class);
+    var tx = new TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
     gateway =
         new ChannelGateway(
             api,
@@ -30,7 +38,110 @@ class ChannelSubmissionTest extends FinancialFixture {
             JsonMapper.builder().build(),
             "test",
             Clock.systemUTC(),
-            new TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource())));
+            tx,
+            new ChannelResultBatcher(
+                tx.getTransactionManager(),
+                new io.micrometer.core.instrument.simple.SimpleMeterRegistry(),
+                1,
+                Duration.ZERO),
+            new io.micrometer.core.instrument.simple.SimpleMeterRegistry());
+  }
+
+  @Test
+  void concurrentGatewayResultsShareOneFinancialCommit() throws Exception {
+    var firstAttempt = task("PAYMENT", "batch-gateway-a");
+    var secondAttempt = task("PAYMENT", "batch-gateway-b");
+    var firstTask = reclaimed(firstAttempt);
+    var secondTask = reclaimed(secondAttempt);
+    when(api.query("MOCK_A", "PAYMENT", firstTask.aggregateId(), "test"))
+        .thenReturn(receipt(firstTask));
+    when(api.query("MOCK_A", "PAYMENT", secondTask.aggregateId(), "test"))
+        .thenReturn(receipt(secondTask));
+    var commits = new AtomicInteger();
+    var metrics = new io.micrometer.core.instrument.simple.SimpleMeterRegistry();
+    var manager =
+        new DataSourceTransactionManager(jdbc.getDataSource()) {
+          @Override
+          protected void doCommit(DefaultTransactionStatus status) {
+            super.doCommit(status);
+            commits.incrementAndGet();
+          }
+        };
+    var ready = new CountDownLatch(2);
+    var start = new CountDownLatch(1);
+
+    try (var batcher = new ChannelResultBatcher(manager, metrics, 32, Duration.ofMillis(50));
+        var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+      var observed =
+          new ChannelGateway(
+              api,
+              payments,
+              refunds,
+              jdbc,
+              JsonMapper.builder().build(),
+              "test",
+              Clock.systemUTC(),
+              new TransactionTemplate(manager),
+              batcher,
+              metrics);
+      var first =
+          executor.submit(
+              () -> {
+                ready.countDown();
+                start.await();
+                observed.execute(firstTask);
+                return null;
+              });
+      var second =
+          executor.submit(
+              () -> {
+                ready.countDown();
+                start.await();
+                observed.execute(secondTask);
+                return null;
+              });
+      assertThat(ready.await(3, TimeUnit.SECONDS)).isTrue();
+      start.countDown();
+      first.get(3, TimeUnit.SECONDS);
+      second.get(3, TimeUnit.SECONDS);
+    }
+
+    assertThat(payments.get("merchant-a", firstTask.aggregateId()).status()).isEqualTo("SUCCEEDED");
+    assertThat(payments.get("merchant-a", secondTask.aggregateId()).status())
+        .isEqualTo("SUCCEEDED");
+    for (var task : java.util.List.of(firstTask, secondTask)) {
+      assertThat(
+              jdbc.queryForObject(
+                  "SELECT COUNT(*) FROM ledger_journals WHERE payment_id=?",
+                  Long.class,
+                  task.aggregateId()))
+          .isEqualTo(1);
+      assertThat(
+              jdbc.queryForObject(
+                  "SELECT COUNT(*) FROM ledger_entries e JOIN ledger_journals j ON j.id=e.journal_id WHERE j.payment_id=?",
+                  Long.class,
+                  task.aggregateId()))
+          .isEqualTo(3);
+      assertThat(
+              jdbc.queryForObject(
+                  "SELECT status FROM channel_attempts WHERE aggregate_id=?",
+                  String.class,
+                  task.aggregateId()))
+          .isEqualTo("SUCCEEDED");
+    }
+    assertThat(metrics.get("merchantpay.channel.result.batch.size").summary().max()).isEqualTo(2);
+    assertThat(commits.get()).isEqualTo(1);
+  }
+
+  private static TaskQueue.Task reclaimed(TaskQueue.Task task) {
+    return new TaskQueue.Task(
+        task.id(),
+        task.eventId(),
+        task.kind(),
+        task.aggregateId(),
+        task.merchantId(),
+        2,
+        task.token());
   }
 
   @ParameterizedTest

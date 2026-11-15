@@ -17,3 +17,4 @@ CREATE INDEX IF NOT EXISTS ix_receipt_pending ON receipts(status,channel,merchan
 ALTER TABLE receipts ADD COLUMN IF NOT EXISTS expected_callbacks INT NOT NULL DEFAULT 1;
 ALTER TABLE receipts ADD COLUMN IF NOT EXISTS callback_deliveries INT NOT NULL DEFAULT 0;
 CREATE INDEX IF NOT EXISTS ix_receipt_evidence ON receipts(channel,operation,aggregate_id);
+CREATE INDEX IF NOT EXISTS ix_receipt_run_evidence ON receipts(channel,operation,business_no,aggregate_id);

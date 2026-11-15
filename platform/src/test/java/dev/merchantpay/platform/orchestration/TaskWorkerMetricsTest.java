@@ -13,6 +13,42 @@ import org.junit.jupiter.api.Test;
 
 class TaskWorkerMetricsTest {
   @Test
+  void expiredNotificationIsNeitherSentNorAcknowledgedAsDelivered() {
+    var queue = mock(TaskQueue.class);
+    var notices = mock(NotificationService.class);
+    var task =
+        new TaskQueue.Task(
+            "expired", "event", "PAYMENT_SUCCEEDED", "payment", "merchant", 2, "lease");
+    when(queue.claimBatch(5, "NOTIFY")).thenReturn(List.of(task));
+    when(queue.notificationMayRun(task)).thenReturn(false);
+    var metrics = new SimpleMeterRegistry();
+    try (var worker =
+        new TaskWorker(
+            queue,
+            mock(ChannelGateway.class),
+            mock(InboxService.class),
+            notices,
+            null,
+            Clock.systemUTC(),
+            metrics,
+            null,
+            null,
+            30)) {
+      worker.poll();
+    }
+    verify(notices, never()).deliver(any());
+    verify(queue, never()).completeBatch(anyList());
+    assertThat(
+            metrics
+                .get("merchantpay.tasks.execution")
+                .tag("kind", "PAYMENT_SUCCEEDED")
+                .tag("outcome", "expired_or_lease_lost")
+                .timer()
+                .count())
+        .isEqualTo(1);
+  }
+
+  @Test
   void executionDurationDistinguishesCompletionRetryAndLostLease() {
     var queue = mock(TaskQueue.class);
     var gateway = mock(ChannelGateway.class);
